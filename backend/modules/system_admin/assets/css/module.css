@@ -1,0 +1,53 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2018-3-7, 13:50:08
+    Author     : Vito
+*/
+/********* uploadfile-index样式 ***********/
+/** table表格th样式 */
+.uploadfile-index .viewdetail-th {
+    color: #666666;
+    width: 23%;
+    font-weight: normal;
+    text-align: right;
+    min-width: 73px;
+    vertical-align: middle;
+}
+
+/** table表格th-head样式 */
+.uploadfile-index .viewdetail-th-head {
+    color: #000000;
+    float: left;
+    font-weight: bold;
+}
+
+.uploadfile-index .frame {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    display: inline-block;
+}
+
+.uploadfile-index .frame-left {
+    width: 40%;
+    margin-bottom: 30px;
+}
+
+.uploadfile-index .frame
+.frame-title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #ffffff;
+    line-height: 20px;
+    background-color: rgba(153, 153, 153, 1);
+}
+
+.uploadfile-index .frame
+.frame-title>span {
+    display: block;
+    float: left;
+}

@@ -1,15 +1,15 @@
 <?php
 
-namespace common\models\searchs;
+namespace common\models\media\searchs;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaAttribute;
+use common\models\media\MediaTypeDetail;
 
 /**
- * MediaAttributeSearch represents the model behind the search form of `common\models\media\MediaAttribute`.
+ * MediaTypeDetailSearch represents the model behind the search form of `common\models\media\MediaTypeDetail`.
  */
-class MediaAttributeSearch extends MediaAttribute
+class MediaTypeDetailSearch extends MediaTypeDetail
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class MediaAttributeSearch extends MediaAttribute
     public function rules()
     {
         return [
-            [['id', 'category_id', 'index_type', 'input_type', 'sort_order', 'is_del', 'value_length'], 'integer'],
-            [['name'], 'safe'],
+            [['id', 'type_id', 'is_del'], 'integer'],
+            [['name', 'ext', 'icon_url'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class MediaAttributeSearch extends MediaAttribute
      */
     public function search($params)
     {
-        $query = MediaAttribute::find();
+        $query = MediaTypeDetail::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +59,13 @@ class MediaAttributeSearch extends MediaAttribute
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'category_id' => $this->category_id,
-            'index_type' => $this->index_type,
-            'input_type' => $this->input_type,
-            'sort_order' => $this->sort_order,
+            'type_id' => $this->type_id,
             'is_del' => $this->is_del,
-            'value_length' => $this->value_length,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'ext', $this->ext])
+            ->andFilterWhere(['like', 'icon_url', $this->icon_url]);
 
         return $dataProvider;
     }

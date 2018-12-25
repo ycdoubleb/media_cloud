@@ -1,15 +1,15 @@
 <?php
 
-namespace common\models\searchs;
+namespace common\models\media\searchs;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaAttributeValue;
+use common\models\media\MediaType;
 
 /**
- * MediaAttributeValueSearch represents the model behind the search form of `common\models\media\MediaAttributeValue`.
+ * MediaTypeSearch represents the model behind the search form of `common\models\media\MediaType`.
  */
-class MediaAttributeValueSearch extends MediaAttributeValue
+class MediaTypeSearch extends MediaType
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class MediaAttributeValueSearch extends MediaAttributeValue
     public function rules()
     {
         return [
-            [['id', 'attribute_id', 'is_del'], 'integer'],
-            [['value'], 'safe'],
+            [[' id', 'is_del'], 'integer'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class MediaAttributeValueSearch extends MediaAttributeValue
      */
     public function search($params)
     {
-        $query = MediaAttributeValue::find();
+        $query = MediaType::find();
 
         // add conditions that should always apply here
 
@@ -58,12 +58,11 @@ class MediaAttributeValueSearch extends MediaAttributeValue
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'attribute_id' => $this->attribute_id,
+            ' id' => $this-> id,
             'is_del' => $this->is_del,
         ]);
 
-        $query->andFilterWhere(['like', 'value', $this->value]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

@@ -1,15 +1,15 @@
 <?php
 
-namespace common\models\searchs;
+namespace common\models\media\searchs;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaCategory;
+use common\models\media\MediaAttribute;
 
 /**
- * MediaCategorySearch represents the model behind the search form of `common\models\media\MediaCategory`.
+ * MediaAttributeSearch represents the model behind the search form of `common\models\media\MediaAttribute`.
  */
-class MediaCategorySearch extends MediaCategory
+class MediaAttributeSearch extends MediaAttribute
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,7 @@ class MediaCategorySearch extends MediaCategory
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'category_id', 'index_type', 'input_type', 'sort_order', 'is_del', 'value_length'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -40,7 +40,7 @@ class MediaCategorySearch extends MediaCategory
      */
     public function search($params)
     {
-        $query = MediaCategory::find();
+        $query = MediaAttribute::find();
 
         // add conditions that should always apply here
 
@@ -59,6 +59,12 @@ class MediaCategorySearch extends MediaCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'category_id' => $this->category_id,
+            'index_type' => $this->index_type,
+            'input_type' => $this->input_type,
+            'sort_order' => $this->sort_order,
+            'is_del' => $this->is_del,
+            'value_length' => $this->value_length,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);

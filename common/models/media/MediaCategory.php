@@ -1,8 +1,9 @@
 <?php
 
-use yii\db\ActiveRecord;
-
 namespace common\models\media;
+
+use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%media_category}}".

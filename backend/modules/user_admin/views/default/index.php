@@ -7,17 +7,17 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\View;
 
+
 /* @var $this View */
-/* @var $dataProvider yii\data\ActiveDataProvider;*/
+/* @ver $dataProvider ActiveDataProvider */
 /* @var $model AdminUser */
 
 $this->title = '管理用户';
-
 ?>
 <div class="user-index">
     <p>
-        <?= Html::a('新增',['create'],['class'=>'btn btn-success']) ?>
-        <?= Html::a('同步GUID',['tongbu'],['class'=>'btn btn-info']) ?>
+        <?= Html::a('新增', ['create'], ['class' => 'btn btn-success', 'onclick' => "showModal($(this).attr('href'));return false;"]) ?>
+        <?= Html::a('同步GUID', ['tongbu'], ['class' => 'btn btn-info']) ?>
     </p>
     <?=
     GridView::widget([
@@ -45,13 +45,13 @@ $this->title = '管理用户';
                             'aria-label' => Yii::t('yii', 'View'),
                             'data-pjax' => '0',
                         ];
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view','id'=>$key], $options);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $key], $options);
                     }
-                        ]
-                    ]
-                ],
-                'tableOptions' => ['class' => 'table table-striped']
-            ]);
-            ?>
-    
+                ]
+            ]
+        ],
+        'tableOptions' => ['class' => 'table table-striped']
+    ]);
+    ?>
+
 </div>

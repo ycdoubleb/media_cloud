@@ -71,7 +71,7 @@ if (Yii::$app->controller->action->id === 'login') {
             'content.php',
             ['content' => $content, 'directoryAsset' => $directoryAsset]
         ) ?>
-
+  
     </div>
 
     <?php $this->endBody() ?>

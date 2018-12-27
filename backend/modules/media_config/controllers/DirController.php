@@ -238,13 +238,15 @@ class DirController extends Controller
      * @param string $target_id
      * @param string $id
      */
-    public function actionSearchChildren($target_id, $id){
+    public function actionSearchChildren($target_id = null, $id){
         $dirsChildren = Dir::getDirsChildren($id); 
         $childrens = [];
         foreach ($dirsChildren as $index => $item) {
-            if($target_id == $item['id']){
-                unset($item[$index]);
-                break;
+            if($target_id != null){
+                if($target_id == $item['id']){
+                    unset($item[$index]);
+                    break;
+                }
             }
             $childrens[] = $item;
         }

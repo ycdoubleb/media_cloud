@@ -216,7 +216,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <!--加载模态框-->
-<?= $this->render('/layouts/____model'); ?>
+<?= $this->render('/layouts/modal'); ?>
 
 <?php
 $js = <<<JS

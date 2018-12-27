@@ -17,7 +17,7 @@ class MediaTypeSearch extends MediaType
     public function rules()
     {
         return [
-            [[' id', 'is_del'], 'integer'],
+            [['id', 'is_del'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -58,8 +58,8 @@ class MediaTypeSearch extends MediaType
 
         // grid filtering conditions
         $query->andFilterWhere([
-            ' id' => $this-> id,
-            'is_del' => $this->is_del,
+            'id' => $this->id,
+            'is_del' => 0,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);

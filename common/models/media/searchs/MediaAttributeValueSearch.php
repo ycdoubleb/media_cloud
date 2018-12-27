@@ -2,9 +2,10 @@
 
 namespace common\models\media\searchs;
 
+use common\models\media\MediaAttributeValue;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaAttributeValue;
+use yii\helpers\ArrayHelper;
 
 /**
  * MediaAttributeValueSearch represents the model behind the search form of `common\models\media\MediaAttributeValue`.
@@ -40,6 +41,8 @@ class MediaAttributeValueSearch extends MediaAttributeValue
      */
     public function search($params)
     {
+        $this->attribute_id = ArrayHelper::getValue($params, 'attribute_id');  //属性id
+        
         $query = MediaAttributeValue::find();
 
         // add conditions that should always apply here

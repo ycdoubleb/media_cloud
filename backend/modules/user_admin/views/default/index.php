@@ -16,7 +16,7 @@ $this->title = '管理用户';
 ?>
 <div class="user-index">
     <p>
-        <?= Html::a('新增', ['create'], ['class' => 'btn btn-success', 'onclick' => "showModal($(this).attr('href'));return false;"]) ?>
+        <?= Html::a('新增', ['create'], ['id' => 'btn-addUser', 'class' => 'btn btn-success']) ?>
         <?= Html::a('同步GUID', ['tongbu'], ['class' => 'btn btn-info']) ?>
     </p>
     <?=
@@ -55,3 +55,19 @@ $this->title = '管理用户';
     ?>
 
 </div>
+
+<!--加载模态框-->
+<?= $this->render('____model'); ?>
+
+<?php
+$js = <<<JS
+    
+    // 弹出用户添加面板
+    $('#btn-addUser').click(function(e){
+        e.preventDefault();
+        showModal($(this));
+    });
+    
+JS;
+    $this->registerJs($js, View::POS_READY);
+?>

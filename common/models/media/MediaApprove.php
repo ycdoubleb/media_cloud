@@ -2,6 +2,7 @@
 
 namespace common\models\media;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 

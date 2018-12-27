@@ -271,7 +271,7 @@ return [
     'Mark' => '标记',
     'Administration' => '管理',
     'Already' => '已',
-    'Icon Path' => '图标',
+    'Icon' => '图标',
     'Information' => '信息',
     'Statistics' => '统计',
     'Space' => '空间',
@@ -294,6 +294,17 @@ return [
     'Warning' => '警戒',
     'Surplus' => '剩余',
     'Total' => '总数',
+    'Suffix' => '后缀',
+    
+    //后台-媒体配置
+    'Media' => '媒体',
+    'Storage' => '存储',
+    'Dir' => '目录',
+    'Include' => '包含',
+    'Is Use' => '是否启用',
+    'Is Required' => '是否必选',
+    'Is Search' => '是否搜索',
+    'Length' => '长度',
     
     //后台-帮助中心
     'App' => '应用',

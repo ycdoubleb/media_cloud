@@ -4,6 +4,7 @@ namespace common\models\media;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%media_category}}".
@@ -27,6 +28,7 @@ class MediaCategory extends ActiveRecord
     public function rules()
     {
         return [
+            [['name'], 'required'],
             [['name'], 'string', 'max' => 50],
         ];
     }
@@ -40,5 +42,24 @@ class MediaCategory extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
         ];
+    }
+    
+    /**
+     * 返回媒体类目信息
+     * @param array $condition      查询条件
+     * @param bool $key_to_value    返回键值对形式
+     * @return array(array|Array) 
+     */
+    public static function getMediaCategory($condition = [], $key_to_value = true) 
+    {
+        $query = self::find();
+        $query->andFilterWhere($condition);
+        
+        $categorys = [];
+        foreach ($query->all() as $id => $category) {
+            $categorys[] = $category;
+        }
+       
+        return $key_to_value ? ArrayHelper::map($categorys, 'id', 'name') : $categorys;
     }
 }

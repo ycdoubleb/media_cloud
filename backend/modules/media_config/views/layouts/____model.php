@@ -31,10 +31,11 @@ UeditorAsset::register($this);
     
     /**
      * 显示模态框
-     * @param {String} url  链接
+     * @param {Object} _this
      * @returns {Boolean}
      */
-    function showModal(url){
+    function showModal(_this){
+        var url = _this.attr("href")
         $(".myModal").html("");
         $('.myModal').modal("show").load(url);
         return false;

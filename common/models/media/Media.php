@@ -3,6 +3,7 @@
 namespace common\models\media;
 
 use common\modules\webuploader\models\Uploadfile;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;

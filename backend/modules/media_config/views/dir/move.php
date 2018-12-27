@@ -75,7 +75,7 @@ $js = <<<JS
     var moveIds = "$move_ids";
     $('#submitsave').click(function(){
         var _nodes = $("#table-fancytree_2").fancytree("getActiveNode");
-        $.post('../dir/move?move_ids=' + moveIds + '&target_id=' + _nodes.key);
+        $.post('/media_config/dir/move?move_ids=' + moveIds + '&target_id=' + _nodes.key);
     });               
 JS;
     $this->registerJs($js,  View::POS_READY);

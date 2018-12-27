@@ -65,14 +65,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     var _this = $(this);
                     switch(index){
                         case 0:
-                            _this.attr({href: \'./create?id=\' + node.key});
+                            _this.attr({href: \'/media_config/dir/create?id=\' + node.key});
                             _this.click(function(e){
                                 e.preventDefault();
                                 showModal(_this);
                             });
                             break;
                         case 1:
-                            _this.attr({href: \'./update?id=\' + node.key});
+                            _this.attr({href: \'/media_config/dir/update?id=\' + node.key});
                             _this.click(function(e){
                                 e.preventDefault();
                                 showModal(_this);
@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             _this.click(function(e){
                                 e.preventDefault();
                                 if(confirm("您确定要删除此项吗？") == true){
-                                    $.post(\'./delete?id=\' + node.key, function(rel){
+                                    $.post(\'/media_config/dir/delete?id=\' + node.key, function(rel){
                                         if(rel.code == 0){
                                             node.remove();
                                         }else{

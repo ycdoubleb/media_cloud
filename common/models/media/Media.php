@@ -40,6 +40,41 @@ use yii\db\ActiveRecord;
  */
 class Media extends ActiveRecord
 {
+    
+    /** 未转码 */
+    const MTS_STATUS_NO = 0;
+
+    /** 转码中 */
+    const MTS_STATUS_DOING = 1;
+
+    /** 已转码 */
+    const MTS_STATUS_YES = 2;
+
+    /** 转码失败 */
+    const MTS_STATUS_FAIL = 5;
+    
+    /**
+     * 状态名
+     * @var array 
+     */
+    public static $statusName = [
+        0 => '未转码',
+        1 => '转码中',
+        2 => '已转码',
+        3 => '转码失败',
+    ];
+    
+    /**
+     * 转码状态名
+     * @var array 
+     */
+    public static $mtsStatusName = [
+        self::MTS_STATUS_NO => '未转码',
+        self::MTS_STATUS_DOING => '转码中',
+        self::MTS_STATUS_YES => '已转码',
+        self::MTS_STATUS_FAIL => '转码失败',
+    ];
+    
     /**
      * {@inheritdoc}
      */

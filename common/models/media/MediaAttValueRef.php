@@ -3,6 +3,8 @@
 namespace common\models\media;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%media_att_value_ref}}".
@@ -13,7 +15,7 @@ use Yii;
  * @property string $attribute_value_id 属性值id，关联media_attribute_value表id字段
  * @property int $is_del    是否已删除 0否 1是
  */
-class MediaAttValueRef extends \yii\db\ActiveRecord
+class MediaAttValueRef extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -46,5 +48,45 @@ class MediaAttValueRef extends \yii\db\ActiveRecord
             'attribute_value_id' => Yii::t('app', 'Attribute Value ID'),
             'is_del' => Yii::t('app', 'Is Del'),
         ];
+    }
+    
+    /**
+     * 保存媒体属性值关联关系
+     * @param int $media_id
+     * @param array $attrValues
+     * @return boolean
+     */
+    public static function saveMediaAttValueRef($media_id, $attrValues)
+    {
+        if(!is_array($attrValues)) return false;
+        try {
+            $mediaAttValue = [];
+            foreach ($attrValues as $attr_id => $attr_value) {
+                // 判断提交上来的属性是单选还是多选
+                if(is_array($attr_value)){
+                    foreach ($attr_value as $value) {
+                        $mediaAttValue[] = [
+                            'media_id' => $media_id,
+                            'attribute_id' => $attr_id,
+                            'attribute_value_id' => $value,
+                        ];
+                    }
+                }else{
+                    $mediaAttValue[] = [
+                        'media_id' => $media_id,
+                        'attribute_id' => $attr_id,
+                        'attribute_value_id' => $attr_value,
+                    ];
+                }
+            }
+            
+            $batchInsert = Yii::$app->db->createCommand()->batchInsert(self::tableName(),
+                isset($mediaAttValue[0]) ? array_keys($mediaAttValue[0]) : [], $mediaAttValue)->execute();
+            return true;
+        } catch (Exception $exc) {
+            Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+        }
+                
+        return false;
     }
 }

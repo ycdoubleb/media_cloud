@@ -11,6 +11,9 @@ use common\models\media\Media;
  */
 class MediaSearch extends Media
 {
+    public $keyword;
+
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +21,7 @@ class MediaSearch extends Media
     {
         return [
             [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'cover_url', 'url'], 'safe'],
+            [['name', 'cover_url', 'url', 'keyword'], 'safe'],
             [['price', 'duration'], 'number'],
         ];
     }
@@ -78,9 +81,7 @@ class MediaSearch extends Media
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'cover_url', $this->cover_url])
-            ->andFilterWhere(['like', 'url', $this->url]);
+        $query->andFilterWhere(['like', 'name', $this->keyword]);
 
         return $dataProvider;
     }

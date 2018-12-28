@@ -23,13 +23,16 @@ use yii\redis\ActiveQuery;
  */
 class MediaAttribute extends ActiveRecord
 {
-    /* 单选-输入类型 */
+    /** 单选-输入类型 */
     const SINGLE_SELECT_INPUT_TYPE = 1;
-    /* 多选-输入类型 */
+    
+    /** 多选-输入类型 */
     const MULTPLE_SELECT_INPUT_TYPE = 2;
-    /* 单行-输入类型 */
+    
+    /** 单行-输入类型 */
     const SINGLE_LINE_INPUT_TYPE = 3;
-    /* 多行-输入类型 */
+    
+    /** 多行-输入类型 */
     const MULTPLE_LINE_INPUT_TYPE = 4;
     
     /**
@@ -87,5 +90,46 @@ class MediaAttribute extends ActiveRecord
     public function getCategory()
     {
         return $this->hasOne(MediaCategory::class, ['id' => 'category_id']);
+    }
+    
+    // 保存前
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            $attrModel = self::find()->orderBy(['sort_order' => SORT_DESC])->one();
+            $this->sort_order = $attrModel == null ? 1 : $attrModel->sort_order + 1;
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * 获取媒体属性
+     * @param string|array $media_id
+     * @param string $category_id
+     * @return array
+     */
+    public static function getMediaAttributeByCategoryId($media_id = null, $category_id = null)
+    {
+        $query = self::find()->from(['Attribute' => self::tableName()]);
+        $query->select(['Attribute.*', "GROUP_CONCAT(AttributeValue.id, '_', AttributeValue.value) AS attr_value"]);
+        // 必要条件
+        $query->andFilterWhere([
+            'Attribute.is_del' => 0,
+            'AttributeValue.is_del' => 0,
+        ]);
+        // 按media_id条件查询
+        $query->andFilterWhere(['media_id' => $media_id]);
+        // 按category_id条件查询
+        $query->andFilterWhere(['category_id' => $category_id]);
+        // 关联属性值表
+        $query->leftJoin(['AttributeValue' => MediaAttributeValue::tableName()], 'AttributeValue.attribute_id = Attribute.id');
+        // 关联媒体属性值关联表
+        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], 'AttrValueRef.attribute_id = Attribute.id');
+        // 按category_id分组
+        $query->groupBy(['category_id', 'AttributeValue.attribute_id']);
+        // 按sort_order上升排序
+        $query->orderBy('sort_order');
+        
+        return $query->asArray()->all();
     }
 }

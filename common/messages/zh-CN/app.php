@@ -17,6 +17,7 @@ return [
     'Up' => '上',
     'Down' => '下',
     'Batch' => '批量',
+    'Join' => '入',
     
     
     //公共- 用户
@@ -54,7 +55,7 @@ return [
     'Updated At' => '更新时间',
     'Start Time' => '开始时间',
     'End Time' => '结束时间',
-    'Long Time' => '时长',
+    'Duration' => '时长',
     'Last Week' => '上一周',
     'This Week' => '这一周',
     'Last Month' => '上一月',
@@ -136,6 +137,7 @@ return [
     
     //公共-属性
     'ID' => 'ID',
+    'DB' => '库',
     'Type' => '类型',
     'Parent' => '父级',
     'Title' => '标题',
@@ -188,6 +190,7 @@ return [
     'Position' => '位置',
     'Default' => '默认',
     'Selected' => '选中',
+    'Thumb Image' => '缩略图',
   
     //提示消息
     "Can't be empty." => '不能为空。',
@@ -260,6 +263,7 @@ return [
     'Range' => '范围',
     'Tag' => '标签',
     'Public' => '公用',
+    'Media' => '媒体',
     
     //后台-文件管理
     'File' => '文件',
@@ -296,8 +300,12 @@ return [
     'Total' => '总数',
     'Suffix' => '后缀',
     
+    //后台-媒体管理
+    'Operator' => '运营者',
+    'Uploader' => '上传者',
+    'Number' => '编码',
+    
     //后台-媒体配置
-    'Media' => '媒体',
     'Storage' => '存储',
     'Dir' => '目录',
     'Include' => '包含',

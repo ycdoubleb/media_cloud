@@ -14,7 +14,6 @@ namespace common\modules\webuploader\actions;
 
 use common\modules\webuploader\models\UploadfileChunk;
 use common\modules\webuploader\models\UploadResponse;
-use yii\base\Action;
 use yii\web\HttpException;
 
 /**
@@ -22,18 +21,25 @@ use yii\web\HttpException;
  *
  * @author Administrator
  */
-class UploadAction extends Action {
+class UploadAction extends BaseAction {
 
     public function run() {
         //应用web路径，默认会放本应用的web下，通过设置root_path可改变目标路径
         $params = $_REQUEST;
+        // Support CORS
+        
+        // other CORS headers if any...
+        if(\Yii::$app->request->method == 'OPTIONS'){
+            return '';
+        }
+
         if (!isset($params["fileMd5"])) {
             return new UploadResponse(UploadResponse::CODE_COMMON_MISS_PARAM, null, null, ['param' => 'fileMd5']);
         }
         if (!isset($params["chunkMd5"])) {
             return new UploadResponse(UploadResponse::CODE_COMMON_MISS_PARAM, null, null, ['param' => 'chunkMd5']);
         }
-        
+
         $root_path = isset($params["root_path"]) ? $params["root_path"] . '/' : '';
         $dir_path = isset($params["dir_path"]) ? '/' . $params["dir_path"] : '';
         $targetDir = $root_path . 'upload/webuploader/upload_tmp';
@@ -66,7 +72,7 @@ class UploadAction extends Action {
         //检查分片是否上传过
         if ($chunkMd5 != '') {
             $fileChunk = UploadfileChunk::findOne(['chunk_id' => $chunkMd5]);
-            if ($fileChunk != null && file_exists($fileChunk->chunk_path)) {
+            if ($fileChunk != null && $fileChunk->is_del == 0 && file_exists($fileChunk->chunk_path)) {
                 //分片已存在
                 return new UploadResponse(UploadResponse::CODE_CHUNK_EXIT, null, $fileChunk->toArray());
             }
@@ -96,7 +102,10 @@ class UploadAction extends Action {
         rename("{$filePath}_{$chunk}.parttmp", "{$filePath}_{$chunk}.part");
 
         //保存记录分片数据
-        $fileChunk = new UploadfileChunk(['chunk_id' => $chunkMd5, 'file_id' => $fileMd5, 'chunk_path' => "{$filePath}_{$chunk}.part", 'chunk_index' => $chunk]);
+        if($fileChunk == null){
+            $fileChunk = new UploadfileChunk(['chunk_id' => $chunkMd5, 'file_md5' => $fileMd5, 'chunk_path' => "{$filePath}_{$chunk}.part", 'chunk_index' => $chunk]);
+        }
+        $fileChunk->is_del = 0;
         $fileChunk->save();
         // Return Success JSON-RPC response
         return new UploadResponse(UploadResponse::CODE_COMMON_OK);

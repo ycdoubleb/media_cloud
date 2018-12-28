@@ -29,4 +29,28 @@ return [
             ],
         ],
     ],
+    'modules' => [
+        //上传组件
+        'webuploader' => [
+            'class' => 'common\modules\webuploader\Module',
+        ],
+        //百度富文本编辑
+        'ueditor' => [
+            'class' => 'common\modules\ueditor\Module',
+        ],
+        //日期控制组件
+        'datecontrol' => [
+            'class' => '\kartik\datecontrol\Module',
+        ],
+        //gridview 组件
+        'gridview' => [
+            'class' => '\kartik\grid\Module',
+        // your other grid module settings
+        ],
+        //gridview 组件
+        'gridviewKrajee' => [
+            'class' => '\kartik\grid\Module',
+        // your other grid module settings
+        ]
+    ],
 ];

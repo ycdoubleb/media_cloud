@@ -1,8 +1,12 @@
 <?php
 
-/* @var $this yii\web\View */
+use common\widgets\webuploader\WebUploaderAsset;
+use yii\web\View;
+
+/* @var $this View */
 
 $this->title = 'My Yii Application';
+WebUploaderAsset::register($this);
 ?>
 <div class="site-index">
 
@@ -15,39 +19,51 @@ $this->title = 'My Yii Application';
     </div>
 
     <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
+        <div id="uploader-container"></div>
     </div>
 </div>
+<script>
+    /**
+     * 加载文件上传
+     */
+    window.uploader;
+    window.onload = function () {
+        require(['euploader'], function (euploader) {
+            //公共配置
+            window.config = {
+                swf: "$swfpath" + "/Uploader.swf",
+                // 文件接收服务端。
+                server: '/webuploader/default/upload',
+                //检查文件是否存在
+                checkFile: '/webuploader/default/check-file',
+                //分片合并
+                mergeChunks: '/webuploader/default/merge-chunks',
+                //自动上传
+                auto: true,
+                //开起分片上传
+                chunked: true,
+                name: 'Video[file_id]',
+                // 上传容器
+                container: '#uploader-container',
+                //验证文件总数量, 超出则不允许加入队列
+                fileNumLimit: 1,
+                //指定接受哪些类型的文件
+                accept: {
+                    title: 'Material',
+                    extensions: 'mp4,mp3,gif,jpg,jpeg,bmp,png,doc,docx,txt,xls,xlsx,ppt,pptx',
+                    mimeTypes: 'video/mp4,audio/mp3,image/*,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx',
+                },
+                formData: {
+                    _csrf: "$csrfToken",
+                }
+
+            };
+            //视频
+            window.uploader = new euploader.Uploader(window.config, euploader.FilelistView);
+            $(window.uploader).on('uploadComplete',function(f,d){
+                console.log(d);
+            });
+        });
+    }
+
+</script>

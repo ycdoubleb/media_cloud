@@ -34,11 +34,11 @@ class EefileUtils {
         }
         $dbFile = [];
         //附件数据
-        $dbFile['id'] = (string) $response->VIDEO_ID;
+        $dbFile['md5'] = (string) $response->VIDEO_ID;
         $dbFile['name'] = (string) $response->VIDEO_NAME;                               //视频名
         $dbFile['path'] = $video_path;                                                  //视频路径
         $dbFile['oss_key'] = $video_path;                                               //设置oss_key
-        $dbFile['thumb_path'] = (string) $response->VIDEO_IMG;                          //视频截图
+        $dbFile['thumb_url'] = (string) $response->VIDEO_IMG;                           //视频截图
         $dbFile['size'] = (string) $response->VIDEO_SIZE;                               //视频大小b   
         //1280x720
         $wh_str = (string) $response->VIDEO_RESOLUTION;
@@ -46,11 +46,13 @@ class EefileUtils {
             $wh_str = '0x0';
         $wh = explode('x', $wh_str);
         $level = (string) $response->VIDEO_BIT_TYPE;
-        $dbFile['level'] = $level != "" ? self::VIDEO_LEVELS[$level] : self::getVideoLevel($wh[1]);     //视频质量等级
-        $dbFile['width'] = (integer) $wh[0];                                        //视频宽
-        $dbFile['height'] = (integer) $wh[1];                                       //视频高
-        $dbFile['bitrate'] = floatval($response->VIDEO_BIT_RATE);                   //码率
-        $dbFile['duration'] = floatval($response->VIDEO_TIME) / 1000;               //视频长度
+        $dbFile['metadata'] = json_encode([
+            'level' => $level != "" ? self::VIDEO_LEVELS[$level] : self::getVideoLevel($wh[1]),     //视频质量等级
+            'width' => (integer) $wh[0],                                                            //视频质量等级
+            'height' => (integer) $wh[1],                                                           //视频质量等级
+            'bitrate' => floatval($response->VIDEO_BIT_RATE),                                       //视频质量等级
+            'duration' => floatval($response->VIDEO_TIME) / 1000,                                   //视频质量等级
+        ]);
         
         return $dbFile;
     }

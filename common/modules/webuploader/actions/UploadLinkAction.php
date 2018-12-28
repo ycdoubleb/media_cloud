@@ -12,7 +12,6 @@ use common\modules\webuploader\models\Uploadfile;
 use common\modules\webuploader\models\UploadResponse;
 use common\utils\EefileUtils;
 use Yii;
-use yii\base\Action;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -20,11 +19,8 @@ use yii\helpers\ArrayHelper;
  * 传外链地址，分析得详细数据返回
  * @param string $path 视频路径
  */
-class UploadLinkAction extends Action {
+class UploadLinkAction extends BaseAction {
 
-    /* 清新度 */
-    const VIDEO_LEVELS = ['LD' => 1, 'SD' => 2, 'HD' => 3, 'FD' => 4];
-    
     public function run() {
         $params = Yii::$app->request->getQueryParams();
         $video_path = ArrayHelper::getValue($params, 'video_path');
@@ -33,22 +29,16 @@ class UploadLinkAction extends Action {
         }
         /* 先获取视频详细数据 */
         $dbFile = EefileUtils::getVideoData($video_path);
-        $uploadFile = Uploadfile::findOne(['id' => $dbFile['id']]);
+        $uploadFile = Uploadfile::findOne(['md5' => $dbFile['md5']]);
         if(!$uploadFile){
-            $uploadFile = new Uploadfile(['id' => $dbFile['id']]);
+            $uploadFile = new Uploadfile(['md5' => $dbFile['md5']]);
         }
         $uploadFile->setAttributes(array_merge([
-            'customer_id' => Yii::$app->user->identity->customer_id,
-            'is_link' => 1,
             'is_del' => 0,
             'oss_upload_status' => Uploadfile::OSS_UPLOAD_STATUS_YES,             //设置已上传到OSS
             'created_by' => Yii::$app->user->id,
         ],$dbFile));
         
-        if($uploadFile->validate() && $uploadFile->save()){
-            return new UploadResponse(UploadResponse::CODE_COMMON_OK, null, $uploadFile->toArray());
-        }else{
-            return new UploadResponse(UploadResponse::CODE_COMMON_SAVE_DB_FAIL, null, implode('', $uploadFile->getErrorSummary(true)));
-        }
+        return new UploadResponse(UploadResponse::CODE_COMMON_OK, null, $uploadFile->toProcessedArray());
     }
 }

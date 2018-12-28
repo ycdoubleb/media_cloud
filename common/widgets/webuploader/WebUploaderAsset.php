@@ -13,7 +13,7 @@ class WebUploaderAsset extends AssetBundle
     public $js = [
         'webuploader.js',
         'require.js',
-        'euploader.min.js',
+        'euploader_v2.min.js',
     ];
     public $depends = [
         'yii\bootstrap\BootstrapPluginAsset',

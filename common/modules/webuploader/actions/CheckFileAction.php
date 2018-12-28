@@ -5,7 +5,6 @@ namespace common\modules\webuploader\actions;
 use common\modules\webuploader\models\Uploadfile;
 use common\modules\webuploader\models\UploadfileChunk;
 use common\modules\webuploader\models\UploadResponse;
-use yii\base\Action;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -13,7 +12,7 @@ use yii\helpers\ArrayHelper;
  *
  * @author Administrator
  */
-class CheckFileAction extends Action {
+class CheckFileAction extends BaseAction {
 
     public function run() {
         if (!isset($_REQUEST['fileMd5'])) {
@@ -21,16 +20,16 @@ class CheckFileAction extends Action {
             return new UploadResponse(UploadResponse::CODE_COMMON_MISS_PARAM, null, null, ['param' => 'fileMd5']);
         }
         $fileMd5 = $_REQUEST['fileMd5'];
-        $dbFile = Uploadfile::findOne(['id' => $fileMd5, 'is_del' => 0]);
+        $dbFile = Uploadfile::findOne(['md5' => $fileMd5, 'is_del' => 0]);
         if ($dbFile) {
             if($dbFile->oss_upload_status != Uploadfile::OSS_UPLOAD_STATUS_YES){
                 $dbFile->uploadOSS();
             }
-            return new UploadResponse(UploadResponse::CODE_FILE_EXIT, null, $dbFile->toArray());
+            return new UploadResponse(UploadResponse::CODE_FILE_EXIT, null, $dbFile->toProcessedArray());
         } else {
             $fileChunks = ArrayHelper::map(UploadfileChunk::find()
                     ->select(['chunk_id', 'chunk_index'])
-                    ->where(['file_id' => $fileMd5])
+                    ->where(['file_md5' => $fileMd5 , 'is_del' => 0])
                     ->asArray()->all(), 'chunk_id', 'chunk_index');
             if ($fileChunks != null && count($fileChunks) > 0) {
                 //上传过程中断...

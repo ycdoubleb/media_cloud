@@ -10,14 +10,13 @@ namespace common\modules\webuploader\actions;
 
 use common\modules\webuploader\models\UploadfileChunk;
 use common\modules\webuploader\models\UploadResponse;
-use yii\base\Action;
 
 /**
  * 检查分片是否存在
  *
  * @author Administrator
  */
-class CheckChunkAction extends Action {
+class CheckChunkAction extends BaseAction {
 
     public function run() {
         if (!isset($_REQUEST['chunkMd5'])) {
@@ -30,7 +29,7 @@ class CheckChunkAction extends Action {
         $fileChunk;
         //检查分片是否上传过
         if ($chunkMd5 != '') {
-            $fileChunk = UploadfileChunk::findOne(['chunk_id' => $chunkMd5]);
+            $fileChunk = UploadfileChunk::findOne(['chunk_id' => $chunkMd5 , 'is_del' => 0]);
             if ($fileChunk != null) {
                 //分片上传过
                 die('{"jsonrpc" : "2.0", "result" : ' . $chunkMd5 . ', "id" : "id", "exist": 1}');

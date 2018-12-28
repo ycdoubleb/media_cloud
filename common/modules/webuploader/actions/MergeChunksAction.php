@@ -104,6 +104,7 @@ class MergeChunksAction extends BaseAction {
                 $dbFile->thumb_url = $thumb_path;
                 $dbFile->created_by = Yii::$app->user->id;
                 $dbFile->size = $fileSize == 0 ? filesize($uploadPath) : $fileSize;
+                $dbFile->ext = strtolower(pathinfo($uploadPath,PATHINFO_EXTENSION));
                 $dbFile->is_del = 0;
                 $dbFile->oss_upload_status = Uploadfile::OSS_UPLOAD_STATUS_NO;
                 $dbFile->oss_key = $replace_file == null ? "" : $replace_file->oss_key;

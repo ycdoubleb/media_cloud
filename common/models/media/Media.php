@@ -22,6 +22,7 @@ use yii\db\ActiveRecord;
  * @property string $price          价格
  * @property string $duration
  * @property string $size           大小(字节 b)
+ * @property string $ext            拓展名/后缀名
  * @property int $status            普通状态 1待入库 2已入库 3已发布
  * @property int $mts_status        转码状态 0无转码 1未转码 2转码中 3已转码 4转码失败
  * @property int $del_status        删除状态 0正常 1申请删除 2逻辑删除 3物理删除
@@ -66,6 +67,7 @@ class Media extends ActiveRecord
             [['type_id'], 'required'],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
+            [['ext'], 'string', 'max' => 10],
             [['cover_url', 'url'], 'string', 'max' => 255],
         ];
     }
@@ -88,6 +90,7 @@ class Media extends ActiveRecord
             'price' => Yii::t('app', 'Price'),
             'duration' => Yii::t('app', 'Duration'),
             'size' => Yii::t('app', 'Size'),
+            'ext' => Yii::t('app', 'Ext'),
             'status' => Yii::t('app', 'Status'),
             'mts_status' => Yii::t('app', 'Mts Status'),
             'del_status' => Yii::t('app', 'Del Status'),

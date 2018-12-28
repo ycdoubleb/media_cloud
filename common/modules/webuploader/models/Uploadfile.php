@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  * @property string $thumb_url              缩略图路径
  * @property string $app_id                 应用ID
  * @property string $size                   大小B
+ * @property string $ext                    拓展名/后缀名
  * @property string $oss_key                oss名称/文件名
  * @property int $oss_upload_status         上传状态：0未上传，1上传中，2已上传
  * @property string $metadata               文件元数据（json格式） 包括duration、width、height、bitrate
@@ -58,6 +59,7 @@ class Uploadfile extends ActiveRecord {
             [['size', 'is_del', 'oss_upload_status', 'created_at', 'updated_at'], 'integer'],
             [['name', 'path', 'thumb_url', 'oss_key'], 'string', 'max' => 255],
             [['metadata'], 'string', 'max' => 500],
+            [['ext'], 'string', 'max' => 10],
             [['id', 'md5'], 'unique'],
         ];
     }
@@ -73,6 +75,7 @@ class Uploadfile extends ActiveRecord {
             'path' => Yii::t('app', 'Path'),
             'thumb_url' => Yii::t('app', 'Thumb Path'),
             'size' => Yii::t('app', 'Size'),
+            'ext' => Yii::t('app', 'Ext'),
             'is_del' => Yii::t('app', 'Is Del'),
             'oss_key' => Yii::t('app', 'OSS Key'),
             'oss_upload_status' => Yii::t('app', 'OSS Upload Status'),

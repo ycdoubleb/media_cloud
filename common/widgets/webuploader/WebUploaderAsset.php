@@ -14,6 +14,7 @@ class WebUploaderAsset extends AssetBundle
         'webuploader.js',
         'require.js',
         'euploader_v2.min.js',
+        'bootstrap-paginator.min.js',
     ];
     public $depends = [
         'yii\bootstrap\BootstrapPluginAsset',

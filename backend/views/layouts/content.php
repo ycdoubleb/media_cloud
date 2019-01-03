@@ -18,8 +18,6 @@ use dmstr\widgets\Alert;
     <section class="content">
         <?= Alert::widget() ?>
         <?= $content ?>
-         <!--加载模态框-->
-        <?= $this->render('model'); ?>
     </section>
 </div>
 

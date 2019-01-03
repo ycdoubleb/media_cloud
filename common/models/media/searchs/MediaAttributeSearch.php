@@ -17,7 +17,7 @@ class MediaAttributeSearch extends MediaAttribute
     public function rules()
     {
         return [
-            [['id', 'category_id', 'index_type', 'input_type', 'sort_order', 'is_del', 'value_length'], 'integer'],
+            [['id', 'category_id', 'index_type', 'input_type', 'sort_order', 'is_del', 'is_required', 'value_length'], 'integer'],
             [['name'], 'safe'],
         ];
     }

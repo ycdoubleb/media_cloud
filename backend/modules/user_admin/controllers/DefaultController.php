@@ -69,7 +69,7 @@ class DefaultController extends Controller {
             }
         }
         $model->loadDefaultValues();
-        return $this->render('create', ['model' => $model]);
+        return $this->renderAjax('create', ['model' => $model]);
     }
 
     public function actionUpdate($id) {

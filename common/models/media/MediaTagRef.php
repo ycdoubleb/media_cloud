@@ -69,4 +69,22 @@ class MediaTagRef extends ActiveRecord
     {
         return $this->hasOne(Tags::className(), ['id' => 'id']);
     }
+    
+    /**
+     * 保存标签
+     * @param string        $video_id      素材ID
+     * @param array<Tags>   $tags         标签
+     */
+    public static function saveVideoTags($video_id,$tags){
+        //准备数据
+        $rows = [];
+        /* @var $tag Tags */
+        foreach ($tags as $tag) {
+            $rows[] = [$video_id, $tag->id, 2];
+        }
+        //保存关联
+        \Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['object_id', 'tag_id', 'type'], $rows)->execute();
+        //累加引用次数
+        Tags::updateAllCounters(['ref_count' => 1], ['id' => ArrayHelper::getColumn($tags, 'id')]);
+    }
 }

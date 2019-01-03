@@ -68,13 +68,17 @@ return [
         'system_admin' => [
             'class' => 'backend\modules\system_admin\Module',
         ],
+        //媒体管理
+        'media_admin' => [
+            'class' => 'backend\modules\media_admin\Module',
+        ],
+        //媒体配置
+        'media_config' => [
+            'class' => 'backend\modules\media_config\Module',
+        ],
         //帮助中心管理
         'helpcenter_admin' => [
             'class' => 'backend\modules\helpcenter_admin\Module',
-        ],
-        //前台管理
-        'frontend_admin' => [
-            'class' => 'backend\modules\frontend_admin\Module',
         ],
     ],
     'params' => $params,
@@ -82,8 +86,6 @@ return [
         'class' => 'common\modules\rbac\components\AccessControl',
         'allowActions' => [
             'site/*',
-            'user_admin/*',
-            'rbac/*',
             'webuploader/*',
             'ueditor/*',
             'gii/*',

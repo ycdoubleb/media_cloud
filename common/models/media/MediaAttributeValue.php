@@ -4,6 +4,7 @@ namespace common\models\media;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\redis\ActiveQuery;
 
 /**
  * This is the model class for table "{{%media_attribute_value}}".
@@ -12,6 +13,8 @@ use yii\db\ActiveRecord;
  * @property string $attribute_id 属性id 关联media_attribute表id字段
  * @property string $value  ''
  * @property int $is_del    是否已删除 1是 0否
+ * 
+ * @property MediaAttribute $mediaAttribute     获取媒体属性
  */
 class MediaAttributeValue extends ActiveRecord
 {
@@ -46,5 +49,12 @@ class MediaAttributeValue extends ActiveRecord
             'value' => Yii::t('app', 'Value'),
             'is_del' => Yii::t('app', 'Is Del'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMediaAttribute() {
+        return $this->hasOne(MediaAttribute::class, ['id' => 'attribute_id']);
     }
 }

@@ -69,6 +69,7 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
+                            ['label' => '上传媒体', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
                             ['label' => '媒体列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media']],
                             ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve']],
                             ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle']],

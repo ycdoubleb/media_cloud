@@ -111,7 +111,8 @@ class MediaAttribute extends ActiveRecord
     public static function getMediaAttributeByCategoryId($media_id = null, $category_id = null)
     {
         $query = self::find()->from(['Attribute' => self::tableName()]);
-        $query->select(['Attribute.*', "GROUP_CONCAT(AttributeValue.id, '_', AttributeValue.value) AS attr_value"]);
+        // 查询的字段
+        $query->select(['Attribute.*', "GROUP_CONCAT(DISTINCT AttributeValue.id, '_', AttributeValue.value) AS attr_value"]);
         // 必要条件
         $query->andFilterWhere([
             'Attribute.is_del' => 0,
@@ -126,7 +127,7 @@ class MediaAttribute extends ActiveRecord
         // 关联媒体属性值关联表
         $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], 'AttrValueRef.attribute_id = Attribute.id');
         // 按category_id分组
-        $query->groupBy(['category_id', 'AttributeValue.attribute_id']);
+        $query->groupBy(['category_id', 'Attribute.id']);
         // 按sort_order上升排序
         $query->orderBy('sort_order');
         

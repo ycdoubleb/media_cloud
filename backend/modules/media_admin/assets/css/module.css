@@ -1,0 +1,105 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2018-12-27, 13:39:58
+    Author     : Kiwi
+*/
+/*******************************************************************************
+ *
+ * 公共
+ *
+********************************************************************************/
+.myModal .modal-body{
+    padding: 15px 30px;
+}
+
+#submit-result{
+    margin-left: 10px;
+    color: #d43f3a;
+}
+
+/*******************************************************************************
+ *
+ * media-search & media-approve-search
+ *
+********************************************************************************/
+.media-search .panel,
+.media-approve-search .panel,
+.media-recycle-search .panel {
+    padding: 15px 0px; 
+    margin-bottom: 30px; 
+    border: 1px solid #e4e4e4; 
+    background: #f9f9f9;
+}
+
+.media-search .panel .dep-dropdown {
+    display: inline-block;
+    width: 118px;
+    margin-right: 5px;
+}
+
+/*******************************************************************************
+ *
+ * media-form
+ *
+********************************************************************************/
+.form .nav-tabs {
+    padding-left: 0 !important; 
+    border: 1px solid #ddd;
+    background-color: #f2f2f2;
+}
+
+.form .nav-tabs > li {
+    float: left;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    margin-left: -1px;
+}
+
+.form .nav-tabs > li > a {
+    margin-right: 0;
+    border-radius: 0;
+}
+
+.form .tab-content {
+    padding: 15px 0px; 
+    border: 1px solid #ddd;
+    border-top: none;
+}
+
+.form .media-attribute_value,
+.form .media-attribute_tags {
+    position: relative;
+}
+
+/*******************************************************************************
+ *
+ * media-view
+ *
+********************************************************************************/
+.media-view .nav-tabs {
+    padding-left: 0 !important; 
+    border: 1px solid #ddd;
+    background-color: #f2f2f2;
+}
+
+.media-view .nav-tabs > li {
+    float: left;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    margin-left: -1px;
+}
+
+.media-view .nav-tabs > li > a {
+    margin-right: 0;
+    border-radius: 0;
+}
+
+.media-view .tab-content {
+    padding: 15px; 
+    border: 1px solid #ddd;
+    border-top: none;
+}

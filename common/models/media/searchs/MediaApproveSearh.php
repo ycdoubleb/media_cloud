@@ -12,6 +12,12 @@ use common\models\media\MediaApprove;
 class MediaApproveSearh extends MediaApprove
 {
     /**
+     * 媒体名称
+     * @var string 
+     */
+    public $media_name;
+
+    /**
      * {@inheritdoc}
      */
     public function rules()

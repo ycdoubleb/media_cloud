@@ -9,7 +9,7 @@ return [
     'Y' => '是',
     'N' => '否',
     'Yes' => '是',
-    'No' => '否',
+    'No' => '不',
     'My' => '我的',
     'All' => '全部',
     'Start' => '开始',
@@ -17,7 +17,8 @@ return [
     'Up' => '上',
     'Down' => '下',
     'Batch' => '批量',
-    'Join' => '入',
+    'Into' => '入',
+    'Pass' => '通过',
     
     
     //公共- 用户
@@ -304,6 +305,14 @@ return [
     'Operator' => '运营者',
     'Uploader' => '上传者',
     'Number' => '编码',
+    'Anew' => '重新',
+    'Bitrate' => '码率',
+    'Format' => '格式',
+    'Operate' => '操作',
+    'Handled By' => '审核人',
+    'Illustration' => '说明',
+    'Recycle Bin' => '回收站',
+    'Recovery' => '还原',
     
     //后台-媒体配置
     'Storage' => '存储',
@@ -353,11 +362,11 @@ return [
     'Screen' => '筛选',
     'Teachers' => '师资',
     'Authentication' => '认证',
-    'Proposer' => '申请',
+    'Approve' => '申请',
     'Applicant' => '申请人',
-    'Auditor' => '审核人',
+    'Verifier' => '审核人',
     'Job Title' => '职称',
-    'Verifier' => '审核',
+    'Auditing' => '审核',
     'Remarks' => '备注',
     'Reset' => '重置',
     'Solve' => '解决',

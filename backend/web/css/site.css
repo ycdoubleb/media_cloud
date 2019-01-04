@@ -76,9 +76,9 @@ a.desc:after {
     content: "\e156";
 }
 
-.grid-view td {
+/*.grid-view td {
     white-space: nowrap;
-}
+}*/
 
 .grid-view .filters input,
 .grid-view .filters select {
@@ -173,6 +173,14 @@ a.desc:after {
     background-color: #ff725b; 
     border-color: #ff725b; 
 }
+.text-danger {
+    color: #ff3300 !important;
+    
+}
+.bg-danger {
+    background-color: #ff3300 !important;
+}
+
 /* 一般信息 */
 .btn-info { 
     color: #fff; 
@@ -205,6 +213,12 @@ a.desc:after {
     color: #fff; 
     background-color: #2CC098; 
     border-color: #2CC098; 
+}
+.text-success {
+    color: #339966 !important;
+}
+.bg-success {
+    background-color: #339966 !important;
 }
 
 /* 不要紧 */
@@ -262,6 +276,10 @@ a.desc:after {
     -webkit-box-orient: vertical;
 }
 /* loading 样式 */
+.loading-box {
+    width: 100%;
+    text-align: left;
+}
 .loading{
     display: inline-block;
     width: 16px;
@@ -296,6 +314,16 @@ a.desc:after {
     cursor: not-allowed;
     box-shadow: none;
     opacity: .65;
+}
+
+/* 清除padding */
+.clean-padding {
+    padding: 0 !important; 
+}
+
+/* 清除margin */
+.clean-margin {
+    margin: 0 !important; 
 }
 
 /*******************************************************************************
@@ -333,6 +361,7 @@ a.desc:after {
 .table > tbody > tr > td {
     text-align: center;
     vertical-align: middle;
+    white-space: normal;
 }
 
 .table .detail-th {
@@ -341,12 +370,15 @@ a.desc:after {
     border: 1px solid #f4f4f4 !important;
     font-weight: normal;
     text-align: right;
+    vertical-align: middle;
 }
+
 .table .detail-td {
     width: 454px;
     border: 1px solid #f4f4f4 !important;
     font-weight: normal;
     text-align: left;
+    vertical-align: middle;
     white-space: inherit;
 }
 
@@ -355,10 +387,21 @@ a.desc:after {
  * 自定义form的样式
  *
 ********************************************************************************/
+.form .form-group {
+    position: relative;
+}
+
 .form .form-group .form-label {
     padding: 10px 0px;
-    color: #999;
+    color: #999999;
     font-weight: bold;
+}
+
+.form .form-group .form-must {
+    position: absolute;
+    top: 5px;
+    right: -10px;
+    font-size: 25px;
 }
 
 /*******************************************************************************

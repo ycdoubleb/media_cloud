@@ -11,13 +11,17 @@ use common\models\media\MediaRecycle;
  */
 class MediaRecycleSearh extends MediaRecycle
 {
+    public $keyword;
+    public $type_id;
+    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'media_id', 'result', 'status', 'handled_by', 'handled_at', 'created_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'media_id', 'type_id', 'result', 'status', 'handled_by', 'handled_at', 'created_by', 'created_at', 'updated_at'], 'integer'],
+            [['keyword'], 'safe'],
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace common\models\media;
 
+use common\models\api\ApiResponse;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -53,40 +54,72 @@ class MediaAttValueRef extends ActiveRecord
     /**
      * 保存媒体属性值关联关系
      * @param int $media_id
-     * @param array $attrValues
-     * @return boolean
+     * @param array $media_attrs    媒体属性
+     * @return ApiResponse
      */
-    public static function saveMediaAttValueRef($media_id, $attrValues)
+    public static function saveMediaAttValueRef($media_id, $media_attrs)
     {
-        if(!is_array($attrValues)) return false;
+        $data = []; // 返回的数据
         try {
-            $mediaAttValue = [];
-            foreach ($attrValues as $attr_id => $attr_value) {
-                // 判断提交上来的属性是单选还是多选
-                if(is_array($attr_value)){
-                    foreach ($attr_value as $value) {
-                        $mediaAttValue[] = [
-                            'media_id' => $media_id,
-                            'attribute_id' => $attr_id,
-                            'attribute_value_id' => $value,
-                        ];
+            if(is_array($media_attrs)){
+                $mediaAttValue = [];
+                foreach ($media_attrs as $attr_id => $attr_value) {
+                    // 判断提交上来的属性是单选还是多选
+                    if(is_array($attr_value)){
+                        foreach ($attr_value as $value) {
+                            $mediaAttValue[] = [$media_id, $attr_id, $value];
+                        }
+                    }else{
+                        $mediaAttValue[] = [$media_id, $attr_id, $attr_value];
                     }
-                }else{
-                    $mediaAttValue[] = [
-                        'media_id' => $media_id,
-                        'attribute_id' => $attr_id,
-                        'attribute_value_id' => $attr_value,
-                    ];
+                    self::updateAll(['is_del' => 1], ['media_id' => $media_id, 'attribute_id' => $attr_id]);
                 }
+                //保存关联
+                Yii::$app->db->createCommand()->batchInsert(self::tableName(),
+                    ['media_id', 'attribute_id', 'attribute_value_id'], $mediaAttValue)->execute();
+                
+                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            }else{
+                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '媒体属性必须是为数组格式');
             }
-            
-            $batchInsert = Yii::$app->db->createCommand()->batchInsert(self::tableName(),
-                isset($mediaAttValue[0]) ? array_keys($mediaAttValue[0]) : [], $mediaAttValue)->execute();
-            return true;
         } catch (Exception $exc) {
-            Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
         }
                 
-        return false;
+        return $data;
+    }
+    
+    /**
+     * 获取媒体属性值引用
+     * @param int $media_id     媒体id
+     * @return array
+     */
+    public static function getMediaAttValueRefByMediaId($media_id) 
+    {
+        $query = self::find()->from(['AttValueRef' => self::tableName()]);
+        // 查询的字段
+        $query->select(['Media.name AS media_name', 
+            'Attribute.id AS attr_id', 'Attribute.name AS attr_name', 
+            "GROUP_CONCAT(DISTINCT AttributeValue.`id` SEPARATOR '，') AS attr_value_id",
+            "GROUP_CONCAT(DISTINCT AttributeValue.`value` SEPARATOR '，') AS attr_value",
+        ]);
+        // 必要条件
+        $query->andFilterWhere([
+            'Attribute.is_del' => 0,
+            'AttributeValue.is_del' => 0,
+            'AttValueRef.is_del' => 0,
+        ]);
+        // 按media_id查询条件
+        $query->andFilterWhere(['media_id' => $media_id,]);
+        // 关联媒体表
+        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = media_id');
+        // 关联媒体属性表
+        $query->leftJoin(['Attribute' => MediaAttribute::tableName()], 'Attribute.id = AttValueRef.attribute_id');
+        // 关联媒体属性值表
+        $query->leftJoin(['AttributeValue' => MediaAttributeValue::tableName()], 'AttributeValue.id = AttValueRef.attribute_value_id');
+        // 按media_id、attribute_id分组
+        $query->groupBy(['media_id', 'AttValueRef.attribute_id']);
+        
+        return $query->asArray()->all();
     }
 }

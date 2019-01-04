@@ -94,11 +94,4 @@ class MediaTypeDetail extends ActiveRecord
         }
         return false;
     }
-    
-    /*
-     * 数据查找后
-     */
-    public function afterFind(){
-        $this->icon_url = Aliyun::absolutePath($this->icon_url);
-    }
 }

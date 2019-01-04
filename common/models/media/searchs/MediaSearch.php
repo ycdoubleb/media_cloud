@@ -73,7 +73,7 @@ class MediaSearch extends Media
             'size' => $this->size,
             'status' => $this->status,
             'mts_status' => $this->mts_status,
-            'del_status' => $this->del_status,
+            'del_status' => 0,
             'is_link' => $this->is_link,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,

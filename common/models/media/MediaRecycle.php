@@ -2,8 +2,10 @@
 
 namespace common\models\media;
 
+use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -18,6 +20,10 @@ use yii\db\ActiveRecord;
  * @property string $created_by 删除人ID（放入回收站的人），关联admin_user表id
  * @property string $created_at 创建时间（放入回收站时间）
  * @property string $updated_at 更新时间
+ * 
+ * @property Media $media 
+ * @property user $handledBy
+ * @property user $createdBy
  */
 class MediaRecycle extends ActiveRecord
 {
@@ -65,5 +71,29 @@ class MediaRecycle extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::className(), ['id' => 'media_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getHandledBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'handled_by']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 }

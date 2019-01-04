@@ -1,9 +1,11 @@
 <?php
 
+use common\models\media\Media;
 use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\media\Media */
+/* @var $this View */
+/* @var $model Media */
 
 $this->title = Yii::t('app', 'Update Media: {name}', [
     'name' => $model->name,

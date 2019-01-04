@@ -2,8 +2,10 @@
 
 namespace common\models\media;
 
+use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -21,9 +23,60 @@ use yii\db\ActiveRecord;
  * @property string $created_by 申请人ID，关联admin_user表id字段
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property Media $media 
+ * @property user $handledBy
+ * @property user $createdBy
  */
 class MediaApprove extends ActiveRecord
 {
+    /** 类型-入库申请 */
+    const TYPE_INTODB_APPROVE = 1;
+    
+    /** 类型-删除申请 */
+    const TYPE_DELETE_APPROVE = 2;
+    
+    /** 状态-待审核 */
+    const STATUS_WAIT_APPROVE = 0;
+    
+    /** 状态-已审核 */
+    const STATUS_ALREADY_APPROVE = 1;
+    
+    /** 结果-不通过 */
+    const RESULT_PASS_NO = 0;
+    
+    /** 结果-通过 */
+    const RESULT_PASS_YES = 1;
+
+    /**
+     * 审核类型
+     * @var array 
+     */
+    public static $typeMap = [
+      self::TYPE_INTODB_APPROVE =>  '入库申请',
+      self::TYPE_DELETE_APPROVE =>  '删除申请',
+    ];
+    
+    /**
+     * 审核状态
+     * @var array 
+     */
+    public static $statusMap = [
+      self::STATUS_WAIT_APPROVE =>  '待审核',
+      self::STATUS_ALREADY_APPROVE =>  '已审核',
+    ];
+    
+    /**
+     * 审核结果
+     * @var array 
+     */
+    public static $resultMap = [
+      self::RESULT_PASS_NO =>  '不通过',
+      self::RESULT_PASS_YES =>  '已通过',
+    ];
+    
+    
+
     /**
      * {@inheritdoc}
      */
@@ -71,5 +124,29 @@ class MediaApprove extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::className(), ['id' => 'media_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getHandledBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'handled_by']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 }

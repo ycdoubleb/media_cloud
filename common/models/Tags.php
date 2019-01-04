@@ -3,8 +3,11 @@
 namespace common\models;
 
 use common\models\media\MediaTagRef;
-use yii\redis\ActiveQuery;
-use yii\redis\ActiveRecord;
+use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
+
 
 /**
  * This is the model class for table "{{%tags}}".
@@ -69,6 +72,8 @@ class Tags extends ActiveRecord
             //把全角",""、"替换为半角","
             $tags = str_replace(['，','、'], ',', $tags);
             $tags = explode(',', $tags);
+        }else{
+            return;
         }
         //处理空值、重复值、清除左右空格
         $tags = array_unique(array_filter($tags));    
@@ -78,10 +83,7 @@ class Tags extends ActiveRecord
         unset($tag);
         
         //查找已经存在的
-        $result = self::find()
-                ->where(['name' => $tags])
-                ->asArray()
-                ->all();
+        $result = self::find()->where(['name' => $tags])->asArray()->all();
         $result = ArrayHelper::map($result, 'name', 'id');
         
         //准备数据
@@ -94,7 +96,7 @@ class Tags extends ActiveRecord
         }
         
         //批量插入数据
-        \Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['name'], $rows)->execute();
+        Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['name'], $rows)->execute();
         //返回所有标签
         return self::find()->where(['name' => $tags])->all();
     }

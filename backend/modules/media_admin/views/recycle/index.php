@@ -1,41 +1,93 @@
 <?php
 
-use yii\helpers\Html;
+use backend\modules\media_admin\assets\ModuleAsset;
+use common\models\media\MediaApprove;
+use common\models\media\searchs\MediaRecycleSearh;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\media\searchs\MediaRecycleSearh */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this View */
+/* @var $searchModel MediaRecycleSearh */
+/* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Media Recycles');
+ModuleAsset::register($this);
+
+$this->title = Yii::t('app', 'Recycle Bin');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="media-recycle-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', [
+        'model' => $searchModel,
+    ]) ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Media Recycle'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="panel pull-left">
+    
+        <div class="title">
+            <div class="btngroup pull-right">
+                <?= Html::a(Yii::t('app', 'Recovery'), ['update', 'result' => MediaApprove::RESULT_PASS_YES], [
+                    'id' => 'btn-recovery', 'class' => 'btn btn-primary btn-flat']); ?>
+                <?= ' ' . Html::a(Yii::t('app', 'Delete'), ['update', 'result' => MediaApprove::RESULT_PASS_NO], [
+                    'id' => 'btn-delete', 'class' => 'btn btn-danger btn-flat']); ?>
+            </div>
+            
+        </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+//            'filterModel' => $searchModel,
+            'layout' => "{items}\n{summary}\n{pager}",  
+            'columns' => [
+                [
+                    'header' => Html::checkbox('selectall'),
+                    'format' => 'raw',
+                    'value' => function($model){
+                        return Html::checkbox('stuCheckBox', null, ['value' => $model->id]);
+                    },
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '20px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
+                [
+                    'attribute' => 'media_id',
+                    'label' => Yii::t('app', '{Media}{Number}', [
+                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                    ]),
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '66px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
 
-            'id',
-            'media_id',
-            'result',
-            'status',
-            'handled_by',
-            //'handled_at',
-            //'created_by',
-            //'created_at',
-            //'updated_at',
+                'result',
+                'status',
+                'handled_by',
+                //'handled_at',
+                //'created_by',
+                //'created_at',
+                //'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]); ?>
+    
+    </div>
+    
 </div>

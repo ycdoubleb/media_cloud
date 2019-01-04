@@ -2,11 +2,13 @@
 
 namespace common\models\media;
 
+use common\models\User;
 use common\modules\webuploader\models\Uploadfile;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+
 
 /**
  * This is the model class for table "{{%media}}".
@@ -21,7 +23,7 @@ use yii\db\ActiveRecord;
  * @property string $cover_url      封面路径
  * @property string $url            原始路径
  * @property string $price          价格
- * @property string $duration
+ * @property string $duration       时长
  * @property string $size           大小(字节 b)
  * @property int $status            普通状态 1待入库 2已入库 3已发布
  * @property int $mts_status        转码状态 0无转码 1未转码 2转码中 3已转码 4转码失败
@@ -34,12 +36,25 @@ use yii\db\ActiveRecord;
  *
  * @property AliyunMtsService[] $aliyunMtsServices
  * @property Dir $dir
+ * @property MediaType $mediaType
  * @property MediaTagRef[] $mediaTagRefs
  * @property Uploadfile $uploadfile
+ * @property User $owner
+ * @property User $createdBy
  * @property VideoUrl[] $videoUrls
+ * @property MediaAction[] $mediaAction
  */
 class Media extends ActiveRecord
 {
+    
+    /** 待入库 */
+    const STATUS_WAIT_INTO_DB = 1;
+
+    /** 已入库 */
+    const STATUS_ALREADY_INTO_DB = 2;
+
+    /** 已发布 */
+    const STATUS_ALREADY_PUBLISH = 3;
     
     /** 未转码 */
     const MTS_STATUS_NO = 0;
@@ -53,15 +68,23 @@ class Media extends ActiveRecord
     /** 转码失败 */
     const MTS_STATUS_FAIL = 5;
     
+    /** 删除状态-申请 */
+    const DEL_STATUS_APPROVE = 1;
+
+    /** 删除状态-逻辑 */
+    const DEL_STATUS_LOGIC = 2;
+
+    /** 删除状态-物理 */
+    const DEL_STATUS_TRUE = 3;
+    
     /**
      * 状态名
      * @var array 
      */
     public static $statusName = [
-        0 => '未转码',
-        1 => '转码中',
-        2 => '已转码',
-        3 => '转码失败',
+        self::STATUS_WAIT_INTO_DB => '待入库',
+        self::STATUS_ALREADY_INTO_DB => '已入库',
+        self::STATUS_ALREADY_PUBLISH => '已发布',
     ];
     
     /**
@@ -99,7 +122,7 @@ class Media extends ActiveRecord
     {
         return [
             [['category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status','is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['type_id'], 'required'],
+//            [['type_id'], 'required'],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
             [['cover_url', 'url'], 'string', 'max' => 255],
@@ -149,13 +172,22 @@ class Media extends ActiveRecord
     {
         return $this->hasOne(Dir::className(), ['id' => 'dir_id']);
     }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMediaType()
+    {
+        return $this->hasOne(MediaType::className(), ['id' => 'type_id']);
+    }
 
     /**
      * @return ActiveQuery
      */
     public function getMediaTagRefs()
     {
-        return $this->hasMany(MediaTagRef::className(), ['object_id' => 'id']);
+        return $this->hasMany(MediaTagRef::className(), ['object_id' => 'id'])
+            ->where(['is_del' => 0])->with('tags');
     }
 
     /**
@@ -165,12 +197,38 @@ class Media extends ActiveRecord
     {
         return $this->hasOne(Uploadfile::className(), ['id' => 'file_id']);
     }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getOwner()
+    {
+        return $this->hasOne(User::className(), ['id' => 'owner_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
 
     /**
      * @return ActiveQuery
      */
     public function getVideoUrls()
     {
-        return $this->hasMany(VideoUrl::className(), ['media_id' => 'id']);
+        return $this->hasMany(VideoUrl::className(), ['media_id' => 'id'])
+           ->where(['media_id' => $this->id]);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMediaAction()
+    {
+        return $this->hasMany(MediaAction::className(), ['media_id' => 'id'])
+           ->where(['media_id' => $this->id]);
     }
 }

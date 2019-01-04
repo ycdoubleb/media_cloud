@@ -51,6 +51,7 @@ return [
     'Week Fri' => '周五',
     'Week Sat' => '周六',
     'Week Sun' => '周日',
+    'Confirm At' => '创建时间',
     'Created At' => '创建时间',
     'Updated At' => '更新时间',
     'Start Time' => '开始时间',
@@ -417,4 +418,29 @@ return [
     'Video Visits' => '视频访问量',
     'Read Number' => '报读数',
     'Visit Number' => '访问量',
+    
+    
+    //前台
+    'Online' => '在线',
+    'Order' => '订单',
+    'Order Sn' => '订单编号',
+    'Resources Sn' => '资源编号',
+    'Amount' => '金额',
+    'Order Time' => '下单时间',
+    'Company' => '公司',
+    'Department' => '部门',
+    'Definition' => '清晰度',
+    'Education' => '教育',
+    'Copyright' => '版权',
+    'Major' => '专业',
+    'Engineering' => '工程',
+    'Learning section' => '学段',
+    'Favorites' => '收藏',
+    'Num' => '数量',
+    'Buy' => '购买',
+    'Checking' => '核对',
+    'Payment' => '支付',
+    'Checkout Success' => '下单成功',
+    'Order Verification' => '订单核查',
+    
 ];

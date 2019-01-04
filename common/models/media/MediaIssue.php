@@ -5,6 +5,7 @@ namespace common\models\media;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\redis\ActiveQuery;
 
 /**
  * This is the model class for table "{{%media_issue}}".
@@ -21,9 +22,34 @@ use yii\db\ActiveRecord;
  * @property string $created_by 创建人（提交人），关联user表id字段
  * @property string $created_at 创建时间（提交时间）
  * @property int $updated_at
+ * 
+ * @property Media $media
  */
 class MediaIssue extends ActiveRecord
 {
+    /** 版权问题 */
+    const ISSUE_COPYRIGHT = 1;
+    /** 内容问题 */
+    const ISSUE_CONTENT = 2;
+    /** 标签属性问题 */
+    const ISSUE_ATTRIBUTE = 3;
+    /** 访问问题 */
+    const ISSUE_VISIT = 4;
+    /** 其它问题 */
+    const ISSUE_OTHER = 5;
+    
+    /**
+     * 问题类型
+     * @var array
+     */
+    public static $issueName = [
+        self::ISSUE_COPYRIGHT => '版权',
+        self::ISSUE_CONTENT => '内容',
+        self::ISSUE_ATTRIBUTE => '标签属性',
+        self::ISSUE_VISIT => '访问',
+        self::ISSUE_OTHER => '其它',
+    ];
+    
     /**
      * {@inheritdoc}
      */
@@ -72,5 +98,13 @@ class MediaIssue extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::class, ['id' => 'media_id']);
     }
 }

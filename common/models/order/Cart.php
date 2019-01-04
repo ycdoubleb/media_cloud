@@ -2,9 +2,11 @@
 
 namespace common\models\order;
 
+use common\models\media\Media;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\redis\ActiveQuery;
 
 /**
  * This is the model class for table "{{%cart}}".
@@ -17,6 +19,8 @@ use yii\db\ActiveRecord;
  * @property string $created_by 创建人
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property Media $media   关联查询媒体
  */
 class Cart extends ActiveRecord
 {
@@ -63,5 +67,13 @@ class Cart extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::class, ['id' => 'goods_id']);
     }
 }

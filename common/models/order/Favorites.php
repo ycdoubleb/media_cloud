@@ -42,7 +42,7 @@ class Favorites extends ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'goods_id', 'created_by'], 'required'],
+            [['goods_id', 'created_by'], 'required'],
             [['id', 'goods_id', 'is_del', 'created_by', 'created_at', 'updated_at'], 'integer'],
             [['group_name'], 'string', 'max' => 50],
             [['id'], 'unique'],

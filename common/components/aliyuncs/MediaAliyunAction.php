@@ -5,6 +5,7 @@ namespace common\components\aliyuncs;
 use common\components\aliyuncs\Aliyun;
 use common\models\media\Media;
 use common\models\media\MediaDetail;
+use common\models\media\MediaType;
 use common\models\media\VideoUrl;
 use common\models\media\Watermark;
 use common\utils\EefileUtils;
@@ -44,7 +45,9 @@ class MediaAliyunAction {
         if (!$media) {
             throw new NotFoundHttpException('找不到对应资源！');
         }
-        if(!$media->mediaType)
+        if($media->mediaType->sign != MediaType::SIGN_VIDEO){
+            return; //非视频其它素材暂不支付转码
+        }
         if ($media->is_link) {
             self::addLinkTrancode($media);
             return; //外联视频无法转码

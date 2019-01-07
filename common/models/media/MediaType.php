@@ -19,6 +19,13 @@ use yii\redis\ActiveQuery;
  */
 class MediaType extends ActiveRecord
 {
+    /* 视频、音频、图片、文档、h5 */
+    const SIGN_VIDEO = 'video';
+    const SIGN_AUDIO = 'audio';
+    const SIGN_IMAGE = 'image';
+    const SIGN_DOCMENT = 'docment';
+    const SIGN_H5 = 'h5';
+    
     /**
      * {@inheritdoc}
      */

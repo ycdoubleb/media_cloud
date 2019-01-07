@@ -2,9 +2,11 @@
 
 namespace common\models\order;
 
+use common\models\api\ApiResponse;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%order_action}}".
@@ -67,5 +69,44 @@ class OrderAction extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * 保存订单操作日志
+     * @param int $order_id     订单ID 
+     * @param string $title     标题
+     * @param string $content   内容（字符串）| 加载渲染的模板
+     * @param int $order_status 订单状态
+     * @param int $play_status  支付状态
+     * @return ApiResponse
+     */
+    public static function savaOrderAction($order_id, $title, $content, $order_status, $play_status)
+    {
+        $data = []; // 返回的数据
+        /** 开启事务 */
+        $trans = Yii::$app->db->beginTransaction();
+        try
+        {  
+            $model = new OrderAction([
+                'order_id' => $order_id,
+                'title' => $title,
+                'content' => $content,
+                'content' => $order_status,
+                'content' => $play_status,
+                'created_by' => Yii::$app->user->id,
+            ]);
+             
+            if($model->save()){
+                $trans->commit();  //提交事务
+                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            }else{
+                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
+            }
+        }catch (Exception $ex) {
+            $trans ->rollBack(); //回滚事务
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+        }
+        
+        return $data;
     }
 }

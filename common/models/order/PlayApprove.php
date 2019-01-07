@@ -24,6 +24,34 @@ use yii\db\ActiveRecord;
  */
 class PlayApprove extends ActiveRecord
 {
+    //待审核
+    const STATUS_TO_BE_AUDITED = 0;
+    //已审核
+    const STATUS_AUDITED = 1;
+
+    //不通过
+    const RESULT_NOT_PASS = 0;
+    //通过
+    const RESULT_PASS = 1;
+
+    /**
+     * 状态名
+     * @var array 
+     */
+    public static $statusName = [
+        self::STATUS_TO_BE_AUDITED => '待审核',
+        self::STATUS_AUDITED => '已审核',
+    ];
+    
+    /**
+     * 结果名
+     * @var array 
+     */
+    public static $resultName = [
+        self::RESULT_NOT_PASS => '不通过',
+        self::RESULT_PASS => '通过',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +75,7 @@ class PlayApprove extends ActiveRecord
     public function rules()
     {
         return [
+            [['certificate_url'], 'required'],
             [['order_id', 'status', 'result', 'handled_by', 'handled_at', 'created_by', 'created_at', 'updated_at'], 'integer'],
             [['certificate_url', 'content', 'feedback'], 'string', 'max' => 255],
         ];

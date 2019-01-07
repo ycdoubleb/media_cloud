@@ -1,12 +1,14 @@
 <?php
 
 use common\models\media\Dir;
+use common\models\media\Media;
 use common\models\media\MediaType;
 use common\models\media\searchs\MediaSearch;
 use common\widgets\depdropdown\DepDropdown;
 use kartik\select2\Select2;
-use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -35,8 +37,9 @@ use yii\widgets\ActiveForm;
     <div class="col-lg-12 col-md-12 panel">
     
         <!--关键字-->
-        <?= $form->field($model, 'keyword')->textInput(['placeholder' => '请输入媒体名称或者标签'])
-            ->label(Yii::t('app', 'Keyword') . '：') ?>
+        <?= $form->field($model, 'keyword')->textInput([
+            'placeholder' => '请输入媒体名称或者标签', 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
         <!--存储目录-->
         <?= $form->field($model, 'dir_id', [
@@ -45,6 +48,7 @@ use yii\widgets\ActiveForm;
             'pluginOptions' => [
                 'url' => Url::to(['/media_config/dir/search-children']),
                 'max_level' => 10,
+                'onChangeEvent' => new JsExpression('function(){ submitForm()}')
             ],
             'items' => Dir::getDirsBySameLevel($model->dir_id, null, true, true),
             'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
@@ -57,7 +61,6 @@ use yii\widgets\ActiveForm;
         
         <!--媒体类型-->
         <?= $form->field($model, 'type_id')->checkboxList(MediaType::getMediaByType(), [
-//            'value' => ArrayHelper::getValue($filters, 'CourseSearch.level', ''),
             'itemOptions'=>[
                 'onclick' => 'submitForm();',
                 'labelOptions'=>[
@@ -91,13 +94,16 @@ use yii\widgets\ActiveForm;
                             // 生成以属性id索引的下拉列表
                             $attrValMap[$attr['id']][$value[0]] = $value[1];
                         }
-                        echo "<div id='DepDropdown_{$attr['id']}' . class='dep-dropdown'>";
+                        echo "<div id='DepDropdown_{$attr['id']}' . class='dep-dropdowns'>";
                         echo Select2::widget([
                             'id' => "attribute_value_{$attr['id']}",
                             'name' => 'MediaSearch[attribute_value_id][]',
+                            'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
                             'data' => $attrValMap[$attr['id']],
                             'hideSearch' => true,
                             'options' => ['placeholder' => $attr['name']],
+                            'pluginOptions' => ['allowClear' => true],
+                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
                         ]);                       
                         echo '</div>';
                     } 
@@ -111,35 +117,44 @@ use yii\widgets\ActiveForm;
             <div class="col-lg-6 col-md-6">
                 
                 <!--运营者-->
-                <div id="DepDropdown_operator" class="dep-dropdown" style="margin-right: 0">
+                <div id="DepDropdown_operator" class="dep-dropdowns" style="margin-right: 0">
                     <?= Select2::widget([
                         'id' => 'mediasearch-owner_id',
                         'name' => 'MediaSearch[owner_id]',
-                        'data' => [],
+                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.owner_id'),
+                        'data' => $userMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Operator')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>
                 </div>
                 
                 <!--上传者-->
-                <div id="DepDropdown-uploader" class="dep-dropdown" style="margin-right: 0">
+                <div id="DepDropdown-uploader" class="dep-dropdowns" style="margin-right: 0">
                     <?= Select2::widget([
                         'id' => 'mediasearch-created_by',
                         'name' => 'MediaSearch[created_by]',
-                        'data' => [],
+                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.created_by'),
+                        'data' => $userMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Uploader')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>
                 </div>
                 
                  <!--状态-->
-                <div id="DepDropdown_status" class="dep-dropdown" style="margin-right: 0">
+                <div id="DepDropdown_status" class="dep-dropdowns" style="margin-right: 0">
                     <?= Select2::widget([
                         'id' => 'mediasearch-status',
                         'name' => 'MediaSearch[status]',
-                        'data' => [],
+                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.status'),
+                        'data' => Media::$statusName,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Status')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>
                 </div>
                 
@@ -151,3 +166,12 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<script type="text/javascript">
+    
+    // 提交表单    
+    function submitForm (){
+        $('#media-search-form').submit();
+    }   
+    
+</script>

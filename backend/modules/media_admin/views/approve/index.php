@@ -23,17 +23,18 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'userMap' => $userMap
     ]) ?>
 
     <div class="panel pull-left">
     
         <div class="title">
             <div class="btngroup pull-right">
-                <?= Html::a(Yii::t('app', 'Pass'), ['update', 'result' => MediaApprove::RESULT_PASS_YES], [
-                    'id' => 'btn-yesPass', 'class' => 'btn btn-primary btn-flat']); ?>
+                <?= Html::a(Yii::t('app', 'Pass'), ['pass-approve'], [
+                    'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat']); ?>
                 <?= ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
                     'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
-                ]), ['update', 'result' => MediaApprove::RESULT_PASS_NO], ['id' => 'btn-noPass', 'class' => 'btn btn-danger btn-flat']); ?>
+                ]), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']); ?>
             </div>
             
         </div>
@@ -44,11 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'layout' => "{items}\n{summary}\n{pager}",  
             'columns' => [
                 [
-                    'header' => Html::checkbox('selectall'),
-                    'format' => 'raw',
-                    'value' => function($model){
-                        return Html::checkbox('stuCheckBox', null, ['value' => $model->id]);
-                    },
+                    'class' => 'yii\grid\CheckboxColumn',
                     'headerOptions' => [
                         'style' => [
                             'width' => '20px',
@@ -296,10 +293,10 @@ $this->params['breadcrumbs'][] = $this->title;
 $js = <<<JS
         
     // 弹出媒体编辑页面面板
-    $('#btn-yesPass, #btn-noPass').click(function(e){
+    $('#btn-passApprove, #btn-notApprove').click(function(e){
         e.preventDefault();
         var val = [],
-            checkBoxs = $('input[name="stuCheckBox"]'), 
+            checkBoxs = $('input[name="selection[]"]'), 
             url = $(this).attr("href");
         // 循环组装媒体id
         for(i in checkBoxs){
@@ -309,24 +306,12 @@ $js = <<<JS
         }
         if(val.length > 0){
             $(".myModal").html("");
-            $('.myModal').modal("show").load(url + "&id=" + val);
+            $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
             alert("请选择需要的审核");
         }
     });    
-        
-    // 单击全选或取消全选
-    $('input[name="selectall"]').click(function(){
-        if($(this).is(':checked')){
-            $('input[name="stuCheckBox"]').each(function(){
-                $(this).prop("checked",true);
-            });
-        }else{
-            $('input[name="stuCheckBox"]').each(function(){
-                $(this).prop("checked",false);
-            });
-        }
-    });
+   
 JS;
     $this->registerJs($js,  View::POS_READY);
 ?>

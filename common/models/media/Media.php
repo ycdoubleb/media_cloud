@@ -2,7 +2,7 @@
 
 namespace common\models\media;
 
-use common\models\User;
+use common\models\AdminUser;
 use common\modules\webuploader\models\Uploadfile;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -39,8 +39,8 @@ use yii\db\ActiveRecord;
  * @property MediaType $mediaType
  * @property MediaTagRef[] $mediaTagRefs
  * @property Uploadfile $uploadfile
- * @property User $owner
- * @property User $createdBy
+ * @property AdminUser $owner
+ * @property AdminUser $createdBy
  * @property VideoUrl[] $videoUrls
  * @property MediaAction[] $mediaAction
  */
@@ -203,7 +203,7 @@ class Media extends ActiveRecord
      */
     public function getOwner()
     {
-        return $this->hasOne(User::className(), ['id' => 'owner_id']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'owner_id']);
     }
     
     /**
@@ -211,7 +211,7 @@ class Media extends ActiveRecord
      */
     public function getCreatedBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
 
     /**

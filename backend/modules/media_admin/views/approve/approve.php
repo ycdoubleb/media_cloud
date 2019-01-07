@@ -12,12 +12,12 @@ use yii\widgets\ActiveForm;
 
 ModuleAsset::register($this);
 
-$this->title = Yii::t('app', '{Approve}{Reason}', [
-    'Approve' => Yii::t('app', 'Approve'), 'Reason' => Yii::t('app', 'Reason')
+$this->title = Yii::t('app', '{Feedback}{Info}', [
+    'Feedback' => Yii::t('app', 'Feedback'), 'Info' => Yii::t('app', 'Info')
 ]);
 
 ?>
-<div class="media-approve-create">
+<div class="media-approve-update">
 
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -39,7 +39,15 @@ $this->title = Yii::t('app', '{Approve}{Reason}', [
             
             <div class="modal-body">
     
-                <?= $form->field($model, 'content')->textarea(['rows' => 20, 'maxlength' => true])->label('') ?>
+                <div class="form-group field-mediaapprove-feedback has-success">
+                    <label class="control-label" for="mediaapprove-feedback"></label>
+                    <?= Html::textarea('MediaApprove[feedback]', null, [
+                        'id' => 'mediaapprove-feedback', 
+                        'class' => 'form-control',
+                        'maxlength' => true,
+                        'rows' => 20,
+                    ]) ?>
+                </div>               
                 
             </div>
             
@@ -66,36 +74,9 @@ $this->title = Yii::t('app', '{Approve}{Reason}', [
 <?php
 $js = <<<JS
         
-    var type = $type,
-        medias = $media_ids;
-    // 初始化
-    var mediaBatchApprove = new mediaapprove.MediaBatchApprove({media_url: '/media_admin/approve/create?type=' + type});
-    
-    $.each(medias, function(index, data){
-        mediaBatchApprove.init({media_id: data});
-    });
-        
-    /** 上传完成 */
-    $(mediaBatchApprove).on('submitFinished',function(){
-        var max_num = this.medias.length;
-        var completed_num = 0;
-        $.each(this.medias,function(){
-            if(this.submit_result){
-                completed_num++;
-            }
-        });
-        // 如果都成功，则显示关闭
-        if(max_num == completed_num){
-            $('#close').removeClass('hidden')
-        };
-        
-        $('#submit-result').html("共有 "+max_num+" 个需要申请，其中 "+completed_num+" 个成功， "+(max_num - completed_num)+" 个失败！");        
-    });
-   
     // 提交表单    
     $("#submitsave").click(function(){
-        var formdata = $('#media-approve-form').serialize();
-        mediaBatchApprove.submit(formdata);
+        $('#media-approve-form').submit();
     });
 
 JS;

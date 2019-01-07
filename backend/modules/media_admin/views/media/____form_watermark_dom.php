@@ -70,7 +70,7 @@ $js = <<<JS
         isPageLoading = false;                  //取消加载Loading状态
         
     // 初始化水印组件
-    watermark = new youxueba.Watermark({container: '#preview-watermark'});
+    watermark = new wate.Watermark({container: '#preview-watermark'});
     /** 显示客户下已启用的水印图 */
     $.each(waterFiles, function(){
         if(!isPageLoading) $('#media-mts_watermark_ids').html('');

@@ -2,11 +2,12 @@
 
 use backend\modules\media_admin\assets\ModuleAsset;
 use common\models\media\Media;
-use common\models\media\MediaApprove;
 use common\models\media\searchs\MediaSearch;
 use common\utils\DateUtil;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -25,6 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
   
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
+        'userMap' => $userMap,
         'attrMap' => $attrMap
     ]) ?>
     
@@ -37,10 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]), ['edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
                 <?= ' ' . Html::a(Yii::t('app', '{Approve}{Into}{DB}', [
                     'Approve' => Yii::t('app', 'Approve'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
-                ]), ['approve/create', 'type' => MediaApprove::TYPE_INTODB_APPROVE], ['id' => 'btn-addDB', 'class' => 'btn btn-danger btn-flat']); ?>
+                ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']); ?>
                 <?= ' ' . Html::a(Yii::t('app', '{Approve}{Delete}', [
                     'Approve' => Yii::t('app', 'Approve'), 'Delete' => Yii::t('app', 'Delete')
-                ]), ['approve/create', 'type' => MediaApprove::TYPE_DELETE_APPROVE], ['id' => 'btn-delDB', 'class' => 'btn btn-highlight btn-flat']); ?>
+                ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']); ?>
             </div>
             
         </div>
@@ -51,11 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'layout' => "{items}\n{summary}\n{pager}",  
             'columns' => [
                 [
-                    'header' => Html::checkbox('selectall'),
-                    'format' => 'raw',
-                    'value' => function($model){
-                        return Html::checkbox('stuCheckBox', null, ['value' => $model->id]);
-                    },
+                    'class' => 'yii\grid\CheckboxColumn',
                     'headerOptions' => [
                         'style' => [
                             'width' => '20px',
@@ -89,7 +88,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => Yii::t('app', 'Thumb Image'),
                     'format' => 'raw',
                     'value' => function($model){
-                        Yii::$app->db;
                         return Html::img($model->cover_url, ['width' => 87, 'height' => 74]);
                     },
                     'headerOptions' => [
@@ -106,6 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'name',
+                    'label' => Yii::t('app', 'Name'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '146px',
@@ -156,6 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'duration',
+                    'label' => Yii::t('app', 'Duration'),
                     'value' => function($model){
                         return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
                     },
@@ -173,6 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'size',
+                    'label' => Yii::t('app', 'Size'),
                     'value' => function($model){
                         return Yii::$app->formatter->asShortSize($model->size);
                     },
@@ -190,6 +191,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'mts_status',
+                    'label' => Yii::t('app', 'Mts Status'),
                     'value' => function($model){
                         return Media::$mtsStatusName[$model->mts_status];
                     },
@@ -207,6 +209,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'status',
+                    'label' => Yii::t('app', 'Status'),
                     'value' => function($model){
                         return Media::$statusName[$model->status];
                     },
@@ -262,7 +265,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => Yii::t('app', 'Tag'),
                     'value' => function($model){
-                        return null;
+                        return implode(',', ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'));
                     },
                     'headerOptions' => [
                         'style' => [
@@ -313,10 +316,10 @@ $this->params['breadcrumbs'][] = $this->title;
 $js = <<<JS
         
     // 弹出媒体编辑页面面板
-    $('#btn-editAttribute, #btn-addDB, #btn-delDB').click(function(e){
+    $('#btn-editAttribute, #btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
         var val = [],
-            checkBoxs = $('input[name="stuCheckBox"]'), 
+            checkBoxs = $('input[name="selection[]"]'), 
             url = $(this).attr("href");
         // 循环组装媒体id
         for(i in checkBoxs){
@@ -326,24 +329,12 @@ $js = <<<JS
         }
         if(val.length > 0){
             $(".myModal").html("");
-            $('.myModal').modal("show").load(url + "&media_id=" + val);
+            $('.myModal').modal("show").load(url + "?media_id=" + val);
         }else{
             alert("请选择需要申请的媒体");
         }
     });    
-        
-    // 单击全选或取消全选
-    $('input[name="selectall"]').click(function(){
-        if($(this).is(':checked')){
-            $('input[name="stuCheckBox"]').each(function(){
-                $(this).prop("checked",true);
-            });
-        }else{
-            $('input[name="stuCheckBox"]').each(function(){
-                $(this).prop("checked",false);
-            });
-        }
-    });
+    
 JS;
     $this->registerJs($js,  View::POS_READY);
 ?>

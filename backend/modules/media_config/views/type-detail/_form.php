@@ -1,10 +1,9 @@
 <?php
 
-use common\components\aliyuncs\Aliyun;
 use common\models\media\MediaType;
 use common\models\media\MediaTypeDetail;
+use common\widgets\webuploader\ImagePicker;
 use kartik\select2\Select2;
-use kartik\widgets\FileInput;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -54,34 +53,27 @@ use yii\widgets\ActiveForm;
                     'The' => Yii::t('app', 'The'), 'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
                 ])) ?>
             
-                <!--后缀名？-->
-                <?= $form->field($model, 'name')->textInput(['maxlength' => true])->label(Yii::t('app', '{Suffix}{Name}', [
+                <!--后缀名-->
+                <?= $form->field($model, 'name')->textInput([
+                    'placeholder' => '请输入文件后缀名', 'maxlength' => true
+                ])->label(Yii::t('app', '{Suffix}{Name}', [
                     'Suffix' => Yii::t('app', 'Suffix'), 'Name' => Yii::t('app', 'Name')
                 ])) ?>
+                
+                <!--MIME-->
+                <?php
+//                    echo $form->field($model, 'mime_type')->textInput([
+//                        'placeholder' => 'image/jpg', 'maxlength' => true
+//                    ])->label(Yii::t('app', 'MIME{Type}', [
+//                        'Type' => Yii::t('app', 'Type')
+//                    ]));
+                ?>
 
                 <!--图标-->
                 <?= $form->field($model, 'icon_url', [
                     'template' => "{label}\n<div class=\"col-lg-5 col-md-5\">{input}</div>\n<div class=\"col-lg-5 col-md-5\">{error}</div>",  
-                ])->widget(FileInput::class, [
-                    'options' => [
-                        'accept' => 'image/*',
-                        'multiple' => false,
-                    ],
-                    'pluginOptions' => [
-                        'resizeImages' => true,
-                        'showCaption' => false,
-                        'showRemove' => false,
-                        'showUpload' => false,
-                        'browseClass' => 'btn btn-primary btn-block',
-                        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-                        'browseLabel' => '选择上传图像...',
-                        'initialPreview' => [
-                            $model->isNewRecord ?
-                                    Html::img(Aliyun::absolutePath('static/imgs/notfound.png'), ['class' => 'file-preview-image', 'width' => '129', 'height' => '98']) :
-                                    Html::img($model->icon_url, ['class' => 'file-preview-image', 'width' => '129', 'height' => '98']),
-                        ],
-                        'overwriteInitial' => true,
-                    ],
+                ])->widget(ImagePicker::class, [
+                    'id' => 'mediatypedetail-icon_url'
                 ])->label(Yii::t('app', 'Icon'));?>
                 
                 <!--是否启用-->

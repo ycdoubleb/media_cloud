@@ -100,9 +100,9 @@
     /**
      * 媒体批量导入控制器
      * @param {type} config
-     * @returns {media-batch-uploadL#7.MediaBatchApprove}
+     * @returns {media-batch-operateL#7.MediaBatchOperate}
      */
-    function MediaBatchApprove(config) {
+    function MediaBatchOperate(config) {
         this.config = $.extend({
             media_url: 'create', //添加素材             
             submit_force: false, //已提交的强制提交
@@ -122,7 +122,7 @@
      * 提交下一个任务
      * @returns {void}
      */
-    MediaBatchApprove.prototype.__submitNext = function () {
+    MediaBatchOperate.prototype.__submitNext = function () {
         var index = this.submit_index;
         if (index >= this.medias.length - 1) {
             //完成
@@ -141,7 +141,7 @@
      * @param {bool} force      已完成的是否需要强制提交 默认false
      * @returns {void}
      */
-    MediaBatchApprove.prototype.__submitMediaData = function (index, force) {
+    MediaBatchOperate.prototype.__submitMediaData = function (index, force) {
         force = !!force;
         var _self = this;
         var md = this.medias[index];
@@ -185,7 +185,7 @@
      * @param {string} data
      * @returns {unresolved}
      */
-    MediaBatchApprove.prototype._parseURIComponent = function (data) {
+    MediaBatchOperate.prototype._parseURIComponent = function (data) {
         data = decodeURIComponent(data);    //uri 进行解码
         // 匹配form表单生成的参数字符正则
         var reg = /([^=&\s]+)[=\s]*([^&\s]*)/g;
@@ -212,7 +212,7 @@
      * @param {array} array
      * @returns {unresolved}
      */
-    MediaBatchApprove.prototype._trimSpace =  function (array) {
+    MediaBatchOperate.prototype._trimSpace =  function (array) {
         for (var i = 0; i < array.length; i++)
         {
             if (array[i] == "" || typeof (array[i]) == "undefined")
@@ -236,7 +236,7 @@
      * @param {array} files             素材文件信息数据
      * @returns {void}  
      */
-    MediaBatchApprove.prototype.init = function (mediaFiles) {
+    MediaBatchOperate.prototype.init = function (mediaFiles) {
         mediaFiles = mediaFiles || [];
         
         var _self = this, mediaData, index = 0;
@@ -251,7 +251,7 @@
      * @param {boole} force                     强制提交默认为false
      * @returns {void}
      */
-    MediaBatchApprove.prototype.submit = function(submit_common_params, force){
+    MediaBatchOperate.prototype.submit = function(submit_common_params, force){
         force = !!force;
         this.submit_index = -1;
         this.config['submit_common_params'] = $.extend(
@@ -263,7 +263,7 @@
     };
     
     
-    win.mediaapprove = win.mediaapprove || {};
-    win.mediaapprove.MediaBatchApprove = MediaBatchApprove;
+    win.mediaoperate = win.mediaoperate || {};
+    win.mediaoperate.MediaBatchOperate = MediaBatchOperate;
     
 })(window, jQuery);

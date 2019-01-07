@@ -2,7 +2,7 @@
 
 namespace common\models\media;
 
-use common\models\User;
+use common\models\AdminUser;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -22,11 +22,41 @@ use yii\db\ActiveRecord;
  * @property string $updated_at 更新时间
  * 
  * @property Media $media 
- * @property user $handledBy
- * @property user $createdBy
+ * @property AdminUser $handledBy
+ * @property AdminUser $createdBy
  */
 class MediaRecycle extends ActiveRecord
 {
+    /** 状态-未处理 */
+    const STATUS_NOT_HANDLE = 0;
+    
+    /** 状态-已处理 */
+    const STATUS_ALREADY_HANDLE = 1;
+    
+    /** 结果-已还原 */
+    const RESULT_ALREADY_RECOVERY = 0;
+    
+    /** 结果-已删除 */
+    const RESULT_ALREADY_DELETE = 1;
+    
+    /**
+     * 审核状态
+     * @var array 
+     */
+    public static $statusMap = [
+      self::STATUS_NOT_HANDLE =>  '未处理',
+      self::STATUS_ALREADY_HANDLE =>  '已处理',
+    ];
+    
+    /**
+     * 审核结果
+     * @var array 
+     */
+    public static $resultMap = [
+      self::RESULT_ALREADY_RECOVERY =>  '已还原',
+      self::RESULT_ALREADY_DELETE =>  '已删除',
+    ];
+    
     /**
      * {@inheritdoc}
      */
@@ -86,7 +116,7 @@ class MediaRecycle extends ActiveRecord
      */
     public function getHandledBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'handled_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'handled_by']);
     }
     
     /**
@@ -94,6 +124,6 @@ class MediaRecycle extends ActiveRecord
      */
     public function getCreatedBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
 }

@@ -85,6 +85,7 @@ use common\widgets\Menu;
                             ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => ['/media_config/dir']],
                             ['label' => '文件后缀配置', 'icon' => 'circle-o', 'url' => ['/media_config/type-detail/index']],
                             ['label' => '媒体属性配置', 'icon' => 'circle-o', 'url' => ['/media_config/attribute']],
+                            ['label' => '媒体水印配置', 'icon' => 'circle-o', 'url' => ['/media_config/watermark']],
                         ],
                     ],
                     [

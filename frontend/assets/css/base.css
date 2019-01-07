@@ -1,0 +1,390 @@
+/* 
+    前台模块基本共用样式
+    Created on : 2018-6-26, 10:45:01
+    Author     : 
+*/
+/**
+ * 正在加载... and 总结 and 查看更多
+ */
+a {
+    text-decoration: none !important;
+}
+
+.loading-box,
+.summary,
+.see-more {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #999;
+    text-align: center;
+}
+/**
+ * 总结
+ */
+.summary {
+    width: auto;
+    text-align: left;
+}
+/**
+ * 禁用样式
+ */
+.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: .65;
+}
+/**
+ * 清除外边距
+ */
+.clear-margin {
+    margin: 0 !important;
+}
+/**
+ * 清除内边距
+ */
+.clear-padding {
+    padding: 0 !important;
+}
+/**
+ *  清除阴影
+ */
+.clear-shadow {
+    box-shadow: none !important;
+}
+/**
+ *  清除边框
+ */
+.clear-border {
+    border: none !important;
+}
+/**
+ * 设置底部内边距
+ */
+.set-bottom {
+    padding-left: 20px;
+    margin-bottom: 40px !important;
+}
+/**
+ * 设置内边距
+ */
+.set-padding {
+    padding-top: 20px !important;
+    padding-right: 15px !important;
+    padding-bottom: 20px !important;
+    padding-left: 20px !important;
+}
+/**
+ * 查看更多
+ */
+.see-more {
+    color: #666;
+}
+/**
+ * 成功
+ */
+.text-success {
+    color: #339966 !important;
+}
+.bg-success {
+    background-color: #339966 !important;
+}
+/**
+ * 危险
+ */
+.text-danger {
+    color: #ff3300 !important;
+
+}
+.bg-danger {
+    background-color: #ff3300 !important;
+}
+/**
+ * 链接
+ */
+.text-link {
+    color: #337ab7 !important;
+}
+/*
+ * 视频样式
+ */
+.mc-video {
+    width: 300px;
+    height: 200px;
+    object-fit: fill;
+}
+/*
+ * 音频样式
+ */
+.mc-audio {
+    width: 500px;
+    object-fit: fill;
+}
+/**
+ * 禁止textarea框横向拉动
+ */
+textarea {
+    overflow: auto;
+    resize: vertical;
+}
+
+/*******************************************************************************
+ * 模态框
+ *******************************************************************************/
+.mc-modal {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+}
+
+.mc-modal .modal-content {
+    border-radius: 0px; 
+}
+
+.mc-modal .modal-content .mc-form{
+    margin-bottom: 0px;
+    border-bottom: transparent;
+}
+
+/*******************************************************************************
+ * 页面标题
+ *******************************************************************************/
+.mc-title {
+    width: 100%;
+    height: 60px;
+    padding-right: 15px;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #666;
+    line-height: 60px;
+    border-bottom: 1px solid #f2f2f2;
+} 
+
+/*******************************************************************************
+ * 面板
+ *******************************************************************************/
+.mc-panel {
+    display: inline-block;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 0px;
+    background-color: #ffffff;
+}
+
+.mc-tabs {
+    display: inline-block;
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    margin-bottom: 35px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.mc-tabs > ul > li {
+    float: left;
+    margin-top: -2px;
+}
+
+.mc-tabs > ul > li > a {
+    display: inline-block;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #333;
+    line-height: 48px;
+    font-size: 16px;
+}
+
+.mc-tabs > ul > li.active > a {
+    border-bottom: 2px solid #FC583D;
+}
+
+.mc-tabs > ul > li.active > a, .mc-title > ul > li:hover > a {
+    color: #fc583d;
+}
+
+.mc-form{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.mc-form .form-group .form-control,
+.mc-table .filters .form-control,
+.mc-form .form-group .select2-selection,
+.mc-table .filters .select2-selection,
+.mc-form .form-group .bootstrap-tagsinput {
+    min-height: 40px;
+    padding: 10px;
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+/*下拉选框*/
+.select2-container--krajee .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+
+/*******************************************************************************
+* 表格
+*******************************************************************************/
+.mc-table {
+    margin: 0px;
+    color: #666;
+    table-layout: fixed;
+}
+
+.mc-table > thead > tr > th,
+.mc-table > thead > tr > td,
+.mc-table > tbody > tr > th,
+.mc-table > tbody > tr > td {
+    height: 48px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: inherit;
+    border: 1px solid #e4e4e4;
+    border-top-width: 0px;
+    border-right-width: 1px;
+    border-left-width: 0px;
+    border-bottom-color: #eee;
+    padding: 5px;
+}
+
+.mc-table > thead > tr > th {
+    background-color: #f2f2f2;
+}
+
+/*******************************************************************************
+ * 只有主布局时的样式
+ *******************************************************************************/
+.header {
+    display: inline-block;
+    width: 100%;
+    height: 180px;
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+.header .container .media-title {
+    padding-top: 35px;
+    padding-bottom: 30px;
+}
+
+.header .container .media-title .media-name{
+    font-size: 24px;
+}
+
+.header .container .media-title .media-name,
+.header .container .media-title .media-tags {
+    display: block;
+}
+
+.header .container .operation .pull-left {
+    width: 500px;
+}
+
+.header .container .operation .btn-ellipse{
+    color: #999999;
+    background-color: #f2f2f2;
+    border-color: #f2f2f2;
+    line-height: 35px;
+    padding: 8px 20px;
+    border-radius: 15px;
+}
+
+.header .container .operation .fav-red {
+    color: #FC583D;
+}
+
+.content {
+    padding: 0 !important;
+}
+
+.content .common {
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 30px;
+}
+
+.content .common .mc-tabs {
+    margin-bottom: 15px;
+}
+
+
+/*******************************************************************************
+ * 步骤样式
+ *******************************************************************************/
+.bar-step {
+    width: 700px;
+    padding-top: 5px;
+}
+
+/*控件-样式*/
+.bar-step #progressbar {
+    margin-bottom: 10px;
+    overflow: hidden;
+    /*CSS计数器的步骤数*/
+    counter-reset: step;
+}
+
+.bar-step #progressbar li {
+    list-style-type: none;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 24.9%;
+    float: left;
+    position: relative;
+    text-align: center;
+}
+
+.bar-step #progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 26px;
+    line-height: 26px;
+    display: block;
+    font-size: 10px;
+    color: #333;
+    background: #eee;
+    border-radius: 50%;
+    margin: 0 auto 5px auto;
+}
+
+/*进度条连接线-样式*/
+.bar-step #progressbar li:after {
+    content: '';
+    width: 88%;
+    height: 4px;
+    background-color: #eee;
+    position: absolute;
+    left: -42%;
+    top: 11px;
+    z-index: 0; /*设置在它后面的数*/
+}
+
+.bar-step #progressbar li:first-child:after {
+    /*第一步之前不需要连接线*/
+    /*content: none;*/ 
+}
+
+.bar-step #progressbar li:last-child:before {
+    /*最后一个不需要显示 只需要连线*/
+    content: none;
+}
+
+/*.bar-step #progressbar li:last-child:after{
+    margin-right: 0px;
+}*/
+
+/*标记活动/完成步骤为绿色*/
+/*步骤和连接线之前的数量都设置为绿色*/
+/*.bar-step #progressbar li.active:before,
+.bar-step #progressbar li.active:after{
+    background: #27AE60;
+    color: white;
+}*/

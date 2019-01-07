@@ -2,10 +2,10 @@
 
 namespace common\models\order\searchs;
 
-use common\models\media\Acl;
 use common\models\media\Media;
 use common\models\media\MediaType;
 use common\models\order\Order;
+use common\models\order\OrderGoods;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -67,6 +67,7 @@ class OrderSearch extends Order
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
+            'key' => 'id',
             'query' => $query,
         ]);
 
@@ -117,8 +118,8 @@ class OrderSearch extends Order
             'Order.created_by' => Yii::$app->user->id
         ]);
         // 查询媒体
-        $query->leftJoin(['Acl' => Acl::tableName()], '(Acl.order_id = Order.id AND Acl.order_sn = Order.order_sn)');
-        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id');
+        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], '(OrderGoods.order_id = Order.id AND OrderGoods.order_sn = Order.order_sn)');
+        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
         // 查询媒体类型
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
         

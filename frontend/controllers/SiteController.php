@@ -87,6 +87,7 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+        $model->scenario = LoginForm::SCENARIO_PASS;    //设置密码登录场景
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         } else {

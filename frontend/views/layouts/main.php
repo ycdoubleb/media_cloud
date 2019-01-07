@@ -1,14 +1,14 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
-
-use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use frontend\assets\AppAsset;
+use kartik\widgets\AlertBlock;
+use yii\helpers\Html;
+use yii\web\View;
+use yii\widgets\Breadcrumbs;
+
+/* @var $this View */
+/* @var $content string */
 
 AppAsset::register($this);
 ?>
@@ -27,56 +27,62 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    ?>
+    <?= $this->render('navbar') ?>
 
-    <div class="container">
+    <div>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+        <?= AlertBlock::widget([
+            'useSessionFlash' => TRUE,
+            'type' => AlertBlock::TYPE_GROWL,
+            'delay' => 0
+        ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>
+        <?= $this->render('model') ?>
     </div>
 </div>
 
 <footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
+    <div class="contacts-box">
+        <div class="container contacts-content">
+            <ul>
+                <li class="contacts-left title">关于我们</li>
+                <li class="contacts-left"><?= Html::a('关于我们', '/other/default/about') ?></li>
+                <li class="contacts-left"><?= Html::a('联系我们', '/other/default/contact') ?></li>
+            </ul>
+            <ul>
+                <li class="contacts-left title">帮助与反馈</li>
+                <li class="contacts-left"><?= Html::a('帮助中心', '/help_center/default/index') ?></li>
+                <li class="contacts-left"><?= Html::a('意见反馈', '/other/default/feedback') ?></li>
+            </ul>
+            <ul>
+                <li class="contacts-left title">合作</li>
+                <li class="contacts-left"><?= Html::a('资源合作', '/res_service/brand-authorize/to-index') ?></li>
+                <li class="contacts-left"><?= Html::a('平台合作', '#') ?></li>
+            </ul>
+            <ul class="contacts-right-box">
+                <li class="contacts-right">
+                    <span class="icon icon-phone"></span>
+                    <p class="title">361733529</p>
+                    <p class="time">周一至周日 9：00—21：00</p>
+                </li>
+                <li class="contacts-right">
+                    <span class="icon icon-qq"></span>
+                    <p class="title"><?= Html::a('在线QQ客服', 'feedback') ?></p>
+                    <p class="time">周一至周日 9：00—21：00</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="copy-right-box">
+        <div class="container copy-right-content">
+            <p class="pull-left">eenet旗下品牌，Copyright © <?= date('Y') ?> <?= Html::encode(Yii::$app->name) ?> 版权所有 <a href="http://www.miitbeian.gov.cn">粤ICP备14084579号-7</a></p>
+            <p class="pull-right"><img src="/imgs/site/logo_hui.png"/></p>
+        </div>
     </div>
 </footer>
-
 <?php $this->endBody() ?>
 </body>
 </html>

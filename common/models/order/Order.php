@@ -2,9 +2,11 @@
 
 namespace common\models\order;
 
+use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\redis\ActiveQuery;
 
 /**
  * This is the model class for table "{{%order}}".
@@ -25,9 +27,53 @@ use yii\db\ActiveRecord;
  * @property string $created_by 创建人id（购买人ID），关联user表id字段
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property User $createdBy    关联用户表
  */
 class Order extends ActiveRecord
 {
+    //待付款
+    const ORDER_STATUS_READING_PAYING = 0;
+    //待审核
+    const ORDER_STATUS_TO_BE_AUDITED = 5;
+    //审核失败
+    const ORDER_STATUS_AUDIT_FAILURE = 6;
+    //待确认
+    const ORDER_STATUS_TO_BE_CONFIRMED = 10;
+    //已确认
+    const ORDER_STATUS_CONFIRMED = 11;
+    //已取消
+    const ORDER_STATUS_CANCELLED = 15;
+    //已作废
+    const ORDER_STATUS_INVALID = 99;
+    
+    //未付款
+    const PLAY_STATUS_UNPAID = 0;
+    //已付款
+    const PLAY_STATUS_PAID = 1;
+
+    /**
+     * 订单状态名
+     * @var array 
+     */
+    public static $orderStatusName = [
+        self::ORDER_STATUS_READING_PAYING => '待付款',
+        self::ORDER_STATUS_TO_BE_AUDITED => '待审核',
+        self::ORDER_STATUS_AUDIT_FAILURE => '审核失败',
+        self::ORDER_STATUS_TO_BE_CONFIRMED => '待确认',
+        self::ORDER_STATUS_CONFIRMED => '已确认',
+        self::ORDER_STATUS_CANCELLED => '已取消',
+        self::ORDER_STATUS_INVALID => '已作废',
+    ];
+    
+    /**
+     * 支付状态名
+     */
+    public static $playStatusName = [
+        self::PLAY_STATUS_UNPAID => '未付款',
+        self::PLAY_STATUS_UNPAID => '已付款',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -95,5 +141,13 @@ class Order extends ActiveRecord
             return true;
         }
         return false;
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 }

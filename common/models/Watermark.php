@@ -123,8 +123,13 @@ class Watermark extends ActiveRecord
     
     public function afterFind()
     {
-        $this->width = self::valuable($this->width);
-        $this->height = self::valuable($this->height);
+        if($this->width != 0){
+            $this->width = self::valuable($this->width);
+        }
+        if($this->height != 0){
+            $this->height = self::valuable($this->height);
+        }
+        
         $this->dx = self::valuable($this->dx);
         $this->dy = self::valuable($this->dy);
     }

@@ -7,7 +7,7 @@ use common\models\media\Media;
 use common\models\media\MediaDetail;
 use common\models\media\MediaType;
 use common\models\media\VideoUrl;
-use common\models\media\Watermark;
+use common\models\Watermark;
 use common\utils\EefileUtils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -70,7 +70,7 @@ class MediaAliyunAction {
             ];
             
             //获取已完成转码文件等级
-            $hasDoneLevels = [3,2]; //AliyunMtsService::getFinishLevel($media->id);
+            $hasDoneLevels = []; //AliyunMtsService::getFinishLevel($media->id);
             if (count($hasDoneLevels) >= 4) {
                 //4种格式都已完成
                 self::integrateVideoTrancode($media->id, $force);

@@ -2,7 +2,7 @@
 
 namespace common\models\media;
 
-use common\models\User;
+use common\models\AdminUser;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -25,8 +25,8 @@ use yii\db\ActiveRecord;
  * @property string $updated_at 更新时间
  * 
  * @property Media $media 
- * @property user $handledBy
- * @property user $createdBy
+ * @property AdminUser $handledBy
+ * @property AdminUser $createdBy
  */
 class MediaApprove extends ActiveRecord
 {
@@ -139,7 +139,7 @@ class MediaApprove extends ActiveRecord
      */
     public function getHandledBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'handled_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'handled_by']);
     }
     
     /**
@@ -147,6 +147,6 @@ class MediaApprove extends ActiveRecord
      */
     public function getCreatedBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
 }

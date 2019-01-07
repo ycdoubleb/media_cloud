@@ -49,6 +49,7 @@ TagsInputAsset::register($this);
                     echo Html::checkboxList("Media[attribute_value][{$attr['id']}][]", isset($attrSelected) ? explode('，', $attrSelected[$attr['id']]) : null, $attrValMap[$attr['id']], [
                         'itemOptions'=>[
 //                            'onchange' => "validateCheckboxList()",
+//                            'id' => "media-attribute_value-{$attr['id']}",
                             'labelOptions'=>[
                                 'style'=>[
                                     'margin'=>'5px 25px 10px 0px',

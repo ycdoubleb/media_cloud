@@ -39,7 +39,8 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     
                 <?= $this->render('____form_upload_dom', [
                     'model' => $model,
-                    'mediaFiles' => $mediaFiles
+                    'mediaFiles' => $mediaFiles,
+                    'mimeTypes' => $mimeTypes
                 ]) ?>
                 
             </div>

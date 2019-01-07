@@ -3,7 +3,7 @@
 namespace common\models\media;
 
 use common\models\api\ApiResponse;
-use common\models\User;
+use common\models\AdminUser;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -22,7 +22,7 @@ use yii\db\Exception;
  * @property string $updated_at 更新时间
  * 
  * @property Media $media
- * @property User $createdBy 
+ * @property AdminUser $createdBy 
  */
 class MediaAction extends ActiveRecord
 {
@@ -99,7 +99,7 @@ class MediaAction extends ActiveRecord
      */
     public function getCreatedBy()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
     
     /**

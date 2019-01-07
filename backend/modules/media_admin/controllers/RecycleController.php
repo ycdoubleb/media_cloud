@@ -2,12 +2,14 @@
 
 namespace backend\modules\media_admin\controllers;
 
-use Yii;
+use common\models\media\Media;
 use common\models\media\MediaRecycle;
-use common\models\media\searchs\MediaRecycleSearh;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use common\models\media\searchs\MediaRecycleSearch;
+use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\web\Controller;
 
 /**
  * RecycleController implements the CRUD actions for MediaRecycle model.
@@ -23,105 +25,102 @@ class RecycleController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+//                    'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
     /**
-     * Lists all MediaRecycle models.
+     * 列出所有回收站数据。
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new MediaRecycleSearh();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new MediaRecycleSearch();
+        $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'filters' => $results['filter'],     //查询过滤的属性
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $results['data']['recycles'],
+                'key' => 'id'
+            ]),
+            'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
         ]);
     }
 
     /**
-     * Displays a single MediaRecycle model.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new MediaRecycle model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 还原 媒体数据
+     * 如果还原成功，浏览器将被重定向到“index”页面。
      * @return mixed
      */
-    public function actionCreate()
+    public function actionRecovery()
     {
-        $model = new MediaRecycle();
+        // 所有id
+        $ids = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'));  
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        //查找已经存在的
+        $result = MediaRecycle::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
+        $result = ArrayHelper::index($result, 'id');
+
+        foreach($ids as $id){
+            // 过滤已经存在
+            if(!isset($result[$id])){
+                $model = MediaRecycle::findOne($id);
+                /* 需要保存的回收站数据 */
+                $model->result = MediaRecycle::RESULT_ALREADY_RECOVERY;
+                $model->status = MediaRecycle::STATUS_ALREADY_HANDLE;
+                $model->handled_by = \Yii::$app->user->id;
+                $model->handled_at = time();
+                if($model->save()){
+                    $mediaModel = Media::findOne($model->media_id);
+                    $mediaModel->del_status = 0;
+                    $mediaModel->save(true, ['del_status']);
+                }
+            }
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing MediaRecycle model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing MediaRecycle model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
+        
+        Yii::$app->getSession()->setFlash('success','还原成功！');
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the MediaRecycle model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * 删除 媒体数据
+     * 如果还原成功，浏览器将被重定向到“index”页面。
      * @param string $id
-     * @return MediaRecycle the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return mixed
      */
-    protected function findModel($id)
+    public function actionDelete($id)
     {
-        if (($model = MediaRecycle::findOne($id)) !== null) {
-            return $model;
+        // 所有id
+        $ids = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'));  
+        
+        //查找已经存在的
+        $result = MediaRecycle::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
+        $result = ArrayHelper::index($result, 'id');
+        
+        foreach($ids as $id){
+            // 过滤已经存在
+            if(!isset($result[$id])){
+                $model = MediaRecycle::findOne($id);
+                /* 需要保存的回收站数据 */
+                $model->result = MediaRecycle::RESULT_ALREADY_DELETE;
+                $model->status = MediaRecycle::STATUS_ALREADY_HANDLE;
+                $model->handled_by = \Yii::$app->user->id;
+                $model->handled_at = time();
+                if($model->save()){
+                    $mediaModel = Media::findOne($model->media_id);
+                    $mediaModel->del_status = Media::DEL_STATUS_LOGIC;
+                    $mediaModel->save(true, ['del_status']);
+                }
+            }
         }
+        
+        Yii::$app->getSession()->setFlash('success','删除成功！');
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        return $this->redirect(['index']);
     }
 }

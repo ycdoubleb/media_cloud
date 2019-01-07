@@ -229,7 +229,7 @@ class Dir extends ActiveRecord
 
     /**
      * 父级
-     * @return UserCategory
+     * @return Dir
      */
     public function getParent() {
         self::initCache();

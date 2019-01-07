@@ -12,6 +12,7 @@ use yii\redis\ActiveQuery;
  *
  * @property string $id
  * @property string $name 媒体类型名称
+ * @property string $sign 类型标识：video,audio,image,docment,h5
  * @property int $is_del 是否已删除 0否 1是
  * 
  * @property MediaTypeDetail[] $typeDetails     获取媒体类型的后缀
@@ -34,7 +35,7 @@ class MediaType extends ActiveRecord
         return [
             [['is_del'], 'integer'],
             [['name'], 'required'],
-            [['name'], 'string', 'max' => 20],
+            [['name', 'sign'], 'string', 'max' => 20],
         ];
     }
 
@@ -46,6 +47,7 @@ class MediaType extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
+            'sign' => Yii::t('app', 'Sign'),
             'is_del' => Yii::t('app', 'Is Del'),
         ];
     }

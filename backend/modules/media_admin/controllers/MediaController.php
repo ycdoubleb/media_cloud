@@ -46,13 +46,17 @@ class MediaController extends Controller
     public function actionIndex()
     {
         $searchModel = new MediaSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $mediaIds = ArrayHelper::getColumn($dataProvider->models, 'id');
+        $results = $searchModel->search(Yii::$app->request->queryParams);
         
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($mediaIds),
+            'filters' => $results['filter'],     //查询过滤的属性
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $results['data']['medias'],
+                'key' => 'id'
+            ]),
+            'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
     }
 
@@ -142,6 +146,7 @@ class MediaController extends Controller
         return $this->render('create', [
             'model' => $model,
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
         ]);
     }
 
@@ -163,12 +168,8 @@ class MediaController extends Controller
             try
             {
                 $is_submit = false;
-                // 类型详细
-                $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
-                // 保存媒体类型
-                $model->type_id = $typeDetail->type_id;
                 //获取所有新属性值
-                $newAttributes = $model->getDirtyAttributes();    
+                $newAttributes = $model->getDirtyAttributes();
                 //获取所有旧属性值
                 $oldAttributes = $model->getOldAttributes();  
                 // 属性值
@@ -271,7 +272,8 @@ class MediaController extends Controller
         
         return $this->renderAjax('____anew_upload', [
             'model' => $model,
-            'mediaFiles' => $model->uploadfile->toArray()
+            'mediaFiles' => $model->uploadfile->toArray(),
+            'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id),
         ]);
     }
     

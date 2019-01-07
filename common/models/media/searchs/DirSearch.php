@@ -4,24 +4,21 @@ namespace common\models\media\searchs;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaRecycle;
+use common\models\media\Dir;
 
 /**
- * MediaRecycleSearh represents the model behind the search form of `common\models\media\MediaRecycle`.
+ * DirSearh represents the model behind the search form of `common\models\media\Dir`.
  */
-class MediaRecycleSearh extends MediaRecycle
+class DirSearch extends Dir
 {
-    public $keyword;
-    public $type_id;
-    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'media_id', 'type_id', 'result', 'status', 'handled_by', 'handled_at', 'created_by', 'created_at', 'updated_at'], 'integer'],
-            [['keyword'], 'safe'],
+            [['id', 'level', 'parent_id', 'sort_order', 'is_del', 'is_public', 'created_by', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'path', 'image', 'des'], 'safe'],
         ];
     }
 
@@ -43,7 +40,7 @@ class MediaRecycleSearh extends MediaRecycle
      */
     public function search($params)
     {
-        $query = MediaRecycle::find();
+        $query = Dir::find();
 
         // add conditions that should always apply here
 
@@ -62,15 +59,20 @@ class MediaRecycleSearh extends MediaRecycle
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'media_id' => $this->media_id,
-            'result' => $this->result,
-            'status' => $this->status,
-            'handled_by' => $this->handled_by,
-            'handled_at' => $this->handled_at,
+            'level' => $this->level,
+            'parent_id' => $this->parent_id,
+            'sort_order' => $this->sort_order,
+            'is_del' => $this->is_del,
+            'is_public' => $this->is_public,
             'created_by' => $this->created_by,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'path', $this->path])
+            ->andFilterWhere(['like', 'image', $this->image])
+            ->andFilterWhere(['like', 'des', $this->des]);
 
         return $dataProvider;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\media;
+namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -28,16 +28,22 @@ class Watermark extends ActiveRecord
 {
     /** 状态-全部 */
     const STATUS_ALL = '';
+    
     /** 状态-启用 */
     const STATUS_ENABLE = 0;
+    
     /** 状态-停用 */
     const STATUS_STOP = 1;
+    
     /** 位置-右上 */
     const POSITION_TOPRIGHT = 'TopRight';
+    
     /** 位置-左上 */
     const POSITION_TOPLEFT = 'TopLeft';
+    
     /** 位置-右下 */
     const POSITION_BOTTOMRIGHT = 'BottomRight';
+    
     /** 位置-左下 */
     const POSITION_BOTTOMLEFT = 'BottomLeft';
 
@@ -46,7 +52,6 @@ class Watermark extends ActiveRecord
      * @var array 
      */
     public static $statusMap = [
-        self::STATUS_ALL => '全部',
         self::STATUS_ENABLE => '启用',
         self::STATUS_STOP => '停用'
     ];

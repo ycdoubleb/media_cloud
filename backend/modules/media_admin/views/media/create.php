@@ -71,7 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attrMap' => $attrMap
             ]) ?>
 
-            <?= $this->render('____form_upload_dom') ?>
+            <?= $this->render('____form_upload_dom', [
+                'mimeTypes' => $mimeTypes
+            ]) ?>
 
         </div>
         

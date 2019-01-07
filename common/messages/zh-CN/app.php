@@ -314,6 +314,8 @@ return [
     'Illustration' => '说明',
     'Recycle Bin' => '回收站',
     'Recovery' => '还原',
+    'Handle' => '处理',
+    'Handler' => '处理人',
     
     //后台-媒体配置
     'Storage' => '存储',
@@ -323,6 +325,7 @@ return [
     'Is Required' => '是否必选',
     'Is Search' => '是否搜索',
     'Length' => '长度',
+    'Is Selected' => '是否选中',
     
     //后台-帮助中心
     'App' => '应用',

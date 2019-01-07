@@ -129,7 +129,7 @@
         return value;
     }
     
-    window.youxueba = window.youxueba || {};
-    window.youxueba.Watermark = Watermark;
+    window.wate = window.wate || {};
+    window.wate.Watermark = Watermark;
     
 })(window, jQuery);

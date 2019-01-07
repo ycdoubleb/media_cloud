@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\media\MediaRecycle */
+/* @var $model common\models\media\Watermark */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Media Recycles'), 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Watermarks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="media-recycle-view">
+<div class="watermark-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,12 +30,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'media_id',
-            'result',
-            'status',
-            'handled_by',
-            'handled_at',
-            'created_by',
+            'type',
+            'name',
+            'url:url',
+            'oss_key',
+            'width',
+            'height',
+            'dx',
+            'dy',
+            'refer_pos',
+            'is_del',
+            'is_selected',
             'created_at',
             'updated_at',
         ],

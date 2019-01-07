@@ -19,7 +19,6 @@ use yii\web\View;
         Webuploader::widget([
             'id' => 'uploader-container',
             'name' => 'Media[file_ids]',
-            'data' => isset($mediaFiles) ? [$mediaFiles] : [],
             'pluginOptions' => [
                 //设置最大选择文件数
                 'fileNumLimit' => isset($mediaFiles) ? 1 : 100,
@@ -29,9 +28,9 @@ use yii\web\View;
                 'pageSize' => 10,
                 //设置允许选择的文件类型
                 'accept' => [
-                    'title' => 'Media',
-                    'extensions' => 'mp4,mp3,gif,jpg,jpeg,bmp,png,doc,docx,txt,xls,xlsx,ppt,pptx',
-                    'mimeTypes' => 'video/mp4,audio/mp3,image/*,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx',
+//                    'title' => 'Media',
+//                    'extensions' => $extensions,
+                    'mimeTypes' => $mimeTypes,
                 ],
             ],
             'pluginEvents' => [

@@ -88,6 +88,7 @@ return [
             'site/*',
             'webuploader/*',
             'ueditor/*',
+            'external/*',
             'gii/*',
             'debug/*',
         // The actions listed here will be allowed to everyone including guests.

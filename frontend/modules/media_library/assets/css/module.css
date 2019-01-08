@@ -1,0 +1,153 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2018-12-25, 14:01:55
+    Author     : Vito
+*/
+
+/*******************************************************************************
+ * 内容
+ *******************************************************************************/
+.content .default-index .mc-title .glyphicon {
+    width: 35px;
+    line-height: 35px;
+    top: 3px;
+    text-align: center;
+    color: #999;
+}
+
+.content .default-index .mc-title .active .glyphicon {
+    background-color: #f9f9f9;
+    border: 1px solid #e4e4e4;
+}
+
+/*******************************************************************************
+ * 列表页面
+ *******************************************************************************/
+.header .mc-form {
+    display: block;
+    border-bottom: none
+}
+.media-form .search-panel {
+    padding: 35px 0px; 
+}
+
+.media-form .search-panel .dep-dropdown {
+    display: inline-block;
+    width: 118px;
+    margin-right: 5px;
+}
+
+.common .mc-panel {
+    margin-top: 20px;
+}
+
+.common .mc-panel .chart-panel {
+    float: left;
+    width: 210px;
+    margin-bottom: 22px;
+    margin-right: 22px;
+    border: 1px solid #e4e4e4;
+    -webkit-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+}
+
+.common .mc-panel .chart-panel.hover {
+    -webkit-box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    -webkit-transform: translate3d(0, -2px, 0);
+    -moz-transform: translate3d(0, -2px, 0);
+    transform: translate3d(0, -2px, 0);
+}
+
+.common .mc-panel .checkbox{
+    position: absolute;
+    z-index: 1;
+    margin-left: 4px;
+} 
+
+.common .mc-panel .chart-panel .chart-header {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 158px;
+    background-color: #fff;
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.common .mc-panel .chart-panel .chart-body {
+    display: inline-block;
+    width: 100%;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.mc-panel .chart-panel .tuip {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #aaa;
+    font-weight: normal;
+}
+
+.mc-panel .chart-panel .tuip-title{
+    margin-bottom: 15px;
+}
+
+.mc-panel .chart-panel .tuip .title{
+    width: 200px;
+    white-space: initial;
+    color: #666666;
+}
+
+.mc-panel .chart-panel .pull-right:hover .buy-now {
+    color: #FC583D;
+}
+
+.mc-panel .chart-panel .chart-footer {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+/*******************************************************************************
+ * 详情页面
+ *******************************************************************************/
+.default-view .mc-panel {
+    margin-top: 15px;
+}
+
+.default-view .mc-panel .table {
+    border: 1px solid #e4e4e4;
+}
+
+.panel-left {
+    width: 50%;
+    float: left;
+}
+
+.panel-right {
+    width: 50%;
+    float: right;
+}
+
+.default-view .mc-panel .table .detail-th {
+    width: 127px;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #e4e4e4;
+}
+
+.default-view .mc-panel .table .detail-td {
+    text-align: left;
+    padding-left: 10px;
+}

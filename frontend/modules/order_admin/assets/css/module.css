@@ -1,0 +1,435 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2018-12-25, 14:01:55
+    Author     : Vito
+*/
+.main {
+    display: inline-block;
+    float: right;  
+    width: 1000px;
+    height: auto;
+    overflow-x: hidden;
+    background-color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.main .mc-tabs {
+    margin-bottom: 15px;
+}
+
+.main .main-search .form-group {
+    margin-bottom: 0px;
+}
+
+.main .main-search .search-name {
+    padding-left: 0px;
+}
+
+.main-search .mc-form .choice-info {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.main-search .mc-form .choice-info span {
+    font-size: 16px;
+    color: #FC583D;
+}
+
+/*******************************************************************************
+ * 用户设置页样式
+ *******************************************************************************/
+.user-update .choice-panel{
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+.user-update .choice-panel .mc-panel {
+    border: 1px solid #f2f2f2;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.user-update .choice-panel .mc-panel .mc-tabs {
+    margin-top: 0px;
+    background-color: #f2f2f2;
+}
+
+.user-update .choice-panel .mc-panel .mc-tabs .active {
+    border-top: 1px solid #f2f2f2;
+    background-color: #fff;
+    border-bottom: 2px solid #fff;
+}
+
+.user-update .choice-panel .mc-panel .mc-tabs > ul > li.active > a {
+    color: #666666;
+    border-bottom: transparent
+}
+
+.user-form {
+    height: 548px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: transparent !important;
+}
+
+.user-form .help-block{
+    margin-top: 10px;
+}
+
+
+/*******************************************************************************
+ * 订单详情页面
+ *******************************************************************************/
+.order-view .order-progress {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding-left: 20px;
+    padding-right: 20px;    
+}
+
+.order-view .order-progress .progress-block {
+    width: 140px;
+    height: 81px;
+    display: inline-block;
+    padding-top: 28px;
+    text-align: center;
+    vertical-align: middle;
+    color: #cecece;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    border: 1px #e1e1e1 dashed;
+}
+
+.order-view .order-progress .active {
+    padding-top: 22px;
+    color: #ffffff;
+    background-color: #28b28b;
+    border: 1px #28b28b dashed;
+}
+
+.order-view .mc-panel .table {
+    border: 1px solid #e4e4e4;
+}
+
+.order-view .mc-panel .table .detail-th {
+    width: 127px;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #e4e4e4;
+}
+
+.order-view .mc-panel .table .detail-td {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.order-view .choice-panel {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}
+
+.order-view .choice-panel .mc-panel {
+    border: 1px solid #f2f2f2;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.order-view .choice-panel .mc-panel .panel-content {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.order-view .choice-panel .mc-panel .mc-tabs {
+    margin-top: 0px;
+    background-color: #f2f2f2;
+}
+
+.order-view .choice-panel .mc-panel .mc-tabs .active {
+    border-top: 1px solid #f2f2f2;
+    background-color: #fff;
+    border-bottom: 2px solid #fff;
+}
+
+.order-view .choice-panel .mc-panel .mc-tabs > ul > li > a{
+    color: #999999;
+    font-size: 14px;
+}
+
+.order-view .choice-panel .mc-panel .mc-tabs > ul > li.active > a {
+    color: #666666;
+    border-bottom: transparent;
+}
+
+/*******************************************************************************
+ * 核对订单页面
+ *******************************************************************************/
+.header.checking-header {
+    height: 300px;
+}
+    
+.header.checking-header .container .media-top {
+    padding-top: 20px;
+    width: 100%;
+    height: 110px;
+}
+
+.checking-header .media-top .cloud-name,
+.checking-header .media-top .cloud-cart {
+    display: inline-block
+}
+
+.checking-header .media-top .cloud-name .cloud-title {
+    font-size: 32px;
+    color: #666666;
+    font-weight: 400;
+    display: block;
+    margin-bottom: -8px;
+}
+
+.checking-header .media-top .cloud-name .cloud-website {
+    color: #666666;
+}
+
+.checking-header .media-top .cloud-cart {
+    position: relative;
+    bottom: 18px;
+    padding-left: 8px;
+}
+
+/*已完成步骤样式*/
+.bar-step #progressbar li.old-active:before,
+.bar-step #progressbar li.old-active:after{
+    background: #96e7d0;
+    color: #fffbed;
+}
+
+.bar-step #progressbar li.old-active {
+    color: #96e7d0;
+}
+
+/*当前步骤样式*/
+.bar-step #progressbar li.active:before,
+.bar-step #progressbar li.active:after{
+    background: #28b28b;
+    color: white;
+}
+
+.bar-step #progressbar li.active {
+    color: #28b28b;
+}
+
+.checking-header .information span{
+    font-size: 16px;
+    color: #666666;
+}
+
+.checking-header .information .use-purpose {
+    margin-top: 10px;
+    height: 135px;
+    padding: 20px;
+    border: 1px #c1c1c1 dashed;
+}
+
+.content .checking-bottom {
+    height: 110px;
+    margin-bottom: 50px;
+}
+
+.content .checking-bottom .display-info {
+    height: 60px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.content .checking-bottom .meida-num,
+.content .checking-bottom .payable-price {
+    font-weight: 700;
+    font-style: normal;
+    font-size: 16px;
+    color: #666666;
+    margin-bottom: 5px;
+}
+
+.content .checking-bottom .mp-number {
+    width: 120px;
+    font-weight: 400;
+    color: #FC583D;
+    text-align: right;
+    display: inline-block;
+}
+
+/*******************************************************************************
+ * 下单成功页面
+ *******************************************************************************/
+.header.place-order {
+    height: 240px;
+}
+
+.header.place-order .information .use-purpose {
+    height: 84px;
+}
+
+.place-order .information .use-purpose .pull-left .glyphicon {
+    font-size: 42px;
+    color: #28b28b;
+}
+
+.place-order .information .use-purpose .pull-left .info-text {
+    position: relative;
+    bottom: 12px;
+    font-size: 20px;
+}
+
+.checking-order .mc-panel {
+    margin-top: 15px;
+}
+
+.checking-order .mc-panel .table {
+    border: 1px solid #e4e4e4;
+}
+
+.panel-left {
+    width: 50%;
+    float: left;
+}
+
+.panel-right {
+    width: 50%;
+    float: right;
+}
+
+.checking-order .mc-panel .table .detail-th {
+    width: 127px;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #e4e4e4;
+}
+
+.checking-order .mc-panel .table .detail-td {
+    text-align: left;
+    padding-left: 10px;
+}
+
+/*当前步骤样式*/
+.place-order #progressbar li:last-child:after{
+    background: #28b28b;
+    color: white;
+}
+
+/*模态框样式*/
+.payment-method .modal-dialog .modal-body {
+    text-align: center;
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.payment-method .modal-dialog .modal-body .pay,
+.payment-method .modal-dialog .modal-body .alipay {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.payment-method .modal-dialog .modal-body .alipay,
+.payment-method .modal-dialog .modal-body .wechatpay {
+    display: inline-block;
+    color: #999999;
+}
+
+.payment-method .modal-dialog .modal-body img {
+    width: 128px;
+    height: 128px;
+    margin-bottom: 10px;
+}
+
+/*******************************************************************************
+ * 订单核查页面
+ *******************************************************************************/
+.header.order-checking {
+    height: 140px;
+}
+
+.order-checking .container {
+    padding-top: 24px;
+    color: #fc583d;
+    font-size: 18px;
+}
+
+.order-checking .container .pull-left img {
+    width: 88px;
+    height: 88px;
+    margin-right: 10px;
+}
+
+.order-checking .container .pull-right img {
+    width: 55px;
+    height: 64px;
+    margin-top: 12px;
+}
+
+/*******************************************************************************
+ * 线下支付页面
+ *******************************************************************************/
+.header.play-approve {
+    height: 100%;
+    margin-bottom: 0px;
+}
+    
+.header.play-approve .container .media-top {
+    padding-top: 20px;
+    width: 100%;
+    height: 110px;
+}
+
+.play-approve .media-top .cloud-name,
+.play-approve .media-top .cloud-cart {
+    display: inline-block
+}
+
+.play-approve .media-top .cloud-name .cloud-title {
+    font-size: 32px;
+    color: #666666;
+    font-weight: 400;
+    display: block;
+    margin-bottom: -8px;
+}
+
+.play-approve .media-top .cloud-name .cloud-website {
+    color: #666666;
+}
+
+.play-approve .media-top .cloud-cart {
+    position: relative;
+    bottom: 18px;
+    padding-left: 8px;
+}
+
+.play-approve .media-top .pull-right img {
+    width: 55px;
+    height: 64px;
+}
+
+.play-approve .main {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.play-approve .main span {
+    font-size: 16px;
+    
+}
+
+.play-approve .main .approve-form {
+    padding: 20px;
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    border: 1px #e4e4e4 dashed;
+}

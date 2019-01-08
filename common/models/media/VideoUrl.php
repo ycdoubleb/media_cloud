@@ -3,6 +3,7 @@
 namespace common\models\media;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%video_url}}".
@@ -25,8 +26,15 @@ use Yii;
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
  */
-class VideoUrl extends \yii\db\ActiveRecord
+class VideoUrl extends ActiveRecord
 {
+    public static $videoLevelName = [
+        0 => '流畅',
+        1 => '标清',
+        2 => '高清',
+        3 => '超清',
+    ];
+    
     /**
      * {@inheritdoc}
      */

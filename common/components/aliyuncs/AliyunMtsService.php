@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\media;
+namespace common\components\aliyuncs;
 
 use common\models\media\Media;
 use Yii;
@@ -81,15 +81,15 @@ class AliyunMtsService extends ActiveRecord
     /**
      * 获取已完成转码文件等级
      * 
-     * @param string $video_id      视频ID
+     * @param string $media_id      视频ID
      * @return array [0,1,2,3]
      */
-    public static function getFinishLevel($video_id) {
+    public static function getFinishLevel($media_id) {
         $hasDoneLevels = AliyunMtsService::find()
                         ->select('level')
                         ->from(AliyunMtsService::tableName())
                         ->where([
-                            'video_id' => $video_id,
+                            'media_id' => $media_id,
                             'is_del' => 0,
                             'is_finish' => 1,
                             'result' => 1,
@@ -100,10 +100,10 @@ class AliyunMtsService extends ActiveRecord
     /**
      * 从反馈里批量添加记录
      * 
-     * @param string $video_id      视频ID
+     * @param string $media_id      视频ID
      * @param Object $response      反馈数据
      */
-    public static function batchInsertServiceForMts($video_id, $response) {
+    public static function batchInsertServiceForMts($media_id, $response) {
         //保存调用记录，用于完成核实
         $rows = [];
         $time = time();
@@ -113,14 +113,14 @@ class AliyunMtsService extends ActiveRecord
             $rows [] = [
                 $request_id,                        //请求ID
                 $JobResult->Job->JobId,             //任务ID
-                $video_id,                          //视频ID
+                $media_id,                          //视频ID
                 $JobResult->Success ? 0 : 1,        //提交任务是否成功
                 $userData->level,                   //转码的等级
                 \Yii::$app->user->id,               //转码操作人，当前用户ID
                 $time, $time                        //创建、更新时间
             ];
         }
-        \Yii::$app->db->createCommand()->batchInsert(AliyunMtsService::tableName(), ['request_id', 'job_id', 'video_id', 'is_finish', 'level', 'created_by', 'created_at', 'updated_at'], $rows)->execute();
+        \Yii::$app->db->createCommand()->batchInsert(AliyunMtsService::tableName(), ['request_id', 'job_id', 'media_id', 'is_finish', 'level', 'created_by', 'created_at', 'updated_at'], $rows)->execute();
     }
 
     

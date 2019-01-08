@@ -56,17 +56,16 @@ class Media extends ActiveRecord
     /** 已发布 */
     const STATUS_ALREADY_PUBLISH = 3;
     
-    /** 未转码 */
-    const MTS_STATUS_NO = 0;
-
+    /** 无转码 */
+    const MTS_STATUS_NONE = 0;
+    /** 无转码 */
+    const MTS_STATUS_NO = 1;
     /** 转码中 */
-    const MTS_STATUS_DOING = 1;
-
+    const MTS_STATUS_DOING = 2;
     /** 已转码 */
-    const MTS_STATUS_YES = 2;
-
+    const MTS_STATUS_YES = 3;
     /** 转码失败 */
-    const MTS_STATUS_FAIL = 5;
+    const MTS_STATUS_FAIL = 4;
     
     /** 删除状态-申请 */
     const DEL_STATUS_APPROVE = 1;
@@ -92,6 +91,7 @@ class Media extends ActiveRecord
      * @var array 
      */
     public static $mtsStatusName = [
+        self::MTS_STATUS_NONE => '无转码',
         self::MTS_STATUS_NO => '未转码',
         self::MTS_STATUS_DOING => '转码中',
         self::MTS_STATUS_YES => '已转码',

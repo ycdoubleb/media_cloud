@@ -82,6 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
             
             <?= $this->render('____form_watermark_dom', [
                 'isNewRecord' => $model->isNewRecord ? 1 : 0,
+                'wateFiles' => $wateFiles,
             ]) ?>
             
         </div>

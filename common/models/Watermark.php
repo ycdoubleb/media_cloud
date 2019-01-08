@@ -130,6 +130,33 @@ class Watermark extends ActiveRecord
     }
     
     /**
+     * 获取已启用的所有水印图
+     * @param integer|array $mw_id      媒体水印图id
+     * @return array
+     */
+    public static function getEnabledWatermarks($mw_id = null)
+    {
+        //查询水印图
+        $query = self::find()->from(['Watermark' => self::tableName()]);
+        
+        // 所需要的字段
+        $query->select([
+            'Watermark.id', 'Watermark.width', 'Watermark.height', 
+            'Watermark.dx AS shifting_X', 'Watermark.dy AS shifting_Y', 
+            'Watermark.refer_pos', "if(Watermark.is_selected = 1, 'true', 'false') AS is_selected", 
+            'Watermark.url AS path'
+        ]);        
+        
+        //必要条件
+        $query->where(['Watermark.is_del' => 0]);
+        
+        // 按id查询
+        $query->andFilterWhere(['Watermark.id' => $mw_id]);
+        
+        return $query->asArray()->all();
+    }
+    
+    /**
      * 按条件探索转码水印配置
      * 
      * @return array [[InputFile,Dx,Dy,Width,Height,ReferPos],[]] 

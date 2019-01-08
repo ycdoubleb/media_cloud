@@ -8,18 +8,19 @@ WatermarkAsset::register($this);
 
 // 加载 ITEM_DOM 模板 
 $water_item_dom = '<div class="media-watermark">';
-$water_item_dom += Html::checkbox('Media[mts_watermark_ids][]', false, [
+$water_item_dom .= Html::checkbox('Media[mts_watermark_ids][]', false, [
     'value' => '{%id%}', 'onchange' => 'checkedWatermark($(this))'
 ]);
-$water_item_dom += Html::img('{%path%}', ['width' => 64, 'height' => 40]);
-$water_item_dom += '</div>';
+$water_item_dom .= Html::img('{%path%}', ['width' => 64, 'height' => 40]);
+$water_item_dom .= '</div>';
 $item_dom = json_encode($water_item_dom);
+
 // 判断是否为新建
 $isNewRecord = $isNewRecord;
 // 所有水印文件
-$waterFiles = json_encode([]);
+$wateFiles = json_encode($wateFiles);
 // 已选中的水印
-$waterSelected = json_encode([]);
+$wateSelected = json_encode([]);
 
 ?>
 
@@ -63,23 +64,24 @@ $waterSelected = json_encode([]);
 <?php
 $js = <<<JS
     var watermark,
-        waterFiles = $waterFiles,               // 水印文件
+        wateFiles = $wateFiles,                 // 水印文件
         isNewRecord = $isNewRecord,             // 获取flash上传组件路径
-        waterSelected = $waterSelected,         // 已选中的水印
+        wateSelected = $wateSelected,           // 已选中的水印
         item_dom = $item_dom,                   // 加载 ITEM_DOM 模板 
-        isPageLoading = false;                  //取消加载Loading状态
+        isPageLoading = false;                  // 取消加载Loading状态
         
     // 初始化水印组件
     watermark = new wate.Watermark({container: '#preview-watermark'});
     /** 显示客户下已启用的水印图 */
-    $.each(waterFiles, function(){
+    $.each(wateFiles, function(){
         if(!isPageLoading) $('#media-mts_watermark_ids').html('');
         //创建情况下显示默认选中，更新情况下如果id存在已选的水印里则this.is_selected = true，否则不显示选中
         if(!isNewRecord){
-            this.is_selected = $.inArray(this.id, waterSelected) != -1 ? true : false;
+            this.is_selected = $.inArray(this.id, wateSelected) != -1 ? true : false;
+            console.log(this.is_selected);
         }
-        var water = $(Wskeee.StringUtil.renderDOM(item_dom, this)).appendTo($('#media-mts_watermark_ids'));
-        water.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', this.is_selected);
+        var wate = $(Wskeee.StringUtil.renderDOM(item_dom, this)).appendTo($('#media-mts_watermark_ids'));
+        wate.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', this.is_selected);
         //如果是默认选中，则在预览图上添加该选中的水印
         if(this.is_selected) watermark.addWatermark('vkcw' + this.id, this);
         isPageLoading = true;

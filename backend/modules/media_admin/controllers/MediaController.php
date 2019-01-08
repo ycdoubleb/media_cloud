@@ -11,6 +11,7 @@ use common\models\media\MediaTagRef;
 use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
+use common\models\Watermark;
 use common\utils\DateUtil;
 use Yii;
 use yii\data\ArrayDataProvider;
@@ -147,6 +148,7 @@ class MediaController extends Controller
             'model' => $model,
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
+            'wateFiles' => Watermark::getEnabledWatermarks()
         ]);
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use common\components\aliyuncs\Aliyun;
 use common\models\Watermark;
 use common\widgets\watermark\WatermarkAsset;
 use common\widgets\webuploader\ImagePicker;
@@ -13,13 +14,16 @@ use yii\widgets\ActiveForm;
 
 WatermarkAsset::register($this);
 
-$selected = $model->width > 1 || $model->height > 1 ? 1 : 0;
-$selected = $model->isNewRecord || ($model->dx > 1 || $model->dy > 1) ? 1 : 0;
+// 大小
+$sizeSelected = $model->width > 1 || $model->height > 1 ? 1 : 0;
+// 偏移
+$shiftSelected = $model->isNewRecord || ($model->dx > 1 || $model->dy > 1) ? 1 : 0;
 // 设置偏移默认值
 $model->dx = $model->isNewRecord ? 10 : $model->dx;
 $model->dy = $model->isNewRecord ? 10 : $model->dy;
-// 水印路径
-$path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
+//水印图路径
+$ossHost = Aliyun::getOssHost();
+$path = !$model->isNewRecord ? $model->url : '';
 
 ?>
 
@@ -66,9 +70,8 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
 
     <!--宽-->
     <?php 
-        $selected = $model->width > 1 || $model->height > 1 ? 1 : 0;
         //下拉选择
-        $downList = Html::dropDownList(null, $selected, ['百分比', '像素'], [
+        $downList = Html::dropDownList(null, $sizeSelected, ['百分比', '像素'], [
             'class' => 'form-control', 'onchange' => 'changeInputMode($(this))'
         ]);
         echo $form->field($model, 'width', [
@@ -76,15 +79,15 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
                 . "<div class=\"clear-padding pull-left\">{$downList}</div>\n"
                 . "<div class=\"col-lg-7 col-md-7\">{error}</div>",
         ])->textInput([
-            'type' => 'number', 'min' => $selected ? 8 : 0, 'max' => $selected ? 4096 : 1, 
-            'step' => $selected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
+            'type' => 'number', 'min' => $sizeSelected ? 8 : 0, 'max' => $sizeSelected ? 4096 : 1, 
+            'step' => $sizeSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
         ]);
     ?>
 
     <!--高-->
     <?php
         //下拉选择
-        $downList = Html::dropDownList(null, $selected, ['百分比', '像素'], [
+        $downList = Html::dropDownList(null, $sizeSelected, ['百分比', '像素'], [
             'class' => 'form-control', 'onchange' => 'changeInputMode($(this))'
         ]);
         echo $form->field($model, 'height', [
@@ -92,15 +95,15 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
                 . "<div class=\"clear-padding pull-left\">{$downList}</div>\n"
                 . "<div class=\"col-lg-7 col-md-7\">{error}</div>",
         ])->textInput([
-            'type' => 'number', 'min' => $selected ? 8 : 0, 'max' => $selected ? 4096 : 1, 
-            'step' => $selected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
+            'type' => 'number', 'min' => $sizeSelected ? 8 : 0, 'max' => $sizeSelected ? 4096 : 1, 
+            'step' => $sizeSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
         ]);
     ?>
 
     <!--水平偏移-->
     <?php
         //下拉选择
-        $downList = Html::dropDownList(null, $selected, ['百分比', '像素'], [
+        $downList = Html::dropDownList(null, $shiftSelected, ['百分比', '像素'], [
             'class' => 'form-control', 'onchange' => 'changeInputMode($(this))'
         ]);
         echo $form->field($model, 'dx', [
@@ -108,9 +111,9 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
                 . "<div class=\"clear-padding pull-left\">{$downList}</div>\n"
                 . "<div class=\"col-lg-7 col-md-7\">{error}</div>",
         ])->textInput([
-            'type' => 'number', 'value' => $model->isNewRecord ? 10 : $model->dx, 
-            'min' => $selected ? 8 : 0, 'max' => $selected ? 4096 : 1, 
-            'step' => $selected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
+            'type' => 'number', 'value' => $model->dx, 
+            'min' => $shiftSelected ? 8 : 0, 'max' => $shiftSelected ? 4096 : 1, 
+            'step' => $shiftSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
         ])->label(Yii::t('app', '{Level}{Shifting}', [
             'Level' => Yii::t('app', 'Level'), 'Shifting' => Yii::t('app', 'Shifting')
         ]));
@@ -119,7 +122,7 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
     <!--垂直偏移-->
     <?php 
         //下拉选择
-        $downList = Html::dropDownList(null, $selected, ['百分比', '像素'], [
+        $downList = Html::dropDownList(null, $shiftSelected, ['百分比', '像素'], [
             'class' => 'form-control', 'onchange' => 'changeInputMode($(this))'
         ]);
         echo $form->field($model, 'dy', [
@@ -127,25 +130,32 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
                 . "<div class=\"clear-padding pull-left\">{$downList}</div>\n"
                 . "<div class=\"col-lg-7 col-md-7\">{error}</div>",
         ])->textInput([
-            'type' => 'number', 'value' => $model->isNewRecord ? 10 : $model->dy, 
-            'min' => $selected ? 8 : 0, 'max' => $selected ? 4096 : 1, 
-            'step' => $selected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
+            'type' => 'number', 'value' => $model->dy, 
+            'min' => $shiftSelected ? 8 : 0, 'max' => $shiftSelected ? 4096 : 1, 
+            'step' => $shiftSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
         ])->label(Yii::t('app', '{Vertical}{Shifting}', [
             'Vertical' => Yii::t('app', 'Vertical'), 'Shifting' => Yii::t('app', 'Shifting')
         ])); 
     ?>
 
     <!--水印文件-->
-    <?= $form->field($model, 'oss_key', [
-        'template' => "{label}\n<div class=\"col-lg-5 col-md-5\">{input}</div>\n<div class=\"col-lg-5 col-md-5\">{error}</div>",  
-    ])->widget(ImagePicker::class, [
-        'id' => 'watermark-oss_key'
+    <?= $form->field($model, 'url')->widget(ImagePicker::class, [
+        'id' => 'watermark-oss_key',
+        'pluginOptions' =>[
+            //设置允许选择的文件类型
+            'accept' => [
+                'mimeTypes' => 'image/png',
+            ],
+        ],
+        'pluginEvents' => [
+            'uploadComplete' => 'function(evt, data){uploadComplete(data)}',
+	]
     ])->label(Yii::t('app', '{Watermark}{File}', [
         'Watermark' => Yii::t('app', 'Watermark'), 'File' => Yii::t('app', 'File')
     ]));?>
 
     <!--是否选中-->
-    <?= $form->field($model, 'is_selected')->checkbox(['value' => 0, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Selected')) ?>
+    <?= $form->field($model, 'is_selected')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Selected')) ?>
 
     <!--预览-->
     <div class="form-group">
@@ -160,8 +170,7 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
     <div class="form-group">
         <?= Html::label(null, null, ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
         <div class="col-lg-11 col-md-11">
-            <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
-            <span id="submit-result"></span>
+            <?= Html::submitButton(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
         </div> 
     </div>
     
@@ -169,24 +178,52 @@ $path = !$model->isNewRecord ? Aliyun::absolutePath($model->oss_key) : '';
 
 </div>
 
-<?php
-
-$js = <<<JS
-    var watermark,
-        paths = "$path";
-            
-    //初始化组件
-    watermark = new wate.Watermark({container: '#preview-watermark'});
+<script type="text/javascript">
     
-    //添加一个水印
-    watermark.addWatermark('vkcw',{
-        refer_pos: '{$model->refer_pos}', path: paths,
-        width: '{$model->width}', height: '{$model->height}', 
-        shifting_X: '{$model->dx}', shifting_Y: '{$model->dy}'
-    });
+    var watermark;
+    var ossHost = "<?= $ossHost ?>/";
+    var paths = "<?= $path ?>";
+    var refer_pos = "<?= $model->refer_pos ?>";
+    var width = "<?= $model->width ?>";
+    var height = "<?= $model->height ?>";
+    var shifting_X = "<?= $model->dx ?>";
+    var shifting_Y = "<?= $model->dy ?>";
+           
+           
+    /**
+     * html 加载完成后初始化所有组件
+     * @returns {void}
+     */
+    window.onload = function(){
+        initWatermark();        //初始水印
+    }
+            
+    //初始化组件        
+    function initWatermark(){
         
+        watermark = new wate.Watermark({container: '#preview-watermark'});
+
+        //添加一个水印
+        watermark.addWatermark('vkcw',{
+            refer_pos: refer_pos, path: paths,
+            width: width, height: height, 
+            shifting_X: shifting_X, shifting_Y: shifting_Y
+        });
+    }        
+                
+    /**
+     * 上传完成
+     * @param {json} data
+     * @returns {undefined}
+     */
+    function uploadComplete(data){
+        paths = ossHost+data['oss_key'];
+        changeRefer_pos();
+    }    
+                
     /**
      * 变更数值，更改对应参数
+     * @returns {undefined}
      */
     function changeRefer_pos (){
         var pos = $('input[name="Watermark[refer_pos]"]:checked').val(), 
@@ -200,13 +237,15 @@ $js = <<<JS
             shifting_X: dx, shifting_Y: dy
         });
     }
+        
     /**
      * 更换输入方式
-     * @param elem 触发事件的对象
+     * @param {obj} _this    触发事件的对象
+     * @returns {undefined}
      */
-    window.changeInputMode = function(elem){
-        var inputMode = elem.parent().prev().children();
-        if(elem.find("option:selected").val() == 1){
+    function changeInputMode(_this){
+        var inputMode = _this.parent().prev().children();
+        if(_this.find("option:selected").val() == 1){
             $(inputMode).attr({min: 8, max: 4096, step: 1});
             $(inputMode).val(8);
         }else{
@@ -215,6 +254,5 @@ $js = <<<JS
         }
         changeRefer_pos();
    }
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>
+    
+</script>

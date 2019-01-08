@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
 use common\models\media\MediaRecycle;
 use common\models\media\searchs\MediaRecycleSearh;
@@ -13,7 +13,7 @@ use yii\web\View;
 /* @var $searchModel MediaRecycleSearh */
 /* @var $dataProvider ActiveDataProvider */
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', 'Recycle Bin');
 $this->params['breadcrumbs'][] = $this->title;

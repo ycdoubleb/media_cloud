@@ -8,12 +8,12 @@ use const YII_DEBUG;
 /**
  * Main backend application asset bundle.
  */
-class ModuleAsset extends AssetBundle
+class MediaModuleAsset extends AssetBundle
 {
     public $sourcePath = '@backend/modules/media_admin/assets';
     public $baseUrl = '@backend/modules/media_admin/assets';
     public $css = [
-        'css/module.css',
+        'css/media_module.css',
     ];
     public $js = [
         'js/media-batch-upload.js',

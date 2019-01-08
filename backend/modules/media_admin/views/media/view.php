@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
 use common\utils\DateUtil;
 use kartik\select2\Select2Asset;
@@ -14,7 +14,7 @@ use yii\widgets\DetailView;
 /* @var $model Media */
 
 YiiAsset::register($this);
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', "{Media}{Detail}：{$model->name}", [
     'Media' => Yii::t('app', 'Media'), 'Detail' => Yii::t('app', 'Detail')

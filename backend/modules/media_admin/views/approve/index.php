@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
 use common\models\media\searchs\MediaApproveSearh;
 use yii\data\ActiveDataProvider;
@@ -8,7 +8,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\View;
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 /* @var $this View */
 /* @var $searchModel MediaApproveSearh */

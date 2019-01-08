@@ -70,7 +70,7 @@ class CartController extends Controller
     public function actionDelMedia()
     {
         try{
-            $models = Cart::findAll(['is_selected' => 1, 'created_by' => Yii::$app->user->id]);
+            $models = Cart::findAll(['is_selected' => 1, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
             foreach($models as $model){
                 $model->is_del = 1;
                 $model->save();
@@ -88,22 +88,30 @@ class CartController extends Controller
      */
     public function actionChangeAll()
     {
+        Yii::$app->getResponse()->format = 'json';
+        
         $checked = Yii::$app->request->post('checked');
-        $models = Cart::findAll(['created_by' => Yii::$app->user->id]);
+        $models = Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]);
 
         if($checked == 'true'){
             foreach($models as $model){
                 $model->is_selected = 1;
                 $model->save();
             }
+            $is_select = true;
         } else {
             foreach($models as $model){
                 $model->is_selected = 0;
                 $model->save();
             }
+            $is_select = false;
         }
         
-        return $this->redirect('index');
+        return [
+            'code'=> 200,
+            'data' => $is_select,
+            'message' => '请求成功！',
+        ];
     }
     
     /**
@@ -111,17 +119,27 @@ class CartController extends Controller
      * @return mixed
      */
     public function actionChangeOne()
-    {
+    {   
+        Yii::$app->getResponse()->format = 'json';
+    
         $id = Yii::$app->request->post('id');
-        $model = Cart::findOne(['goods_id' => $id, 'created_by' => Yii::$app->user->id]);
+        $model = Cart::findOne(['goods_id' => $id, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
         if($model->is_selected == 1){
             $model->is_selected = 0;
         } else {
             $model->is_selected = 1;
         }
         $model->save();
-        
-        return $this->redirect('index');
+        //所有媒体
+        $cats = Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]);
+        //选中的媒体
+        $cats_sels = Cart::findAll(['is_selected' => 1, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
+                
+        return [
+            'code'=> 200,
+            'data' => count($cats) == count($cats_sels),
+            'message' => '请求成功！',
+        ];
     }
 
     /**

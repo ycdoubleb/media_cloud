@@ -2,6 +2,8 @@
 
 namespace frontend\modules\order_admin\controllers;
 
+use common\models\order\Order;
+use common\models\order\searchs\OrderSearch;
 use common\models\User;
 use common\models\UserProfile;
 use Yii;
@@ -9,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Request;
 
 /**
  * UserInfoController implements the CRUD actions for Cart model.
@@ -72,7 +75,25 @@ class UserInfoController extends Controller
      */
     public function actionStatistics()
     {
-        return $this->render('statistics');
+        /* @var $request Request */
+        $request = Yii::$app->getRequest();
+        $dateRange = $request->getQueryParam('dateRange');
+        $year = $request->getQueryParam('year');
+        
+        $query = (new \yii\db\Query())
+                ->from(['Order' => Order::tableName()]);
+        
+        /* 当时间段参数不为空时 */
+        if($dateRange != null){
+            $dateRange_Arr = explode(" - ",$dateRange);
+            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        }
+//        var_dump($this->getTotalPay($query));exit;
+//        var_dump($this->getDataStatistics(Yii::$app->request->queryParams));exit;
+        return $this->render('statistics', [
+            'dateRange' => $dateRange,
+            'totalPay' => $this->getTotalPay($query),                 //总支出和购买数量
+        ]);
     }
     
     
@@ -106,6 +127,26 @@ class UserInfoController extends Controller
         }else{
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
+    }
+    
+    protected function getTotalPay($query)
+    {
+        $totalPay = clone $query;
+        $totalPay->select(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods']);
+        
+        return $totalPay->one(Yii::$app->db);
+    }
+
+    protected function getDataStatistics($query)
+    {
+        $searchModel = new OrderSearch();
+        
+        $query->addSelect(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods']);
+        
+//        $query->groupBy(['Order.id']);
+        $results = $query->asArray()->all();
+        
+        return $results;
     }
 }
 

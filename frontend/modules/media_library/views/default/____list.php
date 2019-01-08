@@ -1,4 +1,4 @@
-<tr id="tr-{%id%}" data-value="{%id%}" data-key="{%row%}">
+<tr id="tr-{%id%}" data-key="{%row%}">
     <td><input type="checkbox" name="selection[]" value="{%id%}"></td>
     <td><img src="{%cover_img%}" width="70px"/></td>
     <td>{%id%}</td>

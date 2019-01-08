@@ -2,6 +2,7 @@
 
 use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\CartSearch;
+use common\utils\DateUtil;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -38,7 +39,7 @@ $this->title = Yii::t('app', 'Cart');
                 'columns' => [
                     [
                         // 'class' => 'yii\grid\CheckboxColumn',
-                        'header' => Html::checkbox('selection[]', $totalCount == $sel_num, ['id' => 'change-all']),
+                        'header' => Html::checkbox('selection_all', $totalCount == $sel_num, ['id' => 'change-all']),
                         'headerOptions' => [
                             'style' => 'width: 30px',
                         ],
@@ -108,7 +109,7 @@ $this->title = Yii::t('app', 'Cart');
                             'style' => 'width: 90px',
                         ],
                         'value' => function($data) {
-                            return $data['duration'];
+                            return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
                         },
                     ],
                     [
@@ -175,8 +176,19 @@ $js = <<<JS
      */
     $("#change-all").click(function(){
         var checked = this.checked;
-        console.log(checked);
-        $.post('/order_admin/cart/change-all', {checked});
+        $.post('/order_admin/cart/change-all', {checked}, function(rel){
+            if(rel['code'] == '200'){
+                $('input[name="selection[]"]').each(function(){
+                    $(this).prop("checked", rel['data']);
+                });
+            }else{
+//                $.notify({
+//                    message: '失败' 
+//                },{
+//                    type: 'danger'
+//                });
+            }
+        });
     });
         
     /**
@@ -184,7 +196,17 @@ $js = <<<JS
      */
     $(".change-one").click(function(){
         var id = this.value;
-        $.post('/order_admin/cart/change-one', {id});
+        $.post('/order_admin/cart/change-one', {id}, function(rel){
+            if(rel['code'] == '200'){
+                $('input[name="selection_all"]').prop("checked", rel['data']);
+            }else{
+//                $.notify({
+//                    message: '失败' 
+//                },{
+//                    type: 'danger'
+//                });
+            }
+        });
     });
 JS;
     $this->registerJs($js,  View::POS_READY);

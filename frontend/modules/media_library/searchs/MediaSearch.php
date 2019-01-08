@@ -3,7 +3,10 @@
 namespace frontend\modules\media_library\searchs;
 
 use common\models\media\Media;
+use common\models\media\MediaAttValueRef;
+use common\models\media\MediaTagRef;
 use common\models\media\MediaType;
+use common\models\Tags;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
@@ -20,6 +23,11 @@ class MediaSearch extends Media
      */
     private static $query;
     /**
+     * 属性值id
+     * @var array 
+     */
+    public $attribute_value_id;
+    /**
      * 关键字
      * @var string 
      */
@@ -30,10 +38,9 @@ class MediaSearch extends Media
      */
     public function rules() {
         return [
-            [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 
-                'status', 'mts_status', 'del_status', 'is_link', 'created_by',
+            [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by',
                     'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'cover_url', 'url', 'keyword'], 'safe'],
+            [['name', 'cover_url', 'url', 'attribute_value_id', 'keyword'], 'safe'],
             [['price', 'duration'], 'number'],
         ];
     }
@@ -56,82 +63,61 @@ class MediaSearch extends Media
      */
     public function search($params)
     {
-        $page = ArrayHelper::getValue($params, 'page', 1); //分页
-        $limit = ArrayHelper::getValue($params, 'limit', 20); //显示数
+        $page = ArrayHelper::getValue($params, 'page', 1);      //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 20);   //显示数
+        $keyword = ArrayHelper::getValue($params, 'MediaSearch.keyword');   //关键字
         
-        self::getInstance();
+        // 查询媒体数据
+        $query = self::find()->from(['Media' => self::tableName()]);
         $this->load($params);
         
-        self::$query->addSelect(['cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
-                    'price', 'duration', 'size',
-//            'tags'
-            ]);
-            
-        // 媒体类型
-        self::$query->andFilterWhere(['type_id' => $this->type_id,]);
-        
-        // 模糊查询
-        self::$query->andFilterWhere(['like', 'Media.name', $this->name]);
-        
         // 关联查询媒体类型
-        self::$query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
+        $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
+        // 关联媒体属性值关系表
+        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
+        // 关联媒体标签关系表
+        $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
+        // 关联标签表
+        $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
         
-        //复制媒体对象
-//        $copyMedia= clone self::$query;    
-//        //查询媒体下的标签
-//        $tagRefQuery = MediaTagRef::getTagsByObjectId($copyMedia, 1, false);
-//        $tagRefQuery->addSelect(["GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tags"]);
+        $query->addSelect(['Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
+                'MediaType.sign AS type_sign', 'price', 'duration', 'size', 
+            "GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tag_name"
+        ]);
+            
+        // 媒体类型过滤
+        $query->andFilterWhere(['Media.type_id' => $this->type_id]);
+        // 属性值条件
+        if(!empty($this->attribute_value_id)){
+            foreach ($this->attribute_value_id as $value) {
+                $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $value]);
+            }
+        }
+        // 模糊查询
+        $query->andFilterWhere(['or',
+            ['like', 'Media.name', $keyword],
+            ['like', 'Tags.name', $keyword],
+        ]);
+        
         //以媒体id为分组
-        self::$query->groupBy(['Media.id']);
+        $query->groupBy(['Media.id']);
+        // 过滤重复
+//        $query->with('dir', 'mediaType', 'mediaTagRefs');
         //查询总数
-        $totalCount = self::$query->count('id');
+        $totalCount = $query->count('id');
         //显示数量
-        self::$query->offset(($page - 1) * $limit)->limit($limit);
+        $query->offset(($page - 1) * $limit)->limit($limit);
         
-        //查询标签结果
-//        $tagRefResult = $tagRefQuery->asArray()->all(); 
         //查询课程结果
-        $meidaResult = self::$query->asArray()->all();
-        //以media_id为索引
-        $medias = ArrayHelper::index($meidaResult, 'id');
-//        $results = ArrayHelper::index($tagRefResult, 'object_id');
-
-        //合并查询后的结果
-//        foreach ($medias as $id => $item) {
-//            if(isset($results[$id])){
-//                $medias[$id] += $results[$id];
-//            }
-//        }
+        $meidaResult = $query->asArray()->all();
+ 
 
         return [
             'filter' => $params,
             'total' => $totalCount,
             'data' => [
-                'media' => $medias
+                'media' => $meidaResult
             ],
         ];
-    }
-    
-    /**
-     * 
-     * @return Query
-     */
-    protected static function getInstance() {
-        if (self::$query == null) {
-            self::$query = self::findMedia();
-        }
-        return self::$query;
-    }
-    
-    /**
-     * 查询媒体
-     * @return Query
-     */
-    public static function findMedia() 
-    {
-        $query = self::find()->select(['Media.id'])
-            ->from(['Media' => self::tableName()]);
-        
-        return $query;
     }
 }

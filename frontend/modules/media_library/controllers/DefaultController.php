@@ -5,12 +5,14 @@ namespace frontend\modules\media_library\controllers;
 use common\components\aliyuncs\Aliyun;
 use common\models\media\Media;
 use common\models\media\MediaAttribute;
+use common\models\media\MediaAttValueRef;
 use common\models\media\MediaIssue;
 use common\models\order\Cart;
 use common\models\order\Favorites;
 use common\models\order\Order;
 use common\models\order\OrderAction;
 use common\models\order\OrderGoods;
+use common\utils\DateUtil;
 use frontend\modules\media_library\searchs\MediaSearch;
 use Yii;
 use yii\data\ArrayDataProvider;
@@ -51,15 +53,24 @@ class DefaultController extends Controller
         $medias = array_values($results['data']['media']);                  //媒体数据
         $mediaIds = ArrayHelper::getColumn($medias, 'id');
         
+        $icons = [
+            'video' => 'glyphicon glyphicon-facetime-video',
+            'image' => 'glyphicon glyphicon-picture',
+            'audio' => 'glyphicon glyphicon-music',
+            'document' => 'glyphicon glyphicon-file',
+        ];
         $row = 0;
         //重设媒体数据里面的元素值
         foreach ($medias as &$item) {
             $item['row'] = $row++;
             $item['cover_img'] = Aliyun::absolutePath(!empty($item['cover_url']) ? $item['cover_url'] : 'static/imgs/notfound.png');
+            $item['dir_id'] = $item['duration'];
+            $item['duration'] = DateUtil::intToTime($item['duration'], ':', true);
             $item['size'] = Yii::$app->formatter->asShortSize($item['size']);
-            $item['tags'] = isset($item['tags']) ? $item['tags'] : 'null';
+            $item['tags'] = isset($item['tag_name']) ? $item['tag_name'] : 'null';
+            $item['icon'] = isset($icons[$item['type_sign']]) ? $icons[$item['type_sign']] : '';
         }
-        
+
         //如果是ajax请求，返回json
         if(\Yii::$app->request->isAjax){
             Yii::$app->getResponse()->format = 'json';
@@ -109,6 +120,8 @@ class DefaultController extends Controller
         return $this->render('view', [
             'filters' => Yii::$app->request->queryParams,
             'model' => $model,
+            'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
+            'tagsDataProvider' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
             'hasFavorite' => !empty($hasFavorite),
         ]);
     }

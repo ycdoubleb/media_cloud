@@ -45,11 +45,15 @@ and open the template in the editor.
     margin-top: 20px;
 }
 
+.common .mc-panel .meida-details {
+    margin-right: -20px;
+}
+
 .common .mc-panel .chart-panel {
     float: left;
     width: 210px;
-    margin-bottom: 22px;
-    margin-right: 22px;
+    margin-bottom: 26px;
+    margin-right: 26px;
     border: 1px solid #e4e4e4;
     -webkit-transition: all 0.2s linear;
     -o-transition: all 0.2s linear;
@@ -69,6 +73,8 @@ and open the template in the editor.
     position: absolute;
     z-index: 1;
     margin-left: 4px;
+    width: 14px;
+    height: 14px;
 } 
 
 .common .mc-panel .chart-panel .chart-header {
@@ -84,7 +90,7 @@ and open the template in the editor.
     display: inline-block;
     width: 100%;
     padding-right: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     padding-left: 10px;
     border-bottom: 1px solid #f2f2f2;
 }
@@ -99,17 +105,15 @@ and open the template in the editor.
     font-weight: normal;
 }
 
-.mc-panel .chart-panel .tuip-title{
-    margin-bottom: 15px;
-}
-
 .mc-panel .chart-panel .tuip .title{
-    width: 200px;
+    width: 188px;
+    height: 34px;
     white-space: initial;
+    word-break: break-word;
     color: #666666;
 }
 
-.mc-panel .chart-panel .pull-right:hover .buy-now {
+.mc-panel .hover .pull-right {
     color: #FC583D;
 }
 
@@ -118,36 +122,55 @@ and open the template in the editor.
     margin-left: 10px;
 }
 
+.mc-panel .chart-panel .chart-footer .glyphicon {
+    font-size: 14px;
+}
+
 /*******************************************************************************
  * 详情页面
  *******************************************************************************/
 .default-view .mc-panel {
-    margin-top: 15px;
+    margin-top: 5px;
+}
+
+.default-view .mc-panel .resource-list {
+    width: 100%;
+    height: 290px;
+    margin-bottom: 50px;
 }
 
 .default-view .mc-panel .table {
     border: 1px solid #e4e4e4;
 }
 
-.panel-left {
+.resource-list .panel-left {
     width: 50%;
     float: left;
 }
 
-.panel-right {
+.resource-list .panel-right {
     width: 50%;
     float: right;
+}
+
+.resource-list .panel-right .table .detail-th {
+    border-left-style: hidden;
 }
 
 .default-view .mc-panel .table .detail-th {
     width: 127px;
     text-align: right;
     padding-right: 10px;
-    background-color: #f2f2f2;
-    border: 1px solid #e4e4e4;
+    background-color: #f9f9f9;
 }
 
 .default-view .mc-panel .table .detail-td {
     text-align: left;
     padding-left: 10px;
+}
+
+.default-view .mc-panel .resource-show {
+    width: 100%;
+    height: 100%;
+    text-align: center;
 }

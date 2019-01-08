@@ -2,6 +2,7 @@
 
 use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\OrderSearch;
+use common\utils\DateUtil;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -111,7 +112,7 @@ $this->title = Yii::t('app', 'Resources');
                             'style' => 'width: 70px',
                         ],
                         'value' => function($data) {
-                            return $data['duration'];
+                            return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
                         },
                     ],
                     [

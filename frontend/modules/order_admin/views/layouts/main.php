@@ -113,10 +113,10 @@ $html = <<<Html
                     <span>{$userName}</span>
                 </div>
                 <div class="set-statistics">
-                    <div class="setting">
+                    <div class="setting" title="设置">
                         <a href="/order_admin/user-info/setting"><i class="glyphicon glyphicon-cog"></i></a>
                     </div>
-                    <div class="statistics">
+                    <div class="statistics" title="统计">
                         <a href="/order_admin/user-info/statistics"><i class="glyphicon glyphicon-stats"></i></a>
                     </div>
                 </div>

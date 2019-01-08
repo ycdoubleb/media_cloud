@@ -39,10 +39,10 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
                     'class' => 'btn btn-highlight btn-flat', 'title' => '立即购买']) . '&nbsp;';
                 echo Html::a('<i class="glyphicon glyphicon-th-list"></i>', 
                     array_merge(['index'], array_merge($filters, ['pages' => 'list'])),
-                        ['id' => 'list', 'title' => '列表模式']);
+                        ['id' => 'list', 'title' => '列表显示']);
                 echo Html::a('<i class="glyphicon glyphicon-th-large"></i>',
                     array_merge(['index'], array_merge($filters, ['pages' => 'chart'])),
-                        ['id' => 'chart', 'title' => '图表模式']);
+                        ['id' => 'chart', 'title' => '图表显示']);
                 ?>
             </div>
         </div>
@@ -139,9 +139,9 @@ $js = <<<JS
             isPageLoading = true;   //设置已经加载当中...
             var params = $.extend($params_js, {page: (target_page + 1)});  //传值
             $.get(url, params, function(rel){
-                isPageLoading = false;  //取消设置加载当中...
-                var data = rel.data;     //获取返回的数据
-                page = Number(data.page);    //当前页
+                isPageLoading = false;      //取消设置加载当中...
+                var data = rel.data;        //获取返回的数据
+                page = Number(data.page);   //当前页
                 //请求成功返回数据，否则提示错误信息
                 if(rel['code'] == '200'){
                     for(var i in data.result){
@@ -152,7 +152,9 @@ $js = <<<JS
                             $(this).find(".checkbox").removeClass('hidden');
                         }, function(){
                             $(this).removeClass('hover');
-                            $(this).find(".checkbox").addClass('hidden');
+                            if(!$(this).find(".checkbox").is(':checked')){  //选中时不再隐藏
+                                $(this).find(".checkbox").addClass('hidden');
+                            }
                         });
                     }
                     //如果当前页大于最大页数显示“没有更多了”
@@ -175,7 +177,6 @@ $js = <<<JS
         
     // 单击全选或取消全选
     $('input[name="selection_all"]').click(function(){
-        console.log(111);
         if($(this).is(':checked')){
             $('input[name="selection[]"]').each(function(){
                 $(this).prop("checked",true);
@@ -192,8 +193,7 @@ $js = <<<JS
         var many_check = $("input[name='selection[]']:checked");
         var ids = "";
         $(many_check).each(function(){
-            console.log($(this).parents('tr').attr('data-value'));
-            ids += $(this).parents('tr').attr('data-value')+',';                       
+            ids += $(this).val()+',';                    
         });
         // 去掉最后一个逗号
         if (ids.length > 0) {
@@ -201,9 +201,7 @@ $js = <<<JS
         }else{
             alert('请选择至少一条记录！'); return false;
         }
-        // console.log(ids);
         var url=$(this).attr('data-url');
-        // console.log(url);
         $.post(url, {ids});
     });
         
@@ -212,8 +210,7 @@ $js = <<<JS
         var many_check = $("input[name='selection[]']:checked");
         var ids = "";
         $(many_check).each(function(){
-            console.log($(this).parents('tr').attr('data-value'));
-            ids += $(this).parents('tr').attr('data-value')+',';                       
+            ids += $(this).val()+',';                       
         });
         // 去掉最后一个逗号
         if (ids.length > 0) {
@@ -221,9 +218,7 @@ $js = <<<JS
         }else{
             alert('请选择至少一条记录！'); return false;
         }
-        // console.log(ids);
         var url=$(this).attr('data-url');
-        // console.log(url);
         //$.post(url, {ids});
         window.location.href = url + "?id=" + ids;
     });

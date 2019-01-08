@@ -15,15 +15,15 @@ class ImagePicker extends WebuploaderInput{
     
     public function __construct($config = array()) {
         $this->pluginOptions['fileNumLimit'] = 1;
-        parent::__construct($config);
-    }
-    
-    public function init(){
         $this->pluginOptions['accept'] = [
             'title' => '选择图片',
             'extensions' => 'gif,jpg,jpeg,bmp,png',
             'mimeTypes' => 'image/*',
         ];
+        parent::__construct($config);
+    }
+    
+    public function init(){
         $this->pluginOptions['type'] = self::TYPE_TILE;
         $this->pluginOptions['targetAttribute'] = 'url';
         

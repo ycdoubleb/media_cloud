@@ -45,12 +45,12 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         <!--箭头-->
         <img src="/imgs/site/seg_green.png">
         <!--付款成功后变绿-->
-        <div class="success-payment progress-block <?= $model->play_status == 1 ? 'active' : '';?>">
+        <div class="success-payment progress-block <?= $model->play_status == 11 ? 'active' : '';?>">
             付款成功<br>
-            <?= $model->play_status == 1 ? date('Y-m-d H:i', $model->play_at) : '';?>
+            <?= $model->play_status == 11 ? date('Y-m-d H:i', $model->play_at) : '';?>
         </div>
         <!--箭头 付款成功后变绿-->
-        <img src="/imgs/site/seg_<?= $model->play_status == 1 ? 'green' : 'default';?>.png">
+        <img src="/imgs/site/seg_<?= $model->play_status == 11 ? 'green' : 'default';?>.png">
         <!--确认开通后变绿-->
         <div class="confirm-open progress-block <?= $model->order_status == 11 ? 'active' : '';?>">
             确认开通<br>

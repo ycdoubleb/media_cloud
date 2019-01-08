@@ -1,6 +1,7 @@
 <?php
 
 use common\components\aliyuncs\Aliyun;
+use common\utils\DateUtil;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -63,7 +64,7 @@ use yii\helpers\Html;
                     'style' => 'width: 90px',
                 ],
                 'value' => function($data) {
-                    return $data['duration'];
+                    return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
                 },
             ],
             [

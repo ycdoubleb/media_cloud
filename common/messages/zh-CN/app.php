@@ -52,7 +52,7 @@ return [
     'Week Fri' => '周五',
     'Week Sat' => '周六',
     'Week Sun' => '周日',
-    'Confirm At' => '创建时间',
+    'Confirm At' => '确认时间',
     'Created At' => '创建时间',
     'Updated At' => '更新时间',
     'Start Time' => '开始时间',
@@ -65,6 +65,17 @@ return [
     'First Half Year' => '上半年',
     'Next Half Year' => '下半年',
     'Full Year' => '一整年',
+    'Statistics-Prev-Week' => '上周',
+    'Statistics-This-Week' => '本周',
+    'Statistics-Prev-Month' => '上月',
+    'Statistics-This-Month' => '本月',
+    'Statistics-First-Half-Year' => '上半年',
+    'Statistics-Next-Half-Year' => '下半年',
+    'Statistics-Full-Year' => '全年',
+    'First Season' => '第一季',
+    'Second Season' => '第二季',
+    'Third Season' => '第三季',
+    'Fourth Season' => '第四季',
     
     //公共-导航
     'Home' => '首页',
@@ -452,7 +463,11 @@ return [
     'Buy' => '购买',
     'Checking' => '核对',
     'Payment' => '支付',
+    'Voucher' => '凭证',
     'Checkout Success' => '下单成功',
     'Order Verification' => '订单核查',
+    'Offline Payment' => '线下支付',
+    'Cart' => '购物车',
+    'Personal' => '个人',
     
 ];

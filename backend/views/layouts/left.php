@@ -89,6 +89,17 @@ use common\widgets\Menu;
                         ],
                     ],
                     [
+                        'label' => '运营管理',
+                        'icon' => 'bars',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/media_config/category']],
+                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/media_config/type/index']],
+                            ['label' => '资源运营', 'icon' => 'circle-o', 'url' => ['/media_config/dir']],
+                            ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/media_config/type-detail/index']],
+                        ],
+                    ],
+                    [
                         'label' => '帮助中心',
                         'icon' => 'bars',
                         'url' => '#',

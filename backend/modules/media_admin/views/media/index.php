@@ -87,8 +87,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => Yii::t('app', 'Thumb Image'),
                     'format' => 'raw',
-                    'value' => function($model){
-                        return Html::img($model->cover_url, ['width' => 87, 'height' => 74]);
+                    'value' => function($model) use($iconMap){
+                        $cover_url = '';
+                        if($model->cover_url != null){
+                            $cover_url = $model->cover_url;
+                        }else if(isset($iconMap[$model->ext])){
+                            $cover_url = $iconMap[$model->ext];
+                        }
+                        return Html::img($cover_url, ['width' => 87, 'height' => 74]);
                     },
                     'headerOptions' => [
                         'style' => [

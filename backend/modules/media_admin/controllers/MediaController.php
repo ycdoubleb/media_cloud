@@ -50,16 +50,19 @@ class MediaController extends Controller
     {
         $searchModel = new MediaSearch();
         $results = $searchModel->search(Yii::$app->request->queryParams);
+        $medias = $results['data']['medias']; //所有媒体数据
+        $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');        
         
         return $this->render('index', [
             'searchModel' => $searchModel,
             'filters' => $results['filter'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
-                'allModels' => $results['data']['medias'],
+                'allModels' => $medias,
                 'key' => 'id'
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
     }
 

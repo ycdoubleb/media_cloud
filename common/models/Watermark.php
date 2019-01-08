@@ -90,6 +90,7 @@ class Watermark extends ActiveRecord
     public function rules()
     {
         return [
+            [['name'], 'required'],
             [['type', 'is_del', 'is_selected', 'created_at', 'updated_at'], 'integer'],
             [['width', 'height', 'dx', 'dy'], 'number'],
             [['name'], 'string', 'max' => 50],

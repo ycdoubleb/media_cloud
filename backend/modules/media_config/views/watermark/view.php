@@ -28,18 +28,25 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Yii::t('app', '{Basic}{Info}',[
                 'Basic' => Yii::t('app', 'Basic'), 'Info' => Yii::t('app', 'Info'),
             ]) ?>
-            <div class="btn-group pull-right">
+            
+            <div class="pull-right">
                 
-                <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']) ?>
+                <?php 
+                    // 更新按钮
+                    echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat']);
+                    // 删除按钮
+                    echo ' '. Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+                        'class' => 'btn btn-danger btn-flat',
+                        'data' => [
+                            'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                            'method' => 'post',
+                        ],
+                    ]);
+                    
+                ?>
                 
-                <?= ' '. Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-                    'class' => 'btn btn-danger btn-flat',
-                    'data' => [
-                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                        'method' => 'post',
-                    ],
-                ]) ?>
             </div>
+            
         </div>
         
         <?= DetailView::widget([

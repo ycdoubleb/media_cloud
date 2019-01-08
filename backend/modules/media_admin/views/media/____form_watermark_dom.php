@@ -8,9 +8,7 @@ WatermarkAsset::register($this);
 
 // 加载 ITEM_DOM 模板 
 $water_item_dom = '<div class="media-watermark">';
-$water_item_dom .= Html::checkbox('Media[mts_watermark_ids][]', false, [
-    'value' => '{%id%}', 'onchange' => 'checkedWatermark($(this))'
-]);
+$water_item_dom .= Html::checkbox('Media[mts_watermark_ids][]', false, ['value' => '{%id%}']);
 $water_item_dom .= Html::img('{%path%}', ['width' => 64, 'height' => 40]);
 $water_item_dom .= '</div>';
 $item_dom = json_encode($water_item_dom);
@@ -61,41 +59,55 @@ $wateSelected = json_encode([]);
     </div>
 </div>
 
-<?php
-$js = <<<JS
-    var watermark,
-        wateFiles = $wateFiles,                 // 水印文件
-        isNewRecord = $isNewRecord,             // 获取flash上传组件路径
-        wateSelected = $wateSelected,           // 已选中的水印
-        item_dom = $item_dom,                   // 加载 ITEM_DOM 模板 
-        isPageLoading = false;                  // 取消加载Loading状态
-        
-    // 初始化水印组件
-    watermark = new wate.Watermark({container: '#preview-watermark'});
-    /** 显示客户下已启用的水印图 */
-    $.each(wateFiles, function(){
-        if(!isPageLoading) $('#media-mts_watermark_ids').html('');
-        //创建情况下显示默认选中，更新情况下如果id存在已选的水印里则this.is_selected = true，否则不显示选中
-        if(!isNewRecord){
-            this.is_selected = $.inArray(this.id, wateSelected) != -1 ? true : false;
-            console.log(this.is_selected);
-        }
-        var wate = $(Wskeee.StringUtil.renderDOM(item_dom, this)).appendTo($('#media-mts_watermark_ids'));
-        wate.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', this.is_selected);
-        //如果是默认选中，则在预览图上添加该选中的水印
-        if(this.is_selected) watermark.addWatermark('vkcw' + this.id, this);
-        isPageLoading = true;
-    });
-        
+<script type="text/javascript">
+
+    var watermark;
+    var wateFiles = <?= $wateFiles ?>;                 // 水印文件
+    var isNewRecord = <?= $isNewRecord ?>;             // 获取flash上传组件路径
+    var wateSelected = <?= $wateSelected ?>;           // 已选中的水印
+    var item_dom = <?= $item_dom ?>;                   // 加载 ITEM_DOM 模板 
+    var isPageLoading = false;                          // 取消加载Loading状态
+    
+    /**
+     * html 加载完成后初始化所有组件
+     * @returns {void}
+     */
+    window.onload = function(){
+        initWatermark();        //初始水印
+    }
+            
+    //初始化组件        
+    function initWatermark(){
+        watermark = new wate.Watermark({container: '#preview-watermark'});
+        /** 显示客户下已启用的水印图 */
+        $.each(wateFiles, function(){
+            if(!isPageLoading) $('#media-mts_watermark_ids').html('');
+            //创建情况下显示默认选中，更新情况下如果id存在已选的水印里则this.is_selected = true，否则不显示选中
+            if(!isNewRecord){
+                this.is_selected = $.inArray(this.id, wateSelected) != -1 ? true : false;
+            }
+            var wate = $(Wskeee.StringUtil.renderDOM(item_dom, this)).appendTo($('#media-mts_watermark_ids'));
+            wate.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', this.is_selected);
+            //check 更改后通知preview显示更改
+            wate.find('input').on('change',function(){
+                checkedWatermark($(this));
+            });
+            //如果是默认选中，则在预览图上添加该选中的水印
+            if(this.is_selected) watermark.addWatermark('vkcw' + this.id, this);
+            isPageLoading = true;
+        });
+    }
+    
     /**
      * 选中水印图
-     * @param {Object} _this
+     * @param {object} _this
+     * @returns {undefined}
      */
     function checkedWatermark(_this){
         /* 判断用户是否有选中水印图，如果选中，则添加水印，否则删除水印 */
         if($(_this).is(":checked")){
-            $.each(waterFiles, function(){
-                //如果客户水印的id等于用户选中的值，则在预览图上添加水印
+            $.each(wateFiles, function(){
+                //如果水印的id等于用户选中的值，则在预览图上添加水印
                 if(this.id == $(_this).val()){
                     watermark.addWatermark('vkcw' + this.id, this);
                     return false;
@@ -105,7 +117,5 @@ $js = <<<JS
             watermark.removeWatermark('vkcw' + $(_this).val());
         }
     }
-    
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>
+
+</script>

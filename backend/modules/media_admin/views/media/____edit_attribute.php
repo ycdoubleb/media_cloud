@@ -22,7 +22,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['update', 'id' => $model->id],
+        'action' => ['edit-attribute', 'id' => $model->id],
     ]); ?>
     
     <div class="modal-dialog modal-lg" role="document">

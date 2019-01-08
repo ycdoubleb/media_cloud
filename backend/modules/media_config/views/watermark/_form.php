@@ -142,6 +142,7 @@ $path = !$model->isNewRecord ? $model->url : '';
     <?= $form->field($model, 'url')->widget(ImagePicker::class, [
         'id' => 'watermark-oss_key',
         'pluginOptions' =>[
+            'fileSingleSizeLimit' => 1*1024*1024,
             //设置允许选择的文件类型
             'accept' => [
                 'mimeTypes' => 'image/png',
@@ -149,6 +150,7 @@ $path = !$model->isNewRecord ? $model->url : '';
         ],
         'pluginEvents' => [
             'uploadComplete' => 'function(evt, data){uploadComplete(data)}',
+            'fileDequeued' => 'function(evt, file){fileDequeued()}'
 	]
     ])->label(Yii::t('app', '{Watermark}{File}', [
         'Watermark' => Yii::t('app', 'Watermark'), 'File' => Yii::t('app', 'File')
@@ -182,12 +184,12 @@ $path = !$model->isNewRecord ? $model->url : '';
     
     var watermark;
     var ossHost = "<?= $ossHost ?>/";
-    var paths = "<?= $path ?>";
-    var refer_pos = "<?= $model->refer_pos ?>";
-    var width = "<?= $model->width ?>";
-    var height = "<?= $model->height ?>";
-    var shifting_X = "<?= $model->dx ?>";
-    var shifting_Y = "<?= $model->dy ?>";
+    var path = "<?= $path ?>";
+    var pos = "<?= $model->refer_pos ?>";
+    var w = "<?= $model->width ?>";
+    var h = "<?= $model->height ?>";
+    var dx = "<?= $model->dx ?>";
+    var dy = "<?= $model->dy ?>";
            
            
     /**
@@ -205,9 +207,9 @@ $path = !$model->isNewRecord ? $model->url : '';
 
         //添加一个水印
         watermark.addWatermark('vkcw',{
-            refer_pos: refer_pos, path: paths,
-            width: width, height: height, 
-            shifting_X: shifting_X, shifting_Y: shifting_Y
+            refer_pos: pos, path: path,
+            width: w, height: h, 
+            shifting_X: dx, shifting_Y: dy
         });
     }        
                 
@@ -217,9 +219,18 @@ $path = !$model->isNewRecord ? $model->url : '';
      * @returns {undefined}
      */
     function uploadComplete(data){
-        paths = ossHost+data['oss_key'];
+        path = ossHost+data['oss_key'];
         changeRefer_pos();
     }    
+    
+    /**
+     * 删除水印
+     * @returns {undefined}
+     */
+    function fileDequeued(){
+        path = '';
+        changeRefer_pos();
+    }
                 
     /**
      * 变更数值，更改对应参数
@@ -232,7 +243,7 @@ $path = !$model->isNewRecord ? $model->url : '';
             dx = $('input[name="Watermark[dx]').val(),
             dy = $('input[name="Watermark[dy]').val();
         watermark.updateWatermark('vkcw',{
-            refer_pos: pos, path: paths,
+            refer_pos: pos, path: path,
             width: w, height: h, 
             shifting_X: dx, shifting_Y: dy
         });

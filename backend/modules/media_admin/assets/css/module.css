@@ -70,11 +70,6 @@ and open the template in the editor.
     border-top: none;
 }
 
-.form .media-attribute_value,
-.form .media-attribute_tags {
-    position: relative;
-}
-
 .form .media-watermark {
     position: relative;
     display: inline-block;

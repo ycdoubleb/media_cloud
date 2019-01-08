@@ -8,15 +8,12 @@ use yii\web\View;
 
 <!--选择资源-->
 <div class="form-group field-media-file_id">
-    <?=
-    Html::label(Yii::t('app', '{Choice}{Media}：', [
+    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Choice}{Media}：', [
                 'Choice' => Yii::t('app', 'Choice'), 'Media' => Yii::t('app', 'Media')
             ]), 'video-file_id', ['class' => 'col-lg-1 col-md-1 control-label form-label'])
     ?>
     <div class="col-lg-9 col-md-9">
-        <span class="form-must text-danger">*</span>
-        <?=
-        Webuploader::widget([
+        <?= Webuploader::widget([
             'id' => 'uploader-container',
             'name' => 'Media[file_ids]',
             'pluginOptions' => [
@@ -28,13 +25,11 @@ use yii\web\View;
                 'pageSize' => 10,
                 //设置允许选择的文件类型
                 'accept' => [
-//                    'title' => 'Media',
-//                    'extensions' => $extensions,
                     'mimeTypes' => $mimeTypes,
                 ],
             ],
             'pluginEvents' => [
-                'uploadComplete' => 'function(evt, data){console.log(data);window.mediaBatchUpload.init(data);}',
+                'uploadComplete' => 'function(evt, data){window.mediaBatchUpload.init(data);}',
             ],
         ]);
         ?>

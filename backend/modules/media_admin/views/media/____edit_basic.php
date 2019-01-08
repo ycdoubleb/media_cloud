@@ -22,7 +22,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['update', 'id' => $model->id],
+        'action' => ['edit-basic', 'id' => $model->id],
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
             'labelOptions' => [

@@ -90,6 +90,7 @@ class Watermark extends ActiveRecord
     public function rules()
     {
         return [
+            [['name'], 'required'],
             [['type', 'is_del', 'is_selected', 'created_at', 'updated_at'], 'integer'],
             [['width', 'height', 'dx', 'dy'], 'number'],
             [['name'], 'string', 'max' => 50],
@@ -123,10 +124,42 @@ class Watermark extends ActiveRecord
     
     public function afterFind()
     {
-        $this->width = self::valuable($this->width);
-        $this->height = self::valuable($this->height);
+        if($this->width != 0){
+            $this->width = self::valuable($this->width);
+        }
+        if($this->height != 0){
+            $this->height = self::valuable($this->height);
+        }
+        
         $this->dx = self::valuable($this->dx);
         $this->dy = self::valuable($this->dy);
+    }
+    
+    /**
+     * 获取已启用的所有水印图
+     * @param integer|array $mw_id      媒体水印图id
+     * @return array
+     */
+    public static function getEnabledWatermarks($mw_id = null)
+    {
+        //查询水印图
+        $query = self::find()->from(['Watermark' => self::tableName()]);
+        
+        // 所需要的字段
+        $query->select([
+            'Watermark.id', 'Watermark.width', 'Watermark.height', 
+            'Watermark.dx AS shifting_X', 'Watermark.dy AS shifting_Y', 
+            'Watermark.refer_pos', "if(Watermark.is_selected = 1, 'true', 'false') AS is_selected", 
+            'Watermark.url AS path'
+        ]);        
+        
+        //必要条件
+        $query->where(['Watermark.is_del' => 0]);
+        
+        // 按id查询
+        $query->andFilterWhere(['Watermark.id' => $mw_id]);
+        
+        return $query->asArray()->all();
     }
     
     /**

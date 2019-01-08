@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  * @property string $price          价格
  * @property string $duration       时长
  * @property string $size           大小(字节 b)
+ * @property string $ext            拓展名/后缀名
  * @property int $status            普通状态 1待入库 2已入库 3已发布
  * @property int $mts_status        转码状态 0无转码 1未转码 2转码中 3已转码 4转码失败
  * @property int $del_status        删除状态 0正常 1申请删除 2逻辑删除 3物理删除
@@ -37,6 +38,7 @@ use yii\db\ActiveRecord;
  * @property AliyunMtsService[] $aliyunMtsServices
  * @property Dir $dir
  * @property MediaType $mediaType
+ * @property MediaDetail $detail
  * @property MediaTagRef[] $mediaTagRefs
  * @property Uploadfile $uploadfile
  * @property AdminUser $owner
@@ -56,17 +58,16 @@ class Media extends ActiveRecord
     /** 已发布 */
     const STATUS_ALREADY_PUBLISH = 3;
     
-    /** 未转码 */
-    const MTS_STATUS_NO = 0;
-
+    /** 无转码 */
+    const MTS_STATUS_NONE = 0;
+    /** 无转码 */
+    const MTS_STATUS_NO = 1;
     /** 转码中 */
-    const MTS_STATUS_DOING = 1;
-
+    const MTS_STATUS_DOING = 2;
     /** 已转码 */
-    const MTS_STATUS_YES = 2;
-
+    const MTS_STATUS_YES = 3;
     /** 转码失败 */
-    const MTS_STATUS_FAIL = 5;
+    const MTS_STATUS_FAIL = 4;
     
     /** 删除状态-申请 */
     const DEL_STATUS_APPROVE = 1;
@@ -92,6 +93,7 @@ class Media extends ActiveRecord
      * @var array 
      */
     public static $mtsStatusName = [
+        self::MTS_STATUS_NONE => '无转码',
         self::MTS_STATUS_NO => '未转码',
         self::MTS_STATUS_DOING => '转码中',
         self::MTS_STATUS_YES => '已转码',
@@ -125,6 +127,7 @@ class Media extends ActiveRecord
 //            [['type_id'], 'required'],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
+            [['ext'], 'string', 'max' => 10],
             [['cover_url', 'url'], 'string', 'max' => 255],
         ];
     }
@@ -179,6 +182,14 @@ class Media extends ActiveRecord
     public function getMediaType()
     {
         return $this->hasOne(MediaType::className(), ['id' => 'type_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getDetail()
+    {
+        return $this->hasOne(MediaDetail::className(), ['media_id' => 'id']);
     }
 
     /**

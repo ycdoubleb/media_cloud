@@ -45,19 +45,6 @@ class TypeController extends Controller
     }
 
     /**
-     * 显示单个媒体类型配置。
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * 创建 媒体类型配置
      * 如果创建成功，浏览器将被重定向到“index”页面。
      * @return mixed

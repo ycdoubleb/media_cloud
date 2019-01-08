@@ -138,7 +138,7 @@ class Uploadfile extends ActiveRecord {
             $arr['thumb_url'] = Aliyun::absolutePath($arr['thumb_url']);
         }
         $arr['url'] = ($arr['oss_key'] == "" ? "" : Aliyun::absolutePath($arr['oss_key']));
-        $arr['metadata'] = json_decode($arr['metadata']);
+        $arr['metadata'] = json_decode($arr['metadata'],true);
         return $arr;
     }
 }

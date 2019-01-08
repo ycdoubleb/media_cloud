@@ -36,8 +36,6 @@ class MediaAction extends ActiveRecord
         'update' => '修改',
         'delete' => '删除',
         'move' => '移动',
-        'create-catalog' => '新增',
-        'update-catalog' => '修改',
     ];
     
     /**
@@ -111,6 +109,11 @@ class MediaAction extends ActiveRecord
      */
     public static function savaMediaAction($media_id, $content, $title = null)
     {
+        /** 如何是默认的CRUD标题则为默认的 */
+        if($title != null && isset(self::$titleMap[Yii::$app->controller->action->id])){
+            $title = self::$titleMap[Yii::$app->controller->action->id];
+        }
+        
         $data = []; // 返回的数据
         /** 开启事务 */
         $trans = Yii::$app->db->beginTransaction();
@@ -118,7 +121,7 @@ class MediaAction extends ActiveRecord
         {  
             $model = new MediaAction([
                 'media_id' => $media_id,
-                'title' => $title == null ? self::$titleMap[Yii::$app->controller->action->id] : $title,
+                'title' => $title,
                 'content' => $content,
                 'created_by' => Yii::$app->user->id,
             ]);

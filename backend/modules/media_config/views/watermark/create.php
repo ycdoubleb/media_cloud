@@ -1,17 +1,18 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\Watermark;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\media\Watermark */
+/* @var $this View */
+/* @var $model Watermark */
 
-$this->title = Yii::t('app', 'Create Watermark');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Watermarks'), 'url' => ['index']];
+$this->title = Yii::t('app', '{Create}{Watermark}', [
+    'Create' => Yii::t('app', 'Create'), 'Watermark' => Yii::t('app', 'Watermark')
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Watermark'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="watermark-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

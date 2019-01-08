@@ -38,6 +38,10 @@ return [
         'ueditor' => [
             'class' => 'common\modules\ueditor\Module',
         ],
+        //外部访问模块
+        'external' => [
+            'class' => 'common\modules\external\Module',
+        ],
         //日期控制组件
         'datecontrol' => [
             'class' => '\kartik\datecontrol\Module',
@@ -51,6 +55,6 @@ return [
         'gridviewKrajee' => [
             'class' => '\kartik\grid\Module',
         // your other grid module settings
-        ]
+        ],
     ],
 ];

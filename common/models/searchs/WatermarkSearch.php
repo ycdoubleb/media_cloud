@@ -5,6 +5,7 @@ namespace common\models\searchs;
 use common\models\Watermark;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 
 /**
  * WatermarkSearch represents the model behind the search form of `common\models\media\Watermark`.
@@ -33,7 +34,7 @@ class WatermarkSearch extends Watermark
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * 创建应用搜索查询的数据提供程序实例
      *
      * @param array $params
      *
@@ -43,21 +44,9 @@ class WatermarkSearch extends Watermark
     {
         $query = Watermark::find();
 
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
+        // 必要条件
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,
@@ -71,11 +60,17 @@ class WatermarkSearch extends Watermark
             'updated_at' => $this->updated_at,
         ]);
 
+        // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'url', $this->url])
             ->andFilterWhere(['like', 'oss_key', $this->oss_key])
             ->andFilterWhere(['like', 'refer_pos', $this->refer_pos]);
 
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $query->all(),
+            'key' => 'id'
+        ]);
+        
         return $dataProvider;
     }
 }

@@ -63,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'itemOptions' => [
                     'style' => 'width: 175px; display: inline-block;',
                 ],
-            ])->label(Yii::t('app', '{Storage}{Dir}：', [
+            ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Storage}{Dir}：', [
                 'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
             ])) ?>
             
@@ -82,6 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
             
             <?= $this->render('____form_watermark_dom', [
                 'isNewRecord' => $model->isNewRecord ? 1 : 0,
+                'wateFiles' => $wateFiles,
             ]) ?>
             
         </div>

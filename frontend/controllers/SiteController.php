@@ -1,17 +1,18 @@
 <?php
 namespace frontend\controllers;
 
-use Yii;
-use yii\base\InvalidParamException;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+use common\components\aliyuncs\MediaAliyunAction;
 use common\models\LoginForm;
+use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
-use frontend\models\ContactForm;
+use Yii;
+use yii\base\InvalidParamException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -53,7 +54,7 @@ class SiteController extends Controller
      * {@inheritdoc}
      */
     public function actions()
-    {
+    {        
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -72,6 +73,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        MediaAliyunAction::addVideoTranscode('1');
+        MediaAliyunAction::addVideoTranscode('2');
+        MediaAliyunAction::addVideoTranscode('3');
+        MediaAliyunAction::addVideoTranscode('4');
+        
         return $this->render('index');
     }
 

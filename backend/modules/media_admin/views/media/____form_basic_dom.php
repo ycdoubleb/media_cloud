@@ -3,6 +3,7 @@
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\widgets\depdropdown\DepDropdown;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
@@ -41,3 +42,19 @@ use yii\widgets\ActiveForm;
 ])->label(Yii::t('app', '{Media}{Price}：', [
     'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
 ])) ?>
+
+<!--媒体内容-->
+<div class="form-group field-media-content">
+    <?= Html::label(Yii::t('app', '{Media}{Content}：', [
+        'Media' => Yii::t('app', 'Media'), 'Content' => Yii::t('app', 'Content')
+    ]), 'field-media-content', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    <div class="col-lg-7 col-md-7">
+        <?= Html::textarea('Media[content]', !empty($model->detail) ? $model->detail->content : null, [
+            'id' => 'MediaApprove-content', 
+            'class' => 'form-control',
+            'placeholder' => '请输入媒体内容',
+            'maxlength' => true,
+            'rows' => 10,
+        ]) ?>
+    </div>
+</div>

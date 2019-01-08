@@ -1,12 +1,13 @@
 <?php
 
-use common\widgets\webuploader\WebUploaderAsset;
+use common\widgets\ueditor\UeditorAsset;
+use common\widgets\webuploader\Webuploader;
 use yii\web\View;
 
 /* @var $this View */
 
 $this->title = 'My Yii Application';
-WebUploaderAsset::register($this);
+UeditorAsset::register($this);
 ?>
 <div class="site-index">
 
@@ -19,50 +20,37 @@ WebUploaderAsset::register($this);
     </div>
 
     <div class="body-content">
-        <div id="uploader-container"></div>
+        <div id="uploader-container">
+            <?=
+            Webuploader::widget([
+                'name' => 'files',
+                'pluginEvents' => [
+                    'ready' => 'function(uploader){console.log(uploader);}',
+                    'uploadComplete' => 'function(evt, data){console.log(data);}',
+                    'uploadFinished' => 'function(evt){console.log("上传完成");}',
+            ]]);
+            ?>
+        </div>
+        <div><textarea id="ueditor-container"></textarea></div>
     </div>
 </div>
 <script>
-    /**
-     * 加载文件上传
-     */
-    window.uploader;
     window.onload = function () {
-        require(['euploader'], function (euploader) {
-            //公共配置
-            window.config = {
-                swf: "$swfpath" + "/Uploader.swf",
-                // 文件接收服务端。
-                server: '/webuploader/default/upload',
-                //检查文件是否存在
-                checkFile: '/webuploader/default/check-file',
-                //分片合并
-                mergeChunks: '/webuploader/default/merge-chunks',
-                //自动上传
-                auto: true,
-                //开起分片上传
-                chunked: true,
-                name: 'Video[file_id]',
-                // 上传容器
-                container: '#uploader-container',
-                //验证文件总数量, 超出则不允许加入队列
-                fileNumLimit: 1,
-                //指定接受哪些类型的文件
-                accept: {
-                    title: 'Material',
-                    extensions: 'mp4,mp3,gif,jpg,jpeg,bmp,png,doc,docx,txt,xls,xlsx,ppt,pptx',
-                    mimeTypes: 'video/mp4,audio/mp3,image/*,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx',
-                },
-                formData: {
-                    _csrf: "$csrfToken",
-                }
-
-            };
-            //视频
-            window.uploader = new euploader.Uploader(window.config, euploader.FilelistView);
-            $(window.uploader).on('uploadComplete',function(f,d){
-                console.log(d);
-            });
+        var ue = UE.getEditor('ueditor-container', {
+            initialFrameHeight: 200,
+            maximumWords: 100000,
+            toolbars: [
+                [
+                    'fullscreen', 'source', '|',
+                    'paragraph', 'fontfamily', 'fontsize', '|',
+                    'forecolor', 'backcolor', '|',
+                    'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'removeformat', 'formatmatch', '|',
+                    'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', '|',
+                    'insertorderedlist', 'insertunorderedlist', 'simpleupload', 'horizontal', '|',
+                    'selectall', 'cleardoc',
+                    'undo', 'redo',
+                ]
+            ]
         });
     }
 

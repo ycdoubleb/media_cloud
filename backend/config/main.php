@@ -76,6 +76,10 @@ return [
         'media_config' => [
             'class' => 'backend\modules\media_config\Module',
         ],
+        //运营管理
+        'operation_admin' => [
+            'class' => 'backend\modules\operation_admin\Module',
+        ],
         //帮助中心管理
         'helpcenter_admin' => [
             'class' => 'backend\modules\helpcenter_admin\Module',
@@ -88,6 +92,7 @@ return [
             'site/*',
             'webuploader/*',
             'ueditor/*',
+            'external/*',
             'gii/*',
             'debug/*',
         // The actions listed here will be allowed to everyone including guests.

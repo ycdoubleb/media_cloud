@@ -24,9 +24,8 @@ TagsInputAsset::register($this);
 ?>
 
 <div class="form-group field-media-attribute_value required">
-    <?= Html::label($attr['name'] . '：', 'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
-    <div class="col-lg-7 col-md-7 media-attribute_value">
-        <span class="form-must text-danger">*</span>
+    <?= Html::label('<span class="form-must text-danger">*</span>' . $attr['name'] . '：', 'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    <div class="col-lg-7 col-md-7">
         <?php
             switch ($attr['input_type']){
                 case MediaAttribute::SINGLE_SELECT_INPUT_TYPE:
@@ -37,19 +36,18 @@ TagsInputAsset::register($this);
                         'value' => isset($attrSelected) ? $attrSelected[$attr['id']] : null,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'All')],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
+                        'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => [
 //                            'change' => 'function(){ validateAttributeValue($(this))}'
                         ]
                     ]);
                     break;
                 case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
-                    echo Html::checkboxList("Media[attribute_value][{$attr['id']}][]", isset($attrSelected) ? explode('，', $attrSelected[$attr['id']]) : null, $attrValMap[$attr['id']], [
+                    echo Html::checkboxList("Media[attribute_value][{$attr['id']}][]", 
+                        isset($attrSelected) ? explode('，', $attrSelected[$attr['id']]) : null, $attrValMap[$attr['id']], [
+                        'style' => 'margin-right: -35px;',
                         'itemOptions'=>[
 //                            'onchange' => "validateCheckboxList()",
-//                            'id' => "media-attribute_value-{$attr['id']}",
                             'labelOptions'=>[
                                 'style'=>[
                                     'margin'=>'5px 25px 10px 0px',
@@ -70,9 +68,8 @@ TagsInputAsset::register($this);
 
 <!--标签-->
 <div class="form-group field-media-tag_ids required">
-    <?= Html::label(Yii::t('app', 'Tag') . '：', 'field-media-tag_ids', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
-    <div class="col-lg-7 col-md-7 media-attribute_tags">
-        <span class="form-must text-danger">*</span>
+    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Tag') . '：', 'field-media-tag_ids', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    <div class="col-lg-7 col-md-7">
         <?= Html::textInput('Media[tag_ids]', isset($tagsSelected) ? implode(',', $tagsSelected) : null, [
             'id' => 'media-tag_ids', 'class' => 'form-control', 'data-role' => 'tagsinput', 
 //            'placeholder' => '请输入至少5个标签'

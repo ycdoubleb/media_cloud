@@ -73,10 +73,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        
         MediaAliyunAction::addVideoTranscode('1');
         MediaAliyunAction::addVideoTranscode('2');
         MediaAliyunAction::addVideoTranscode('3');
+        MediaAliyunAction::addVideoTranscode('4');
         
         return $this->render('index');
     }

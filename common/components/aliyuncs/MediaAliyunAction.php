@@ -8,6 +8,7 @@ use common\models\media\MediaDetail;
 use common\models\media\MediaType;
 use common\models\media\VideoUrl;
 use common\models\Watermark;
+use common\modules\webuploader\models\Uploadfile;
 use common\utils\EefileUtils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -55,8 +56,8 @@ class MediaAliyunAction {
  
         //检查是否已经转码或者在转码中
         if ($force || $media->mts_status != Media::MTS_STATUS_YES) {
-            //源文件
-            $source_file = VideoUrl::findOne(['media_id' => $media->id, 'is_del' => 0, 'is_original' => 1]);
+            //添加源视频格式
+            $source_file = self::addMediaSource($media);
             //媒体详情
             $media_detail = MediaDetail::findOne(['media_id' => $media->id]);
             //水印配置
@@ -108,6 +109,85 @@ class MediaAliyunAction {
                 $media->mts_status = Media::MTS_STATUS_FAIL;
             }
             $media->save(false, ['mts_status']);
+        }
+    }
+
+    /**
+     * 添加媒体源始格式
+     * @param Media $media
+     * @return VideoUrl 源格式
+     */
+    private static function addMediaSource($media) {
+        if ($media->is_link) {
+            return self::addLinkMediaSource($media);
+        }
+        //找到源上传文件
+        $file = Uploadfile::findOne(['id' => $media->file_id]);
+        if (!$file) {
+            throw new NotFoundHttpException("添加媒体源始格式失败，找不到媒体文件！");
+        }
+        $file_data = $file->toProcessedArray();
+        //更新旧数据
+        $source_video_url = VideoUrl::findOne(['media_id' => $media->id, 'is_original' => 1]);
+        if (!$source_video_url) {
+            $source_video_url = new VideoUrl();
+        }
+        $source_video_url->setAttributes([
+            'media_id' => $media->id,
+            'name' => VideoUrl::$videoLevelName[0],
+            'url' => $file_data['url'],
+            'oss_key' => $file_data['oss_key'],
+            'size' => $file_data['size'],
+            'level' => 0,
+            'width' => $file_data['metadata']['width'],
+            'height' => $file_data['metadata']['height'],
+            'duration' => $file_data['metadata']['duration'],
+            'bitrate' => $file_data['metadata']['bitrate'],
+            'is_original' => 1,
+            'is_del' => 0,
+            'created_by' => $media->created_by,
+        ]);
+        if ($source_video_url->validate() && $source_video_url->save()) {
+            return $source_video_url;
+        } else {
+            throw new \Exception("添加媒体源始格式失败：" . implode(',', $source_video_url->getErrorSummary(true)));
+        }
+    }
+
+    /**
+     * 添加外链媒体源始格式
+     * @param Media $media
+     */
+    private static function addLinkMediaSource($media) {
+        if (!$media->is_link) {
+            return self::addMediaSource($media);
+        }
+        $file = EefileUtils::getVideoData($media->url);
+        $metadata = json_decode($file['metadata'],true);
+
+        //更新旧数据
+        $source_video_url = VideoUrl::findOne(['media_id' => $media->id, 'is_original' => 1]);
+        if (!$source_video_url) {
+            $source_video_url = new VideoUrl();
+        }
+        $source_video_url->setAttributes([
+            'media_id' => $media->id,
+            'name' => VideoUrl::$videoLevelName[0],
+            'url' => $file['oss_key'],
+            'level' => 0,
+            'size' => $file['size'],
+            'width' => $metadata['width'],
+            'height' => $metadata['height'],
+            'duration' => $metadata['duration'],
+            'bitrate' => $metadata['bitrate'],
+            'is_original' => 1,
+            'is_del' => 0,
+            'created_by' => $media->created_by,
+        ]);
+        if ($source_video_url->validate() && $source_video_url->save()) {
+            return $source_video_url;
+        } else {
+            throw new \Exception("添加媒体源始格式失败：" . implode(',', $source_video_url->getErrorSummary(true)));
         }
     }
 
@@ -257,6 +337,8 @@ class MediaAliyunAction {
         
         if($media->mts_status != Media::MTS_STATUS_YES){
             $tran = \Yii::$app->db->beginTransaction();
+            //添加源视频格式
+            self::addLinkMediaSource($media);
             try {
                 /* 分析文件路径 */
                 $media_path_info = pathinfo($media->url);
@@ -268,7 +350,7 @@ class MediaAliyunAction {
                 $time = time();
                 foreach($formats as $index => $format){
                     $file = EefileUtils::getVideoData("$media_path_basepath/$format/{$media_path_info['basename']}");
-                    $metadata = json_decode($file['metadata']);
+                    $metadata = json_decode($file['metadata'],true);
                     if(!$file)continue;
                     $rows []= [
                         $media->id,
@@ -286,7 +368,7 @@ class MediaAliyunAction {
                     ];
                 }                
                 //删除旧关联(不包括源文件关联)
-                VideoUrl::updateAll(['is_del' => 1], ['media_id' => $media_id, 'is_del' => 0, 'is_original' => 0]);
+                VideoUrl::updateAll(['is_del' => 1], ['media_id' => $media->id, 'is_del' => 0, 'is_original' => 0]);
                 //插入新的VideoUrl关联
                 Yii::$app->db->createCommand()->batchInsert(VideoUrl::tableName(), $rowKeys, $rows)->execute();
                 //更改 Media 转码状态

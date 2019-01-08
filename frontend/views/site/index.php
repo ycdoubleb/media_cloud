@@ -1,13 +1,13 @@
 <?php
 
+use common\widgets\ueditor\UeditorAsset;
 use common\widgets\webuploader\Webuploader;
-use common\widgets\webuploader\WebUploaderAsset;
 use yii\web\View;
 
 /* @var $this View */
 
 $this->title = 'My Yii Application';
-WebUploaderAsset::register($this);
+UeditorAsset::register($this);
 ?>
 <div class="site-index">
 
@@ -31,8 +31,27 @@ WebUploaderAsset::register($this);
             ]]);
             ?>
         </div>
+        <div><textarea id="ueditor-container"></textarea></div>
     </div>
 </div>
 <script>
+    window.onload = function () {
+        var ue = UE.getEditor('ueditor-container', {
+            initialFrameHeight: 200,
+            maximumWords: 100000,
+            toolbars: [
+                [
+                    'fullscreen', 'source', '|',
+                    'paragraph', 'fontfamily', 'fontsize', '|',
+                    'forecolor', 'backcolor', '|',
+                    'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'removeformat', 'formatmatch', '|',
+                    'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', '|',
+                    'insertorderedlist', 'insertunorderedlist', 'simpleupload', 'horizontal', '|',
+                    'selectall', 'cleardoc',
+                    'undo', 'redo',
+                ]
+            ]
+        });
+    }
 
 </script>

@@ -28,13 +28,8 @@ use yii\db\ActiveRecord;
  */
 class VideoUrl extends ActiveRecord
 {
-    public static $videoLevelName = [
-        0 => '流畅',
-        1 => '标清',
-        2 => '高清',
-        3 => '超清',
-    ];
-    
+    public static $videoLevelName = ['原始', '流畅', '标清', '高清', '超清',];
+
     /**
      * {@inheritdoc}
      */

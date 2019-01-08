@@ -4,15 +4,15 @@ namespace backend\modules\media_config\controllers;
 
 use common\models\searchs\WatermarkSearch;
 use common\models\Watermark;
+use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * WatermarkController implements the CRUD actions for Watermark model.
  */
-class WatermarkController extends Controller
+class WatermarkController extends GridViewChangeSelfController
 {
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class WatermarkController extends Controller
     }
 
     /**
-     * Lists all Watermark models.
+     * 列出所有水印模型。
      * @return mixed
      */
     public function actionIndex()
@@ -45,7 +45,7 @@ class WatermarkController extends Controller
     }
 
     /**
-     * Displays a single Watermark model.
+     * 显示单个水印模型。
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,26 +58,27 @@ class WatermarkController extends Controller
     }
 
     /**
-     * Creates a new Watermark model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 创建一个新的水印模型。
+     * 如果创建成功，浏览器将被重定向到“视图”页面。
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Watermark();
+        $model->loadDefaultValues();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->renderAjax('create', [
+        return $this->render('create', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Updates an existing Watermark model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * 更新现有的水印模型。
+     * 如果更新成功，浏览器将被重定向到“视图”页面。
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -96,8 +97,8 @@ class WatermarkController extends Controller
     }
 
     /**
-     * Deletes an existing Watermark model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 删除现有的水印模型。
+     * 如果删除成功，浏览器将被重定向到“索引”页面。
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -108,10 +109,31 @@ class WatermarkController extends Controller
 
         return $this->redirect(['index']);
     }
+    
+    /**
+     * 启用 现有的 CustomerWatermark 模型。
+     * @param integer $id          id
+     * @param string $fieldName   字段名
+     * @param integer $value       新值
+     */
+    public function actionEnable($id, $fieldName, $value)
+    {
+        $count = Watermark::find()->where(['is_del' => 0])->count('id');
+        
+        if(!$value && $count >= 20){
+            Yii::$app->getResponse()->format = 'json';
+            return [
+                'result' => 0,
+                'message' => '启用的数量已经达到最大数20条。'
+            ];
+        }
+        
+        parent::actionChangeValue($id, $fieldName, $value);
+    }
 
     /**
-     * Finds the Watermark model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * 基于主键值查找水印模型。
+     * 如果找不到模型，将引发404 HTTP异常。
      * @param string $id
      * @return Watermark the loaded model
      * @throws NotFoundHttpException if the model cannot be found

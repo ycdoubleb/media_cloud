@@ -1,6 +1,7 @@
 <?php
 
 use common\models\media\searchs\WatermarkSearch;
+use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfColumn;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -94,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'Watermark' => Yii::t('app', 'Watermark'), 'Position' => Yii::t('app', 'Position')
                 ]),
                 'value' => function($model){
-                    return CustomerWatermark::$referPosMap[$model->refer_pos];
+                    return Watermark::$referPosMap[$model->refer_pos];
                 },
                 'headerOptions' => [
                     'style' => [
@@ -164,8 +165,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Type}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Type' => Yii::t('app', 'Type')
+                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Watermark}", [
+                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Watermark' => Yii::t('app', 'Watermark')
                                 ]),
                                 'method' => 'post',
                             ],
@@ -183,19 +184,3 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 </div>
-
-<!--加载模态框-->
-<?= $this->render('/layouts/modal'); ?>
-
-<?php
-$js = <<<JS
-    
-    // 弹出媒体类型面板
-    $('#btn-addWatermark, #btn-updateWatermark').click(function(e){
-        e.preventDefault();
-        showModal($(this));
-    });
-    
-JS;
-    //$this->registerJs($js, View::POS_READY);
-?>

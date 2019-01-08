@@ -22,7 +22,7 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['update', 'id' => $model->id],
+        'action' => ['anew-upload', 'id' => $model->id],
     ]); ?>
     
     <div class="modal-dialog modal-lg" role="document">
@@ -62,7 +62,7 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
 $js = <<<JS
         
     // 初始化
-    window.mediaBatchUpload = new mediaupload.MediaBatchUpload({media_url: "update?id={$model->id}"});
+    window.mediaBatchUpload = new mediaupload.MediaBatchUpload({media_url: "anew-upload?id={$model->id}"});
         
     // 提交表单    
     $("#submitsave").click(function(){

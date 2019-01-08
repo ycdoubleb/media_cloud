@@ -73,7 +73,14 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'icon_url', [
                     'template' => "{label}\n<div class=\"col-lg-5 col-md-5\">{input}</div>\n<div class=\"col-lg-5 col-md-5\">{error}</div>",  
                 ])->widget(ImagePicker::class, [
-                    'id' => 'mediatypedetail-icon_url'
+                    'id' => 'mediatypedetail-icon_url',
+                    'pluginOptions' =>[
+                        'fileSingleSizeLimit' => 1*1024*1024,
+                        //设置允许选择的文件类型
+                        'accept' => [
+                            'mimeTypes' => 'image/png',
+                        ],
+                    ],
                 ])->label(Yii::t('app', 'Icon'));?>
                 
                 <!--是否启用-->

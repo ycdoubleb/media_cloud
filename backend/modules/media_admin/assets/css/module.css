@@ -70,9 +70,23 @@ and open the template in the editor.
     border-top: none;
 }
 
-.form .media-attribute_value,
-.form .media-attribute_tags {
+.form .media-watermark {
     position: relative;
+    display: inline-block;
+    width: 92px;
+    height: 70px;
+    margin-right: 10px;
+    font-size: 0px;
+    line-height: 70px;
+    text-align: center;
+    border: 1px solid #e4e4e4;
+}
+
+.form .media-watermark > input[type="checkbox"] {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    margin-top: 0px;
 }
 
 /*******************************************************************************

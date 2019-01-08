@@ -362,6 +362,7 @@ a.desc:after {
     text-align: center;
     vertical-align: middle;
     white-space: normal;
+    word-wrap: break-word;
 }
 
 .table .detail-th {
@@ -387,21 +388,16 @@ a.desc:after {
  * 自定义form的样式
  *
 ********************************************************************************/
-.form .form-group {
-    position: relative;
-}
-
 .form .form-group .form-label {
     padding: 10px 0px;
     color: #999999;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .form .form-group .form-must {
-    position: absolute;
-    top: 5px;
-    right: -10px;
-    font-size: 25px;
+    margin-right: 5px;
+    font-size: 15px;
 }
 
 /*******************************************************************************

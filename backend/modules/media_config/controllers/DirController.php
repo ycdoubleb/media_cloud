@@ -3,7 +3,7 @@
 namespace backend\modules\media_config\controllers;
 
 use common\models\media\Dir;
-use common\models\media\searchs\DirSearh;
+use common\models\media\searchs\DirSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -35,25 +35,12 @@ class DirController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new DirSearh();
+        $searchModel = new DirSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => Dir::getDirListFramework(),
-        ]);
-    }
-
-    /**
-     * 显示单个媒体存储目录配置.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
         ]);
     }
 

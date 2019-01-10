@@ -41,6 +41,7 @@ $this->title = Yii::t('app', '{Anew}{Transcoding}{Video}{File}', [
                     'model' => $model,
                     'isNewRecord' => $model->isNewRecord ? 1 : 0,
                     'wateFiles' => $wateFiles,
+                    'wateSelected' => $wateSelected
                 ]) ?>
                 
             </div>
@@ -57,3 +58,12 @@ $this->title = Yii::t('app', '{Anew}{Transcoding}{Video}{File}', [
     <?php ActiveForm::end(); ?>
     
 </div>
+
+<?php
+$js = <<<JS
+        
+    window.onload();
+
+JS;
+    $this->registerJs($js,  View::POS_READY);
+?>

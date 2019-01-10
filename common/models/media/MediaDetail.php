@@ -61,26 +61,19 @@ class MediaDetail extends ActiveRecord
     public static function savaMediaDetail($media_id, $columns)
     {
         $data = []; // 返回的数据
-        /** 开启事务 */
-        $trans = Yii::$app->db->beginTransaction();
         try
         {  
             $model = self::findOne(['media_id' => $media_id]);
             if($model == null){
                 $columns = array_merge(['media_id' => $media_id], $columns);
-                $query = \Yii::$app->db->createCommand()->insert(self::tableName(), $columns);
+                $query = \Yii::$app->db->createCommand()->insert(self::tableName(), $columns)->execute();
             }else{
-                $query = \Yii::$app->db->createCommand()->update(self::tableName(), $columns, ['media_id' => $media_id]);
+                $query = \Yii::$app->db->createCommand()->update(self::tableName(), $columns, ['media_id' => $media_id])->execute();
             }
             
-            if($query->execute()){
-                $trans->commit();  //提交事务
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
-            }
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            
         }catch (Exception $ex) {
-            $trans ->rollBack(); //回滚事务
             $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
         }
         

@@ -2,6 +2,7 @@
 
 namespace backend\modules\media_admin\controllers;
 
+use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaAction;
@@ -165,7 +166,8 @@ class MediaController extends Controller
             'model' => $model,
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
-            'wateFiles' => Watermark::getEnabledWatermarks()
+            'wateFiles' => Watermark::getEnabledWatermarks(),
+            'wateSelected' => [],
         ]);
     }
 
@@ -252,7 +254,6 @@ class MediaController extends Controller
                 $tagResult = MediaTagRef::saveMediaTagRef($model->id, $tags);
 
             } catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
                 Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
             }
             
@@ -334,28 +335,25 @@ class MediaController extends Controller
      */
     public function actionAnewTranscoding($id)
     {
-        $model = $this->findModel($id);       
+        $model = $this->findModel($id);
+        $post = Yii::$app->request->post();
         
-        if ($model->load(Yii::$app->request->post())) {
-            /** 开启事务 */
-            $trans = Yii::$app->db->beginTransaction();
+        if ($model->load($post)) {
             try
             {
-                $is_submit = false;
-                
-                if($model->validate() && $model->save()){
-                    $is_submit = true;
-                    $actionResult = MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
-                        $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                // 水印id
+                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
+                // 保存媒体详细
+                $detailResult = MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
+
+                if($detailResult->code == 0){
+                    MediaAliyunAction::addVideoTranscode($model->id);   // 转码
+                    MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 }
                 
-                if($is_submit && $actionResult->code == 0){
-                    $trans->commit();  //提交事务
-                    Yii::$app->getSession()->setFlash('success','操作成功！');
-                }
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 
             } catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
                 Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
             }
             
@@ -364,7 +362,8 @@ class MediaController extends Controller
         
         return $this->renderAjax('____anew_transcoding', [
             'model' => $model,
-            'wateFiles' => Watermark::getEnabledWatermarks()
+            'wateFiles' => Watermark::getEnabledWatermarks(),
+            'wateSelected' => explode(',', $model->detail->mts_watermark_ids)
         ]);
     }
     

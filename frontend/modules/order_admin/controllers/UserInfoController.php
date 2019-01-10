@@ -3,10 +3,10 @@
 namespace frontend\modules\order_admin\controllers;
 
 use common\models\order\Order;
-use common\models\order\searchs\OrderSearch;
 use common\models\User;
 use common\models\UserProfile;
 use Yii;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -78,21 +78,14 @@ class UserInfoController extends Controller
         /* @var $request Request */
         $request = Yii::$app->getRequest();
         $dateRange = $request->getQueryParam('dateRange');
-        $year = $request->getQueryParam('year');
-        
-        $query = (new \yii\db\Query())
-                ->from(['Order' => Order::tableName()]);
-        
-        /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
-        }
-//        var_dump($this->getTotalPay($query));exit;
-//        var_dump($this->getDataStatistics(Yii::$app->request->queryParams));exit;
+        $year = $request->getQueryParam('year') == null ? date('Y',time()) : $request->getQueryParam('year');
+
         return $this->render('statistics', [
             'dateRange' => $dateRange,
-            'totalPay' => $this->getTotalPay($query),                 //总支出和购买数量
+            'year' => $year,
+            'years' => $this->getOrderYears(),
+            'totalPay' => $this->getTotalPay($dateRange),           //总支出和购买数量
+            'dateStatistics' => $this->getDateStatistics($year),    //年度月支出金额
         ]);
     }
     
@@ -100,7 +93,7 @@ class UserInfoController extends Controller
     /**
      * 根据其主键值查找 User 模型。
      * 如果找不到模型，就会抛出404个HTTP异常。
-     * @param string $id
+     * @param int $id
      * @return model User 
      * @throws NotFoundHttpException
      */
@@ -116,8 +109,8 @@ class UserInfoController extends Controller
     /**
      * 根据其主键值查找 UserProfile 模型。
      * 如果找不到模型，就会抛出404个HTTP异常。
-     * @param string $id
-     * @return model User 
+     * @param int $id
+     * @return model UserProfile 
      * @throws NotFoundHttpException
      */
     protected function findProfileModel($id)
@@ -129,24 +122,86 @@ class UserInfoController extends Controller
         }
     }
     
-    protected function getTotalPay($query)
+    /**
+     * 时间段支出金额
+     * @param string $dateRange 时间段
+     * @return array
+     */
+    protected function getTotalPay($dateRange)
     {
-        $totalPay = clone $query;
-        $totalPay->select(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods']);
+        $query = (new Query())
+                ->select(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods'])
+                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->from(['Order' => Order::tableName()]);
         
-        return $totalPay->one(Yii::$app->db);
+        // 当时间段参数不为空时
+        if($dateRange != null){
+            $dateRange_Arr = explode(" - ",$dateRange);
+            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        }
+        
+        return $query->one();
     }
 
-    protected function getDataStatistics($query)
+    /**
+     * 年度月支出金额
+     * @param string $year  年份
+     * @return array
+     */
+    protected function getDateStatistics($year)
     {
-        $searchModel = new OrderSearch();
+        $query = (new Query())
+                ->select(["CONCAT(FROM_UNIXTIME(confirm_at, '%c'), '月') AS name",
+                    'SUM(order_amount) AS value'])
+                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->from(['Order' => Order::tableName()]);
+        // 当年份参数不为空时
+        if($year != null){
+            $startTime = $year.'-01-01 00:00:00';
+            $endTime = $year.'-12-31 23:59:59';
+        }
+        $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($startTime), strtotime($endTime)]);
         
-        $query->addSelect(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods']);
+        $query->groupBy('name');    // 按月份分组
+        $results = $query->all();
+        $months = [
+            ['name' => '1月', 'value' => 0],
+            ['name' => '2月', 'value' => 0],
+            ['name' => '3月', 'value' => 0],
+            ['name' => '4月', 'value' => 0],
+            ['name' => '5月', 'value' => 0],
+            ['name' => '6月', 'value' => 0],
+            ['name' => '7月', 'value' => 0],
+            ['name' => '8月', 'value' => 0],
+            ['name' => '9月', 'value' => 0],
+            ['name' => '10月', 'value' => 0],
+            ['name' => '11月', 'value' => 0],
+            ['name' => '12月', 'value' => 0],
+        ];
         
-//        $query->groupBy(['Order.id']);
-        $results = $query->asArray()->all();
+        $merges = ArrayHelper::merge(ArrayHelper::index($months, 'name'), ArrayHelper::index($results, 'name'));
+        $items = [];
+        foreach ($merges as $merge){
+            $items[] = $merge;
+        }
         
-        return $results;
+        return $items;
+    }
+    
+    /**
+     * 获取订单确认年份
+     * @return array
+     */
+    protected function getOrderYears()
+    {
+        $query = (new Query())
+                ->select(['confirm_at', "FROM_UNIXTIME(confirm_at, '%Y') AS years"])
+                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->from(['Order' => Order::tableName()])
+                ->groupBy('years')
+                ->all();
+
+        return ArrayHelper::map($query, 'years', 'years');
     }
 }
 

@@ -82,9 +82,9 @@ class OrderSearch extends Order
         // grid filtering conditions
         $query->andFilterWhere(['order_status' => $order_status,]);
 
-        // 模糊查询
+        // 关键查询
         $query->andFilterWhere(['or',
-            ['like', 'Order.order_sn', $keyword],   //订单编号
+            ['Order.order_sn' => $keyword],         //订单编号
             ['like', 'Order.order_name', $keyword], //订单名称
         ]);
 
@@ -135,11 +135,11 @@ class OrderSearch extends Order
             return $dataProvider;
         }
 
-        // 模糊查询
+        // 关键字查询
         $query->andFilterWhere(['or',
-            ['like', 'Media.id', $keyword], //媒体编号
+            ['Media.id' => $keyword],           //媒体编号
             ['like', 'Media.name', $keyword],   //媒体名称
-            ['like', 'Order.order_sn', $keyword],   //订单编号
+            ['Order.order_sn' => $keyword],         //订单编号
             ['like', 'Order.order_name', $keyword], //订单名称
         ]);
 

@@ -11,8 +11,6 @@ class Module extends \yii\base\Module
      * {@inheritdoc}
      */
     public $controllerNamespace = 'frontend\modules\media_library\controllers';
-
-//    public $layout = 'main';
     
     /**
      * {@inheritdoc}

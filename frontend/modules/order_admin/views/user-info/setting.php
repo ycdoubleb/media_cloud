@@ -37,11 +37,11 @@ ModuleAssets::register($this);
             </div>
             <?php
                 if($sets == 'base'){
-                    echo $this->render('_baseform', [
+                    echo $this->render('____baseform', [
                         'userModel' => $userModel,
                     ]);
                 } else {       
-                    echo $this->render('_otherform', [
+                    echo $this->render('____otherform', [
                         'peofileModel' => $peofileModel,
                     ]);
                 }

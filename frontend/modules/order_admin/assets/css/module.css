@@ -89,14 +89,24 @@ and open the template in the editor.
 /*******************************************************************************
  * 统计页面
  *******************************************************************************/
+/* 替换日期组件样式 */
+.user-statistics .kv-drp-dropdown .left-ind, .kv-drp-dropdown .right-ind {
+    top: 10px;
+}
+.user-statistics .statistics-form .kv-drp-dropdown .range-value {
+    padding-left: 34px;
+    padding-right: 34px;
+}
+
 .user-statistics .statistics-form {
+    margin-bottom: 0px;
     border-bottom: transparent;
 }
 
 .user-statistics .statistics-form .all-datas {
     width: 100%;
     height: 103px;
-    margin-bottom: 50px;
+    margin-bottom: 80px;
 }
 
 .user-statistics .pull-left,
@@ -131,6 +141,10 @@ and open the template in the editor.
 .user-statistics .all-datas .statistics-num span {
     font-size: 20px;
     color: #333333;
+}
+
+.user-statistics .chart {
+    margin-bottom: 30px;
 }
 
 /*******************************************************************************
@@ -225,22 +239,22 @@ and open the template in the editor.
 /*******************************************************************************
  * 核对订单页面
  *******************************************************************************/
-.header.checking-header {
+.mediacloud .header.checking-header {
     height: 300px;
 }
     
-.header.checking-header .container .media-top {
+.mediacloud .header.checking-header .container .media-top {
     padding-top: 20px;
     width: 100%;
     height: 110px;
 }
 
-.checking-header .media-top .cloud-name,
-.checking-header .media-top .cloud-cart {
+.mediacloud .checking-header .media-top .cloud-name,
+.mediacloud .checking-header .media-top .cloud-cart {
     display: inline-block
 }
 
-.checking-header .media-top .cloud-name .cloud-title {
+.mediacloud .checking-header .media-top .cloud-name .cloud-title {
     font-size: 32px;
     color: #666666;
     font-weight: 400;
@@ -248,11 +262,11 @@ and open the template in the editor.
     margin-bottom: -8px;
 }
 
-.checking-header .media-top .cloud-name .cloud-website {
+.mediacloud .checking-header .media-top .cloud-name .cloud-website {
     color: #666666;
 }
 
-.checking-header .media-top .cloud-cart {
+.mediacloud .checking-header .media-top .cloud-cart {
     position: relative;
     bottom: 18px;
     padding-left: 8px;
@@ -280,12 +294,12 @@ and open the template in the editor.
     color: #28b28b;
 }
 
-.checking-header .information span{
+.mediacloud .checking-header .information span{
     font-size: 16px;
     color: #666666;
 }
 
-.checking-header .information .use-purpose {
+.mediacloud .checking-header .information .use-purpose {
     margin-top: 10px;
     height: 135px;
     padding: 20px;
@@ -323,48 +337,48 @@ and open the template in the editor.
 /*******************************************************************************
  * 下单成功页面
  *******************************************************************************/
-.header.place-order {
+.mediacloud .header.place-order {
     height: 240px;
 }
 
-.header.place-order .information .use-purpose {
+.mediacloud .header.place-order .information .use-purpose {
     height: 84px;
 }
 
-.place-order .information .use-purpose .pull-left .glyphicon {
+.mediacloud .place-order .information .use-purpose .pull-left .glyphicon {
     font-size: 42px;
     color: #28b28b;
 }
 
-.place-order .information .use-purpose .pull-left .info-text {
+.mediacloud .place-order .information .use-purpose .pull-left .info-text {
     position: relative;
     bottom: 12px;
     font-size: 20px;
 }
 
-.checking-order .mc-panel {
+.mediacloud .checking-order .mc-panel {
     margin-top: 15px;
 }
 
-.checking-order .mc-panel .table {
+.mediacloud .checking-order .mc-panel .table {
     border: 1px solid #e4e4e4;
 }
 
-.panel-left {
+.mediacloud .panel-left {
     width: 50%;
     float: left;
 }
 
-.panel-right {
+.mediacloud .panel-right {
     width: 50%;
     float: right;
 }
 
-.checking-order .panel-right .table .detail-th {
+.mediacloud .checking-order .panel-right .table .detail-th {
     border-left-style: hidden !important;
 }
 
-.checking-order .mc-panel .table .detail-th {
+.mediacloud .checking-order .mc-panel .table .detail-th {
     width: 127px;
     text-align: right;
     padding-right: 10px;
@@ -372,7 +386,7 @@ and open the template in the editor.
     border: 1px solid #e4e4e4;
 }
 
-.checking-order .mc-panel .table .detail-td {
+.mediacloud .checking-order .mc-panel .table .detail-td {
     text-align: left;
     padding-left: 10px;
 }
@@ -386,14 +400,14 @@ and open the template in the editor.
 /*模态框样式*/
 .payment-method .modal-dialog .modal-body {
     text-align: center;
-    padding-top: 80px;
-    padding-bottom: 80px;
+    padding-top: 140px;
+    padding-bottom: 140px;
 }
 
 .payment-method .modal-dialog .modal-body .pay,
 .payment-method .modal-dialog .modal-body .alipay {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 80px;
 }
 
 .payment-method .modal-dialog .modal-body .alipay,
@@ -411,23 +425,23 @@ and open the template in the editor.
 /*******************************************************************************
  * 订单核查页面
  *******************************************************************************/
-.header.order-checking {
+.mediacloud .header.order-checking {
     height: 140px;
 }
 
-.order-checking .container {
+.mediacloud .order-checking .container {
     padding-top: 24px;
     color: #fc583d;
     font-size: 18px;
 }
 
-.order-checking .container .pull-left img {
+.mediacloud .order-checking .container .pull-left img {
     width: 88px;
     height: 88px;
     margin-right: 10px;
 }
 
-.order-checking .container .pull-right img {
+.mediacloud .order-checking .container .pull-right img {
     width: 55px;
     height: 64px;
     margin-top: 12px;
@@ -436,23 +450,23 @@ and open the template in the editor.
 /*******************************************************************************
  * 线下支付页面
  *******************************************************************************/
-.header.play-approve {
+.order_admin .header.play-approve {
     height: 100%;
     margin-bottom: 0px;
 }
     
-.header.play-approve .container .media-top {
+.order_admin .header.play-approve .container .media-top {
     padding-top: 20px;
     width: 100%;
     height: 110px;
 }
 
-.play-approve .media-top .cloud-name,
-.play-approve .media-top .cloud-cart {
+.order_admin .play-approve .media-top .cloud-name,
+.order_admin .play-approve .media-top .cloud-cart {
     display: inline-block
 }
 
-.play-approve .media-top .cloud-name .cloud-title {
+.order_admin .play-approve .media-top .cloud-name .cloud-title {
     font-size: 32px;
     color: #666666;
     font-weight: 400;
@@ -460,32 +474,32 @@ and open the template in the editor.
     margin-bottom: -8px;
 }
 
-.play-approve .media-top .cloud-name .cloud-website {
+.order_admin .play-approve .media-top .cloud-name .cloud-website {
     color: #666666;
 }
 
-.play-approve .media-top .cloud-cart {
+.order_admin .play-approve .media-top .cloud-cart {
     position: relative;
     bottom: 18px;
     padding-left: 8px;
 }
 
-.play-approve .media-top .pull-right img {
+.order_admin .play-approve .media-top .pull-right img {
     width: 55px;
     height: 64px;
 }
 
-.play-approve .main {
+.order_admin .play-approve .main {
     width: 100%;
     margin-top: 30px;
 }
 
-.play-approve .main span {
+.order_admin .play-approve .main span {
     font-size: 16px;
     
 }
 
-.play-approve .main .approve-form {
+.order_admin .play-approve .main .approve-form {
     padding: 20px;
     margin-top: 10px;
     background-color: #f9f9f9;

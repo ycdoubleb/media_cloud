@@ -123,7 +123,7 @@ use yii\helpers\Html;
                        ];
                        $buttonHtml = [
                            'name' => '查看资源',
-                           'url' => ['/media_library/default/view', 'id' => $data['media_id']],
+                           'url' => ['/media_library/media/view', 'id' => $data['media_id']],
                            'options' => $options,
                            'symbol' => '&nbsp;',
                            'conditions' => true,

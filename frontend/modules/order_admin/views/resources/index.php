@@ -166,7 +166,7 @@ $this->title = Yii::t('app', 'Resources');
                                ];
                                $buttonHtml = [
                                    'name' => '详情',
-                                   'url' => ['/media_library/default/view', 'id' => $data['media_id']],
+                                   'url' => ['/media_library/media/view', 'id' => $data['media_id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
                                    'conditions' => true,

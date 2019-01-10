@@ -78,9 +78,9 @@ class FavoritesSearch extends Favorites
             return $dataProvider;
         }
 
-        // 模糊查询
+        // 关键字查询
         $query->andFilterWhere(['or',
-            ['like', 'Media.id', $keyword],
+            ['Media.id' => $keyword],
             ['like', 'Media.name', $keyword]
         ]);
 

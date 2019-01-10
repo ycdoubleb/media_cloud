@@ -42,13 +42,13 @@ use yii\widgets\ActiveForm;
             <div class="col-log-6 col-md-6" style="padding-right: 5px;">
                 <div class="pull-right">
                     <?php
-                    echo Html::a('加入购物车', 'javascript:;', [
+                    echo Html::a('加入购物车', 'javascript:;', ['id' => 'add-carts',
                         'data-url' => Url::to(['favorites/add-cart']),
-                        'class' => 'btn btn-highlight btn-flat submit', 'title' => '加入购物车',
+                        'class' => 'btn btn-highlight btn-flat', 'title' => '加入购物车',
                     ]) . '&nbsp;';
-                    echo Html::a('取消收藏', 'javascript:;', [
+                    echo Html::a('取消收藏', 'javascript:;', ['id' => 'del-favorites',
                         'data-url' => Url::to(['favorites/del-favorites']),
-                        'class' => 'btn btn-default btn-flat submit', 'title' => '取消收藏']);
+                        'class' => 'btn btn-default btn-flat', 'title' => '取消收藏']);
                     ?>
                 </div>
             </div>
@@ -58,8 +58,46 @@ use yii\widgets\ActiveForm;
 </div>
 <?php
 $js = <<<JS
-    // 添加到购物车 or 取消收藏
-    $(".submit").click(function(){
+    // 添加到购物车
+    $("#add-carts").click(function(){
+        var many_check = $("input[name='selection[]']:checked");
+        var ids = "";
+        $(many_check).each(function(){
+            ids += $(this).parents('tr').attr('data-value')+',';                  
+        });
+        // 去掉最后一个逗号
+        if (ids.length > 0) {
+            ids = ids.substr(0, ids.length - 1);
+        }else{
+            alert('请选择至少一条记录！'); return false;
+        }
+        var url=$(this).attr('data-url');
+        console.log(ids);
+        console.log(url);
+        $.post(url, {ids}, function(rel){
+            // 把复选框全取消
+            $('input[name="selection_all"]').prop("checked",false);
+            $('input[name="selection[]"]').each(function(){
+                $(this).prop("checked",false);
+            });
+            if(rel['code'] == '0'){
+                $.notify({
+                    message: '成功加入购物车' 
+                },{
+                    type: 'success'
+                });
+            }else{
+                $.notify({
+                    message: rel['msg'] 
+                },{
+                    type: 'danger'
+                });
+            }
+        });
+    });
+    
+    // 取消收藏
+    $("#del-favorites").click(function(){
         var many_check = $("input[name='selection[]']:checked");
         var ids = "";
         $(many_check).each(function(){

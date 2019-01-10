@@ -4,6 +4,7 @@ use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\FavoritesSearch;
 use common\utils\DateUtil;
 use frontend\modules\order_admin\assets\ModuleAssets;
+use kartik\growl\GrowlAsset;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -14,6 +15,7 @@ use yii\web\View;
 /* @var $dataProvider ActiveDataProvider */
 
 ModuleAssets::register($this);
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', 'Favorites');
 
@@ -139,7 +141,7 @@ $this->title = Yii::t('app', 'Favorites');
                            ];
                            $buttonHtml = [
                                'name' => '查看详情',
-                               'url' => ['/media_library/default/view', 'id' => $data['media_id']],
+                               'url' => ['/media_library/media/view', 'id' => $data['media_id']],
                                'options' => $options,
                                'symbol' => '&nbsp;',
                                'conditions' => true,

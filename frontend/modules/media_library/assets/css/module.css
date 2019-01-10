@@ -11,7 +11,7 @@ and open the template in the editor.
 /*******************************************************************************
  * 内容
  *******************************************************************************/
-.content .default-index .mc-title .glyphicon {
+.content .media-index .mc-title .glyphicon {
     width: 35px;
     line-height: 35px;
     top: 3px;
@@ -19,7 +19,7 @@ and open the template in the editor.
     color: #999;
 }
 
-.content .default-index .mc-title .active .glyphicon {
+.content .media-index .mc-title .active .glyphicon {
     background-color: #f9f9f9;
     border: 1px solid #e4e4e4;
 }
@@ -129,17 +129,17 @@ and open the template in the editor.
 /*******************************************************************************
  * 详情页面
  *******************************************************************************/
-.default-view .mc-panel {
+.media-view .mc-panel {
     margin-top: 5px;
 }
 
-.default-view .mc-panel .resource-list {
+.media-view .mc-panel .resource-list {
     width: 100%;
     height: 290px;
     margin-bottom: 50px;
 }
 
-.default-view .mc-panel .table {
+.media-view .mc-panel .table {
     border: 1px solid #e4e4e4;
 }
 
@@ -157,19 +157,19 @@ and open the template in the editor.
     border-left-style: hidden;
 }
 
-.default-view .mc-panel .table .detail-th {
+.media-view .mc-panel .table .detail-th {
     width: 127px;
     text-align: right;
     padding-right: 10px;
     background-color: #f9f9f9;
 }
 
-.default-view .mc-panel .table .detail-td {
+.media-view .mc-panel .table .detail-td {
     text-align: left;
     padding-left: 10px;
 }
 
-.default-view .mc-panel .resource-show {
+.media-view .mc-panel .resource-show {
     width: 100%;
     height: 100%;
     text-align: center;

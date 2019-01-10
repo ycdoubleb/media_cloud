@@ -2,7 +2,6 @@
 
 use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\CartSearch;
-use common\utils\DateUtil;
 use frontend\modules\media_library\assets\MainAssets;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\data\ActiveDataProvider;
@@ -25,7 +24,7 @@ ModuleAssets::register($this);
 
 ?>
 
-<div class="order_admin mediacloud">
+<div class="media_library mediacloud">
     <!--头部信息-->
     <div class="header checking-header">
         <div class="container">
@@ -50,8 +49,8 @@ ModuleAssets::register($this);
                 <span>填写资源使用信息</span>
                 <div class="use-purpose mc-form">
                     <?php $form = ActiveForm::begin([
-                        'action' => ['checking-order'],
-                        'method' => 'post',
+    //                    'action' => ['checking-order'],
+    //                    'method' => 'post',
                         'options' => [
                             'id' => 'order-admin-form',
                             'class' => 'form-horizontal',
@@ -102,7 +101,7 @@ ModuleAssets::register($this);
                                 ],
                             ],
                             [
-                                'attribute' => 'media_id',
+                                'attribute' => 'id',
                                 'label' => Yii::t('app', 'Resources Sn'),
                                 'headerOptions' => [
                                     'style' => 'width: 120px',
@@ -121,18 +120,21 @@ ModuleAssets::register($this);
                                 ],
                             ],
                             [
-                                'attribute' => 'media_name',
+                                'attribute' => 'name',
                                 'label' => Yii::t('app', '{Resources}{Name}',[
                                     'Resources' => Yii::t('app', 'Resources'),
                                     'Name' => Yii::t('app', 'Name')
                                 ]),
                             ],
                             [
-                                'attribute' => 'type_name',
+                                'attribute' => 'type_id',
                                 'label' => Yii::t('app', 'Type'),
                                 'headerOptions' => [
                                     'style' => 'width: 50px',
                                 ],
+                                'value' => function($data){
+                                    return $data->mediaType->name;
+                                }
                             ],
                             [
                                 'attribute' => 'duration',
@@ -141,7 +143,7 @@ ModuleAssets::register($this);
                                     'style' => 'width: 90px',
                                 ],
                                 'value' => function($data) {
-                                    return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
+                                    return $data['duration'];
                                 },
                             ],
                             [
@@ -168,11 +170,14 @@ ModuleAssets::register($this);
                                 }
                             ],
                             [
-                                'attribute' => 'num',
+    //                            'attribute' => 'num',
                                 'label' => Yii::t('app', 'Num'),
                                 'headerOptions' => [
                                     'style' => 'width: 50px',
                                 ],
+                                'value' => function($data) {
+                                    return '1';
+                                }
                             ],
                             [
                                 'class' => 'yii\grid\ActionColumn',
@@ -191,7 +196,7 @@ ModuleAssets::register($this);
                                        ];
                                        $buttonHtml = [
                                            'name' => '查看详情',
-                                           'url' => ['/media_library/media/view', 'id' => $data['media_id']],
+                                           'url' => ['/media_library/media/view', 'id' => $data->id],
                                            'options' => $options,
                                            'symbol' => '&nbsp;',
                                            'conditions' => true,

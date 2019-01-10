@@ -4,6 +4,7 @@ use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\CartSearch;
 use common\utils\DateUtil;
 use frontend\modules\order_admin\assets\ModuleAssets;
+use kartik\growl\GrowlAsset;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -14,6 +15,7 @@ use yii\web\View;
 /* @var $dataProvider ActiveDataProvider */
 
 ModuleAssets::register($this);
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', 'Cart');
 
@@ -39,7 +41,8 @@ $this->title = Yii::t('app', 'Cart');
                 'columns' => [
                     [
                         // 'class' => 'yii\grid\CheckboxColumn',
-                        'header' => Html::checkbox('selection_all', $totalCount == $sel_num, ['id' => 'change-all']),
+                        'header' => Html::checkbox('selection_all', 
+                            ($totalCount != 0 ? $totalCount == $sel_num : false), ['id' => 'change-all']),
                         'headerOptions' => [
                             'style' => 'width: 30px',
                         ],
@@ -153,7 +156,7 @@ $this->title = Yii::t('app', 'Cart');
                                ];
                                $buttonHtml = [
                                    'name' => '查看详情',
-                                   'url' => ['/media_library/default/view', 'id' => $data['media_id']],
+                                   'url' => ['/media_library/media/view', 'id' => $data['media_id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
                                    'conditions' => true,
@@ -177,16 +180,16 @@ $js = <<<JS
     $("#change-all").click(function(){
         var checked = this.checked;
         $.post('/order_admin/cart/change-all', {checked}, function(rel){
-            if(rel['code'] == '200'){
+            if(rel['code'] == '0'){
                 $('input[name="selection[]"]').each(function(){
                     $(this).prop("checked", rel['data']);
                 });
             }else{
-//                $.notify({
-//                    message: '失败' 
-//                },{
-//                    type: 'danger'
-//                });
+                $.notify({
+                    message: '失败' 
+                },{
+                    type: 'danger'
+                });
             }
         });
     });
@@ -197,14 +200,14 @@ $js = <<<JS
     $(".change-one").click(function(){
         var id = this.value;
         $.post('/order_admin/cart/change-one', {id}, function(rel){
-            if(rel['code'] == '200'){
+            if(rel['code'] == '0'){
                 $('input[name="selection_all"]').prop("checked", rel['data']);
             }else{
-//                $.notify({
-//                    message: '失败' 
-//                },{
-//                    type: 'danger'
-//                });
+                $.notify({
+                    message: '失败' 
+                },{
+                    type: 'danger'
+                });
             }
         });
     });

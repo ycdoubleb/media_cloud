@@ -177,9 +177,12 @@
     win.ccoacharts.MultiBarChart = MultiBarChart;
 })(window,jQuery);
 
-
-
-
+/**
+ * 柱状图 横向显示
+ * @param {type} win
+ * @param {type} $
+ * @returns {undefined}
+ */
 (function(win,$){
     
     win.ccoacharts = win.ccoacharts || {};
@@ -290,6 +293,124 @@
     }
 
     win.ccoacharts.BarChart = BarChart;
+})(window,jQuery);
+
+/**
+ * 柱状图 竖向显示
+ * @param {type} win
+ * @param {type} $
+ * @returns {undefined}
+ */
+(function(win,$){
+    
+    win.ccoacharts = win.ccoacharts || {};
+    /**
+     * 创建表
+     * @param {Object} config   配置
+     * @param {Dom} dom         chart的容器
+     * @param {Array} datas     [[name:string,value:number],[],...]
+     * @returns
+     */
+    var ColumnBarChart = function(config,dom,datas){
+        this.config = $.extend({
+            title: '标题',                      //大标题
+            subTtile: '',                       //副标题
+            itemLabelFormatter: '{c}',           //bar 提示格式
+        },config);
+        this.init(dom,datas);
+        this.reflashChart(this.config.title,datas);
+        var _this = this;
+        $(win).resize(function(){
+            _this.chart.resize();
+        });
+    }
+    var p = ColumnBarChart.prototype;
+    /** 制图画板 */
+    p.canvas = null;
+    /** 图表 */
+    p.chart = null;
+    /** 图表选项 */
+    p.chartOptions = null;
+    
+    p.init = function(dom,datas){
+        this.canvas = dom;
+        //重新计算图标的高度，高度由显示的数据相关
+        var len=0;
+        for(var i in datas)len++;
+        $(this.canvas).css('height',(len*(30+10)-10+100)+"px");
+        
+        this.chart = echarts.init(dom);
+        this.chartOptions = {
+            title: {
+                text: this.config.title,
+                subtext: this.config.subTtile,
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: []
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['巴西','印尼','美国','印度','中国','世界人口(万)']
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            series: [
+                {
+                    name: '',
+                    type: 'bar',
+                    label: {
+                        normal: {
+                            show: true,
+                            position:"insideRight",
+                            formatter:this.config.itemLabelFormatter
+                        }
+                    },
+                    data: [18203, 23489, 29034, 104970, 131744, 630230]
+                }
+            ]
+        };
+
+    };
+    
+    /**
+     * 刷新图标
+     * @param {String} title 标题
+     * @param {Array} data 出错步骤数据
+     * @returns 
+     */
+    p.reflashChart = function(title,data){
+        
+        var keys = [];
+        var values = [];
+        
+        for(var i=0,len=data.length;i<len;i++)
+        {
+            keys.push(data[i]["name"]);
+            values.push(data[i]["value"]);
+        }
+        
+        
+        this.chartOptions.title.text = title;
+        this.chartOptions.xAxis.data = keys;
+        this.chartOptions.series[0].data = values;
+        this.chart.setOption(this.chartOptions,true);
+    }
+
+    win.ccoacharts.ColumnBarChart = ColumnBarChart;
 })(window,jQuery);
 
 /* 

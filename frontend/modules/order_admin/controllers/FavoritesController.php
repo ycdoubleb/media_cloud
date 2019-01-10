@@ -2,6 +2,7 @@
 
 namespace frontend\modules\order_admin\controllers;
 
+use common\models\api\ApiResponse;
 use common\models\order\Cart;
 use common\models\order\Favorites;
 use common\models\order\searchs\FavoritesSearch;
@@ -52,21 +53,23 @@ class FavoritesController extends Controller
      */
     public function actionAddCart()
     {
+        Yii::$app->getResponse()->format = 'json';
+
         try{
             $id = Yii::$app->request->post('ids');
-            $ids = explode(',', $id);
-            foreach($ids as $id){
-                $model = Cart::findOne(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
+            $media_ids = explode(',', $id);
+            foreach($media_ids as $media_id){
+                $model = Cart::findOne(['goods_id' => $media_id, 'is_del' => 0, 'created_by' => \Yii::$app->user->id]);
                 if($model == null){
-                    $model = new Cart(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
+                    $model = new Cart(['goods_id' => $media_id, 'created_by' => \Yii::$app->user->id]);
                     $model->save();
                 }
             }
-            Yii::$app->getSession()->setFlash('success', '成功加入购物车！');
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
-            Yii::$app->getSession()->setFlash('error', '加入购物车失败！失败原因：'.$ex->getMessage());
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
         }
-        return $this->redirect('index');
+
     }
     
     /**

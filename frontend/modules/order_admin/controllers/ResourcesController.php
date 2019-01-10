@@ -35,7 +35,7 @@ class ResourcesController extends Controller
     {
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->searchResources(Yii::$app->request->queryParams);
-//        var_dump($dataProvider->models);exit;
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

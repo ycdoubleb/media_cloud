@@ -345,7 +345,7 @@ class MediaController extends Controller
                 $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
                 // 保存媒体详细
                 $detailResult = MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
-
+                
                 if($detailResult->code == 0){
                     MediaAliyunAction::addVideoTranscode($model->id);   // 转码
                     MediaAction::savaMediaAction($model->id,  '重新转码', '修改');

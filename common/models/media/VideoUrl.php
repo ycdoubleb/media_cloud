@@ -25,6 +25,8 @@ use yii\db\ActiveRecord;
  * @property string $created_by 上传人ID，关联admin_user表id字段
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property Media $media
  */
 class VideoUrl extends ActiveRecord
 {
@@ -76,5 +78,13 @@ class VideoUrl extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::className(), ['id' => 'media_id']);
     }
 }

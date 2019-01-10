@@ -260,63 +260,6 @@ textarea {
 }
 
 /*******************************************************************************
- * 只有主布局时的样式
- *******************************************************************************/
-.header {
-    display: inline-block;
-    width: 100%;
-    height: 180px;
-    margin-bottom: 20px;
-    background-color: #fff;
-}
-
-.header .container .media-title {
-    padding-top: 35px;
-    padding-bottom: 30px;
-}
-
-.header .container .media-title .media-name{
-    font-size: 24px;
-}
-
-.header .container .media-title .media-name,
-.header .container .media-title .media-tags {
-    display: block;
-}
-
-.header .container .operation .pull-left {
-    width: 500px;
-}
-
-.header .container .operation .btn-ellipse{
-    color: #999999;
-    background-color: #f2f2f2;
-    border-color: #f2f2f2;
-    line-height: 35px;
-    padding: 8px 20px;
-    border-radius: 15px;
-}
-
-.header .container .operation .fav-red {
-    color: #FC583D;
-}
-
-.content {
-    padding: 0 !important;
-}
-
-.content .common {
-    width: 100%;
-    background-color: #fff;
-    margin-bottom: 30px;
-}
-
-.content .common .mc-tabs {
-    margin-bottom: 15px;
-}
-
-
-/*******************************************************************************
  * 步骤样式
  *******************************************************************************/
 .bar-step {

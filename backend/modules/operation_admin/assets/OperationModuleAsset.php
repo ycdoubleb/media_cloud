@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\modules\media_admin\assets;
+namespace backend\modules\operation_admin\assets;
 
 use yii\web\AssetBundle;
 use const YII_DEBUG;
@@ -8,16 +8,15 @@ use const YII_DEBUG;
 /**
  * Main backend application asset bundle.
  */
-class MediaModuleAsset extends AssetBundle
+class OperationModuleAsset extends AssetBundle
 {
-    public $sourcePath = '@backend/modules/media_admin/assets';
-    public $baseUrl = '@backend/modules/media_admin/assets';
+    public $sourcePath = '@backend/modules/operation_admin/assets';
+    public $baseUrl = '@backend/modules/operation_admin/assets';
     public $css = [
-        'css/media_module.css',
+        'css/operation_module.css',
     ];
     public $js = [
-        'js/media-batch-upload.js',
-//        'js/media-batch-operate.js'
+      
     ];
     public $depends = [
         'yii\web\YiiAsset',

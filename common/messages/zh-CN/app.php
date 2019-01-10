@@ -240,6 +240,7 @@ return [
     'The video has been transcoding without repeating the transcoding.' => '该视频已经转码，无需重复转码。',
     'Uploading course resources' => '课程资源上传',
     'Select the mobile material to the directory' => '选择移动素材到目录',
+    'Are you sure you want to do this?' => '你确定要执行此操作？',
     
     //后台-公共配置
     'Config' => '配置',
@@ -337,6 +338,16 @@ return [
     'Is Search' => '是否搜索',
     'Length' => '长度',
     'Is Selected' => '是否选中',
+    
+    //后台-运营管理
+    'Goods' => '商品',
+    'Purchaser' => '购买人',
+    'Payable' => '应付',
+    'Confirm' => '确认',
+    'Total Price' => '总价',
+    'User Note' => '用户留言',
+    'Income' => '收入',
+    
     
     //后台-帮助中心
     'App' => '应用',
@@ -468,6 +479,5 @@ return [
     'Order Verification' => '订单核查',
     'Offline Payment' => '线下支付',
     'Cart' => '购物车',
-    'Personal' => '个人',
-    
+    'Personal' => '个人',    
 ];

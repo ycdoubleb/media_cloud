@@ -16,6 +16,15 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 MediaModuleAsset::register($this);
 
+/* 判断缩略图是否存在 */
+if($model->cover_url != null){
+    $cover_url = $model->cover_url;
+}else if(isset($iconMap[$model->ext])){
+    $cover_url = $iconMap[$model->ext];
+}else{
+    $cover_url = '';
+}
+
 $this->title = Yii::t('app', "{Media}{Detail}：{$model->name}", [
     'Media' => Yii::t('app', 'Media'), 'Detail' => Yii::t('app', 'Detail')
 ]);
@@ -33,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <a href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">标签管理</a>
         </li>
         <li role="presentation" class="">
-            <a href="#video" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">视频发布</a>
+            <a href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">媒体预览</a>
         </li>
         <li role="presentation" class="">
             <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
@@ -76,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'label' => Yii::t('app', 'Cover Img'),
                         'format' => 'raw',
-                        'value' => Html::img($model->cover_url, ['width' => 112, 'height' => 72])
+                        'value' => Html::img($cover_url, ['width' => 112, 'height' => 72])
                     ],
                     [
                         'label' => Yii::t('app', '{Media}{Price}', [
@@ -145,7 +154,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         
        <!--视频发布-->
-        <div role="tabpanel" class="tab-pane fade" id="video" aria-labelledby="config-tab">
+        <div role="tabpanel" class="tab-pane fade" id="preview" aria-labelledby="preview-tab">
             
             <p>
                 <?= Html::a(Yii::t('app', '{Anew}{Upload}', [
@@ -153,7 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']) ?>
                 <?= Html::a(Yii::t('app', '{Anew}{Transcoding}', [
                     'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
-                ]), ['anew-upload', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']) ?>
             </p>
             
             <?= GridView::widget([
@@ -226,7 +235,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         
         <!--操作记录-->
-        <div role="tabpanel" class="tab-pane fade" id="action" aria-labelledby="config-tab">
+        <div role="tabpanel" class="tab-pane fade" id="action" aria-labelledby="action-tab">
           
             <?= GridView::widget([
                 'dataProvider' => $actionDataProvider,
@@ -295,7 +304,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'buttons' => [
                             'view' => function($url, $model){
                                 return Html::a(Yii::t('app', 'View'), ['view-action', 'id' => $model->id], [
-                                    'id' => 'btn-viewAction', 'class' => 'btn btn-default'
+                                    'id' => 'btn-viewAction', 'class' => 'btn btn-default', 'onclick' => 'showModal($(this)); return false;'
                                 ]);
                             },
                         ],
@@ -323,7 +332,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $js = <<<JS
     
     // 弹出媒体编辑页面面板
-    $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-viewAction').click(function(e){
+    $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
         e.preventDefault();
         showModal($(this));
     });

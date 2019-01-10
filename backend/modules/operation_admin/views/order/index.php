@@ -1,48 +1,45 @@
 <?php
 
-use backend\modules\media_admin\assets\MediaModuleAsset;
-use common\models\media\MediaApprove;
-use common\models\media\searchs\MediaApproveSearh;
+use backend\modules\operation_admin\assets\OperationModuleAsset;
+use backend\modules\operation_admin\searchs\OrderSearch;
+use common\models\order\Order;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\View;
 
-MediaModuleAsset::register($this);
-
 /* @var $this View */
-/* @var $searchModel MediaApproveSearh */
+/* @var $searchModel OrderSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Approve}', [
-    'Media' => Yii::t('app', 'Media'), 'Approve' => Yii::t('app', 'Approve')
-]);
+OperationModuleAsset::register($this);
+
+$this->title = Yii::t('app', 'Order');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="media-approve-index">  
-    
+<div class="order-index">
+
     <?= $this->render('_search', [
         'model' => $searchModel,
         'userMap' => $userMap
     ]) ?>
-
-    <div class="panel pull-left">
     
+    <div class="panel pull-left">
+        
         <div class="title">
-            <div class="btngroup pull-right">
-                <?= Html::a(Yii::t('app', 'Pass'), ['pass-approve'], [
-                    'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
-                    'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
-                ]), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']); ?>
-            </div>
             
+            <div class="pull-right">
+                <?= Html::a(Yii::t('app', 'Export'), ['export'], [
+                    'id' => 'btn-export', 'class' => 'btn btn-primary btn-flat'
+                ]) ?>
+            </div>
+
         </div>
         
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-        //        'filterModel' => $searchModel,
-            'layout' => "{items}\n{summary}\n{pager}",  
+//            'filterModel' => $searchModel,
+            'layout' => "{items}\n{summary}\n{pager}",
             'columns' => [
                 [
                     'class' => 'yii\grid\CheckboxColumn',
@@ -58,14 +55,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
+                
                 [
-                    'attribute' => 'media_id',
-                    'label' => Yii::t('app', '{Media}{Number}', [
-                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                    'attribute' => 'order_name',
+                    'label' => Yii::t('app', '{Order}{Name}', [
+                        'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
                     ]),
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '200px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -76,15 +74,30 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Name}', [
-                        'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                    'attribute' => 'order_sn',
+                    'label' => Yii::t('app', 'Order Sn'),
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '150px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
+                [
+                    'label' => Yii::t('app', '{Order}{Status}', [
+                        'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
                     ]),
                     'value' => function($model){
-                        return !empty($model->media_id) ? $model->media->name : null;
+                        return Order::$orderStatusName[$model->order_status];
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '190px',
+                            'width' => '70px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -95,15 +108,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Type}', [
-                        'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+                    'attribute' => 'goods_num',
+                    'label' => Yii::t('app', '{Goods}{Num}', [
+                        'Goods' => Yii::t('app', 'Goods'), 'Num' => Yii::t('app', 'Num')
+                    ]),
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '70px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
+                [
+                    'label' => Yii::t('app', '{Payable}{Amount}', [
+                        'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
                     ]),
                     'value' => function($model){
-                        return !empty($model->media_id) ? $model->media->mediaType->name : null;
+                        return Yii::$app->formatter->asCurrency($model->order_amount);
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '90px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -114,32 +144,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Auditing}{Type}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Type' => Yii::t('app', 'Type')
-                    ]),
-                    'value' => function($model){
-                        return MediaApprove::$typeMap[$model->type];
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '86px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Applicant'),
+                    'label' => Yii::t('app', 'Purchaser'),
                     'value' => function($model){
                         return !empty($model->created_by) ? $model->createdBy->nickname : null;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '70px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -150,15 +161,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Approve}{Time}', [
-                        'Approve' => Yii::t('app', 'Approve'), 'Time' => Yii::t('app', 'Time')
+                    'label' => Yii::t('app', '{Payment}{Mode}', [
+                        'Payment' => Yii::t('app', 'Payment'), 'Mode' => Yii::t('app', 'Mode')
                     ]),
                     'value' => function($model){
-                        return date('Y-m-d H:i', $model->created_at);
+                        return !empty($model->play_code) ? Order::$playCodeMode[$model->play_code] : null;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '76px',
+                            'width' => '70px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
+                [
+                    'label' => Yii::t('app', 'Order Time'),
+                    'value' => function($model){
+                        return $model->created_at > 0 ? date('Y-m-d H:i', $model->created_at) : null;
+                    },
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '70px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -170,87 +198,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'attribute' => 'content',
-                    'label' => Yii::t('app', '{Approve}{Illustration}', [
-                        'Approve' => Yii::t('app', 'Approve'), 'Illustration' => Yii::t('app', 'Illustration')
-                    ]),
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '210px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', '{Auditing}{Status}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')
+                    'label' => Yii::t('app', '{Payment}{Time}', [
+                        'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
                     ]),
                     'value' => function($model){
-                        return MediaApprove::$statusMap[$model->status];
+                        return $model->play_at > 0 ? date('Y-m-d H:i', $model->play_at) : null;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', '{Auditing}{Result}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
-                    ]),
-                    'value' => function($model){
-                        return $model->status == 1 ? MediaApprove::$resultMap[$model->result] : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '66px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Verifier'),
-                    'value' => function($model){
-                        return !empty($model->handled_by) ? $model->handledBy->nickname : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '66px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', '{Auditing}{Time}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
-                    ]),
-                    'value' => function($model){
-                        return !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '76px',
+                            'width' => '70px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -262,37 +218,60 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'attribute' => 'feedback',
-                    'label' => Yii::t('app', '{Feedback}{Info}', [
-                        'Feedback' => Yii::t('app', 'Feedback'), 'Info' => Yii::t('app', 'Info')
+                    'label' => Yii::t('app', '{Confirm}{Time}', [
+                        'Confirm' => Yii::t('app', 'Confirm'), 'Time' => Yii::t('app', 'Time')
                     ]),
+                    'value' => function($model){
+                        return $model->confirm_at > 0 ? date('Y-m-d H:i', $model->confirm_at) : null;
+                    },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '210px',
+                            'width' => '70px',
                             'padding' => '8px 4px'
                         ]
                     ],
                     'contentOptions' => [
                         'style' => [
-                            'padding' => '8px 4px'
+                            'padding' => '8px 4px',
+                            'font-size' => '13px'
                         ],
                     ]
+                ],
+                
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'header' => '操作',
+                    'buttons' => [
+                        'view' => function($url, $model){
+                            return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
+                        },
+                    ],
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '66px',
+                            'padding' => '8px 4px'
+                        ],
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px',
+                        ],
+                    ],
+
+                    'template' => '{view}',
                 ],
             ],
         ]); ?>
     
-    </div>    
-        
-</div>
+    </div>
 
-<!--加载模态框-->
-<?= $this->render('/layouts/modal'); ?>
+</div>
 
 <?php
 $js = <<<JS
         
-    // 弹出媒体编辑页面面板
-    $('#btn-passApprove, #btn-notApprove').click(function(e){
+    // 导出
+    $('#btn-export').click(function(e){
         e.preventDefault();
         var val = [],
             checkBoxs = $('input[name="selection[]"]'), 
@@ -307,10 +286,10 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要的审核");
+            alert("请选择需要导出的订单");
         }
     });    
-   
+    
 JS;
     $this->registerJs($js,  View::POS_READY);
 ?>

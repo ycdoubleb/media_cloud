@@ -17,11 +17,11 @@ $this->title = Yii::t('app', '{Feedback}{Info}', [
 ]);
 
 ?>
-<div class="media-approve-update">
+<div class="order-approve-update">
 
     <?php $form = ActiveForm::begin([
         'options'=>[
-            'id' => 'media-approve-form',
+            'id' => 'order-approve-form',
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
@@ -39,10 +39,10 @@ $this->title = Yii::t('app', '{Feedback}{Info}', [
             
             <div class="modal-body">
     
-                <div class="form-group field-mediaapprove-feedback has-success">
-                    <label class="control-label" for="mediaapprove-feedback"></label>
-                    <?= Html::textarea('MediaApprove[feedback]', null, [
-                        'id' => 'mediaapprove-feedback', 
+                <div class="form-group field-orderapprove-feedback has-success">
+                    <label class="control-label" for="orderapprove-feedback"></label>
+                    <?= Html::textarea('PlayApprove[feedback]', null, [
+                        'id' => 'orderapprove-feedback', 
                         'class' => 'form-control',
                         'maxlength' => true,
                         'rows' => 20,
@@ -56,12 +56,7 @@ $this->title = Yii::t('app', '{Feedback}{Info}', [
                 <span id="submit-result"></span>
                 
                 <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
-                
-                <?= Html::button(Yii::t('app', 'Close'), [
-                    'id' => 'close', 'class' => 'btn btn-default btn-flat hidden',
-                    'data-dismiss' => 'modal', 'aria-label' => 'Close'
-                ]) ?>
-                
+               
             </div>
                 
        </div>
@@ -76,7 +71,7 @@ $js = <<<JS
         
     // 提交表单    
     $("#submitsave").click(function(){
-        $('#media-approve-form').submit();
+        $('#order-approve-form').submit();
     });
 
 JS;

@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
 use common\models\media\searchs\MediaSearch;
 use common\utils\DateUtil;
@@ -15,7 +15,7 @@ use yii\web\View;
 /* @var $searchModel MediaSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', '{Media}{List}', [
     'Media' => Yii::t('app', 'Media'), 'List' => Yii::t('app', 'List')
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel pull-left">
         
         <div class="title">
-            <div class="btngroup pull-right">
+            <div class="pull-right">
                 <?= Html::a(Yii::t('app', '{Reset}{Tag}', [
                     'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
                 ]), ['edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
@@ -67,6 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
+                
                 [
                     'attribute' => 'id',
                     'label' => Yii::t('app', '{Media}{Number}', [
@@ -88,11 +89,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => Yii::t('app', 'Thumb Image'),
                     'format' => 'raw',
                     'value' => function($model) use($iconMap){
-                        $cover_url = '';
                         if($model->cover_url != null){
                             $cover_url = $model->cover_url;
                         }else if(isset($iconMap[$model->ext])){
                             $cover_url = $iconMap[$model->ext];
+                        }else{
+                            $cover_url = '';
                         }
                         return Html::img($cover_url, ['width' => 87, 'height' => 74]);
                     },

@@ -371,7 +371,6 @@ class MediaController extends Controller
     protected function findModel($id)
     {
         if (($model = Media::findOne(['id' => $id, 'del_status' => 0, 'status' => Media::STATUS_PUBLISHED])) !== null) {
-//        if (($model = Media::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

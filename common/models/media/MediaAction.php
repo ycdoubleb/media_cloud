@@ -110,7 +110,7 @@ class MediaAction extends ActiveRecord
     public static function savaMediaAction($media_id, $content, $title = null)
     {
         /** 如何是默认的CRUD标题则为默认的 */
-        if($title != null && isset(self::$titleMap[Yii::$app->controller->action->id])){
+        if($title == null && isset(self::$titleMap[Yii::$app->controller->action->id])){
             $title = self::$titleMap[Yii::$app->controller->action->id];
         }
         

@@ -8,13 +8,13 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Media */
 
-$this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
-    'Anew' => Yii::t('app', 'Anew'), 'Media' => Yii::t('app', 'Media'),
-    'Upload' => Yii::t('app', 'Upload'), 'File' => Yii::t('app', 'File')
+$this->title = Yii::t('app', '{Anew}{Transcoding}{Video}{File}', [
+    'Anew' => Yii::t('app', 'Anew'), 'Video' => Yii::t('app', 'Video'),
+    'Transcoding' => Yii::t('app', 'Transcoding'), 'File' => Yii::t('app', 'File')
 ]);
 
 ?>
-<div class="media-anew-upload">
+<div class="media-anew-transcoding">
     
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -22,7 +22,7 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['anew-upload', 'id' => $model->id],
+        'action' => ['anew-transcoding', 'id' => $model->id],
     ]); ?>
     
     <div class="modal-dialog modal-lg" role="document">
@@ -37,17 +37,17 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
             
             <div class="modal-body">
     
-                <?= $this->render('____form_upload_dom', [
+                <?= $this->render('____form_watermark_dom', [
                     'model' => $model,
-//                    'mediaFiles' => $mediaFiles,
-                    'mimeTypes' => $mimeTypes
+                    'isNewRecord' => $model->isNewRecord ? 1 : 0,
+                    'wateFiles' => $wateFiles,
                 ]) ?>
                 
             </div>
             
             <div class="modal-footer">
                 
-                <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
+                <?= Html::submitButton(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary btn-flat']) ?>
                 
             </div>
                 
@@ -57,19 +57,3 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     <?php ActiveForm::end(); ?>
     
 </div>
-
-<?php
-$js = <<<JS
-        
-    // 初始化
-    window.mediaBatchUpload = new mediaupload.MediaBatchUpload({media_url: "anew-upload?id={$model->id}"});
-        
-    // 提交表单    
-    $("#submitsave").click(function(){
-        var formdata = $('#media-form').serialize();
-        window.mediaBatchUpload.submit(formdata);
-    });
-
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>

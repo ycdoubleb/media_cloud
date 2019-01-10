@@ -4,7 +4,7 @@ use common\widgets\ueditor\UeditorAsset;
 
 /** 模态框 ///加载富文本编辑器 */
     
-//UeditorAsset::register($this);
+UeditorAsset::register($this);
 
 ?>
 

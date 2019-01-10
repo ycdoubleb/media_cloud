@@ -28,6 +28,7 @@ use yii\redis\ActiveQuery;
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
  * 
+ * @property PlayApprove[] $playApproves    
  * @property User $createdBy    关联用户表
  */
 class Order extends ActiveRecord
@@ -72,6 +73,10 @@ class Order extends ActiveRecord
     public static $playStatusName = [
         self::PLAY_STATUS_UNPAID => '未付款',
         self::PLAY_STATUS_UNPAID => '已付款',
+    ];
+    
+    public static $playCodeMode = [
+       'eeplay' => '线下支付'
     ];
 
     /**
@@ -141,6 +146,14 @@ class Order extends ActiveRecord
             return true;
         }
         return false;
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getPlayApproves()
+    {
+        return $this->hasMany(PlayApprove::class, ['order_id' => 'id']);
     }
     
     /**

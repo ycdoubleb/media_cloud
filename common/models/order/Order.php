@@ -72,7 +72,7 @@ class Order extends ActiveRecord
      */
     public static $playStatusName = [
         self::PLAY_STATUS_UNPAID => '未付款',
-        self::PLAY_STATUS_UNPAID => '已付款',
+        self::PLAY_STATUS_PAID => '已付款',
     ];
     
     public static $playCodeMode = [

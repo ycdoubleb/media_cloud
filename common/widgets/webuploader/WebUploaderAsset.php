@@ -12,7 +12,7 @@ class WebUploaderAsset extends AssetBundle
     ];
     public $js = [
         'webuploader.js',
-        'require.js',
+        'require_wskeee.js',
         'euploader_v2.min.js',
         'bootstrap-paginator.min.js',
     ];

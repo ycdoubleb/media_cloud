@@ -2,7 +2,9 @@
 namespace frontend\controllers;
 
 use common\components\aliyuncs\MediaAliyunAction;
+use common\models\api\ApiResponse;
 use common\models\LoginForm;
+use common\models\User;
 use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
@@ -13,6 +15,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use const YII_ENV_TEST;
 
 /**
  * Site controller
@@ -77,8 +80,21 @@ class SiteController extends Controller
         MediaAliyunAction::addVideoTranscode('2');
         MediaAliyunAction::addVideoTranscode('3');
         MediaAliyunAction::addVideoTranscode('4');
-        
         return $this->render('index');
+    }
+    
+    public function actionUpdateUser($id) {
+        /* @var $user User */
+        $post = \Yii::$app->request->post();
+        $user = User::findOne(['id' => $id]);
+        if($user->load($post)){
+            if($user->validate() && $user->save()){
+                \Yii::$app->response->format = 'json';
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK,null,$user->toArray());
+            }
+        }else{
+            return $this->renderAjax('_test_form',['model' => $user]);
+        }
     }
 
     /**

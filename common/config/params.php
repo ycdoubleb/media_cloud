@@ -4,6 +4,25 @@ return [
     'supportEmail' => 'lmgclj@qq.com',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordAccessTokenExpire' => 3600 * 24 * 7,
+    /* 
+     * ueditor 富文本配置
+     * 该配置会覆盖 common\modules\ueditor\Config.php $config 
+     */
+    'ueditor' => [
+        "useAliyun" => true,    //是否把文件保存到线上
+        "imagePathFormat" => "mediacloud/upload/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "scrawlPathFormat" => "mediacloud/upload/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "snapscreenPathFormat" => "mediacloud/upload/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "catcherPathFormat" => "mediacloud/upload/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "videoPathFormat" => "mediacloud/upload/ueditor/video/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "filePathFormat" => "mediacloud/upload/ueditor/file/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+        "imageManagerListPath" => "mediacloud/upload/ueditor/image/", /* 指定要列出图片的目录 */
+        "fileManagerListPath" => "mediacloud/upload/ueditor/file/", /* 指定要列出文件的目录 */
+    ],
+    /* Webuploader 配置 */
+    'webuploader' => [
+        'savePath' => 'mediacloud/files/',
+    ],
     /* 企业微信配置 */
     'notification.qywx' => [
         "CorpId" => "wwd0cb15376ce0a58a",

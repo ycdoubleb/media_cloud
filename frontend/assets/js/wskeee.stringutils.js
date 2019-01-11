@@ -33,6 +33,30 @@
         efn.push(")");
         return eval(efn.join(""));
     };
+    /**
+     * 分析 Jquery(form).serialize() 生成对应json对象
+     * @param {string} serialize
+     * @param {boolean} decoed     是否需要使用decodeURIComponent对serialize转义 默认为true
+     * @returns {wskeee.stringutilsL#5.StringUtil.parseJquerySerialize.obj}
+     */
+    StringUtil.parseJquerySerialize = function (serialize, decoed) {
+        var reg = /([^=&\s]+)[=\s]*([^&\s]*)/g;
+        var obj = {};
+        if (decoed == undefined) {
+            decoed = true;
+        }
+        while (reg.exec(decoed ? decodeURIComponent(serialize) : serialize)) {
+            if (!obj[RegExp.$1]) {
+                obj[RegExp.$1] = RegExp.$2;
+            } else if (obj[RegExp.$1]) {
+                if (typeof obj[RegExp.$1] != 'object') {
+                    obj[RegExp.$1] = [obj[RegExp.$1]];
+                }
+                obj[RegExp.$1].push(RegExp.$2);
+            }
+        }
+        return obj;
+    };
 
     /**
      * 数字转换成时间格式

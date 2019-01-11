@@ -83,7 +83,8 @@ class MediaAliyunAction {
              * 提交后等待转码完成回调 AliyunMtsController::actionTaskComplete()
              */
             $file_md5 = pathinfo($source_file->oss_key,PATHINFO_FILENAME);
-            $result = Aliyun::getMts()->addTranscode($source_file->oss_key, "mediacloud/transcode/{$file_md5}.mp4", $water_mark_options, $hasDoneLevels, $user_data);
+            $transcode_save_path = Yii::$app->params['aliyun']['mts']['transcode_save_path'];
+            $result = Aliyun::getMts()->addTranscode($source_file->oss_key, "{$transcode_save_path}{$file_md5}.mp4", $water_mark_options, $hasDoneLevels, $user_data);
             
             if ($result['success']) {
                 //修改视频为转码中状态
@@ -441,7 +442,8 @@ class MediaAliyunAction {
             throw new NotFoundHttpException('找不到原始视频！');
         }
         //提交截图任务(异步)
-        $result = Aliyun::getMts()->submitSnapshotJob($file->oss_key, "mediacloud/thumb/{$media->id}.jpg");
+        $screenshot_save_path = Yii::$app->params['aliyun']['mts']['screenshot_save_path'];
+        $result = Aliyun::getMts()->submitSnapshotJob($file->oss_key, "{$screenshot_save_path}{$media->id}.jpg");
         if ($result['success']) {
             try {
                 //获取截图路径

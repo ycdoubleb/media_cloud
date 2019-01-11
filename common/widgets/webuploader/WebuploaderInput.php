@@ -72,14 +72,14 @@ class WebuploaderInput extends InputWidget{
     public function __construct($config = array()) {
         $config['pluginOptions'] = array_merge($this->pluginOptions, isset($config['pluginOptions']) ? $config['pluginOptions'] : []);
         $config['pluginEvents'] = array_merge($this->pluginEvents, isset($config['pluginEvents']) ? $config['pluginEvents'] : []);
+        if(!isset($config['id'])){
+            $this->setId('Webuploader_'. rand(100000, 999999));
+        }
         parent::__construct($config);
     }
 
     public function init(){
         parent::init();
-        if(empty($this->id)){
-            $this->id = 'Webupload_'. rand(10000, 99999);
-        }
         
         /**
          * 合并数据
@@ -115,7 +115,7 @@ class WebuploaderInput extends InputWidget{
         $datas = json_encode($this->convertDbfiles());
         
         $js = <<< JS
-            require(['euploader'],function(){
+            Wskeee.require(['euploader'],function(){
                 var config = $config;
                 var uploader = new euploader.Uploader(config,euploader[config['type']]);
                 var ready = {$this->pluginEvents['ready']};

@@ -108,4 +108,33 @@ class MediaTagRef extends ActiveRecord
         
         return $data;
     }
+    
+    /**
+     * 获取所有对象的标签
+     * @param string|Query $objectId  对象id
+     * @param boolen $key_to_value    默认返回键值对模式
+     * @return array|Query
+     */
+    public static function getTagsByObjectId($objectId, $key_to_value = true)
+    {
+        //查询对象下的标签
+        $tagRef = self::find()->select(['TagRef.object_id'])->from(['TagRef' => MediaTagRef::tableName()]);
+        //关联查询
+        $tagRef->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
+        //必要条件查询
+        $tagRef->where(['TagRef.is_del' => 0]);
+        //条件查询
+        $tagRef->andFilterWhere(['TagRef.object_id' => $objectId]);
+        //以id排序
+        $tagRef->orderBy('TagRef.id');
+        /** 默认返回键值对模式 */
+        if($key_to_value) {
+            $tagRef->select(['TagRef.tag_id', 'Tags.name']);
+            return ArrayHelper::map($tagRef->asArray()->all(), 'tag_id', 'name');
+        }
+        //以对象id为分组
+        $tagRef->groupBy('TagRef.object_id');
+        
+        return $tagRef;
+    }
 }

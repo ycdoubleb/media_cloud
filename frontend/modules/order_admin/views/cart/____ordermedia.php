@@ -86,6 +86,9 @@ use yii\helpers\Html;
                 'headerOptions' => [
                     'style' => 'width: 100px',
                 ],
+                'value' => function($data) {
+                    return '￥'. $data['price'];
+                }
             ],
             [
 //                'attribute' => 'num',
@@ -114,7 +117,7 @@ use yii\helpers\Html;
                        ];
                        $buttonHtml = [
                            'name' => '查看详情',
-                           'url' => ['/media_library/default/view', 'id' => $data['media_id']],
+                           'url' => ['/media_library/media/view', 'id' => $data['media_id']],
                            'options' => $options,
                            'symbol' => '&nbsp;',
                            'conditions' => true,

@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
 use yii\helpers\Html;
 use yii\web\View;
@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $model MediaApprove */
 /* @var $form ActiveForm */
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', '{Approve}{Reason}', [
     'Approve' => Yii::t('app', 'Approve'), 'Reason' => Yii::t('app', 'Reason')

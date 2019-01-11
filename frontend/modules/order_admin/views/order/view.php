@@ -18,7 +18,7 @@ $this->title = Yii::t('app', '{Order}{Detail}', [
 $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
 
 ?>
-<div class="order-view main">
+<div class="order-view main mediacloud">
     <!--头部信息 / 按钮-->
     <div class="mc-title">
         <span>

@@ -13,6 +13,7 @@ use yii\db\Exception;
  * @property string $id
  * @property string $media_id   媒体id，关联media表id字段
  * @property string $content    媒体描述/简介
+ * @property string $mts_need   是否需要转码服务：0否 1是
  * @property string $mts_watermark_ids 转码水印id,多个使用,分隔，关联watermark表id字段
  */
 class MediaDetail extends ActiveRecord
@@ -31,7 +32,7 @@ class MediaDetail extends ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'media_id'], 'integer'],
+            [['id', 'media_id', 'mts_need'], 'integer'],
             [['content'], 'string'],
             [['mts_watermark_ids'], 'string', 'max' => 255],
             [['id'], 'unique'],
@@ -54,36 +55,25 @@ class MediaDetail extends ActiveRecord
     /**
      * 保存媒体详情
      * @param int $media_id  
-     * @param string $content  内容
-     * @param string $wate_ids 水印id
+     * @param array $columns ['content', 'mts_need', 'mts_watermark_ids']  
      * @return ApiResponse
      */
-    public static function savaMediaDetail($media_id, $content, $wate_ids = null)
+    public static function savaMediaDetail($media_id, $columns)
     {
         $data = []; // 返回的数据
-        /** 开启事务 */
-        $trans = Yii::$app->db->beginTransaction();
         try
         {  
             $model = self::findOne(['media_id' => $media_id]);
             if($model == null){
-                $model = new MediaDetail([
-                    'media_id' => $media_id,
-                    'content' => $content,
-                    'mts_watermark_ids' => $wate_ids,
-                ]);
+                $columns = array_merge(['media_id' => $media_id], $columns);
+                $query = \Yii::$app->db->createCommand()->insert(self::tableName(), $columns)->execute();
             }else{
-                $model->content = $content;
+                $query = \Yii::$app->db->createCommand()->update(self::tableName(), $columns, ['media_id' => $media_id])->execute();
             }
-                        
-            if($model->save()){
-                $trans->commit();  //提交事务
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
-            }
+            
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            
         }catch (Exception $ex) {
-            $trans ->rollBack(); //回滚事务
             $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
         }
         

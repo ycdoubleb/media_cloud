@@ -137,10 +137,10 @@ class Watermark extends ActiveRecord
     
     /**
      * 获取已启用的所有水印图
-     * @param integer|array $mw_id      媒体水印图id
+     * @param integer|array $id
      * @return array
      */
-    public static function getEnabledWatermarks($mw_id = null)
+    public static function getEnabledWatermarks($id = null)
     {
         //查询水印图
         $query = self::find()->from(['Watermark' => self::tableName()]);
@@ -157,7 +157,7 @@ class Watermark extends ActiveRecord
         $query->where(['Watermark.is_del' => 0]);
         
         // 按id查询
-        $query->andFilterWhere(['Watermark.id' => $mw_id]);
+        $query->andFilterWhere(['Watermark.id' => $id]);
         
         return $query->asArray()->all();
     }

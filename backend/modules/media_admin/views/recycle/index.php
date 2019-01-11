@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
 use common\models\media\MediaRecycle;
 use common\models\media\searchs\MediaRecycleSearh;
@@ -13,7 +13,7 @@ use yii\web\View;
 /* @var $searchModel MediaRecycleSearh */
 /* @var $dataProvider ActiveDataProvider */
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', 'Recycle Bin');
 $this->params['breadcrumbs'][] = $this->title;
@@ -243,8 +243,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'Handle' => Yii::t('app', 'Handle'), 'Result' => Yii::t('app', 'Result')
                     ]),
                     'value' => function($model){
-                        return $model->result === 0 || $model->result === 1 ? 
-                            MediaRecycle::$resultMap[$model->result] : null;
+                        return $model->status == 1 ? MediaRecycle::$resultMap[$model->result] : null;
                     },
                     'headerOptions' => [
                         'style' => [

@@ -18,30 +18,32 @@ $isNewRecord = $isNewRecord;
 // 所有水印文件
 $wateFiles = json_encode($wateFiles);
 // 已选中的水印
-$wateSelected = json_encode([]);
+$wateSelected = json_encode($wateSelected);
 
 ?>
 
 <!--转码-->
-<div class="form-group field-media-mts_need">
-    <?= Html::label(Yii::t('app', 'Transcoding') . '：', 'field-media-mts_need', [
-        'class' => 'col-lg-1 col-md-1 control-label form-label'
-    ]) ?>
-    <div class="col-lg-7 col-md-7">
-        <?= Html::radioList('Media[mts_need]', $isNewRecord, [1 => '自动', 0 => '手动'],[
-            'itemOptions'=>[
-                'labelOptions'=>[
-                    'style'=>[
-                        'margin'=>'10px 15px 10px 0',
-                        'color' => '#999999',
-                        'font-weight' => 'normal',
-                    ]
-                ]
-            ],
+<?php if($isNewRecord): ?>
+    <div class="form-group field-media-mts_need">
+        <?= Html::label(Yii::t('app', 'Transcoding') . '：', 'field-media-mts_need', [
+            'class' => 'col-lg-1 col-md-1 control-label form-label'
         ]) ?>
+        <div class="col-lg-7 col-md-7">
+            <?= Html::radioList('Media[mts_need]', $isNewRecord, [1 => '自动', 0 => '手动'],[
+                'itemOptions'=>[
+                    'labelOptions'=>[
+                        'style'=>[
+                            'margin'=>'10px 15px 10px 0',
+                            'color' => '#999999',
+                            'font-weight' => 'normal',
+                        ]
+                    ]
+                ],
+            ]) ?>
+        </div>
+        <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
     </div>
-    <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
-</div>
+<?php endif; ?>
 
 <!--水印-->
 <div class="form-group field-media-mts_watermark_ids">

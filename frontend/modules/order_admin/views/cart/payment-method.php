@@ -13,7 +13,7 @@ $this->title = Yii::t('app', '{Payment}{Mode}',[
 ?>
 <div class="payment-method main mc-modal">
 
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">

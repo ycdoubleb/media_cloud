@@ -2,9 +2,11 @@
 
 namespace backend\modules\media_admin\controllers;
 
+use common\components\aliyuncs\MediaAliyunAction;
 use common\models\media\Media;
 use common\models\media\MediaApprove;
 use common\models\media\MediaRecycle;
+use common\models\media\MediaType;
 use common\models\media\searchs\MediaApproveSearch;
 use Yii;
 use yii\data\ArrayDataProvider;
@@ -66,8 +68,12 @@ class ApproveController extends Controller
             $content = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.content'); 
 
             //查找已经存在的
-            $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
+            $result = MediaApprove::find()->from(['Approve' => MediaApprove::tableName()])
+                ->select(['Approve.*', 'Media.status as media_status'])
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id')
+                ->where(['Approve.media_id' => $mediaIds])
+                ->orWhere(['or', ['Media.status' => Media::STATUS_INSERTED_DB], ['Media.status' => Media::STATUS_PUBLISHED]])
+                ->andWhere(['or', ['Approve.result' => 1], ['Approve.status' => 0]])->asArray()->all();
             $result = ArrayHelper::index($result, 'media_id');
 
             foreach($mediaIds as $id){
@@ -87,7 +93,7 @@ class ApproveController extends Controller
             
             Yii::$app->getSession()->setFlash('success','申请成功！');
             
-            return $this->redirect(['index']);
+            return $this->redirect(['media/index']);
         }
         
         return $this->renderAjax('apply');
@@ -128,7 +134,7 @@ class ApproveController extends Controller
             
             Yii::$app->getSession()->setFlash('success','申请成功！');
             
-            return $this->redirect(['index']);
+            return $this->redirect(['media/index']);
         }
         
         return $this->renderAjax('apply');
@@ -166,12 +172,20 @@ class ApproveController extends Controller
                         switch ($model->type){
                             case MediaApprove::TYPE_INTODB_APPROVE:
                                 // 改变media状态需要满足审核类型是【入库申请】
-                                $mediaModel->status = Media::STATUS_ALREADY_INTO_DB;
+                                if($mediaModel->mediaType->sign == MediaType::SIGN_VIDEO){
+                                    // 如果视频转码需求是自动则转码
+                                    if($mediaModel->detail->mts_need){
+                                        MediaAliyunAction::addVideoTranscode($mediaModel->id);   // 转码
+                                    }
+                                    $mediaModel->status = Media::STATUS_PUBLISHED;
+                                }else{
+                                    $mediaModel->status = Media::STATUS_PUBLISHED;
+                                }
                                 $mediaModel->save(true, ['status']);
                                 break;
                             case MediaApprove::TYPE_DELETE_APPROVE:
                                 // 媒体申请删除状态
-                                $mediaModel->del_status = Media::DEL_STATUS_APPROVE;
+                                $mediaModel->del_status = Media::DEL_STATUS_APPLY;
                                 if($mediaModel->save(true, ['del_status'])){
                                     // 创建回收站数据需要满足审核类型是【删除申请】
                                     $recycleModel = new MediaRecycle(['media_id' => $model->media_id, 'created_by' => $model->handled_by]);

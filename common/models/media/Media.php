@@ -49,32 +49,28 @@ use yii\db\ActiveRecord;
 class Media extends ActiveRecord
 {
     
-    /** 待入库 */
-    const STATUS_WAIT_INTO_DB = 1;
-
-    /** 已入库 */
-    const STATUS_ALREADY_INTO_DB = 2;
-
-    /** 已发布 */
-    const STATUS_ALREADY_PUBLISH = 3;
+    /** 状态-待入库 */
+    const STATUS_INSERTING_DB = 1;
+    /** 状态-已入库 */
+    const STATUS_INSERTED_DB = 2;
+    /** 状态-已发布 */
+    const STATUS_PUBLISHED = 3;
     
-    /** 无转码 */
+    /** 转码状态-无转码 */
     const MTS_STATUS_NONE = 0;
-    /** 无转码 */
+    /** 转码状态-无转码 */
     const MTS_STATUS_NO = 1;
-    /** 转码中 */
+    /** 转码状态-转码中 */
     const MTS_STATUS_DOING = 2;
-    /** 已转码 */
+    /** 转码状态-已转码 */
     const MTS_STATUS_YES = 3;
-    /** 转码失败 */
+    /** 转码状态-转码失败 */
     const MTS_STATUS_FAIL = 4;
     
     /** 删除状态-申请 */
-    const DEL_STATUS_APPROVE = 1;
-
+    const DEL_STATUS_APPLY = 1;
     /** 删除状态-逻辑 */
     const DEL_STATUS_LOGIC = 2;
-
     /** 删除状态-物理 */
     const DEL_STATUS_TRUE = 3;
     
@@ -83,9 +79,9 @@ class Media extends ActiveRecord
      * @var array 
      */
     public static $statusName = [
-        self::STATUS_WAIT_INTO_DB => '待入库',
-        self::STATUS_ALREADY_INTO_DB => '已入库',
-        self::STATUS_ALREADY_PUBLISH => '已发布',
+        self::STATUS_INSERTING_DB => '待入库',
+        self::STATUS_INSERTED_DB => '已入库',
+        self::STATUS_PUBLISHED => '已发布',
     ];
     
     /**

@@ -9,5 +9,5 @@
     <td>{%duration%}</td>
     <td>{%size%}</td>
     <td>{%tags%}</td>
-    <td><a class="" href="/media_library/default/view?id={%id%}" title="查看" style="color: #39f" aria-label="查看" data-pjax="0" target="_blank">查看详情</a> </td>
+    <td><a class="" href="/media_library/media/view?id={%id%}" title="查看" style="color: #39f" aria-label="查看" data-pjax="0" target="_blank">查看详情</a> </td>
 </tr>

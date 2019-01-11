@@ -2,6 +2,7 @@
 
 namespace frontend\modules\order_admin\controllers;
 
+use common\models\api\ApiResponse;
 use common\models\order\Cart;
 use common\models\order\Order;
 use common\models\order\OrderAction;
@@ -107,11 +108,8 @@ class CartController extends Controller
             $is_select = false;
         }
         
-        return [
-            'code'=> 200,
-            'data' => $is_select,
-            'message' => '请求成功！',
-        ];
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $is_select);
+        
     }
     
     /**
@@ -129,17 +127,15 @@ class CartController extends Controller
         } else {
             $model->is_selected = 1;
         }
-        $model->save();
-        //所有媒体
-        $cats = Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]);
-        //选中的媒体
-        $cats_sels = Cart::findAll(['is_selected' => 1, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
-                
-        return [
-            'code'=> 200,
-            'data' => count($cats) == count($cats_sels),
-            'message' => '请求成功！',
-        ];
+        
+        if($model->save()){
+            //所有媒体
+            $cats = Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]);
+            //选中的媒体
+            $cats_sels = Cart::findAll(['is_selected' => 1, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
+
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, count($cats) == count($cats_sels));
+        }
     }
 
     /**
@@ -191,11 +187,11 @@ class CartController extends Controller
                 foreach ($dataProvider->models as $value) {
                     $data[] = [
                         $order->id, $order_sn, $value['media_id'], $value['price'],
-                        $value['price'], Yii::$app->user->id
+                        $value['price'], Yii::$app->user->id, time(), time()
                     ];
                 }
                 Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
-                    ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by'], $data)->execute();
+                    ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
                 
                 return $this->redirect(['place-order',
                     'id' => $order->id,

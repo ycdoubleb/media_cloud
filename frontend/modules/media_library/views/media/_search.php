@@ -2,7 +2,7 @@
 
 use common\models\media\MediaType;
 use kartik\widgets\Select2;
-use yii\web\JsExpression;
+use yii\helpers\ArrayHelper;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -70,7 +70,7 @@ use yii\widgets\ActiveForm;
                                 // 组装生成属性值下拉选择框
                                 foreach ($mediaAttrValue as $attr_val){
                                     // 分割成val=>name
-                                    $value = explode('_', $attr_val);   
+                                    $value = explode('_', $attr_val);
                                     // 生成以属性id索引的下拉列表
                                     $attrValMap[$attr['id']][$value[0]] = $value[1];
                                 }
@@ -78,12 +78,12 @@ use yii\widgets\ActiveForm;
                                 echo Select2::widget([
                                     'id' => "attribute_value_{$attr['id']}",
                                     'name' => 'MediaSearch[attribute_value_id][]',
+                                    'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
                                     'data' => $attrValMap[$attr['id']],
                                     'hideSearch' => true,
                                     'options' => ['placeholder' => $attr['name']],
-                                    'pluginEvents' => [
-                                        'change' => 'function(){ submitForm(); }'
-                                    ]
+                                    'pluginOptions' => ['allowClear' => true],
+                                    'pluginEvents' => ['change' => 'function(){ submitForm()}']
                                 ]);                       
                                 echo '</div>';
                             } 

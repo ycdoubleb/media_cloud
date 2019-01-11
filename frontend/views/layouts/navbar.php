@@ -18,7 +18,7 @@ NavBar::begin([
 ]);
 
 $menuItems = [
-    ['label' => '资源库', 'url' => ['/media_library/default']],
+    ['label' => '资源库', 'url' => ['/media_library/media']],
     ['label' => '我的', 'url' => ['/order_admin/order'], 'visible' => !Yii::$app->user->isGuest],
 ];
 

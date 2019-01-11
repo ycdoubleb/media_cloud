@@ -2,8 +2,11 @@
 
 namespace common\models\order;
 
+use common\models\media\Media;
+use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -20,6 +23,10 @@ use yii\db\ActiveRecord;
  * @property string $created_by 创建人（购买人），关联user表id字段
  * @property string $created_at 创建时间（购买时间）
  * @property string $updated_at 更新时间
+ * 
+ * @property Media $media
+ * @property Order $order
+ * @property User $createdBy
  */
 class OrderGoods extends ActiveRecord
 {
@@ -71,5 +78,29 @@ class OrderGoods extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getMedia()
+    {
+        return $this->hasOne(Media::class, ['id' => 'goods_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrder()
+    {
+        return $this->hasOne(Order::class, ['id' => 'order_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 }

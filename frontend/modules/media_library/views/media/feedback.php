@@ -18,7 +18,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
 ?>
 
 <div class="feedback main mc-modal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -34,31 +34,31 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                             'class'=>'form-horizontal',
                         ],
                         'fieldConfig' => [
-                            'template' => "{label}\n<div class=\"col-lg-10 col-md-10\" style=\"padding-left: 0px;\">"
+                            'template' => "{label}\n<div class=\"col-lg-10 col-md-10\" style=\"padding-left: 0px; padding-right: 30px\">"
                                                 . "{input}</div>\n<div class=\"col-lg-12 col-md-12\">{error}</div>",  
                             'labelOptions' => [
                                 'class' => 'col-lg-2 col-md-2',
-                                'style' => 'padding-top: 5px; padding-right: 0px;'
+                                'style' => 'padding-top: 5px; text-align: right;'
                             ],  
                         ], 
                     ]); ?>
                     <!--媒体编号-->
                     <div class="form-group field-mediaissue-content has-success">
-                        <label class="col-lg-2 col-md-2" style="padding-right: 0px;" for="mediaissue-content">媒体编号：</label>
+                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">媒体编号：</label>
                         <div class="col-lg-10 col-md-10" style="padding-left: 0px;">
                             <div class=""><?= $model->media_id;?></div>
                         </div>
                     </div>
                     <!--媒体名称-->
                     <div class="form-group field-mediaissue-content has-success">
-                        <label class="col-lg-2 col-md-2" style="padding-right: 0px;" for="mediaissue-content">媒体名称：</label>
+                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">媒体名称：</label>
                         <div class="col-lg-10 col-md-10" style="padding-left: 0px;">
                             <div class=""><?= $model->media->name;?></div>
                         </div>
                     </div>
                     <!--媒体ID-->
                     <?= Html::activeHiddenInput($model, 'media_id') ?>
-
+                    <!--问题类型-->
                     <?= $form->field($model, 'type')->radioList(MediaIssue::$issueName,[
                         'itemOptions'=>[
                             'labelOptions'=>[
@@ -72,7 +72,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                     ])->label(Yii::t('app', '{Problem}{Type}：',[
                         'Problem' => Yii::t('app', 'Problem'), 'Type' => Yii::t('app', 'Type')
                     ])) ?>
-
+                    <!--问题描述-->
                     <?= $form->field($model, 'content')->textarea(['rows' => 6])
                         ->label(Yii::t('app', '{Problem}{Des}：',[
                             'Problem' => Yii::t('app', 'Problem'),
@@ -97,7 +97,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
 $js = <<<JS
     //提交表单
     $("#submitsave").click(function(){
-        $.post("../default/feedback?id={$model->media_id}", $('#form-admin').serialize(),function(data){
+        $.post("../media/feedback?id={$model->media_id}", $('#form-admin').serialize(),function(data){
             if(data['code'] == '200'){
                 
             }

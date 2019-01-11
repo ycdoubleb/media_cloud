@@ -1,6 +1,6 @@
 <?php
 
-use backend\modules\media_admin\assets\ModuleAsset;
+use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\widgets\depdropdown\DepDropdown;
@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Media */
 
-ModuleAsset::register($this);
+MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', '{Create}{Media}', [
     'Create' => Yii::t('app', 'Create'), 'Media' => Yii::t('app', 'Media')
@@ -83,6 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $this->render('____form_watermark_dom', [
                 'isNewRecord' => $model->isNewRecord ? 1 : 0,
                 'wateFiles' => $wateFiles,
+                'wateSelected' => $wateSelected,
             ]) ?>
             
         </div>

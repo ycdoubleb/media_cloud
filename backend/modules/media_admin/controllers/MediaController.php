@@ -10,6 +10,7 @@ use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
 use common\models\media\MediaTagRef;
+use common\models\media\MediaType;
 use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
@@ -78,6 +79,7 @@ class MediaController extends Controller
         
         return $this->render('view', [
             'model' => $model,
+            'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id, false), 'name', 'icon_url'),
             'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
             'tagsDataProvider' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
             'videoDataProvider' => new ArrayDataProvider([
@@ -86,6 +88,7 @@ class MediaController extends Controller
             'actionDataProvider' => new ArrayDataProvider([
                 'allModels' => $model->mediaAction,
             ]),
+            
         ]);
     }
 
@@ -132,12 +135,9 @@ class MediaController extends Controller
                     $attResult = MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
                     $tagResult = MediaTagRef::saveMediaTagRef($model->id, $tags);
                     $actionResult = MediaAction::savaMediaAction($model->id, $model->name);
-                    /** 转码条件：1媒体类型是视频,2自动转码 */
-                    if($model->mediaType->sign == 'video' && $mts_need){
-                        $detailResult = MediaDetail::savaMediaDetail($model->id, null, $wate_ids);
-                        if($detailResult->code == 0){
-                            MediaAliyunAction::addVideoTranscode($model->id);   // 转码
-                        }
+                    /** 保存水印图： 1媒体类型是视频,2自动转码 */
+                    if($model->mediaType->sign == MediaType::SIGN_VIDEO && $mts_need){
+                        MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
                     }
                 }else{
                     $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
@@ -166,7 +166,8 @@ class MediaController extends Controller
             'model' => $model,
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
-            'wateFiles' => Watermark::getEnabledWatermarks()
+            'wateFiles' => Watermark::getEnabledWatermarks(),
+            'wateSelected' => [],
         ]);
     }
 
@@ -204,7 +205,7 @@ class MediaController extends Controller
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
-                    $detailResult = MediaDetail::savaMediaDetail($model->id, $content);
+                    $detailResult = MediaDetail::savaMediaDetail($model->id, ['content' => $content]);
                     $actionResult = MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
                         $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                 }
@@ -253,7 +254,6 @@ class MediaController extends Controller
                 $tagResult = MediaTagRef::saveMediaTagRef($model->id, $tags);
 
             } catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
                 Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
             }
             
@@ -322,8 +322,48 @@ class MediaController extends Controller
         
         return $this->renderAjax('____anew_upload', [
             'model' => $model,
-            'mediaFiles' => $model->uploadfile->toArray(),
+//            'mediaFiles' => $model->uploadfile->toArray(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id),
+        ]);
+    }
+    
+    /**
+     * 重新 转码视频文件
+     * 如果更新成功，浏览器将被重定向到“view”页面。
+     * @param string $id
+     * @return mixed
+     */
+    public function actionAnewTranscoding($id)
+    {
+        $model = $this->findModel($id);
+        $post = Yii::$app->request->post();
+        
+        if ($model->load($post)) {
+            try
+            {
+                // 水印id
+                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
+                // 保存媒体详细
+                $detailResult = MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
+
+                if($detailResult->code == 0){
+                    MediaAliyunAction::addVideoTranscode($model->id);   // 转码
+                    MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
+                }
+                
+                Yii::$app->getSession()->setFlash('success','操作成功！');
+                
+            } catch (Exception $ex) {
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+            }
+            
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+        
+        return $this->renderAjax('____anew_transcoding', [
+            'model' => $model,
+            'wateFiles' => Watermark::getEnabledWatermarks(),
+            'wateSelected' => explode(',', $model->detail->mts_watermark_ids)
         ]);
     }
     

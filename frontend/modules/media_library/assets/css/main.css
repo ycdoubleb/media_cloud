@@ -9,18 +9,57 @@ and open the template in the editor.
 */
 
 /*******************************************************************************
- * 头部样式
+ * 只有主布局时的样式
  *******************************************************************************/
-.header {
+.mediacloud .header {
     display: inline-block;
     width: 100%;
-    height: 80px;
-    margin-bottom: 30px;
+    height: 180px;
+    margin-bottom: 20px;
     background-color: #fff;
 }
-/*******************************************************************************
- * 内容
- *******************************************************************************/
+
+.mediacloud .header .container .media-title {
+    padding-top: 35px;
+    padding-bottom: 30px;
+}
+
+.mediacloud .header .container .media-title .media-name{
+    font-size: 24px;
+}
+
+.mediacloud .header .container .media-title .media-name,
+.mediacloud .header .container .media-title .media-tags {
+    display: block;
+}
+
+.mediacloud .header .container .operation .pull-left {
+    width: 500px;
+}
+
+.mediacloud .header .container .operation .btn-ellipse{
+    color: #999999;
+    background-color: #f2f2f2;
+    border-color: #f2f2f2;
+    line-height: 35px;
+    padding: 8px 20px;
+    border-radius: 15px;
+}
+
+.mediacloud .header .container .operation .fav-red {
+    color: #FC583D;
+}
+
 .content {
     padding: 0 !important;
+}
+
+.content .common {
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 30px;
+}
+
+.content .common .mc-tabs {
+    margin-bottom: 15px;
 }

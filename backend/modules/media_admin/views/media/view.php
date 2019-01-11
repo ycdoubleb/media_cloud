@@ -2,8 +2,8 @@
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
+use common\models\media\MediaType;
 use common\utils\DateUtil;
-use kartik\select2\Select2Asset;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\View;
@@ -160,77 +160,106 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a(Yii::t('app', '{Anew}{Upload}', [
                     'Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
                 ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']) ?>
-                <?= Html::a(Yii::t('app', '{Anew}{Transcoding}', [
-                    'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
-                ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']) ?>
+                <?php 
+                    if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                        echo Html::a(Yii::t('app', '{Anew}{Transcoding}', [
+                            'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
+                        ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
+                    }
+                ?>
             </p>
             
-            <?= GridView::widget([
-                'dataProvider' => $videoDataProvider,
-                'layout' => "{items}\n{summary}\n{pager}",  
-                'columns' => [
-                    [
-                        'label' => Yii::t('app', 'Name'),
-                        'value' => function($model){
-                            return $model->name;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '185px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', 'Bitrate'),
-                        'value' => function($model){
-                            return $model->bitrate;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '250px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', 'Size'),
-                        'value' => function($model){
-                            return Yii::$app->formatter->asShortSize($model->size);
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '330px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', 'Format'),
-                        'value' => function($model){
-                            return !empty($model->type_id) ? $model->mediaType->name : null;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '330px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'class' => 'yii\grid\ActionColumn',
-                        'header' => '操作',
-                        'buttons' => [
-                            'view' => function($url, $model){
-                                return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
+            <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                echo GridView::widget([
+                    'dataProvider' => $videoDataProvider,
+                    'layout' => "{items}\n{summary}\n{pager}",  
+                    'columns' => [
+                        [
+                            'label' => Yii::t('app', 'Name'),
+                            'value' => function($model){
+                                return $model->name;
                             },
-                        ],
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '120px',
+                            'headerOptions' => [
+                                'style' => [
+                                    'width' => '185px',
+                                ]
                             ],
                         ],
+                        [
+                            'label' => Yii::t('app', 'Bitrate'),
+                            'value' => function($model){
+                                return $model->bitrate;
+                            },
+                            'headerOptions' => [
+                                'style' => [
+                                    'width' => '250px',
+                                ]
+                            ],
+                        ],
+                        [
+                            'label' => Yii::t('app', 'Size'),
+                            'value' => function($model){
+                                return Yii::$app->formatter->asShortSize($model->size);
+                            },
+                            'headerOptions' => [
+                                'style' => [
+                                    'width' => '330px',
+                                ]
+                            ],
+                        ],
+                        [
+                            'label' => Yii::t('app', 'Format'),
+                            'value' => function($model){
+                                return !empty($model->media_id) ? $model->media->ext : null;
+                            },
+                            'headerOptions' => [
+                                'style' => [
+                                    'width' => '330px',
+                                ]
+                            ],
+                        ],
+                        [
+                            'class' => 'yii\grid\ActionColumn',
+                            'header' => '操作',
+                            'buttons' => [
+                                'view' => function($url, $model){
+                                    return Html::a(Yii::t('app', 'Preview'), null, [
+                                        'class' => 'btn btn-default',
+                                        'data-url' => $model->url,
+                                        'onclick' => 'videoPreview($(this));'
+                                    ]);
+                                },
+                            ],
+                            'headerOptions' => [
+                                'style' => [
+                                    'width' => '120px',
+                                ],
+                            ],
 
-                        'template' => '{view}',
+                            'template' => '{view}',
+                        ],
                     ],
-                ],
-            ]); ?>
+                ]); 
+            }
+            
+            /* 根据媒体类型加载不同的预览内容 */
+            if(!empty($model->type_id)){
+                switch ($model->mediaType->sign){
+                    case MediaType::SIGN_VIDEO :
+                        echo "<video id=\"myVideo\" src=\"{$model->url}\"  poster=\"{$model->cover_url}\" width=\"100%\" controls=\"controls\"></video>";
+                        break;
+                    case MediaType::SIGN_AUDIO :
+                        echo "<audio src=\"{$model->url}\" style=\"width: 100%\" controls=\"controls\"></audio>";
+                        break;
+                    case MediaType::SIGN_IMAGE :
+                        echo "<img src=\"{$model->url}\" width=\"100%\" />";
+                        break;
+                    case MediaType::SIGN_DOCMENT :
+                        echo "<iframe src=\"http://eezxyl.gzedu.com/?furl={$model->url}\" width=\"100%\" height=\"700\" style=\"border: none\"></iframe>";
+                        break;
+                }
+            }
+            ?>
             
         </div>
         
@@ -336,7 +365,19 @@ $js = <<<JS
         e.preventDefault();
         showModal($(this));
     });
-    
+        
+    /**
+     * 视频预览
+     * @param {object} _this
+     * @returns {undefined}
+     */
+    window.videoPreview = function(_this){
+        var url = _this.attr('data-url');
+        var myVideo = $('#myVideo');
+        myVideo.attr('src', url);
+        myVideo[0].play();
+    } 
+        
 JS;
     $this->registerJs($js, View::POS_READY);
 ?>

@@ -29,14 +29,14 @@ use yii\widgets\ActiveForm;
 
     <div class="col-lg-12 col-md-12 panel">
     
-        <!--订单名称-->
+        <!--媒体名称-->
         <?= $form->field($model, 'meida_name')->textInput([
             'placeholder' => '请输入媒体名称', 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', '{Media}{Name}：', [
             'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
         ])) ?>
         
-        <!--订单编号-->
+        <!--媒体编-->
         <?= $form->field($model, 'meida_sn')->textInput([
             'placeholder' => '请输入媒体编号', 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', '{Media}{Number}：', [

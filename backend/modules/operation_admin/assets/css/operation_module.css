@@ -23,12 +23,13 @@ and open the template in the editor.
 
 /*******************************************************************************
  *
- * order-search & play-approve-search & order-goods-search
+ * order-search & play-approve-search & order-goods-search & acl-search
  *
 ********************************************************************************/
 .order-search .panel,
 .play-approve-search .panel,
-.order-goods-search .panel {
+.order-goods-search .panel,
+.acl-search .panel {
     padding: 15px 0px; 
     margin-bottom: 30px; 
     border: 1px solid #e4e4e4; 

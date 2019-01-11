@@ -74,7 +74,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
-                
                 [
                     'label' => Yii::t('app', '{Media}{Name}', [
                         'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')

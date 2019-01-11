@@ -297,7 +297,7 @@ class MediaAliyunAction {
                     //插入 VideoUrl
                     Yii::$app->db->createCommand()->batchInsert(VideoUrl::tableName(), $mediaTranscodeRowKeys, $mediaTranscodeRows)->execute();
                     //更改 Media 转码状态 成功, Media 时长 ，【注意】并且改为发布状态
-                    Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_ALREADY_PUBLISH, 'duration' => $format->Duration], ['id' => $media_id])->execute();
+                    Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_PUBLISHED, 'duration' => $format->Duration], ['id' => $media_id])->execute();
                     if ($force) {
                         //如果为强制，即删除所有服务记录（前面未删除）
                         AliyunMtsService::updateAll(['is_del' => 1], ['media_id' => $media_id]);
@@ -373,7 +373,7 @@ class MediaAliyunAction {
                 //插入新的VideoUrl关联
                 Yii::$app->db->createCommand()->batchInsert(VideoUrl::tableName(), $rowKeys, $rows)->execute();
                 //更改 Media 转码状态
-                Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_ALREADY_PUBLISH], ['id' => $media->id])->execute();
+                Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_PUBLISHED], ['id' => $media->id])->execute();
                 $tran->commit();
             } catch (\Exception $ex) {
                 $tran->rollBack();

@@ -50,7 +50,7 @@ use yii\widgets\ActiveForm;
                 'max_level' => 10,
                 'onChangeEvent' => new JsExpression('function(){ submitForm()}')
             ],
-            'items' => Dir::getDirsBySameLevel($model->dir_id, null, true, true),
+            'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
             'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
             'itemOptions' => [
                 'style' => 'width: 175px; display: inline-block;',
@@ -94,18 +94,20 @@ use yii\widgets\ActiveForm;
                             // 生成以属性id索引的下拉列表
                             $attrValMap[$attr['id']][$value[0]] = $value[1];
                         }
-                        echo "<div id='DepDropdown_{$attr['id']}' . class='dep-dropdowns'>";
-                        echo Select2::widget([
-                            'id' => "attribute_value_{$attr['id']}",
-                            'name' => 'MediaSearch[attribute_value_id][]',
-                            'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
-                            'data' => $attrValMap[$attr['id']],
-                            'hideSearch' => true,
-                            'options' => ['placeholder' => $attr['name']],
-                            'pluginOptions' => ['allowClear' => true],
-                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
-                        ]);                       
-                        echo '</div>';
+                        if($attr['index_type'] > 0){
+                            echo "<div id='DepDropdown_{$attr['id']}' . class='dep-dropdowns'>";
+                            echo Select2::widget([
+                                'id' => "attribute_value_{$attr['id']}",
+                                'name' => 'MediaSearch[attribute_value_id][]',
+                                'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
+                                'data' => $attrValMap[$attr['id']],
+                                'hideSearch' => true,
+                                'options' => ['placeholder' => $attr['name']],
+                                'pluginOptions' => ['allowClear' => true],
+                                'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                            ]);                       
+                            echo '</div>';
+                        }
                     } 
                 ?>
             </div>

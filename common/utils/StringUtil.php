@@ -61,7 +61,7 @@ class StringUtil {
     public static function checkPhoneValid($phone) {
         return preg_match('/^[1][345678][0-9]{9}$/', $phone);
     }
-
+    
     /**
      * 获取文件的后缀名
      * @param string $file

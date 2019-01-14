@@ -313,21 +313,17 @@ class Dir extends ActiveRecord
     /**
      * 获取目录的等级
      * @param intger $level         默认返回所有目录
-     * @param string $created_by    用户ID
+     * @param string $created_by    用户ID，一般是当前用户ID
      * @param bool $key_to_value    返回键值对形式
      * @param bool $include_unshow  是否包括隐藏的分类
      * @param string $sort_order    排序
      * 
      * @return array(array|Array) 
      */
-    public static function getDirsByLevel($level = 1, $created_by = null, $key_to_value = false, $include_unshow = false, $sort_order = 'is_public') {
+    public static function getDirsByLevel($level = 1, $created_by, $key_to_value = false, $include_unshow = false, $sort_order = 'is_public') {
         self::initCache();
         $dirs = self::$dirs;   //所有目录
-        //不传created_by，默认使用当前用户的ID
-        if (!isset($created_by) || empty($created_by)) {
-            $created_by = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        }
-       
+        
         $leveDirs = [];
         ArrayHelper::multisort($dirs, $sort_order, SORT_DESC);
         foreach ($dirs as $id => $dir) {
@@ -342,7 +338,7 @@ class Dir extends ActiveRecord
     /**
      * 获取目录的子级
      * @param integer $id               目录ID
-     * @param string $created_by        用户ID
+     * @param string $created_by        用户ID，一般是当前用户ID
      * @param bool $key_to_value        返回键值对形式
      * @param bool $recursion           是否递归
      * @param bool $include_unshow      是否包括隐藏的分类
@@ -350,14 +346,10 @@ class Dir extends ActiveRecord
      * 
      * @return array [array|key=value]
      */
-    public static function getDirsChildren($id, $created_by = null, $key_to_value = false, $recursion = false, $include_unshow = false, $sort_order = 'is_public') {
+    public static function getDirsChildren($id, $created_by, $key_to_value = false, $recursion = false, $include_unshow = false, $sort_order = 'is_public') {
         self::initCache();
         $dirs = self::$dirs; //所有目录
-        //不传created_by，默认使用当前用户的ID
-        if (!isset($created_by) || empty($created_by)) {
-            $created_by = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        }
-       
+        
         $childrens = [];
         ArrayHelper::multisort($dirs, $sort_order, SORT_DESC);
         foreach ($dirs as $dir) {
@@ -375,13 +367,13 @@ class Dir extends ActiveRecord
     /**
      * 获取目录的子级ID
      * @param integer $id               目录ID
-     * @param string $created_by        用户ID
+     * @param string $created_by        用户ID，一般是当前用户ID
      * @param bool $recursion           是否递归
      * @param bool $include_unshow      是否包括隐藏的分类
      * 
      * @return array [id,id...]
      */
-    public static function getDirChildrenIds($id, $created_by = null, $recursion = false, $include_unshow = false) {
+    public static function getDirChildrenIds($id, $created_by, $recursion = false, $include_unshow = false) {
         self::initCache();
         //不传created_by，默认使用当前用户ID
         if (!isset($created_by) || empty($created_by)) {
@@ -404,7 +396,7 @@ class Dir extends ActiveRecord
     /**
      * 返回当前（包括父级）存储目录同级的所有目录
      * @param integer $id               分类ID
-     * @param string $created_by        用户ID
+     * @param string $created_by        用户ID，一般是当前用户ID
      * @param bool $containerSelfLevel  是否包括该分类同级分类
      * @param bool $key_to_value        返回键值对形式
      * @param bool $recursion           是否递归（向上级递归）
@@ -413,12 +405,8 @@ class Dir extends ActiveRecord
      * 
      * @return array [[level_1],[level_2],..]
      */
-    public static function getDirsBySameLevel($id, $created_by = null, $containerSelfLevel = false, $key_to_value = false, $recursion = true, $include_unshow = false, $sort_order = 'is_public') {
-        //不created_by，默认使用当前用户的ID
-        if (!isset($created_by) || empty($created_by)) {
-            $created_by = Yii::$app->user->isGuest ? null : Yii::$app->user->id;
-        }
-        
+    public static function getDirsBySameLevel($id, $created_by, $containerSelfLevel = false, $key_to_value = false, $recursion = true, $include_unshow = false, $sort_order = 'is_public') 
+    {
         $dir = self::getDirById($id);
         $dirs = [];
         if (($containerSelfLevel && $dir != null)) {

@@ -53,14 +53,7 @@ $this->title = Yii::t('app', '{Feedback}{Info}', [
             
             <div class="modal-footer">
                 
-                <span id="submit-result"></span>
-                
-                <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
-                
-                <?= Html::button(Yii::t('app', 'Close'), [
-                    'id' => 'close', 'class' => 'btn btn-default btn-flat hidden',
-                    'data-dismiss' => 'modal', 'aria-label' => 'Close'
-                ]) ?>
+                <?= Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-primary btn-flat']) ?>
                 
             </div>
                 
@@ -70,15 +63,3 @@ $this->title = Yii::t('app', '{Feedback}{Info}', [
     <?php ActiveForm::end(); ?>
 
 </div>
-
-<?php
-$js = <<<JS
-        
-    // 提交表单    
-    $("#submitsave").click(function(){
-        $('#media-approve-form').submit();
-    });
-
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>

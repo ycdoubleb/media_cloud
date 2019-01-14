@@ -86,16 +86,16 @@ $wateSelected = json_encode($wateSelected);
             if(!isPageLoading) $('#media-mts_watermark_ids').html('');
             //创建情况下显示默认选中，更新情况下如果id存在已选的水印里则this.is_selected = true，否则不显示选中
             if(!isNewRecord){
-                this.is_selected = $.inArray(this.id, wateSelected) != -1 ? true : false;
+                this.is_selected = $.inArray(this.id, wateSelected) != -1 ? 1 : 0;
             }
             var wate = $(Wskeee.StringUtil.renderDOM(item_dom, this)).appendTo($('#media-mts_watermark_ids'));
-            wate.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', this.is_selected);
+            wate.find('input').attr('name', 'Media[mts_watermark_ids][]').prop('checked', parseInt(this.is_selected));
             //check 更改后通知preview显示更改
             wate.find('input').on('change',function(){
                 checkedWatermark($(this));
             });
             //如果是默认选中，则在预览图上添加该选中的水印
-            if(this.is_selected) watermark.addWatermark('vkcw' + this.id, this);
+            if(parseInt(this.is_selected)) watermark.addWatermark('vkcw' + this.id, this);
             isPageLoading = true;
         });
     }

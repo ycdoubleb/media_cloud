@@ -73,7 +73,9 @@ class DefaultController extends Controller {
      * 上传
      */
     public function actionUpload($action) {
-        $CONFIG = Config::$config;
+        
+        $app_config = isset(Yii::$app->params['ueditor']) ? Yii::$app->params['ueditor'] : [];
+        $CONFIG = array_merge(Config::$config,$app_config);
 
         /* 上传配置 */
         $base64 = "upload";

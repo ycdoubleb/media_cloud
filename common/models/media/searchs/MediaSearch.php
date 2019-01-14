@@ -3,13 +3,14 @@
 namespace common\models\media\searchs;
 
 use common\models\AdminUser;
+use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaTagRef;
 use common\models\Tags;
+use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
-use yii\db\Query;
+use yii\helpers\ArrayHelper;
 
 /**
  * MediaSearch represents the model behind the search form of `common\models\media\Media`.
@@ -64,7 +65,7 @@ class MediaSearch extends Media
      * @return array
      */
     public function search($params)
-    {
+    {        
         // 查询媒体数据
         $query = self::find()->from(['Media' => self::tableName()]);
 
@@ -82,12 +83,15 @@ class MediaSearch extends Media
         // 关联标签表
         $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
         
+        if(!empty($this->dir_id)){
+            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, true);
+            $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
+        }
         
         // 必要条件
         $query->andFilterWhere([
             'Media.type_id' => $this->type_id,
             'Media.owner_id' => $this->owner_id,
-            'Media.dir_id' => $this->dir_id,
             'Media.status' => $this->status,
             'Media.created_by' => $this->created_by,
             'Media.del_status' => 0,

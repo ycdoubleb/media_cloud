@@ -23,6 +23,8 @@ TagsInputAsset::register($this);
         }
 ?>
 
+<?php if($attr['is_required']): ?>
+
 <div class="form-group field-media-attribute_value required">
     <?= Html::label('<span class="form-must text-danger">*</span>' . $attr['name'] . '：', 'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
     <div class="col-lg-7 col-md-7">
@@ -63,6 +65,8 @@ TagsInputAsset::register($this);
     </div>
     <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
 </div>
+
+<?php endif; ?>
 
 <?php endforeach; ?>
 

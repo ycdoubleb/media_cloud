@@ -21,8 +21,6 @@ class AliyunMtsController extends Controller {
     public function actionTaskComplete() {
         try {
             $post = \Yii::$app->request->post();
-            //$post = json_decode('{\"jobId\":\"1a0659d9f6ff4349a0d5aeeef6dd6875\",\"requestId\":\"22D0C51A-E363-408B-A337-CE58B47F32E4\",\"Type\":\"Transcode\",\"state\":\"Success\",\"UserData\":\"{\\\"created_by\\\":\\\"0\\\",\\\"redirect_url\\\":\\\"http://tt.mediacloud.studying8.com/external/aliyun-mts/task-complete\\\",\\\"level\\\":0,\\\"media_id\\\":\\\"1\\\",\\\"is_redirect\\\":1}\",\"type\":\"Transcode\",\"userData\":\"{\\\"created_by\\\":\\\"0\\\",\\\"redirect_url\\\":\\\"http://tt.mediacloud.studying8.com/external/aliyun-mts/task-complete\\\",\\\"level\\\":0,\\\"media_id\\\":\\\"1\\\",\\\"is_redirect\\\":1}\",\"State\":\"Success\",\"JobId\":\"1a0659d9f6ff4349a0d5aeeef6dd6875\",\"RequestId\":\"22D0C51A-E363-408B-A337-CE58B47F32E4\"}');
-            //var_dump($post);
             $topicName = $post['TopicName'];
         } catch (Exception $ex) {
             $topicName = "";

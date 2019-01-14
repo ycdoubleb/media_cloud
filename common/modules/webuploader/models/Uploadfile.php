@@ -94,7 +94,8 @@ class Uploadfile extends ActiveRecord {
     public function uploadOSS($key = null) {
         if ($key == null) {
             //生成文件名，当oss_key不为空时，将使用oss_key作为文件名
-            $filename = "mediacloud/files/" . pathinfo($this->path, PATHINFO_BASENAME);
+            $config = isset(Yii::$app->params['webuploader']) ? Yii::$app->params['webuploader'] : ['savePath' => 'upload/webuploader/files'];
+            $filename = $config['savePath'] . pathinfo($this->path, PATHINFO_BASENAME);
             //设置文件名
             $object_key = $this->oss_key == '' ? $filename : $this->oss_key;
         } else {

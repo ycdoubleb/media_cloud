@@ -37,6 +37,8 @@ return [
             'template_id_fd' => 'ec4ec87b7382c154f6c61b0973bf67ef',     //超畅模板ID
             'water_mark_template_id' => '15b2d6094e8448c493cd113a90e330e3',     //水印模板ID 默认右上
             'topic_name' => 'studying8-transcode',                      //消息通道名
+            'transcode_save_path' => 'mediacloud/transcode/',           //转码后保存路径
+            'screenshot_save_path' => 'mediacloud/thumb/',              //截图后保存路径
         ]
     ],
     /* wskeee 阿里云OSS配置 

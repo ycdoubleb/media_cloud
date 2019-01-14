@@ -7,6 +7,7 @@ use common\models\order\searchs\OrderGoodsSearch;
 use common\models\order\searchs\OrderSearch;
 use common\models\order\searchs\PlayApproveSearch;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -57,9 +58,9 @@ class OrderController extends Controller
     {
         $auditingSearch = new PlayApproveSearch();
         $auditingData = $auditingSearch->searchDetails($id, Yii::$app->request->queryParams);
-        
+
         $resourcesSearch = new OrderGoodsSearch();
-        $resourcesData = $resourcesSearch->searchMedia($id, Yii::$app->request->queryParams);
+        $resourcesData = $resourcesSearch->searchMedia($id);
         
         return $this->render('view', [
             'model' => $this->findModel($id),   // Order模型
@@ -67,6 +68,21 @@ class OrderController extends Controller
             'resourcesData' => $resourcesData,  // 资源列表数据
             'filter' => Yii::$app->request->queryParams,
         ]);
+    }
+    
+    /**
+     * 确认资源可用
+     * @param string $id
+     * @return mixed
+     */
+    public function actionConfirm($id)
+    {
+        $model = $this->findModel($id);
+        $model->order_status = Order::ORDER_STATUS_CONFIRMED; //把订单状态改为取消状态
+        $model->confirm_at = time();
+        $model->save();
+        
+        return $this->redirect(['index']);
     }
 
     /**

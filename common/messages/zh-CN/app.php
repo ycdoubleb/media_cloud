@@ -459,7 +459,7 @@ return [
     'Online' => '在线',
     'Order' => '订单',
     'Order Sn' => '订单编号',
-    'Resources Sn' => '资源编号',
+    'Media Sn' => '媒体编号',
     'Amount' => '金额',
     'Order Time' => '下单时间',
     'Company' => '公司',

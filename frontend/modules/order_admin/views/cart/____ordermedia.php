@@ -25,8 +25,8 @@ use yii\helpers\Html;
                 ],
             ],
             [
-                'attribute' => 'media_id',
-                'label' => Yii::t('app', 'Resources Sn'),
+                'attribute' => 'goods_id',
+                'label' => Yii::t('app', 'Media Sn'),
                 'headerOptions' => [
                     'style' => 'width: 120px',
                 ],
@@ -45,8 +45,8 @@ use yii\helpers\Html;
             ],
             [
                 'attribute' => 'media_name',
-                'label' => Yii::t('app', '{Resources}{Name}',[
-                    'Resources' => Yii::t('app', 'Resources'),
+                'label' => Yii::t('app', '{Media}{Name}',[
+                    'Media' => Yii::t('app', 'Media'),
                     'Name' => Yii::t('app', 'Name')
                 ]),
             ],
@@ -79,8 +79,8 @@ use yii\helpers\Html;
             ],
             [
                 'attribute' => 'price',
-                'label' => Yii::t('app', '{Resources}{Price}',[
-                    'Resources' => Yii::t('app', 'Resources'),
+                'label' => Yii::t('app', '{Media}{Price}',[
+                    'Media' => Yii::t('app', 'Media'),
                     'Price' => Yii::t('app', 'Price')
                 ]),
                 'headerOptions' => [
@@ -117,7 +117,7 @@ use yii\helpers\Html;
                        ];
                        $buttonHtml = [
                            'name' => '查看详情',
-                           'url' => ['/media_library/media/view', 'id' => $data['media_id']],
+                           'url' => ['/media_library/media/view', 'id' => $data['goods_id']],
                            'options' => $options,
                            'symbol' => '&nbsp;',
                            'conditions' => true,

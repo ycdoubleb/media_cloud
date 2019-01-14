@@ -41,6 +41,17 @@ class Acl extends ActiveRecord
     /** 状态-正常 */
     const STATUS_NORMAL = 1;
     
+    /** 视频质量-原始 */
+    const LEVEL_ORIGINAL = 0;
+    /** 视频质量-流畅 */
+    const LEVEL_LD = 1;
+    /** 视频质量-标清 */
+    const LEVEL_SD = 2;
+    /** 视频质量-高清 */
+    const LEVEL_HD = 3;
+    /** 视频质量-超清 */
+    const LEVEL_FD = 4;
+    
     /**
      * 状态
      * @var array 
@@ -50,6 +61,18 @@ class Acl extends ActiveRecord
         self::STATUS_NORMAL => '正常'
     ];
 
+    /**
+     * 视频质量
+     * @var array 
+     */
+    public static $levelMap = [
+        self::LEVEL_ORIGINAL => '原始',
+        self::LEVEL_LD => '流畅',
+        self::LEVEL_SD => '标清',
+        self::LEVEL_HD => '高清',
+        self::LEVEL_FD => '超清',
+    ];    
+    
     /**
      * {@inheritdoc}
      */
@@ -167,6 +190,7 @@ class Acl extends ActiveRecord
 
                 // 合并创建时间和更新时间
                 foreach ($goodsRows as &$item){
+                    $item['level'] = empty($item['level']) ? 0 : $item['level'];
                     $item['created_at'] = time();
                     $item['updated_at'] = time();
                 }

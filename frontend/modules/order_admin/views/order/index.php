@@ -172,14 +172,14 @@ $this->title = Yii::t('app', 'Order');
                                    'title' => Yii::t('app', 'Confirm'),
                                    'aria-label' => Yii::t('app', 'Confirm'),
                                    'data-pjax' => '0',
-                                   'target' => '_blank'
+                                   'target' => ''
                                ];
                                $buttonHtml = [
                                    'name' => '确认开通',
                                    'url' => ['confirm', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['play_status'] == 10,
+                                   'conditions' => $data['order_status'] == Order::ORDER_STATUS_TO_BE_CONFIRMED,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';

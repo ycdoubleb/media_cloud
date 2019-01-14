@@ -102,7 +102,7 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'id',
-                                'label' => Yii::t('app', 'Resources Sn'),
+                                'label' => Yii::t('app', 'Media Sn'),
                                 'headerOptions' => [
                                     'style' => 'width: 120px',
                                 ],
@@ -121,8 +121,8 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'name',
-                                'label' => Yii::t('app', '{Resources}{Name}',[
-                                    'Resources' => Yii::t('app', 'Resources'),
+                                'label' => Yii::t('app', '{Media}{Name}',[
+                                    'Media' => Yii::t('app', 'Media'),
                                     'Name' => Yii::t('app', 'Name')
                                 ]),
                             ],
@@ -158,8 +158,8 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'price',
-                                'label' => Yii::t('app', '{Resources}{Price}',[
-                                    'Resources' => Yii::t('app', 'Resources'),
+                                'label' => Yii::t('app', '{Media}{Price}',[
+                                    'Media' => Yii::t('app', 'Media'),
                                     'Price' => Yii::t('app', 'Price')
                                 ]),
                                 'headerOptions' => [

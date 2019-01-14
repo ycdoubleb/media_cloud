@@ -141,11 +141,13 @@ class MediaController extends Controller
             $id = Yii::$app->request->post('ids');
             $media_ids = explode(',', $id);
             foreach($media_ids as $media_id){
-                $model = Cart::findOne(['goods_id' => $media_id, 'is_del' => 0, 'created_by' => \Yii::$app->user->id]);
+                $model = Cart::findOne(['goods_id' => $media_id, 'created_by' => \Yii::$app->user->id]);
                 if($model == null){
                     $model = new Cart(['goods_id' => $media_id, 'created_by' => \Yii::$app->user->id]);
-                    $model->save();
+                } else {
+                    $model->is_del = 0;
                 }
+                $model->save();
             }
             return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
@@ -287,7 +289,7 @@ class MediaController extends Controller
     {
         $model = Cart::findOne(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
         if($model != null){
-            $model->num += 1;
+            $model->is_del = 0;
         } else {
             $model = new Cart(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
         }

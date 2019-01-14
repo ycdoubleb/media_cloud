@@ -226,7 +226,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             return Html::a('查看媒体', ['/media_admin/media/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);
                         },
                         'acl' => function($url, $model){
-                            return ' '. Html::a('访问路径', ['acl/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);
+                            return ' '. Html::a('访问路径', ['acl/index', 
+                                'AclSearch' => [
+                                    'order_sn' => $model->order_sn, 'media_id' => $model->goods_id]
+                                ], ['class' => 'btn btn-default']);
                         },
                     ],
                     'headerOptions' => [
@@ -249,3 +252,30 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     
 </div>
+
+<?php
+$js = <<<JS
+        
+    // 导出
+    $('#btn-export').click(function(e){
+        e.preventDefault();
+        var val = [],
+            checkBoxs = $('input[name="selection[]"]'), 
+            url = $(this).attr("href");
+        // 循环组装媒体id
+        for(i in checkBoxs){
+            if(checkBoxs[i].checked){
+               val.push(checkBoxs[i].value);
+            }
+        }
+        if(val.length > 0){
+            $(".myModal").html("");
+            $('.myModal').modal("show").load(url + "?id=" + val);
+        }else{
+            alert("请选择需要导出的订单");
+        }
+    });    
+    
+JS;
+    $this->registerJs($js,  View::POS_READY);
+?>

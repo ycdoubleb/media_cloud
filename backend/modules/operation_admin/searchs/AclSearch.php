@@ -2,9 +2,9 @@
 
 namespace backend\modules\operation_admin\searchs;
 
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use common\models\media\Acl;
+use common\models\User;
+use yii\base\Model;
 
 /**
  * AclSearch represents the model behind the search form of `common\models\media\Acl`.
@@ -12,17 +12,10 @@ use common\models\media\Acl;
 class AclSearch extends Acl
 {
     /**
-     * 媒体编号
-     * @var array 
+     * 用户昵称
+     * @var string 
      */
-    public $meida_sn;
-            
-    /**
-     * 订单编号
-     * @var int 
-     */
-    public $order_sn;
-
+    public $nickname;
 
     /**
      * {@inheritdoc}
@@ -30,8 +23,8 @@ class AclSearch extends Acl
     public function rules()
     {
         return [
-            [['id', 'order_id', 'media_id', 'user_id', 'status', 'visit_count', 'expire_at', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'order_sn'], 'safe'],
+            [['id', 'order_id', 'media_id', 'level', 'user_id', 'status', 'visit_count', 'expire_at', 'created_at', 'updated_at'], 'integer'],
+            [['name', 'order_sn', 'url', 'nickname'], 'safe'],
         ];
     }
 
@@ -53,38 +46,39 @@ class AclSearch extends Acl
      */
     public function search($params)
     {
-        $query = Acl::find();
+        // 查询数据
+        $query = self::find()->from(['Acl' => self::tableName()]);
 
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
+        $this->load($params);       
+        
+        // 关联用户表
+        $query->leftJoin(['User' => User::tableName()], 'User.id = Acl.user_id');
+        // 复制对象
+        $queryCopy = clone $query;
+      
+        // 必要条件
         $query->andFilterWhere([
-            'id' => $this->id,
-            'order_id' => $this->order_id,
-            'media_id' => $this->media_id,
-            'user_id' => $this->user_id,
-            'status' => $this->status,
-            'visit_count' => $this->visit_count,
-            'expire_at' => $this->expire_at,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'Acl.id' => $this->id,
+            'Acl.order_sn' => $this->order_sn,
+            'Acl.media_id' => $this->media_id,
+            'Acl.user_id' => $this->user_id,
+            'Acl.status' => $this->status,
         ]);
+        // 模糊查询
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'order_sn', $this->order_sn]);
+        // 用户查询结果
+        $userResults = $queryCopy->select(['User.id', 'User.nickname'])->groupBy('User.id')->all();
 
-        return $dataProvider;
+        // 查询结果
+        $aclResults = $query->all();
+        
+        return [
+            'filter' => $params,
+            'data' => [
+                'users' => $userResults,
+                'acls' => $aclResults,
+            ]
+        ];
     }
 }

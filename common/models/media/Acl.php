@@ -33,6 +33,7 @@ use yii\db\Exception;
  * @property Media $media
  * @property Order $order
  * @property User $user 
+ * @property AclAction[] $aclAction
  */
 class Acl extends ActiveRecord
 {
@@ -126,6 +127,15 @@ class Acl extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getAclAction()
+    {
+        return $this->hasMany(AclAction::className(), ['acl_id' => 'id'])
+           ->where(['acl_id' => $this->id]);
     }
     
     /**

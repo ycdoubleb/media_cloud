@@ -348,6 +348,8 @@ return [
     'User Note' => '用户留言',
     'Income' => '收入',
     'Visit' => '访问',
+    'Visit Count' => '访问次数',
+    'Refresh Cache' => '刷新缓存',
     
     
     //后台-帮助中心

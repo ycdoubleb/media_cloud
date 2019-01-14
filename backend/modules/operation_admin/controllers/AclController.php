@@ -2,12 +2,15 @@
 
 namespace backend\modules\operation_admin\controllers;
 
-use Yii;
-use common\models\media\Acl;
 use backend\modules\operation_admin\searchs\AclSearch;
+use common\models\media\Acl;
+use common\models\media\AclAction;
+use Yii;
+use yii\data\ArrayDataProvider;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * AclController implements the CRUD actions for Acl model.
@@ -30,88 +33,100 @@ class AclController extends Controller
     }
 
     /**
-     * Lists all Acl models.
+     * 列出所有ACL数据。
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new AclSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $results['data']['acls'],
+                'key' => 'id'
+            ]),
+            'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname')
         ]);
     }
 
     /**
-     * Displays a single Acl model.
+     * 显示单个ACL模型。
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        
         return $this->render('view', [
+            'model' => $model,
+            'actionDataProvider' => new ArrayDataProvider([
+                'allModels' => $model->aclAction,
+            ]),
+        ]);
+    }
+    
+    /**
+     * 预览媒体
+     * @param string $media_id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionPreview($id)
+    {        
+        return $this->renderAjax('____preview', [
             'model' => $this->findModel($id),
         ]);
     }
-
+    
     /**
-     * Creates a new Acl model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * 设置状态
+     * @param string $media_id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionSetStatus()
+    {
+        if(\Yii::$app->request->isPost){
+            // 所有id
+            $ids = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'));  
+            // 状态
+            $status = ArrayHelper::getValue(Yii::$app->request->post(), 'Acl.status'); 
+            // 原因
+            $content = ArrayHelper::getValue(Yii::$app->request->post(), 'Acl.content'); 
+            
+            if(Acl::updateAll(['status' => $status], ['id' => $ids]) > 0){
+                AclAction::savaAclAction($ids, Acl::$statusMap[$status], $content);
+            }
+                        
+            Yii::$app->getSession()->setFlash('success','设置成功！');
+            
+            return $this->redirect(['index']);
+        }
+        
+        return $this->renderAjax('____set_status');
+    }
+    
+    /**
+     * 查看 媒体操作
+     * @param string $id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionViewAction($id)
     {
-        $model = new Acl();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('create', [
+       $model = AclAction::findOne($id);        
+        
+        return $this->renderAjax('____view_action', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Updates an existing Acl model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Acl model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Acl model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * 根据ACL的主键值查找ACL模型。
+     * 如果找不到模型，将引发404 HTTP异常。
      * @param string $id
      * @return Acl the loaded model
      * @throws NotFoundHttpException if the model cannot be found

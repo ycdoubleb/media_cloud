@@ -349,6 +349,8 @@ return [
     'User Note' => '用户留言',
     'Income' => '收入',
     'Visit' => '访问',
+    'Visit Count' => '访问次数',
+    'Refresh Cache' => '刷新缓存',
     
     //后台-定时任务
     'Crontab' => '定时任务',
@@ -469,7 +471,7 @@ return [
     'Online' => '在线',
     'Order' => '订单',
     'Order Sn' => '订单编号',
-    'Resources Sn' => '资源编号',
+    'Media Sn' => '媒体编号',
     'Amount' => '金额',
     'Order Time' => '下单时间',
     'Company' => '公司',

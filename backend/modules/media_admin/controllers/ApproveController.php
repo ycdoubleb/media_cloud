@@ -96,7 +96,7 @@ class ApproveController extends Controller
             return $this->redirect(['media/index']);
         }
         
-        return $this->renderAjax('apply');
+        return $this->renderAjax('____apply');
     }
     
     /**
@@ -137,7 +137,7 @@ class ApproveController extends Controller
             return $this->redirect(['media/index']);
         }
         
-        return $this->renderAjax('apply');
+        return $this->renderAjax('____apply');
     }
 
     /**
@@ -202,7 +202,7 @@ class ApproveController extends Controller
             return $this->redirect(['index']);
         }
         
-        return $this->renderAjax('approve');
+        return $this->renderAjax('____approve');
     }
     
     /**
@@ -241,6 +241,6 @@ class ApproveController extends Controller
             return $this->redirect(['index']);
         }
         
-        return $this->renderAjax('approve');
+        return $this->renderAjax('____approve');
     }
 }

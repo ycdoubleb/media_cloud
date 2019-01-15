@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
         'url' => Url::to(['/media_config/dir/search-children']),
         'max_level' => 10,
     ],
-    'items' => Dir::getDirsBySameLevel($model->dir_id, null, true, true),
+    'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
     'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
     'itemOptions' => [
         'style' => 'width: 175px; display: inline-block;',

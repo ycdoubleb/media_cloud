@@ -50,7 +50,7 @@ use yii\widgets\ActiveForm;
         
         <div class="clo-lg-6 col-md-6 clear-padding">
             <!--媒体编号-->
-            <?= $form->field($model, 'meida_sn')->textInput([
+            <?= $form->field($model, 'media_id')->textInput([
                 'placeholder' => '请输入媒体编号', 'onchange' => 'submitForm()'
             ])->label(Yii::t('app', '{Media}{Number}：', [
                 'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
@@ -80,7 +80,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'user_id',[
                 'template' => "{label}\n<div class=\"col-lg-3 col-md-3\">{input}</div>",  
             ])->widget(Select2::class, [
-                'data' => [],
+                'data' => $userMap,
                 'hideSearch' => true,
                 'options' => ['placeholder' => Yii::t('app', 'All')],
                 'pluginOptions' => ['allowClear' => true],

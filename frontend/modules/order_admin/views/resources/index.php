@@ -1,25 +1,30 @@
 <?php
 
 use common\components\aliyuncs\Aliyun;
+use common\models\media\Acl;
 use common\models\order\searchs\OrderSearch;
 use common\utils\DateUtil;
 use frontend\modules\order_admin\assets\ModuleAssets;
+use kartik\growl\GrowlAsset;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\View;
 
 /* @var $this View */
 /* @var $searchModel OrderSearch */
 /* @var $dataProvider ActiveDataProvider */
 
 ModuleAssets::register($this);
+GrowlAsset::register($this);
 
-$this->title = Yii::t('app', 'Resources');
+$this->title = Yii::t('app', 'Media');
 
 ?>
 <div class="resources-index main">
     <div class="mc-title">
-        <span>我的资源</span>
+        <span><?= Yii::t('app', '{My}{Media}', ['My' => Yii::t('app', 'My'), 'Media' => Yii::t('app', 'Media')])?></span>
     </div>
     <?= $this->render('_search', [
         'searchModel' => $searchModel,
@@ -46,15 +51,15 @@ $this->title = Yii::t('app', 'Resources');
                     ],
                     [
                         'attribute' => 'media_id',
-                        'label' => Yii::t('app', 'Resources Sn'),
-//                        'headerOptions' => [
-//                            'style' => 'width: 100px',
-//                        ],
+                        'label' => Yii::t('app', 'Media Sn'),
+                        'headerOptions' => [
+                            'style' => 'width: 70px',
+                        ],
                     ],
                     [
                         'attribute' => 'media_name',
-                        'label' => Yii::t('app', '{Resources}{Name}',[
-                            'Resources' => Yii::t('app', 'Resources'),
+                        'label' => Yii::t('app', '{Media}{Name}',[
+                            'Media' => Yii::t('app', 'Media'),
                             'Name' => Yii::t('app', 'Name')
                         ]),
                     ],
@@ -66,7 +71,7 @@ $this->title = Yii::t('app', 'Resources');
                         ]),
                         'headerOptions' => [
                             'style' => [
-                                'width' => '170px',
+                                'width' => '160px',
                             ],
                         ],
                         'format' => 'raw',
@@ -83,8 +88,8 @@ $this->title = Yii::t('app', 'Resources');
                     ],     
                     [
                         'attribute' => 'price',
-                        'label' => Yii::t('app', '{Resources}{Price}',[
-                            'Resources' => Yii::t('app', 'Resources'),
+                        'label' => Yii::t('app', '{Media}{Price}',[
+                            'Media' => Yii::t('app', 'Media'),
                             'Price' => Yii::t('app', 'Price')
                         ]),
                         'headerOptions' => [
@@ -148,6 +153,31 @@ $this->title = Yii::t('app', 'Resources');
                                 'width' => '90px',
                             ],
                         ],
+                        'format' => 'raw',
+                        'value' => function ($data) {
+                            foreach ($data['acl'] as $key => $value){
+                                // 访问链接
+                                $urls = Url::to(["/media/use/link?id=$value"], true);
+                                switch ($key){
+                                    case Acl::LEVEL_ORIGINAL:   //原始
+                                        $contents = '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a><br>';
+                                        break;
+                                    case Acl::LEVEL_LD:         //流畅
+                                        $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                        break;
+                                    case Acl::LEVEL_SD:         //标清
+                                        $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a><br>';
+                                        break;
+                                    case Acl::LEVEL_HD:         //高清 
+                                        $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                        break;
+                                    case Acl::LEVEL_FD:         //超清
+                                        $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>';
+                                        break;
+                                }
+                            }
+                            return $contents;
+                        }
                     ],
                     [
                         'class' => 'yii\grid\ActionColumn',
@@ -181,3 +211,27 @@ $this->title = Yii::t('app', 'Resources');
         </div>
     </div>
 </div>
+
+<?php
+$js = <<<JS
+        
+    //点击复制视频地址
+    var btns = document.querySelectorAll('a');
+    var clipboard = new ClipboardJS(btns);
+    clipboard.on('success', function(e) {
+        $.notify({
+            message: '复制成功',
+        },{
+            type: "success",
+        });
+    });
+    clipboard.on('error', function(e) {
+        $.notify({
+            message: '复制失败',
+        },{
+            type: "danger",
+        });
+    });
+JS;
+$this->registerJs($js, View::POS_READY);
+?>

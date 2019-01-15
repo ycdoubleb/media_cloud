@@ -48,7 +48,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
             
             <div class="modal-footer">
                 
-                <?= Html::submitButton(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary btn-flat']) ?>
+                <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
                 
             </div>
                 
@@ -58,3 +58,15 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
     <?php ActiveForm::end(); ?>
     
 </div>
+
+<?php
+$js = <<<JS
+                
+    // 提交表单    
+    $("#submitsave").click(function(){
+        $('#media-form').submit();
+    });
+
+JS;
+    $this->registerJs($js,  View::POS_READY);
+?>

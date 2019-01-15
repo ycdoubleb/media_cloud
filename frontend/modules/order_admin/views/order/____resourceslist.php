@@ -1,9 +1,12 @@
 <?php
 
 use common\components\aliyuncs\Aliyun;
+use common\models\media\Acl;
+use common\models\order\Order;
 use common\utils\DateUtil;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -25,7 +28,7 @@ use yii\helpers\Html;
                 ],
             ],
             [
-                'attribute' => 'media_id',
+                'attribute' => 'goods_id',
                 'label' => Yii::t('app', 'Resources Sn'),
                 'headerOptions' => [
                     'style' => 'width: 90px',
@@ -49,6 +52,9 @@ use yii\helpers\Html;
                     'Resources' => Yii::t('app', 'Resources'),
                     'Name' => Yii::t('app', 'Name')
                 ]),
+                'value' => function($data) {
+                    return $data['media_name'];
+                },
             ],
             [
                 'attribute' => 'type_name',
@@ -56,6 +62,9 @@ use yii\helpers\Html;
                 'headerOptions' => [
                     'style' => 'width: 50px',
                 ],
+                'value' => function($data) {
+                    return $data['type_name'];
+                },
             ],
             [
                 'attribute' => 'duration',
@@ -87,7 +96,7 @@ use yii\helpers\Html;
                     'style' => 'width: 90px',
                 ],
                 'value' => function($data) {
-                    return '￥'. $data['price'];
+                    return Yii::$app->formatter->asCurrency($data['price']);
                 }
             ],
             [
@@ -99,8 +108,31 @@ use yii\helpers\Html;
                 'headerOptions' => [
                     'style' => 'width: 180px',
                 ],
-                'value' => function ($data) {
-                    return '超清      高清      标清      流畅';
+                'format' => 'raw',
+                'value' => function ($data) use($model) {
+                    foreach ($data['acl'] as $key => $value){
+                        // 访问链接
+                        $urls = Url::to(["/media/use/link?id=$value"], true);
+                        switch ($key){
+                            case Acl::LEVEL_ORIGINAL:   //原始
+                                $contents = '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                break;
+                            case Acl::LEVEL_LD:         //流畅
+                                $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                break;
+                            case Acl::LEVEL_SD:         //标清
+                                $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                break;
+                            case Acl::LEVEL_HD:         //高清 
+                                $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>&nbsp';
+                                break;
+                            case Acl::LEVEL_FD:         //超清
+                                $contents .= '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a>';
+                                break;
+                        }
+                    }
+                    return ($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED || $model->order_status == Order::ORDER_STATUS_CONFIRMED) 
+                        ? $contents : '<span style="color:#ccc">支付成功后方可使用</span>';
                 }
             ],
             [
@@ -123,7 +155,7 @@ use yii\helpers\Html;
                        ];
                        $buttonHtml = [
                            'name' => '查看资源',
-                           'url' => ['/media_library/media/view', 'id' => $data['media_id']],
+                           'url' => ['/media_library/media/view', 'id' => $data['goods_id']],
                            'options' => $options,
                            'symbol' => '&nbsp;',
                            'conditions' => true,

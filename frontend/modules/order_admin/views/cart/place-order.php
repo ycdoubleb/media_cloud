@@ -82,8 +82,8 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'goods_num',
-                                'label' => Yii::t('app', '{Resources}{Total}',[
-                                    'Resources' => Yii::t('app', 'Resources'),
+                                'label' => Yii::t('app', '{Media}{Total}',[
+                                    'Media' => Yii::t('app', 'Media'),
                                     'Total' => Yii::t('app', 'Total'),
                                 ])
                             ],

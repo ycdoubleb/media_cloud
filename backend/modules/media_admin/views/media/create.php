@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'url' => Url::to(['/media_config/dir/search-children']),
                     'max_level' => 10,
                 ],
-                'items' => Dir::getDirsBySameLevel($model->dir_id, null, true, true),
+                'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
                 'itemOptions' => [
                     'style' => 'width: 175px; display: inline-block;',
                 ],

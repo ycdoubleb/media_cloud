@@ -3,6 +3,7 @@
 namespace backend\modules\operation_admin\controllers;
 
 use backend\modules\operation_admin\searchs\PlayApproveSearch;
+use common\models\order\Order;
 use common\models\order\PlayApprove;
 use Yii;
 use yii\data\ArrayDataProvider;
@@ -75,14 +76,18 @@ class OrderApproveController extends Controller
         $model = $this->findModel($id);
         
         if($model->status == PlayApprove::STATUS_TO_BE_AUDITED){
-        
+            
             $model->status = PlayApprove::STATUS_AUDITED;
             $model->result = PlayApprove::RESULT_PASS;
             $model->handled_by = \Yii::$app->user->id;
             $model->handled_at = time();
             $model->feedback = '审核通过';
 
-            $model->save();
+            if($model->save()){
+                $orderModel = Order::findOne($model->order_id);
+                $orderModel->order_status = Order::ORDER_STATUS_TO_BE_CONFIRMED;
+                $orderModel->save(true, ['order_status']);
+            }
 
             Yii::$app->getSession()->setFlash('success','操作成功！');
         }else{
@@ -123,7 +128,7 @@ class OrderApproveController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
                 
-        return $this->renderAjax('approve');
+        return $this->renderAjax('____approve');
     }
     
     /**

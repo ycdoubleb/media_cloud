@@ -88,20 +88,13 @@ class MediaController extends Controller
             Yii::$app->getResponse()->format = 'json';
             try
             { 
-                return [
-                    'code'=> 200,
-                    'data' => [
+                $data = [
                         'result' => $medias, 
                         'page' => $results['filter']['page']
-                    ],
-                    'message' => '请求成功！',
-                ];
+                    ];
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '请求成功！', $data);
             }catch (Exception $ex) {
-                return [
-                    'code'=> 404,
-                    'data' => [],
-                    'message' => '请求失败::' . $ex->getMessage(),
-                ];
+                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '请求失败::' . $ex->getMessage());
             }
         }
         
@@ -198,14 +191,13 @@ class MediaController extends Controller
         if($model->load(Yii::$app->request->post()) && $model->save()){
             try {
                 // 保存订单操作记录
-                $order = Order::findOne(['order_sn' => $order_sn]);
-                OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status);
+                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status);
                 
                 // 保存订单媒体表
                 $data = [];
                 foreach ($medias as $value) {
                     $data[] = [
-                        $order->id, $order_sn, $value->id, $value->price,
+                        $model->id, $order_sn, $value->id, $value->price,
                         $value->price, Yii::$app->user->id, time(), time()
                     ];
                 }
@@ -213,7 +205,7 @@ class MediaController extends Controller
                     ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
                 
                 return $this->redirect(['/order_admin/cart/place-order',
-                    'id' => $order->id,
+                    'id' => $model->id,
                 ]);
             } catch (Exception $ex) {
                 Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
@@ -266,7 +258,7 @@ class MediaController extends Controller
     }
     
     /**
-     * 打开反馈问题的模态框
+     * 打开反馈问题的模态框 / 添加反馈问题操作
      * @param int $id   媒体ID
      * @return type
      */
@@ -277,12 +269,20 @@ class MediaController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             Yii::$app->getResponse()->format = 'json';
-            $result = $this->Feedback($model, Yii::$app->request->post());
-            return [
-                'code' => $result ? 200 : 404,
-                'message' => ''
-            ];
-
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {  
+                $results = $this->saveFeedback(Yii::$app->request->post());
+                if($results <= 0){
+                    throw new Exception($model->getErrors());
+                }
+                $trans->commit();  //提交事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功！');
+            }catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '操作失败::'.$ex->getMessage());
+            }
         } else {
             return $this->renderAjax('feedback', [
                 'model' => $model,
@@ -312,36 +312,7 @@ class MediaController extends Controller
         return $this->redirect(['view', 'id' => $id]);
     }
 
-
     /**
-     * 添加反馈问题操作
-     * @param MediaIssue $model
-     * @param type $post
-     * @return array
-     * @throws Exception
-     */
-    public function Feedback($model, $post)
-    {
-        /** 开启事务 */
-        $trans = Yii::$app->db->beginTransaction();
-        try
-        {  
-            $results = $this->saveFeedback($post);
-            if($results['code'] == 400){
-                throw new Exception($model->getErrors());
-            }
-            
-            $trans->commit();  //提交事务
-            return true;
-            Yii::$app->getSession()->setFlash('success','操作成功！');
-        }catch (Exception $ex) {
-            $trans ->rollBack(); //回滚事务
-            return false;
-            Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
-        }
-    }
-
-     /**
      * 保存反馈问题
      * @param type $post
      * @return array
@@ -351,26 +322,19 @@ class MediaController extends Controller
         $media_id = ArrayHelper::getValue($post, 'MediaIssue.media_id');    //媒体ID
         $type = ArrayHelper::getValue($post, 'MediaIssue.type');            //问题类型
         $content = ArrayHelper::getValue($post, 'MediaIssue.content');      //问题描述
+
+        $values = [
+            'media_id' => $media_id,
+            'type' => $type,
+            'content' => $content,
+            'created_by' => \Yii::$app->user->id,
+            'created_at' => time(),
+            'updated_at' => time(),
+        ];
+        /** 添加$values数组到表里 */
+        $num = Yii::$app->db->createCommand()->insert(MediaIssue::tableName(),$values)->execute();
         
-        if($type == null){
-            return false;
-        } else {
-            $values = [
-                'media_id' => $media_id,
-                'type' => $type,
-                'content' => $content,
-                'created_by' => \Yii::$app->user->id,
-                'created_at' => time(),
-                'updated_at' => time(),
-            ];
-            /** 添加$values数组到表里 */
-            $num = Yii::$app->db->createCommand()->insert(MediaIssue::tableName(),$values)->execute();
-            if($num > 0){
-                return ['code' => 200];
-            } else {
-                return ['code' => 400];
-            }
-        }
+        return $num;
     }
     
     /**

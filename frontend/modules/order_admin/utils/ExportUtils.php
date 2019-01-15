@@ -5,12 +5,15 @@ namespace frontend\modules\order_admin\utils;
 use common\models\order\Order;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\utils\DateUtil;
+use common\utils\StringUtil;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Yii;
+use yii\helpers\Url;
 
 class ExportUtils
 {
@@ -41,13 +44,20 @@ class ExportUtils
         // 订单信息
         $order_info = [
             'order_amount' => $model->order_amount,
+            'upcase_order_amount' => StringUtil::toUpcaseChinese($model->order_amount),
             'order_sn' => $model->order_sn,
-            'show_link' => \yii\helpers\Url::to(['order/simple-view', 'order_sn' => $model->order_sn], true)
+            'user_department' => $model->createdBy->profile->department,
+            'created_by' => $model->createdBy->nickname,
+            'show_link' => Url::to(['order/simple-view', 'order_sn' => $model->order_sn], true)
         ];
-//        var_dump($order_info);exit;
+
         $this->saveTemplate($order_info);
     }
 
+    /**
+     * 保存支付审批申请模板
+     * @param array $order_info  订单信息
+     */
     private function saveTemplate($order_info)
     {
         // Create new Spreadsheet object
@@ -68,18 +78,18 @@ class ExportUtils
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
         ];
-        // 底部居左
-        $bottomDefalut = [
+        // 顶部居左
+        $topLeft = [
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_LEFT,
-                'vertical' => Alignment::VERTICAL_BOTTOM,
+                'vertical' => Alignment::VERTICAL_TOP,
             ],
         ];
-        // 边框
+        // 设置边框
         $borderStyle = [
             'borders' => [
                 'outline' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'borderStyle' => Border::BORDER_THIN,
                     'color' => ['argb' => '00000000'],
                 ],
             ],
@@ -95,43 +105,46 @@ class ExportUtils
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '申报日期：          年       月       日')
                 ->setCellValue('D2', '金额：')->setCellValue('E2', $order_info['order_amount'] . '元');
         $spreadsheet->getActiveSheet()->mergeCells('A2:C2');    //合并单元格
-        
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '申报部门')->setCellValue('D3', '订单编号')->setCellValue('E3', $order_info['order_sn']);
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(2)->setRowHeight(20);     //设置行高
+        // 第3-4行
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '申报部门')->setCellValue('B3', $order_info['user_department'])
+                ->setCellValue('D3', '订单编号')->setCellValue('E3', $order_info['order_sn']);
         $spreadsheet->getActiveSheet()->mergeCells('B3:C3');    //合并单元格
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(3)->setRowHeight(40);     //设置行高
         $spreadsheet->getActiveSheet()->mergeCells('D3:D4'); 
         $spreadsheet->getActiveSheet()->mergeCells('E3:E4'); 
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A4', '申报人');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A4', '申请人')->setCellValue('B4', $order_info['created_by']);
         $spreadsheet->getActiveSheet()->mergeCells('B4:C4');
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(4)->setRowHeight(40);     //设置行高
-        
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '申请结算金额')->setCellValue('B5', $order_info['order_amount'] . '元')
-                ->setCellValue('C5', '(小写)：')->setCellValue('D5', '(大写)：');
+        // 第5行
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '申请结算金额')->setCellValue('B5',  '(小写)：')
+                ->setCellValue('C5', $order_info['order_amount'] . '元')->setCellValue('D5', '(大写)：')->setCellValue('E5', $order_info['upcase_order_amount']);
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(5)->setRowHeight(40);     //设置行高
-        
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '收入部门');
+        // 第6行
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '收入部门')->setCellValue('B6', '内容中心');
         $spreadsheet->getActiveSheet()->mergeCells('B6:E6');
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(6)->setRowHeight(40);     //设置行高
-        
+        // 第7行
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体资源用途')
-            ->setCellValue('B7', "1、 媒体资源数量（媒体资源明细见附件  订单媒体清单）\n2、 媒体资源使用的用途（用在哪个项目、课程）附件(资源核实地址)：".$order_info['show_link']);
+            ->setCellValue('B7', "\n请填写媒体资源使用的用途（用在哪个项目、课程）");
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(7)->setRowHeight(240);     //设置行高
         $spreadsheet->getActiveSheet()->mergeCells('B7:E7');
-        $spreadsheet->getActiveSheet()->getStyle('B7:E7')
-            ->getFont()->getColor()->setARGB('FF999999');
-        
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '审批')->setCellValue('B8', '部门负责人')
-                ->setCellValue('B9', '财务')->setCellValue('B10', 'CEO');
-        $spreadsheet->getActiveSheet()->mergeCells('A8:A10');
-        $spreadsheet->getActiveSheet()->mergeCells('B8:C8');
-        $spreadsheet->getActiveSheet()->mergeCells('B9:C9');
-        $spreadsheet->getActiveSheet()->mergeCells('B10:C10');
-        $spreadsheet->getActiveSheet()->mergeCells('D8:E8');
-        $spreadsheet->getActiveSheet()->mergeCells('D9:E9');
-        $spreadsheet->getActiveSheet()->mergeCells('D10:E10');
-        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(8)->setRowHeight(26);     //设置行高
-        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(9)->setRowHeight(26);     //设置行高
-        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(10)->setRowHeight(26);     //设置行高
+        $spreadsheet->getActiveSheet()->getStyle('B7:E7')->getFont()->getColor()->setARGB('FF999999');
+        // 第8行
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '订单核实地址')->setCellValue('B8', $order_info['show_link']);
+        $spreadsheet->getActiveSheet()->mergeCells('B8:E8');
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(8)->setRowHeight(40);     //设置行高
+        $spreadsheet->getActiveSheet()->getStyle('B8:E8')->getAlignment()->setWrapText(true);
+        // 第9-11行
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A9', '审批')->setCellValue('B9', '部门负责人')
+                ->setCellValue('B10', '财务')->setCellValue('B11', 'CEO');
+        $spreadsheet->getActiveSheet()->mergeCells('A9:A11');
+        $row = 9;
+        for($row; $row <= 11; $row++){
+            $spreadsheet->getActiveSheet()->mergeCells("B$row:C$row");
+            $spreadsheet->getActiveSheet()->mergeCells("D$row:E$row");
+            $spreadsheet->setActiveSheetIndex(0)->getRowDimension($row)->setRowHeight(26);     //设置行高
+        }
         
         //设置列宽
         $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(20);
@@ -141,10 +154,18 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(26);
         
         // 设置文字排列样式
-        $spreadsheet->getActiveSheet()->getStyle('A3:E10')->applyFromArray($allCenter);
-        $spreadsheet->getActiveSheet()->getStyle('B7:E7')->applyFromArray($bottomDefalut);
-        $spreadsheet->getActiveSheet()->getStyle('A3:E10')->applyFromArray($borderStyle);
+        $spreadsheet->getActiveSheet()->getStyle('A3:E11')->applyFromArray($allCenter);
+        $spreadsheet->getActiveSheet()->getStyle('B7:E7')->applyFromArray($topLeft);
         
+        // 设置边框
+        $start = 3;
+        for($start; $start <= 11; $start++){
+            $spreadsheet->getActiveSheet()->getStyle("A$start")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("B$start")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("C$start")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("D$start")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("E$start")->applyFromArray($borderStyle);
+        }        
         
         // Rename worksheet
         $spreadsheet->getActiveSheet()->setTitle("支付审批申请模板");

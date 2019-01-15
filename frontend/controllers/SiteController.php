@@ -1,7 +1,6 @@
 <?php
 namespace frontend\controllers;
 
-use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
 use common\models\LoginForm;
 use common\models\User;
@@ -76,10 +75,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        MediaAliyunAction::addVideoTranscode('1');
-        MediaAliyunAction::addVideoTranscode('2');
-        MediaAliyunAction::addVideoTranscode('3');
-        MediaAliyunAction::addVideoTranscode('4');
+        //MediaAliyunAction::addVideoTranscode('1');
+        //MediaAliyunAction::addVideoTranscode('2');
+        //MediaAliyunAction::addVideoTranscode('3');
+        //MediaAliyunAction::addVideoTranscode('4');
         return $this->render('index');
     }
     

@@ -47,7 +47,7 @@ use common\widgets\Menu;
                         'items' => [
                             ['label' => '配置管理', 'icon' => 'circle-o', 'url' => ['/system_admin/config'],],
                             ['label' => '文件管理', 'icon' => 'circle-o', 'url' => ['/system_admin/uploadfile'],],
-                            ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/task-log'],],
+                            ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab'],],
                             ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup']],
                         ],
                     ],

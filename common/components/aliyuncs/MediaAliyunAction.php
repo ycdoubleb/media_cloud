@@ -100,11 +100,20 @@ class MediaAliyunAction {
                     $tran->rollBack();
                     $rows = [];
                     $JobResult = $result['response']->JobResultList->JobResult;
+                    $errorMessages = '';
                     foreach ($JobResult as $JobResult) {
-                        $rows [] = $JobResult->Job->JobId;             //任务ID;
+                        if($JobResult->Success){
+                            $rows [] = $JobResult->Job->JobId;             //任务ID;
+                        }else{
+                            $errorMessages.="$JobResult->Message\n";
+                        }
                     }
                     //取消转码任务
-                    Aliyun::getMts()->cancelJob($rows);
+                    if(count($rows)>0){
+                        Aliyun::getMts()->cancelJob($rows);
+                    }
+                    
+                    throw new \Exception('转码失败！'.$errorMessages);
                 }
             } else {
                 $media->mts_status = Media::MTS_STATUS_FAIL;

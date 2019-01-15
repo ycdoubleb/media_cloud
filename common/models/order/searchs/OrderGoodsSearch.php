@@ -100,7 +100,10 @@ class OrderGoodsSearch extends OrderGoods
         ]);
         
         //过滤条件
-        $query->andFilterWhere(['OrderGoods.order_id' => $id]);
+        $query->andFilterWhere(['or', 
+            ['OrderGoods.order_id' => $id],
+            ['OrderGoods.order_sn' => $id],
+        ]);
         
         // 查询媒体
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');

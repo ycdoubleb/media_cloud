@@ -356,6 +356,11 @@ and open the template in the editor.
     font-size: 20px;
 }
 
+.mediacloud .place-order .information .use-purpose .pull-left .info-text span{
+    font-size: 14px;
+    color: #fc583d;
+}
+
 .mediacloud .checking-order .mc-panel {
     margin-top: 15px;
 }

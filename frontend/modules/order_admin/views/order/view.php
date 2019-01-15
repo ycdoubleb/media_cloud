@@ -29,9 +29,11 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         <div class="btngroup pull-right">
             <?php 
                 if($model->order_status == 0){
-                    echo Html::a('立即付款', ['create'], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']).' ';
-                        
-                    echo Html::a('取消订单', ['create'], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
+                    echo Html::a('立即付款', ['cart/payment-method', 'id' => $model->id], [
+                        'class' => 'btn btn-highlight btn-flat', 
+                        'onclick' => 'showModal($(this).attr("href"));return false;'
+                    ]).' ';
+                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
                 }
             ?>
         </div>
@@ -81,7 +83,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         <?= Html::a('支付审核', array_merge(['view'], array_merge($filter, ['tabs' => 'payment']))) ?>
                     </li>
                     <li id="resources">
-                        <?= Html::a('资源列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
+                        <?= Html::a('媒体列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
                     </li>
                 </ul>
             </div>
@@ -96,7 +98,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                             'auditingData' => $auditingData,
                         ]);
                     } else {
-                        echo $this->render('____resourceslist', [
+                        echo $this->render('____mediaslist', [
                             'model' => $model,
                             'resourcesData' => $resourcesData,
                         ]);

@@ -4,7 +4,13 @@ use common\components\aliyuncs\Aliyun;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\grid\GridView;
 
+/**
+ * view 订单详情页的子页面
+ * 支付审核信息页
+ */
+
 ModuleAssets::register($this);
+
 ?>
 
 <div class="play-approve-index">

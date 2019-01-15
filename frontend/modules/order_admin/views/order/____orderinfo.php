@@ -3,6 +3,11 @@
 use common\models\order\Order;
 use yii\widgets\DetailView;
 
+/**
+ * simple-view 订单核查页的子页面
+ * 订单信息页
+ */
+
 ?>
 <div class="panel-left">
     <?= DetailView::widget([

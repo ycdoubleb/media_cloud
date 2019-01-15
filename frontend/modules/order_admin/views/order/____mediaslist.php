@@ -8,10 +8,9 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * view 订单详情页的子页面
+ * 媒体列表信息页
  */
 
 ?>
@@ -29,7 +28,7 @@ use yii\helpers\Url;
             ],
             [
                 'attribute' => 'goods_id',
-                'label' => Yii::t('app', 'Resources Sn'),
+                'label' => Yii::t('app', 'Media Sn'),
                 'headerOptions' => [
                     'style' => 'width: 90px',
                 ],
@@ -48,8 +47,8 @@ use yii\helpers\Url;
             ],
             [
                 'attribute' => 'media_name',
-                'label' => Yii::t('app', '{Resources}{Name}',[
-                    'Resources' => Yii::t('app', 'Resources'),
+                'label' => Yii::t('app', '{Media}{Name}',[
+                    'Media' => Yii::t('app', 'Media'),
                     'Name' => Yii::t('app', 'Name')
                 ]),
                 'value' => function($data) {
@@ -88,8 +87,8 @@ use yii\helpers\Url;
             ],
             [
                 'attribute' => 'price',
-                'label' => Yii::t('app', '{Resources}{Price}',[
-                    'Resources' => Yii::t('app', 'Resources'),
+                'label' => Yii::t('app', '{Media}{Price}',[
+                    'Media' => Yii::t('app', 'Media'),
                     'Price' => Yii::t('app', 'Price')
                 ]),
                 'headerOptions' => [

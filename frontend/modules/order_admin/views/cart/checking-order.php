@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $searchModel CartSearch */
 /* @var $dataProvider ActiveDataProvider */
+/* 下单购买页 */
 
 $this->title = Yii::t('app', '{Checking}{Order}', [
     'Checking' => Yii::t('app', 'Checking'),

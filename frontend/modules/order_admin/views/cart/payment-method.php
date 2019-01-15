@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\web\View;
 
 /* @var $this View */
+/* 选择支付方式的模态框 */
 
 $this->title = Yii::t('app', '{Payment}{Mode}',[
     'Payment' => Yii::t('app', 'Payment'),
@@ -22,7 +23,7 @@ $this->title = Yii::t('app', '{Payment}{Mode}',[
                 <h4 class="modal-title" id="myModalLabel"><?= Html::encode($this->title) ?></h4>
             </div>
             <div class="modal-body">
-                <a href="play-approve?id=<?=$id;?>" class="pay">
+                <a href="/order_admin/cart/play-approve?id=<?=$id;?>" class="pay">
                     <img src="/imgs/site/pay.png"/>
                     <div>线下支付</div>
                 </a>

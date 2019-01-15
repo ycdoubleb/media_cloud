@@ -7,7 +7,7 @@ use common\models\order\searchs\OrderGoodsSearch;
 use common\models\order\searchs\OrderSearch;
 use common\models\order\searchs\PlayApproveSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -29,6 +29,20 @@ class OrderController extends Controller
 //                    'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['simple-view'],   //订单核查页不需要登录也可查看
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -83,6 +97,27 @@ class OrderController extends Controller
         $model->save();
         
         return $this->redirect(['index']);
+    }
+
+    /**
+     * 订单核查
+     * @param int $order_sn
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionSimpleView($order_sn)
+    {
+        // 使用主布局main的布局样式
+        $this->layout = '@app/views/layouts/main';
+        
+        $searchModel = new OrderGoodsSearch();
+        $dataProvider = $searchModel->searchMedia($order_sn);
+        
+        return $this->render('simple-view', [
+            'model' => Order::findOne(['order_sn' => $order_sn]),
+            'dataProvider' => $dataProvider,
+            'filters' => Yii::$app->request->queryParams,
+        ]);
     }
 
     /**

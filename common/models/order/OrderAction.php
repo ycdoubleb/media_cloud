@@ -91,8 +91,8 @@ class OrderAction extends ActiveRecord
                 'order_id' => $order_id,
                 'title' => $title,
                 'content' => $content,
-                'content' => $order_status,
-                'content' => $play_status,
+                'order_status' => $order_status,
+                'play_status' => $play_status,
                 'created_by' => Yii::$app->user->id,
             ]);
              

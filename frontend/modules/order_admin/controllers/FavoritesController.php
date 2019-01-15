@@ -7,6 +7,7 @@ use common\models\order\Cart;
 use common\models\order\Favorites;
 use common\models\order\searchs\FavoritesSearch;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +29,15 @@ class FavoritesController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ]
         ];
     }
 

@@ -153,11 +153,12 @@ $this->title = Yii::t('app', 'Order');
                                    'title' => Yii::t('app', 'Payment'),
                                    'aria-label' => Yii::t('app', 'Payment'),
                                    'data-pjax' => '0',
-                                   'target' => '_blank'
+                                   'target' => '',
+                                    'onclick' => 'showModal($(this).attr("href"));return false;'
                                ];
                                $buttonHtml = [
                                    'name' => '立即付款',
-                                   'url' => ['cart/place-order', 'id' => $data['id']],
+                                   'url' => ['cart/payment-method', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
                                    'conditions' => $data['order_status'] == 0,

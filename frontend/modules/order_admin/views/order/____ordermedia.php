@@ -5,10 +5,9 @@ use common\utils\DateUtil;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * simple-view 订单核查页的子页面
+ * 订单商品页
  */
 
 ?>

@@ -4,6 +4,7 @@ namespace frontend\modules\order_admin\controllers;
 
 use common\models\order\searchs\OrderSearch;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 
@@ -24,6 +25,15 @@ class ResourcesController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ]
         ];
     }
     

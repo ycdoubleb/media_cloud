@@ -8,6 +8,7 @@ use yii\web\View;
 use yii\widgets\DetailView;
 
 /* @var $this View */
+/* 下单成功页 */
 
 $this->title = Yii::t('app', 'Checkout Success');
 
@@ -41,7 +42,7 @@ ModuleAssets::register($this);
                 <div class="use-purpose">
                     <div class="pull-left">
                         <span class="glyphicon glyphicon-ok-circle"></span>
-                        <span class="info-text">提交订单完成！现在马上去付款吧！</span>
+                        <span class="info-text">提交订单完成！现在马上去付款吧！<span>（请在七天内完成付款噢）</span></span>
                     </div>
                     <div class="pull-right">
                         <?php
@@ -49,7 +50,7 @@ ModuleAssets::register($this);
                             'class' => 'btn btn-highlight btn-flat', 'title' => '立即付款',
                             'onclick' => 'showModal($(this).attr("href"));return false;'
                         ]) . '&nbsp;&nbsp;';
-                        echo Html::a('查看订单', ['view', 'id' => $model->id], [
+                        echo Html::a('查看订单', ['order/view', 'id' => $model->id], [
                             'target' => '_black',
                             'class' => 'btn btn-default btn-flat', 'title' => '查看订单'
                         ]);?>

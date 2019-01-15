@@ -19,6 +19,7 @@ use frontend\modules\media_library\searchs\MediaSearch;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -41,6 +42,15 @@ class MediaController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ]
         ];
     }
     

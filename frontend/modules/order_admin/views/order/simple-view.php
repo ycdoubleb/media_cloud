@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\web\View;
 
 /* @var $this View */
+/* 订单核查页 */
 
 $this->title = Yii::t('app', 'Order Verification');
 
@@ -39,21 +40,21 @@ $tabs = ArrayHelper::getValue($filters, 'tabs', 'order_info');  //显示内容
                 <div class="mc-tabs">
                     <ul class="list-unstyled">
                         <li id="order_info">
-                            <?= Html::a('订单信息', array_merge(['view'], array_merge($filters, ['tabs' => 'order_info'])), ['title' => '订单信息']);?>
+                            <?= Html::a('订单信息', array_merge(['simple-view'], array_merge($filters, ['tabs' => 'order_info'])), ['title' => '订单信息']);?>
                         </li>
                         <li id="order_media">
-                            <?= Html::a('媒体列表', array_merge(['view'], array_merge($filters, ['tabs' => 'order_media'])), ['title' => '媒体列表']);?>
+                            <?= Html::a('媒体列表', array_merge(['simple-view'], array_merge($filters, ['tabs' => 'order_media'])), ['title' => '媒体列表']);?>
                         </li>
                     </ul>
                 </div>
                 <div class="mc-panel set-bottom">
                     <?php if ($tabs == 'order_info') {
-                        // 列表显示
+                        // 订单信息
                         echo $this->render('____orderinfo',[
                             'model' => $model,
                         ]);
                     } else { 
-                        // 图表显示
+                        // 订单商品
                         echo $this->render('____ordermedia',[
                             'dataProvider' => $dataProvider,
                         ]);

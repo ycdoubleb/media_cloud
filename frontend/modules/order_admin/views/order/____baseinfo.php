@@ -3,6 +3,11 @@
 use common\models\order\Order;
 use yii\widgets\DetailView;
 
+/**
+ * view 订单详情页的子页面
+ * 订单基本信息页
+ */
+
 ?>
 
 <div class="panel-left">

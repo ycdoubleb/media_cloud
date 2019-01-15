@@ -19,6 +19,7 @@ return [
     'Batch' => '批量',
     'Into' => '入',
     'Pass' => '通过',
+    'Is Del' => '是否删除',
     
     
     //公共- 用户
@@ -350,6 +351,15 @@ return [
     'Visit' => '访问',
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
+    
+    //后台-定时任务
+    'Crontab' => '定时任务',
+    'Crontabs' => '日常任务',
+    'Crontab Str' => '命令格式',
+    'Last Rundate' => '最后一次执行时间',
+    'Next Rundate' => '下一次执行时间',
+    'Exec Memory' => '执行内存',
+    'Exec Time' => '执行时间',
     
     
     //后台-帮助中心

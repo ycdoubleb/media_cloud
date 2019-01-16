@@ -52,7 +52,7 @@ class MIMEUtil {
         
         // 视频文件类型
         'avi' => 'video/avi',
-        'mp4' => 'video/mpeg',
+        'mp4' => 'video/mp4',
         'flv' => 'video/x-flv',
         'mkv' => 'video/x-matroska',
         'wmv' => 'video/x-ms-wmv',

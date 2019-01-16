@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\SerialColumn',
                 'headerOptions' => [
                     'style' => [
-                        'width' => '30px',
+                        'width' => '50px',
                     ],
                 ],
             ],

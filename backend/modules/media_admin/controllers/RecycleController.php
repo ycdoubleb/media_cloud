@@ -70,8 +70,8 @@ class RecycleController extends Controller
             if(!isset($result[$id])){
                 $model = MediaRecycle::findOne($id);
                 /* 需要保存的回收站数据 */
-                $model->result = MediaRecycle::RESULT_ALREADY_RECOVERY;
-                $model->status = MediaRecycle::STATUS_ALREADY_HANDLE;
+                $model->result = MediaRecycle::RESULT_RECOVERED;
+                $model->status = MediaRecycle::STATUS_HANDLED;
                 $model->handled_by = \Yii::$app->user->id;
                 $model->handled_at = time();
                 if($model->save()){
@@ -107,8 +107,8 @@ class RecycleController extends Controller
             if(!isset($result[$id])){
                 $model = MediaRecycle::findOne($id);
                 /* 需要保存的回收站数据 */
-                $model->result = MediaRecycle::RESULT_ALREADY_DELETE;
-                $model->status = MediaRecycle::STATUS_ALREADY_HANDLE;
+                $model->result = MediaRecycle::RESULT_DELETED;
+                $model->status = MediaRecycle::STATUS_HANDLED;
                 $model->handled_by = \Yii::$app->user->id;
                 $model->handled_at = time();
                 if($model->save()){

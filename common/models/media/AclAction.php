@@ -3,12 +3,13 @@
 namespace common\models\media;
 
 use common\models\AdminUser;
-use common\models\api\ApiResponse;
+use common\models\media\Acl;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+
 
 /**
  * This is the model class for table "{{%acl_action}}".
@@ -90,15 +91,13 @@ class AclAction extends ActiveRecord
     
     /**
      * 保存Acl操作日志
-     * @param array $acl_ids  
+     * @param array $acl_ids
      * @param string $title 标题
-     * @param string $content  内容（字符串）| 加载渲染的模板
-     * @return ApiResponse
+     * @param string $content   内容（字符串）| 加载渲染的模板
+     * @throws Exception
      */
     public static function savaAclAction($acl_ids, $title, $content)
     {
-        $data = []; // 返回的数据
-        
         try
         {  
             // 准备数据
@@ -112,12 +111,8 @@ class AclAction extends ActiveRecord
             // 批量插入
             Yii::$app->db->createCommand()->batchInsert(self::tableName(), array_keys($rows[0]), array_values($rows))->execute();
             
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $rows);
-            
         }catch (Exception $ex) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
     }
 }

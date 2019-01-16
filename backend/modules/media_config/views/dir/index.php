@@ -86,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         if(rel.code == 0){
                                             node.remove();
                                         }else{
-                                            alert(rel.message);
+                                            alert(rel.msg);
                                         }
                                     });
                                 }

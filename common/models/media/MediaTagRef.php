@@ -81,11 +81,10 @@ class MediaTagRef extends ActiveRecord
      */
     public static function saveMediaTagRef($media_id, $tags)
     {
-        $data = []; // 返回的数据
         try {
             // 如果标签为空则返回
             if($tags == null){
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                throw new Exception('标签不能为空。');
             }
             //删除已存在的标签
             self::updateAll(['is_del' => 1], ['object_id' => $media_id]);
@@ -100,13 +99,9 @@ class MediaTagRef extends ActiveRecord
             //累加引用次数
             Tags::updateAllCounters(['ref_count' => 1], ['id' => ArrayHelper::getColumn($tags, 'id')]);
             
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            
-        }catch (Exception $exc) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+        }catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
     }
     
     /**

@@ -54,13 +54,12 @@ class MediaDetail extends ActiveRecord
     
     /**
      * 保存媒体详情
-     * @param int $media_id  
-     * @param array $columns ['content', 'mts_need', 'mts_watermark_ids']  
-     * @return ApiResponse
+     * @param int $media_id
+     * @param array $columns     ['content', 'mts_need', 'mts_watermark_ids'] 
+     * @throws Exception
      */
     public static function savaMediaDetail($media_id, $columns)
     {
-        $data = []; // 返回的数据
         try
         {  
             $model = self::findOne(['media_id' => $media_id]);
@@ -71,13 +70,9 @@ class MediaDetail extends ActiveRecord
                 $query = \Yii::$app->db->createCommand()->update(self::tableName(), $columns, ['media_id' => $media_id])->execute();
             }
             
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            
         }catch (Exception $ex) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
     }
     
 }

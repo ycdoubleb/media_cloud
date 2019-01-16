@@ -2,7 +2,7 @@
 
 namespace common\models\media;
 
-use common\models\api\ApiResponse;
+use common\components\redis\RedisService;
 use common\models\order\Order;
 use common\models\order\OrderGoods;
 use common\models\User;
@@ -11,6 +11,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -41,6 +42,11 @@ class Acl extends ActiveRecord
     const STATUS_SUSPEND = 0; 
     /** 状态-正常 */
     const STATUS_NORMAL = 1;
+   
+    /**
+     * @see redis
+     */
+    public static $redisKey = 'mc_acl:';
     
     /**
      * 状态
@@ -137,16 +143,14 @@ class Acl extends ActiveRecord
         return $this->hasMany(AclAction::className(), ['acl_id' => 'id'])
            ->where(['acl_id' => $this->id]);
     }
-    
+  
     /**
      * 保存访问路径
      * @param int $order_id
-     * @return ApiResponse
+     * @throws Exception
      */
     public static function saveAcl($order_id)
     { 
-        $data = []; // 返回的数据
-        
         try
         {
             // 查询已经存在的acl
@@ -182,15 +186,35 @@ class Acl extends ActiveRecord
                 }
             
                 Yii::$app->db->createCommand()->batchInsert(self::tableName(), array_keys($goodsRows[0]), array_values($goodsRows))->execute();
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $goodsRows);
+                
             }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK, '数据已经存在。', $aclResults);
+                throw new Exception('数据已经存在');
             }
             
         } catch (Exception $ex){
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
+    }
+    
+    /**
+     * 按ID获取ACL信息
+     * @param int|string $id
+     * @param array $fields
+     * @return array
+     */
+    public static function getAclInfoById($id = 0, $fields = []){
+        $id = intval($id);
+        if($id < 1) return [];
+
+        $info  = RedisService::getHash(self::$redisKey . $id, $fields); 
+        if(empty($info)){
+            $_info = sel::findOne($id); //数据库读取数据
+            if($_info){
+                RedisService::setHash(self::$redisKey . $id, $_info->attributes);
+                $info = ArrayHelper::filter($_info->attributes, $fields); //获取指定字段
+            }
+        }
+        var_dump($info);exit;
+        return $info;
     }
 }

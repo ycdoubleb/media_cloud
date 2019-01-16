@@ -23,7 +23,7 @@ class MediaType extends ActiveRecord
     const SIGN_VIDEO = 'video';
     const SIGN_AUDIO = 'audio';
     const SIGN_IMAGE = 'image';
-    const SIGN_DOCMENT = 'docment';
+    const SIGN_DOCUMENT = 'document';
     const SIGN_H5 = 'h5';
     
     /**

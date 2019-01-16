@@ -391,7 +391,7 @@ return [
     'Screen' => '筛选',
     'Teachers' => '师资',
     'Authentication' => '认证',
-    'Approve' => '申请',
+    'Approve' => '审核',
     'Applicant' => '申请人',
     'Verifier' => '审核人',
     'Job Title' => '职称',

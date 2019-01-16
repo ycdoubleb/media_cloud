@@ -17,6 +17,7 @@ use common\models\Tags;
 use common\models\Watermark;
 use common\utils\DateUtil;
 use Yii;
+use yii\base\Exception;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -132,34 +133,30 @@ class MediaController extends Controller
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
-                    $attResult = MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
-                    $tagResult = MediaTagRef::saveMediaTagRef($model->id, $tags);
-                    $actionResult = MediaAction::savaMediaAction($model->id, $model->name);
+                    // 保存关联的属性值
+                    MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
+                    // 保存关联的标签
+                    MediaTagRef::saveMediaTagRef($model->id, $tags);
+                    // 保存操作记录
+                    MediaAction::savaMediaAction($model->id, $model->name);
                     /** 保存水印图： 1媒体类型是视频,2自动转码 */
                     if($model->mediaType->sign == MediaType::SIGN_VIDEO && $mts_need){
+                        // 保存媒体详情
                         MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
                     }
                 }else{
-                    $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
+                   return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }
                 
-                if($is_submit && $attResult->code == 0 && $tagResult->code == 0 && $actionResult->code == 0){
+                if($is_submit){
                     $trans->commit();  //提交事务
-                    $data = new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $model->toArray());
+                    return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $model->toArray());
                 }
                 
             }catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
-            
-            return [
-                // array_merge_recursive() 函数把一个或多个数组合并为一个数组, get_object_vars() 返回由对象属性组成的关联数组
-                'data' => array_merge_recursive(
-                    get_object_vars($data), get_object_vars($attResult), 
-                    get_object_vars($tagResult), get_object_vars($actionResult)
-                ),
-            ];
         }
 
         return $this->render('create', [
@@ -205,12 +202,14 @@ class MediaController extends Controller
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
-                    $detailResult = MediaDetail::savaMediaDetail($model->id, ['content' => $content]);
-                    $actionResult = MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
+                    // 保存媒体详情
+                    MediaDetail::savaMediaDetail($model->id, ['content' => $content]);
+                    // 保存操作记录
+                    MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
                         $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                 }
                 
-                if($is_submit && $detailResult->code == 0 && $actionResult->code == 0){
+                if($is_submit){
                     $trans->commit();  //提交事务
                     Yii::$app->getSession()->setFlash('success','操作成功！');
                 }
@@ -246,12 +245,13 @@ class MediaController extends Controller
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
                 $media_tags = ArrayHelper::getValue($post, 'Media.tag_ids');
-                $tags = Tags::saveTags($media_tags);    // 保存标签
+                // 保存标签
+                $tags = Tags::saveTags($media_tags);
                 
                 // 保存属性关联
-                $attResult = MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
+                MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
                 // 保存标签关联
-                $tagResult = MediaTagRef::saveMediaTagRef($model->id, $tags);
+                MediaTagRef::saveMediaTagRef($model->id, $tags);
 
             } catch (Exception $ex) {
                 Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
@@ -303,11 +303,12 @@ class MediaController extends Controller
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
-                    $actionResult = MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
+                    // 保存操作记录
+                    MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
                         $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                 }
                 
-                if($is_submit && $actionResult->code == 0){
+                if($is_submit){
                     $trans->commit();  //提交事务
                     Yii::$app->getSession()->setFlash('success','操作成功！');
                 }
@@ -344,12 +345,11 @@ class MediaController extends Controller
                 // 水印id
                 $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
                 // 保存媒体详细
-                $detailResult = MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
-                
-                if($detailResult->code == 0){
-                    MediaAliyunAction::addVideoTranscode($model->id);   // 转码
-                    MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
-                }
+                MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
+                // 转码
+                MediaAliyunAction::addVideoTranscode($model->id);   
+                // 保存操作记录
+                MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 
                 Yii::$app->getSession()->setFlash('success','操作成功！');
                 

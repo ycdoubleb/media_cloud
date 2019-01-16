@@ -173,9 +173,16 @@ a.desc:after {
     background-color: #ff725b; 
     border-color: #ff725b; 
 }
+
+.text-default {
+    color: #999 !important;
+}
+.bg-default {
+    color: #999 !important;
+}
+
 .text-danger {
     color: #ff3300 !important;
-    
 }
 .bg-danger {
     background-color: #ff3300 !important;

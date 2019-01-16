@@ -2,6 +2,7 @@
 
 namespace backend\modules\media_config\controllers;
 
+use common\models\api\ApiResponse;
 use common\models\media\Dir;
 use common\models\media\searchs\DirSearch;
 use Yii;
@@ -147,26 +148,18 @@ class DirController extends Controller
         $model = $this->findModel($id);
 
         Yii::$app->getResponse()->format = 'json';
-        $results = [
-            'code' => 10002,
-            'data' => ['id' => $model->id, 'name' => $model->name],
-            'message' => Yii::t('app', 'You have no permissions to perform this operation.'),
-        ];
-        
-        if(count(Dir::getDirsChildren($id)) > 0){
-            $results['message'] = '该目录下存在子目录，不能删除。';
-            return $results;
+       
+        if(count(Dir::getDirsChildren($id, \Yii::$app->user->id)) > 0){
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在子目录，不能删除。');
         }else if(count($model->medias) > 0) {
-            $results['message'] = '该目录下存在媒体素材，不能删除。';
-            return $results;
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在媒体素材，不能删除。');
         }else{
             $model->delete();
             Dir::invalidateCache();    //清除缓存
-            $results['code'] = 0;
-            $results['message'] = '操作成功！';
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $model->toArray());
         }
 
-        return $results;
+        return $data;
     }
     
     /**
@@ -226,7 +219,7 @@ class DirController extends Controller
      * @param string $id
      */
     public function actionSearchChildren($target_id = null, $id){
-        $dirsChildren = Dir::getDirsChildren($id); 
+        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
         $childrens = [];
         foreach ($dirsChildren as $index => $item) {
             if($target_id != null){
@@ -239,10 +232,8 @@ class DirController extends Controller
         }
         
         Yii::$app->getResponse()->format = 'json';
-        return [
-            'result' => 1,
-            'data' => $childrens,
-        ];
+        
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
     }
 
     /**

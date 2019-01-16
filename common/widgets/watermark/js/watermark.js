@@ -2,111 +2,114 @@
     /**
      * 
      * @param {Object} config
-     *      container string 容器id
-     *      background string 图片 or 颜色
-     *      watermark string 水印：图片或其他
+     *  container string 容器id
+     *  background string 图片 or 颜色
+     *  watermark string 水印（默认是图片）
      * @returns {void}
      */
     var Watermark = function(config){
         /* 配置 */
         this.config = $.extend({
-            container:'#container',
-            background: '',
-            watermark: '<img />'
+            container: '#preview-watermark',
+            class: 'preview',
+            watermark: '<img />',
         },config);
         
         /* 容器 */
         this.container = $(this.config['container']);
-        /* 背景 */
-        this.container.css({"background": this.config['background']});
-        /* 所有水印 */
-        this.watermarks = {};
+        /* 添加背景 */
+        this.container.addClass(this.config['class']);
     }
     
     /**
      * 添加水印
-     * @param {string} waterId          水印ID
-     * @param {type} waterConfig        水印配置
+     * @param {type} config        水印配置{refer_pos,url,width, height, dx, dy}
+     * @param {string} water_id    水印ID
      * @returns {void}
      */
-    Watermark.prototype.addWatermark = function (waterId, waterConfig) {
-        this.watermarks [waterId] = waterConfig;
-        //找到原先的 watermark com，如果没有新建
-        if(this.container.find($(this.config['watermark'])).length <= 0){
-            $(this.config['watermark']).attr("id", waterId).addClass('watermark').appendTo(this.container);
+    Watermark.prototype.addWatermark = function (config, water_id) 
+    {
+        var water_id = water_id || 0,
+            config = config || {},
+            container = this.container,     //预览图
+            watermark = $(this.config['watermark']);    //获取对应 watermark_dom
+            
+        //找到原先的 watermark_dom，如果没有新建
+        if(container.find(watermark).length <= 0){
+            watermark.attr({id: 'watermark' + water_id, class: 'watermark'}).appendTo(container);
         }
+        
         //更新水印
-        this.updateWatermark(waterId, waterConfig);
+        this.updateWatermark(config, water_id);
     }
 
     /**
      * 更新水印
-     * @param {string} waterId      水印ID
-     * @param {type} waterConfig    水印配置{width, height, shifting_X, shifting_Y}    
+     * @param {type} config          水印配置{refer_pos,url,width, height, dx, dy}    
+     * @param {string} water_id      水印ID
      * @returns {void}
      */
-    Watermark.prototype.updateWatermark = function (waterId, waterConfig) {
-        this.watermarks [waterId] = waterConfig;
-        //获取对应 watermark com
-        var tatermark = $('#' + waterId);
-        
-        //验证数据
-        var config = waterConfig;
-        config.width = this.valuableWatermark(config.width, this.container.width());
-        config.height = this.valuableWatermark(config.height, this.container.height());
-        config.shifting_X = this.valuableWatermark(config.shifting_X, this.container.width());
-        config.shifting_Y = this.valuableWatermark(config.shifting_Y, this.container.height());
-        
-        //更新水印图片
-        if(tatermark.get(0).tagName == 'IMG'){
-            tatermark.attr({src: Wskeee.StringUtil.completeFilePath(config.path)})
+    Watermark.prototype.updateWatermark = function (config, water_id) 
+    {
+        var water_id = water_id || 0,
+            config = config || {},
+            container = this.container,     //预览图
+            watermark = $('#watermark' + water_id),  //获取对应 watermark_dom
+            w = this.valuableWatermark(config['width'], container.width()) + 'px',  //宽度
+            h = this.valuableWatermark(config['height'], container.height()) + 'px',  //高度
+            dx = this.valuableWatermark(config['dx'], container.width()) + 'px',  //水平偏移
+            dy = this.valuableWatermark(config['dy'], container.height()) + 'px';  //垂直偏移
+            
+        //设置水印图片路径
+        watermark.attr({src: Wskeee.StringUtil.completeFilePath(config['url'])})
+        // 如果宽是0并且高非0，则宽为空
+        if(config['width'] == 0 && config['height'] != 0){
+            w = '';
+        }
+        // 如果宽非0并且高为0，则高为空
+        if(config['width'] != 0 && config['height'] == 0){
+            h = '';
         }
         
         //判断水印的位置
-        switch (config.refer_pos) {
+        switch (config['refer_pos']) {
             case 'TopRight':
-                tatermark.css({bottom: '', left: ''})
-                tatermark.css({
-                    top: config.shifting_Y + 'px', right: config.shifting_X + 'px',
-                    width: config.width + 'px', height: config.height + 'px',
+                watermark.css({
+                    top: dy, right: dx, bottom: '', left: '', width: w, height: h
                 });
                 break;
             case 'TopLeft':
-                tatermark.css({bottom: '', right: ''})
-                tatermark.css({
-                    top: config.shifting_Y + 'px', left: config.shifting_X + 'px',
-                    width: config.width + 'px', height: config.height + 'px',
+                watermark.css({
+                    top: dy, right: '', bottom: '', left: dx, width: w, height: h
                 });
                 break;
             case 'BottomRight':
-                tatermark.css({top: '', left: ''});
-                tatermark.css({
-                    bottom: config.shifting_Y + 'px', right: config.shifting_X + 'px',
-                    width: config.width + 'px', height: config.height + 'px',
+                watermark.css({
+                    top: '', right: dx, bottom: dy, left: '', width: w, height: h
                 });
                 break;
             case 'BottomLeft':
-                tatermark.css({top: '', right: ''});
-                tatermark.css({
-                    bottom: config.shifting_Y + 'px', left: config.shifting_X + 'px',
-                    width: config.width + 'px', height: config.height + 'px',
+                watermark.css({
+                    top: '', right: '', bottom: dy, left: dx, width: w, height: h
                 });
                 break;
             default:
-                tatermark.css({top: '0px', right: '0px'});
+                watermark.css({top: dy, right: dx});
             }
     }
     
     /**
      * 删除水印
-     * @param {string} waterId  水印ID
+     * @param {string} water_id  水印ID
      * @return {void}
      */
-    Watermark.prototype.removeWatermark = function(waterId){
-        //获取对应 watermark com
-        var tatermark = $('#' + waterId);
+    Watermark.prototype.removeWatermark = function(water_id)
+    {
+        var water_id = water_id || 0,
+            watermark = $('#watermark' + water_id);  //获取对应 watermark_dom
+    
         //删除元素
-        tatermark.remove();
+        watermark.remove();
     }
     
     /**
@@ -119,13 +122,12 @@
         value = Number(value);  //转为数字
         bgsize = Number(bgsize);//转为数字
         if (value < 8) {
-            value = value <= 0 ? value = 0.13 : value;
+            value = value <= 0 ? value = 0.12 : value;
             value = value > 1 ? value = 1 : value;
             value = value * bgsize;
         } else {
             value = value > 4096 ? value = 4096 : parseInt(value);
         }
-        
         return value;
     }
     

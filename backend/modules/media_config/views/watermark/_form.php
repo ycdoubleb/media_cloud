@@ -22,7 +22,6 @@ $shiftSelected = $model->isNewRecord || ($model->dx > 1 || $model->dy > 1) ? 1 :
 $model->dx = $model->isNewRecord ? 10 : $model->dx;
 $model->dy = $model->isNewRecord ? 10 : $model->dy;
 //水印图路径
-$ossHost = Aliyun::getOssHost();
 $path = !$model->isNewRecord ? $model->url : '';
 
 ?>
@@ -140,7 +139,7 @@ $path = !$model->isNewRecord ? $model->url : '';
 
     <!--水印文件-->
     <?= $form->field($model, 'url')->widget(ImagePicker::class, [
-        'id' => 'watermark-oss_key',
+        'id' => 'watermark-url',
         'pluginOptions' =>[
             'fileSingleSizeLimit' => 1*1024*1024,
             //设置允许选择的文件类型
@@ -156,6 +155,9 @@ $path = !$model->isNewRecord ? $model->url : '';
         'Watermark' => Yii::t('app', 'Watermark'), 'File' => Yii::t('app', 'File')
     ]));?>
 
+    <!--oss_key-->
+    <?= Html::activeHiddenInput($model, 'oss_key', ['value' => $model->isNewRecord ? '' : $model->oss_key]) ?>
+    
     <!--是否选中-->
     <?= $form->field($model, 'is_selected')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Selected')) ?>
 
@@ -165,14 +167,15 @@ $path = !$model->isNewRecord ? $model->url : '';
             'class' => 'col-lg-1 col-md-1 control-label form-label'
         ]) ?>
         <div class="col-lg-7 col-md-7">
-            <div id="preview-watermark" class="preview"></div>
+            <div id="preview-watermark"></div>
         </div>
     </div>
             
     <div class="form-group">
         <?= Html::label(null, null, ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
         <div class="col-lg-11 col-md-11">
-            <?= Html::submitButton(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
+            <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 
+                'class' => 'btn btn-success btn-flat', 'onclick' => 'submitForm()']) ?>
         </div> 
     </div>
     
@@ -183,15 +186,13 @@ $path = !$model->isNewRecord ? $model->url : '';
 <script type="text/javascript">
     
     var watermark;
-    var ossHost = "<?= $ossHost ?>/";
     var path = "<?= $path ?>";
     var pos = "<?= $model->refer_pos ?>";
     var w = "<?= $model->width ?>";
     var h = "<?= $model->height ?>";
     var dx = "<?= $model->dx ?>";
     var dy = "<?= $model->dy ?>";
-           
-           
+               
     /**
      * html 加载完成后初始化所有组件
      * @returns {void}
@@ -199,17 +200,24 @@ $path = !$model->isNewRecord ? $model->url : '';
     window.onload = function(){
         initWatermark();        //初始水印
     }
+    
+    /**
+     * 提交表单
+     * @returns {undefined}
+     */
+    function submitForm(){
+        $('#watermark-form').submit();
+    }
             
     //初始化组件        
     function initWatermark(){
-        
-        watermark = new wate.Watermark({container: '#preview-watermark'});
-
+        watermark = new wate.Watermark();
+       
         //添加一个水印
-        watermark.addWatermark('vkcw',{
-            refer_pos: pos, path: path,
+        watermark.addWatermark({
+            refer_pos: pos, url: path,
             width: w, height: h, 
-            shifting_X: dx, shifting_Y: dy
+            dx: dx, dy: dy
         });
     }        
                 
@@ -219,7 +227,8 @@ $path = !$model->isNewRecord ? $model->url : '';
      * @returns {undefined}
      */
     function uploadComplete(data){
-        path = ossHost+data['oss_key'];
+        $('#watermark-oss_key').val(data['oss_key']);
+        path = data['url'];
         changeRefer_pos();
     }    
     
@@ -238,14 +247,20 @@ $path = !$model->isNewRecord ? $model->url : '';
      */
     function changeRefer_pos (){
         var pos = $('input[name="Watermark[refer_pos]"]:checked').val(), 
-            w = $('input[name="Watermark[width]"]').val(),
-            h = $('input[name="Watermark[height]"]').val(),
-            dx = $('input[name="Watermark[dx]').val(),
-            dy = $('input[name="Watermark[dy]').val();
-        watermark.updateWatermark('vkcw',{
-            refer_pos: pos, path: path,
-            width: w, height: h, 
-            shifting_X: dx, shifting_Y: dy
+            w = $('input[name="Watermark[width]"]'),
+            h = $('input[name="Watermark[height]"]'),
+            dx = $('input[name="Watermark[dx]'),
+            dy = $('input[name="Watermark[dy]');
+    
+        w.val(valuableNumber(w.val(), w.attr('max'), w.attr('min')));
+        h.val(valuableNumber(h.val(), h.attr('max'), h.attr('min')));
+        dx.val(valuableNumber(dx.val(), dx.attr('max'), dx.attr('min')));
+        dy.val(valuableNumber(dy.val(), dy.attr('max'), dy.attr('min')));
+        
+        watermark.updateWatermark({
+            refer_pos: pos, url: path,
+            width: w.val(), height: h.val(), 
+            dx: dx.val(), dy: dy.val()
         });
     }
         
@@ -265,5 +280,25 @@ $path = !$model->isNewRecord ? $model->url : '';
         }
         changeRefer_pos();
    }
+   
+    /**
+     * 验证数字
+     * @param {Number} value    验证的数值
+     * @param {Number} max      最大
+     * @param {Number} min      最小
+     * @return {Number|@var;value}
+     */
+    function valuableNumber (value, max, min){
+        value = Number(value);  //转为数字
+        max = Number(max);  //转为数字
+        min = Number(min);  //转为数字
+        if (value > max) {
+            value = max;
+        } else if(value < min) {
+            value = min;
+        }
+        
+        return value;
+    }
     
 </script>

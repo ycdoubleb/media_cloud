@@ -28,24 +28,24 @@ use yii\db\ActiveRecord;
 class MediaRecycle extends ActiveRecord
 {
     /** 状态-未处理 */
-    const STATUS_NOT_HANDLE = 0;
+    const STATUS_UNTREATED = 0; 
     
     /** 状态-已处理 */
-    const STATUS_ALREADY_HANDLE = 1;
+    const STATUS_HANDLED = 1;
     
     /** 结果-已还原 */
-    const RESULT_ALREADY_RECOVERY = 0;
+    const RESULT_RECOVERED = 0;
     
     /** 结果-已删除 */
-    const RESULT_ALREADY_DELETE = 1;
+    const RESULT_DELETED = 1;
     
     /**
      * 审核状态
      * @var array 
      */
     public static $statusMap = [
-      self::STATUS_NOT_HANDLE =>  '未处理',
-      self::STATUS_ALREADY_HANDLE =>  '已处理',
+      self::STATUS_UNTREATED =>  '未处理',
+      self::STATUS_HANDLED =>  '已处理',
     ];
     
     /**
@@ -53,8 +53,8 @@ class MediaRecycle extends ActiveRecord
      * @var array 
      */
     public static $resultMap = [
-      self::RESULT_ALREADY_RECOVERY =>  '已还原',
-      self::RESULT_ALREADY_DELETE =>  '已删除',
+      self::RESULT_RECOVERED =>  '已还原',
+      self::RESULT_DELETED =>  '已删除',
     ];
     
     /**

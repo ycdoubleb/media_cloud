@@ -120,13 +120,13 @@ $js = <<<JS
     var watermark;    
         
     //初始化组件
-    watermark = new wate.Watermark({container: '#preview-watermark'});
+    watermark = new wate.Watermark();
     
     //添加一个水印
-    watermark.addWatermark('vkcw',{
-        refer_pos: "{$model->refer_pos}", path: "{$model->url}",
+    watermark.addWatermark({
+        refer_pos: "{$model->refer_pos}", url: "{$model->url}",
         width: "{$model->width}", height: "{$model->height}",
-        shifting_X: "{$model->dx}", shifting_Y: "{$model->dy}"
+        dx: "{$model->dx}", dy: "{$model->dy}"
     });
 JS;
     $this->registerJs($js,  View::POS_READY);

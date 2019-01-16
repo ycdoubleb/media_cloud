@@ -71,6 +71,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-updateType', 'class' => 'btn btn-default'
                         ]);
                     },
+                    'view' => function($url, $model){
+                        return ' '. Html::a(Yii::t('app', '{Config}{Suffix}', [
+                            'Config' => Yii::t('app', 'Config'), 'Suffix' => Yii::t('app', 'Suffix')
+                        ]), ['type-detail/index', 'MediaTypeDetailSearch' => ['type_id' => $model->id]], ['class' => 'btn btn-primary']);
+                    },
                     'delete' => function ($url, $model){
                         return ' ' . Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
                             'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
@@ -86,11 +91,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'headerOptions' => [
                     'style' => [
-                        'width' => '200px',
+                        'width' => '210px',
                     ],
                 ],
                             
-                'template' => '{updata}{delete}',
+                'template' => '{updata}{view}{delete}',
             ],
         ],
     ]); ?>

@@ -19,6 +19,9 @@ $this->title = Yii::t('app', '{Create}{Media}', [
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Media'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+//加载 WATERMARK_DOM 模板
+$media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom'));
+
 ?>
 <div class="media-create">
 
@@ -92,7 +95,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::label(null, null, ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
             <div class="col-lg-11 col-md-11">
                 <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
-                <span id="submit-result"></span>
             </div> 
         </div>
     
@@ -102,30 +104,161 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<?php
-$js = <<<JS
-        
-    // 初始化
-    window.mediaBatchUpload = new mediaupload.MediaBatchUpload();
-        
-    /** 上传完成 */
-    $(mediaBatchUpload).on('submitFinished',function(){
-        var max_num = this.medias.length;
-        var completed_num = 0;
-        $.each(this.medias,function(){
-            if(this.submit_result){
-                completed_num++;
-            }
-        });
-        $('#submit-result').html("共有 "+max_num+" 个需要上传，其中 "+completed_num+" 个成功， "+(max_num - completed_num)+" 个失败！");
-    });
-        
-    // 提交表单    
-    $("#submitsave").click(function(){
-        var formdata = $('#media-form').serialize();
-        window.mediaBatchUpload.submit(formdata);
-    });
+<!--模态框-->
+<div class="modal fade myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提交结果</h4>
+            </div>
+            
+            <div class="modal-body result-info" id="myModalBody">
+                
+                <!--结果进度-->
+                <div class="progress">
+                    <div class="progress-bar result-progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%; line-height: 18px">0%</div>
+                </div>
+                
+                <!--结果提示-->
+                <p class="text-default result-hint" style="font-size: 13px; margin-top: 10px">
+                    共有 <span class="max_num">0</span> 个需要上传，其中 <span class="completed_num">0</span> 个成功 <span class="lose_num">0</span> 个失败！
+                </p>
+                
+                <!--文本-->
+                <p class="text-default" style="font-size: 13px;">以下为失败列表：</p>
+                
+                <!--失败列表-->
+                <table class="table table-striped table-bordered result-table">
+                    <thead>
+                        <tr><th style="width: 30px;">#</th><th style="width: 210px;">文件名</th><th style="width: 300px;">失败原因</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="modal-footer">
+                <?= Html::button(Yii::t('app', '{Anew}{Upload}', ['Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
+                    ]), ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']) 
+                ?>
+                <?= Html::button(Yii::t('app', 'Close'), ['id' => 'btn-close', 'class' => 'btn btn-default', 'data-dismiss' => 'modal']) ?>
+            </div>
+            
+       </div>
+    </div> 
+</div>
 
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>
+<script type="text/javascript">
+    //媒体 tr dom
+    var php_media_data_tr_dom = '<?= $media_data_tr_dom ?>';
+    //批量上传控制器
+    var mediaBatchUpload;
+    //上传工具的媒体
+    var uploaderMedias = [];
+    
+    /**
+     * html 加载完成后初始化所有组件
+     * @returns {void}
+     */
+    window.onload = function(){
+        initBatchUpload();        //初始批量上传
+        initWatermark();          //初始水印
+        initSubmit();             //初始提交
+    }
+    
+    /************************************************************************************
+    *
+    * 初始化批量上传
+    *
+    ************************************************************************************/
+    function initBatchUpload(){
+        mediaBatchUpload = new mediaupload.MediaBatchUpload({
+            media_data_tr_dom : php_media_data_tr_dom,
+        });
+        
+        /** 上传完成 */
+//        $(mediaBatchUpload).on('submitFinished',function(){
+//            createResultInfo(this.medias);            
+//        });
+        
+        // 关闭模态框事件
+        $('.myModal').on('hidden.bs.modal', function (e) {
+//            $progress = $('.result-info').find('div.result-progress').removeAttr('style').html('0%');
+            $table = $('.result-info').find('table.result-table');
+            $table.find('tbody').html('');
+        });
+    }
+    
+    /**
+     * 上传完成后返回的文件数据
+     * @param {object} data
+     * @returns {Array|uploaderMedias}
+     */
+    function uploadComplete(data){
+        mediaBatchUpload.addMediaData(data);
+//        uploaderMedias.push(data);        
+    }
+    
+    /**
+     * 删除上传列表中的文件
+     * @param {object} data
+     * @returns {undefined}
+     */
+    function fileDequeued(data){
+        mediaBatchUpload.delMediaData(data.dbFile);
+    }
+    
+    /**
+     * 视图 创建结果信息
+     * @param {array} medias
+     * @returns {undefined}
+     */
+//    function createResultInfo(medias) {
+//        var max_num = medias.length,
+//            completed_num = 0;
+//            
+//        $progress = $('.result-info').find('div.result-progress');
+//        $hint = $('.result-info').find('p.result-hint');
+//        $table = $('.result-info').find('table.result-table');
+//        $tbody = $table.find('tbody');
+//        
+//        $.each(medias,function(index, mediaData){
+//            if(this.submit_result){
+//                completed_num++;
+//            }else{
+//                $(Wskeee.StringUtil.renderDOM(php_media_data_tr_dom, mediaData)).appendTo($tbody);
+//            }
+//        });
+//        
+//        percent = completed_num / max_num  * 100 + '%'
+//        $progress.css({width: percent}).html(percent);
+//        
+//        $hint.find('span.max_num').html(max_num);
+//        $hint.find('span.completed_num').html(completed_num);
+//        $hint.find('span.lose_num').html(max_num - completed_num);
+//    }
+//    
+    /************************************************************************************
+     *
+     * 初始化提交
+     *
+     ************************************************************************************/ 
+    function initSubmit(){
+        // 弹出提交结果
+        $("#submitsave").click(function(){
+            $('.myModal').modal("show");
+//            mediaBatchUpload.init(uploaderMedias);
+            var formdata = $('#media-form').serialize();
+            mediaBatchUpload.submit(formdata);
+        });
+        // 重新上传
+        $("#btn-anewUpload").click(function(){
+            $table = $('.result-info').find('table.result-table');
+            $table.find('tbody').html('');
+            var formdata = $('#media-form').serialize();
+            mediaBatchUpload.submit(formdata);
+        });
+    }
+    
+</script>

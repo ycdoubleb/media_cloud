@@ -1,6 +1,8 @@
 <?php
 
 use common\models\AdminUserr;
+use common\models\media\MediaApprove;
+use common\models\media\MediaRecycle;
 use common\widgets\Menu;
 
 /* @var $user AdminUserr */
@@ -71,8 +73,8 @@ use common\widgets\Menu;
                         'items' => [
                             ['label' => '上传媒体', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
                             ['label' => '媒体列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media']],
-                            ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve']],
-                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle']],
+                            ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve', 'MediaApproveSearch' => ['status' => MediaApprove::STATUS_APPROVEING]]],
+                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle', 'MediaRecycleSearch' => ['status' => MediaRecycle::STATUS_UNTREATED]]],
                         ],
                     ],
                     [

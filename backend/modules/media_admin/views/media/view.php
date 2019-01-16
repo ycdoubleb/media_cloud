@@ -254,7 +254,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     case MediaType::SIGN_IMAGE :
                         echo "<img src=\"{$model->url}\" width=\"100%\" />";
                         break;
-                    case MediaType::SIGN_DOCMENT :
+                    case MediaType::SIGN_DOCUMENT :
                         echo "<iframe src=\"http://eezxyl.gzedu.com/?furl={$model->url}\" width=\"100%\" height=\"700\" style=\"border: none\"></iframe>";
                         break;
                 }

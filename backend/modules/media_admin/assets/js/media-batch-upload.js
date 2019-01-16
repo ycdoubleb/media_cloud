@@ -7,7 +7,7 @@
     
     //================================================================================================
     //
-    // VideoData class
+    // MediaData class
     //
     //================================================================================================
     /**
@@ -28,6 +28,7 @@
         this.size = data.size;                              //文件大小
         this.ext = data.ext;                                //文件后缀名
         this.oss_key = data.oss_key                         //文件oss_key
+        this.md5 = data.md5                                 //文件MD5
 
         this.media_id = null;                               //媒体id
         this.submit_status = 0;                             //提交状态 0/1/2 未提交/提交中/已提交
@@ -118,17 +119,52 @@
      */
     function MediaBatchUpload(config) {
         this.config = $.extend({
-            media_url: 'create', //添加素材             
-            submit_force: false, //已提交的强制提交
-            submit_common_params: {}, //提交公共参数，如 form
+            //添加素材url     
+            media_url: 'create',                    
+            //已提交的强制提交
+            submit_force: false,                    
+            //提交公共参数，如 form
+            submit_common_params: {},   
+            //素材信息容器
+            resultinfo: '.result-info',                      
+            
         }, config);
+        //dom
+        this.resultinfo = $(this.config['resultinfo']);
         //model
         this.medias = [];           //素材信息数据
         //vars
         this.is_submiting = false;  //是否提交中
         this.submit_index = -1;     //当前提交索引
+        this.completed_num = 0      //完成数量
     }
+    
+    /**
+     * 视图 创建结果信息
+     * @param {MediaData} mediaData
+     * @returns {undefined}
+     */
+    MediaBatchUpload.prototype.__createResultInfo = function (mediaData) {
+        var _self = this,
+            max_num = _self.medias.length,
+            completed_num = _self.completed_num;
+            
+        $progress = this.resultinfo.find('div.result-progress');
+        $hint = this.resultinfo.find('p.result-hint');
+        $table = this.resultinfo.find('table.result-table');
 
+        if(mediaData.submit_result){
+            _self.completed_num = ++completed_num;
+        }else{
+            $(Wskeee.StringUtil.renderDOM(_self.config['media_data_tr_dom'], mediaData)).appendTo($table.find('tbody'));
+        }
+        
+        $progress.css({width: parseInt(_self.completed_num / max_num * 100) + '%'}).html(parseInt(_self.completed_num / max_num * 100) + '%');
+        $hint.find('span.max_num').html(max_num);
+        $hint.find('span.completed_num').html(_self.completed_num);
+        $hint.find('span.lose_num').html(max_num - _self.completed_num);
+    }
+    
     //------------------------------------------------------
     // 提交数据
     //------------------------------------------------------
@@ -159,7 +195,6 @@
         force = !!force;
         var _self = this;
         var md = this.medias[index];
-        
         if (!md || (md.submit_status == 2 && md.submit_result)) {
             //找不到数据或者已经创建成功的 跳过
             this.__submitNext();
@@ -171,26 +206,18 @@
                 md.setSubmitResult(1);  //设置提交中
                 $.post(this.config['media_url'], postData, function (response) {
                     try {
-                        var result = false;
-                        var feedback = "";
-                        if (response.data.code == '10002') {
-                            feedback = response.data.msg;     //其它错误显示
-                        }
-                        // 如果都为0才返回成功
-                        $.each(response.data.code, function(i, e){
-                            if(e != "0") return;
-                            result = true;
-                        });
                         //code 不为0即为失败
-                        md.setSubmitResult(2, result, feedback, response.data.data);
+                        md.setSubmitResult(2, response.code == "0", response.msg, response.data);
+                        
                     } catch (e) {
                         if (console) {
                             console.error(e);
                         }
                         md.setSubmitResult(2, false, '未知错误');
                     }
-
+                    
                     $(_self).trigger('submitCompleted', md);         //发送单个素材上传完成
+                    _self.__createResultInfo(md);
                     _self.__submitNext();
                 });
             } else {
@@ -205,7 +232,7 @@
      * @param {string} data
      * @returns {unresolved}
      */
-    MediaBatchUpload.prototype._parseURIComponent = function (data) {
+    MediaBatchUpload.prototype.__parseURIComponent = function (data) {
         data = decodeURIComponent(data);    //uri 进行解码
         // 匹配form表单生成的参数字符正则
         var reg = /([^=&\s]+)[=\s]*([^&\s]*)/g;
@@ -245,6 +272,21 @@
         return array;
     }
 
+    /**
+     * 通过ID查找MediaDdata
+     * @param {string} id
+     * @returns {VideoData}
+     */
+    MediaBatchUpload.prototype.__getMediadataById = function (id) {
+        var target = null;
+        $.each(this.medias, function (index, mediadata) {
+            if (id == mediadata.file_id) {
+                target = mediadata;
+            }
+        });
+        return target;
+    };
+    
     
     //--------------------------------------------------------------------------
     //
@@ -253,17 +295,56 @@
     //--------------------------------------------------------------------------
     /**
      * 初始上传组件，准备所有数据，也可以后面再补其它数据
-     * @param {array} files             素材文件信息数据
+     * @param {array} medias             素材文件信息数据
      * @returns {void}  
      */
-    MediaBatchUpload.prototype.init = function (mediaFiles) {
-        mediaFiles = mediaFiles || [];
-        
-        var _self = this, mediaData, index = 0;
-        mediaData = new MediaData(index++, mediaFiles);
-        
-        _self.medias.push(mediaData);
+    MediaBatchUpload.prototype.init = function (medias) {
+        medias = medias || [];
+        var _self = this, mediaData;
+        //array to MediaData
+         for(var index in medias){
+            mediaData = new MediaData(Number(index) + 1, medias[index]);
+            _self.medias.push(mediaData);
+        }
     };
+    
+    /**
+     * 添加 MediaData
+     * @param {object} media
+     * @returns {undefined}
+     */
+    MediaBatchUpload.prototype.addMediaData = function(media)
+    {
+        var _self = this, 
+            mediaData,
+            index = _self.submit_index;
+    
+        _self.submit_index = ++index;
+        
+        var md = _self.__getMediadataById(media.id);
+        if(!md){
+            mediaData = new MediaData(_self.submit_index + 1, media);
+            _self.medias.push(mediaData);
+        }    
+    }
+    
+    /**
+     * 删除 MediaData
+     * @param {object} media
+     * @returns {undefined}
+     */
+    MediaBatchUpload.prototype.delMediaData = function(media)
+    {
+        var _self = this, 
+            mediaData;
+    
+        var md = _self.__getMediadataById(media.id);
+        if(md){
+            var index = _self.medias.indexOf(md)
+            _self.medias.splice(index, 1);
+        }
+        console.log(_self.medias);
+    }
     
     /**
      * 提交数据，已经提交的不再提交
@@ -276,7 +357,7 @@
         this.submit_index = -1;
         this.config['submit_common_params'] = $.extend(
             this.config['submit_common_params'], 
-            this._parseURIComponent(submit_common_params)
+            this.__parseURIComponent(submit_common_params)
         );
         this.config['submit_force'] = force;
         this.__submitNext();

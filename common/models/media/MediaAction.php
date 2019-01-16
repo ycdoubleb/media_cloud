@@ -99,26 +99,23 @@ class MediaAction extends ActiveRecord
     {
         return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
-    
+ 
     /**
      * 保存媒体操作日志
-     * @param int $media_id  
-     * @param string $content  内容（字符串）| 加载渲染的模板
+     * @param int $media_id
+     * @param string $content   内容（字符串）| 加载渲染的模板
      * @param string $title 标题
-     * @return ApiResponse
+     * @throws Exception
      */
     public static function savaMediaAction($media_id, $content, $title = null)
     {
-        /** 如何是默认的CRUD标题则为默认的 */
-        if($title == null && isset(self::$titleMap[Yii::$app->controller->action->id])){
-            $title = self::$titleMap[Yii::$app->controller->action->id];
-        }
-        
-        $data = []; // 返回的数据
-        /** 开启事务 */
-        $trans = Yii::$app->db->beginTransaction();
         try
         {  
+            /** 如何是默认的CRUD标题则为默认的 */
+            if($title == null && isset(self::$titleMap[Yii::$app->controller->action->id])){
+                $title = self::$titleMap[Yii::$app->controller->action->id];
+            }
+        
             $model = new MediaAction([
                 'media_id' => $media_id,
                 'title' => $title,
@@ -126,17 +123,11 @@ class MediaAction extends ActiveRecord
                 'created_by' => Yii::$app->user->id,
             ]);
              
-            if($model->save()){
-                $trans->commit();  //提交事务
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
+            if(!$model->save()){
+                throw new Exception('保存失败：' . $model->getErrorSummary(true));
             }
         }catch (Exception $ex) {
-            $trans ->rollBack(); //回滚事务
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
     }
 }

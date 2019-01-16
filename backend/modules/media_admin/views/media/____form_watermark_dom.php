@@ -9,7 +9,7 @@ WatermarkAsset::register($this);
 // 加载 ITEM_DOM 模板 
 $water_item_dom = '<div class="media-watermark">';
 $water_item_dom .= Html::checkbox('Media[mts_watermark_ids][]', false, ['value' => '{%id%}']);
-$water_item_dom .= Html::img('{%path%}', ['width' => 64, 'height' => 40]);
+$water_item_dom .= Html::img('{%url%}', ['width' => 64, 'height' => 40]);
 $water_item_dom .= '</div>';
 $item_dom = json_encode($water_item_dom);
 
@@ -53,11 +53,14 @@ $wateSelected = json_encode($wateSelected);
     <div class="col-lg-7 col-md-7">
         <div id="media-mts_watermark_ids">
             <!--加载-->
-            <div class="loading-box"><span class="loading"></span></div>
+            <div class="loading-box">
+                <span class="loading"></span>
+                <span class="text-danger">未配置水印</span>
+            </div>
         </div>
         <br/>
         <!--预览-->
-        <div id="preview-watermark" class="preview"></div>
+        <div id="preview-watermark"></div>
     </div>
 </div>
 
@@ -80,7 +83,7 @@ $wateSelected = json_encode($wateSelected);
             
     //初始化组件        
     function initWatermark(){
-        watermark = new wate.Watermark({container: '#preview-watermark'});
+        watermark = new wate.Watermark();
         /** 显示客户下已启用的水印图 */
         $.each(wateFiles, function(){
             if(!isPageLoading) $('#media-mts_watermark_ids').html('');
@@ -95,7 +98,7 @@ $wateSelected = json_encode($wateSelected);
                 checkedWatermark($(this));
             });
             //如果是默认选中，则在预览图上添加该选中的水印
-            if(parseInt(this.is_selected)) watermark.addWatermark('vkcw' + this.id, this);
+            if(parseInt(this.is_selected)) watermark.addWatermark(this, this.id);
             isPageLoading = true;
         });
     }
@@ -111,12 +114,12 @@ $wateSelected = json_encode($wateSelected);
             $.each(wateFiles, function(){
                 //如果水印的id等于用户选中的值，则在预览图上添加水印
                 if(this.id == $(_this).val()){
-                    watermark.addWatermark('vkcw' + this.id, this);
+                    watermark.addWatermark(this, this.id);
                     return false;
                 }
             });
         }else{
-            watermark.removeWatermark('vkcw' + $(_this).val());
+            watermark.removeWatermark($(_this).val());
         }
     }
 

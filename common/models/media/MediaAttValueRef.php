@@ -2,10 +2,9 @@
 
 namespace common\models\media;
 
-use common\models\api\ApiResponse;
 use Yii;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
-use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%media_att_value_ref}}".
@@ -53,13 +52,12 @@ class MediaAttValueRef extends ActiveRecord
     
     /**
      * 保存媒体属性值关联关系
-     * @param int $media_id
-     * @param array $media_attrs    媒体属性
-     * @return ApiResponse
+     * @param type $media_id
+     * @param type $media_attrs     媒体属性值
+     * @throws Exception
      */
     public static function saveMediaAttValueRef($media_id, $media_attrs)
     {
-        $data = []; // 返回的数据
         try {
             if(is_array($media_attrs)){
                 $mediaAttValue = [];
@@ -78,15 +76,13 @@ class MediaAttValueRef extends ActiveRecord
                 Yii::$app->db->createCommand()->batchInsert(self::tableName(),
                     ['media_id', 'attribute_id', 'attribute_value_id'], $mediaAttValue)->execute();
                 
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
             }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '媒体属性必须是为数组格式');
+                throw new Exception('媒体属性必须是为数组格式');
             }
-        } catch (Exception $exc) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
         }
-                
-        return $data;
     }
     
     /**

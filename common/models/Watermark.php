@@ -147,10 +147,9 @@ class Watermark extends ActiveRecord
         
         // 所需要的字段
         $query->select([
-            'Watermark.id', 'Watermark.width', 'Watermark.height', 
-            'Watermark.dx AS shifting_X', 'Watermark.dy AS shifting_Y', 
-            'Watermark.refer_pos', "if(Watermark.is_selected = 1, 1, 0) AS is_selected", 
-            'Watermark.url AS path'
+            'Watermark.id', 'Watermark.width', 'Watermark.height', 'Watermark.dx',
+            'Watermark.dy', 'Watermark.refer_pos', 'Watermark.url', 
+            "if(Watermark.is_selected = 1, 1, 0) AS is_selected"
         ]);        
         
         //必要条件

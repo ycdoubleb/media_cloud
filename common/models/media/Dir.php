@@ -107,21 +107,6 @@ class Dir extends ActiveRecord
     
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
-//            $file_name = md5(time());
-//            //图片上传
-//            $upload = UploadedFile::getInstance($this, 'image');
-//            if ($upload !== null) {
-//                $string = $upload->name;
-//                $array = explode('.', $string);
-//                //获取后缀名，默认名为.jpg
-//                $ext = count($array) == 0 ? 'jpg' : $array[count($array) - 1];
-//                $uploadpath = $this->fileExists(Yii::getAlias('@frontend/web/upload/course/category/'));
-//                $upload->saveAs($uploadpath . $file_name . '.' . $ext);
-//                $this->image = '/upload/course/category/' . $file_name . '.' . $ext . '?r=' . rand(1, 10000);
-//            }
-//            if (trim($this->image) == '') {
-//                $this->image = $this->getOldAttribute('image');
-//            }
             //设置等级
             if (empty($this->parent_id)) {
                 $this->parent_id = 0;
@@ -283,10 +268,10 @@ class Dir extends ActiveRecord
      * @param integer $parent_id    父级id
      * @return array
      */
-    public static function getDirListFramework($ids = [], $parent_id = 0){
+    public static function getDirListFramework($ids = [], $parent_id = 0, $sort_order = 'is_public'){
         self::initCache();
         
-        ArrayHelper::multisort(self::$dirs, 'is_public', SORT_DESC);
+        ArrayHelper::multisort(self::$dirs, $sort_order, SORT_DESC);
         //组装目录结构
         $listFramework = [];
         foreach(self::$dirs as $id => $_data){
@@ -302,7 +287,7 @@ class Dir extends ActiveRecord
                     'sort_order' => $_data['sort_order'],
                     'folder' => true,
                 ];
-                $item['children'] = self::getDirListFramework($ids, $_data['id']);
+                $item['children'] = self::getDirListFramework($ids, $_data['id'], $sort_order);
                 $listFramework[] = $item;
             }
         }

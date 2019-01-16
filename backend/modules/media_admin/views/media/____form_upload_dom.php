@@ -29,7 +29,8 @@ use yii\web\View;
                 ],
             ],
             'pluginEvents' => [
-                'uploadComplete' => 'function(evt, data){window.mediaBatchUpload.init(data);}',
+                'uploadComplete' => 'function(evt, data){ uploadComplete(data) }',
+                'fileDequeued' => 'function(evt, file){ fileDequeued(file) }'
             ],
         ]);
         ?>

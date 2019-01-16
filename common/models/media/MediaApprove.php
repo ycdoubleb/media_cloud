@@ -37,10 +37,10 @@ class MediaApprove extends ActiveRecord
     const TYPE_DELETE_APPROVE = 2;
     
     /** 状态-待审核 */
-    const STATUS_WAIT_APPROVE = 0;
+    const STATUS_APPROVEING = 0;
     
     /** 状态-已审核 */
-    const STATUS_ALREADY_APPROVE = 1;
+    const STATUS_APPROVED = 1;
     
     /** 结果-不通过 */
     const RESULT_PASS_NO = 0;
@@ -62,8 +62,8 @@ class MediaApprove extends ActiveRecord
      * @var array 
      */
     public static $statusMap = [
-      self::STATUS_WAIT_APPROVE =>  '待审核',
-      self::STATUS_ALREADY_APPROVE =>  '已审核',
+      self::STATUS_APPROVEING =>  '待审核',
+      self::STATUS_APPROVED =>  '已审核',
     ];
     
     /**

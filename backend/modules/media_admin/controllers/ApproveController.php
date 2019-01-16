@@ -83,7 +83,7 @@ class ApproveController extends Controller
                     $model = new MediaApprove(['media_id' => $id,'type' => MediaApprove::TYPE_INTODB_APPROVE,
                         'content' => $content, 'created_by' => Yii::$app->user->id]);
                     $model->save();
-                }else if($result[$id]['status'] == MediaApprove::STATUS_WAIT_APPROVE){
+                }else if($result[$id]['status'] == MediaApprove::STATUS_APPROVEING){
                     $model = MediaApprove::findOne($result[$id]['id']);
                     $model->type = MediaApprove::TYPE_INTODB_APPROVE;
                     $model->content = $content;
@@ -124,7 +124,7 @@ class ApproveController extends Controller
                     $model = new MediaApprove(['media_id' => $id,'type' => MediaApprove::TYPE_DELETE_APPROVE,
                         'content' => $content, 'created_by' => Yii::$app->user->id]);
                     $model->save();
-                }else if($result[$id]['status'] == MediaApprove::STATUS_WAIT_APPROVE){
+                }else if($result[$id]['status'] == MediaApprove::STATUS_APPROVEING){
                     $model = MediaApprove::findOne($result[$id]['id']);
                     $model->type = MediaApprove::TYPE_DELETE_APPROVE;
                     $model->content = $content;
@@ -162,7 +162,7 @@ class ApproveController extends Controller
                 if(!isset($result[$id])){
                     $model = MediaApprove::findOne($id);
                     /* 需要保存的申请数据 */
-                    $model->status = MediaApprove::STATUS_ALREADY_APPROVE;
+                    $model->status = MediaApprove::STATUS_APPROVED;
                     $model->result = MediaApprove::RESULT_PASS_YES;
                     $model->feedback = $feedback;
                     $model->handled_by = \Yii::$app->user->id;
@@ -227,7 +227,7 @@ class ApproveController extends Controller
                 if(!isset($result[$id])){
                     $model = MediaApprove::findOne($id);
                     /* 需要保存的申请数据 */
-                    $model->status = MediaApprove::STATUS_ALREADY_APPROVE;
+                    $model->status = MediaApprove::STATUS_APPROVED;
                     $model->result = MediaApprove::RESULT_PASS_NO;
                     $model->feedback = $feedback;
                     $model->handled_by = \Yii::$app->user->id;

@@ -227,7 +227,7 @@ class Media extends ActiveRecord
     public function getVideoUrls()
     {
         return $this->hasMany(VideoUrl::className(), ['media_id' => 'id'])
-           ->where(['media_id' => $this->id]);
+           ->where(['media_id' => $this->id, 'is_del' => 0]);
     }
     
     /**

@@ -149,7 +149,7 @@ $js = <<<JS
                 var data = rel.data;        //获取返回的数据
                 page = Number(data.page);   //当前页
                 //请求成功返回数据，否则提示错误信息
-                if(rel['code'] == '200'){
+                if(rel['code'] == '0'){
                     for(var i in data.result){
                         var item = $(Wskeee.StringUtil.renderDOM($details_dom, data.result[i])).appendTo($(".meida-details"));
                         //鼠标经过、离开事件

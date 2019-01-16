@@ -137,17 +137,6 @@ class Order extends ActiveRecord
         ];
     }
     
-    public function beforeSave($insert) {
-        if(parent::beforeSave($insert)) {
-            // 设置订单号
-            if($this->order_sn == null){
-                $this->order_sn = date('YmdHis',time()) . rand(1000, 9999);
-            }
-            return true;
-        }
-        return false;
-    }
-    
     /**
      * @return ActiveQuery
      */

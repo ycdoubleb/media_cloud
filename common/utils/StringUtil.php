@@ -14,6 +14,7 @@ namespace common\utils;
  * @author Kiwi°
  */
 class StringUtil {
+
     //put your code here
     /**
      * 补全文件路径
@@ -22,34 +23,33 @@ class StringUtil {
      * @param srting $appendStr  补全的字符，默认‘/’
      * @return srting
      */
-    public static function completeFilePath($path, $withStr = '', $appendStr = '/')
-    {
+    public static function completeFilePath($path, $withStr = '', $appendStr = '/') {
         //如果$withStr为空的，默认['http://', 'https://', '/']
-        if(empty($withStr)){
+        if (empty($withStr)) {
             $withStr = ['http://', 'https://', '/'];
         }
-        
+
         //如果$withStr不是数组，默认转为数组
-        if(!is_array($withStr)){
+        if (!is_array($withStr)) {
             $withStr = [$withStr];
         }
         //如果参数path为空，默认为空字符串
-        if($path == null){
+        if ($path == null) {
             $path = '';
         }
         //判断指定的字符串是否存在，若不存在则补全
         $isAppendStr = false;
         foreach ($withStr as $str) {
-            if(stripos($path, "$str") !== 0){
+            if (stripos($path, "$str") !== 0) {
                 $isAppendStr = true;
-            }else{
+            } else {
                 $isAppendStr = false;
                 break;
             }
         }
         return $isAppendStr ? $appendStr . $path : $path;
     }
-    
+
     /**
      * 检查手机有效性，
      * 手机必须满足以下规定：
@@ -61,7 +61,7 @@ class StringUtil {
     public static function checkPhoneValid($phone) {
         return preg_match('/^[1][345678][0-9]{9}$/', $phone);
     }
-    
+
     /**
      * 获取文件的后缀名
      * @param string $file
@@ -72,19 +72,19 @@ class StringUtil {
         //获取文件的后缀名
         $ext = pathinfo($file, PATHINFO_EXTENSION);
         //判断文件后缀名的最后一个字符是否是大写
-        if(preg_match('/^[A-Z]+$/', substr($ext, -1))){
+        if (preg_match('/^[A-Z]+$/', substr($ext, -1))) {
             //判断后缀名最后一个字符是否为大写X
-            if(substr($ext, -1) == 'X'){
+            if (substr($ext, -1) == 'X') {
                 //在后缀名最后一个字符是大写X的情况下替换为小写
                 $extName = str_replace(substr($extName, -1), 'x', $extName);
             }
-        //判断后缀名最后一个字符是否为小写x
-        }else if(substr($ext, -1) == 'x'){
+            //判断后缀名最后一个字符是否为小写x
+        } else if (substr($ext, -1) == 'x') {
             $extName = $ext;
-        }else{
+        } else {
             $extName = $ext . 'x';
         }
-        
+
         return $extName;
     }
     
@@ -146,4 +146,17 @@ class StringUtil {
         }
 
     }
+
+    /**
+     * 生成16位随机码
+     * @param array $codes              开始字符数组
+     * @param interger $start_year      开始年份
+     * @return string
+     */
+    public static function getRandomSN($codes = null, $start_year = 2019) {
+        $yCode = $codes ? $codes : array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J');
+        $orderSn = $yCode[intval(date('Y')) - $start_year] . strtoupper(dechex(date('m'))) . date('d') . substr(time(), -5) . substr(microtime(), 2, 5) . sprintf('%02d', rand(0, 99));
+        return $orderSn;
+    }
+
 }

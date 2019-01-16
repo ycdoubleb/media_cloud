@@ -3,10 +3,12 @@
 namespace frontend\modules\order_admin\controllers;
 
 use common\models\order\Order;
+use common\models\order\OrderAction;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\models\order\searchs\OrderSearch;
 use common\models\order\searchs\PlayApproveSearch;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +30,20 @@ class OrderController extends Controller
 //                    'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['simple-view'],   //订单核查页不需要登录也可查看
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -57,15 +73,53 @@ class OrderController extends Controller
     {
         $auditingSearch = new PlayApproveSearch();
         $auditingData = $auditingSearch->searchDetails($id, Yii::$app->request->queryParams);
-        
+
         $resourcesSearch = new OrderGoodsSearch();
-        $resourcesData = $resourcesSearch->searchMedia($id, Yii::$app->request->queryParams);
+        $resourcesData = $resourcesSearch->searchMedia($id);
         
         return $this->render('view', [
             'model' => $this->findModel($id),   // Order模型
             'auditingData' => $auditingData,    // 支付审核数据
             'resourcesData' => $resourcesData,  // 资源列表数据
             'filter' => Yii::$app->request->queryParams,
+        ]);
+    }
+    
+    /**
+     * 确认资源可用
+     * @param string $id
+     * @return mixed
+     */
+    public function actionConfirm($id)
+    {
+        $model = $this->findModel($id);
+        $model->order_status = Order::ORDER_STATUS_CONFIRMED; //把订单状态改为取消状态
+        $model->confirm_at = time();
+        if($model->save()){
+            OrderAction::savaOrderAction($id, '订单确认', '订单确认', $model->order_status, $model->play_status);
+        }
+        
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * 订单核查
+     * @param int $order_sn
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionSimpleView($order_sn)
+    {
+        // 使用主布局main的布局样式
+        $this->layout = '@app/views/layouts/main';
+        
+        $searchModel = new OrderGoodsSearch();
+        $dataProvider = $searchModel->searchMedia($order_sn);
+        
+        return $this->render('simple-view', [
+            'model' => Order::findOne(['order_sn' => $order_sn]),
+            'dataProvider' => $dataProvider,
+            'filters' => Yii::$app->request->queryParams,
         ]);
     }
 
@@ -118,7 +172,9 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
         $model->order_status = Order::ORDER_STATUS_CANCELLED; //把订单状态改为取消状态
-        $model->save();
+        if($model->save()){
+            OrderAction::savaOrderAction($id, '取消订单', '取消订单', $model->order_status, $model->play_status);
+        }
         
         return $this->redirect(['index']);
     }

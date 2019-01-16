@@ -1,7 +1,7 @@
 <?php
+
 namespace frontend\controllers;
 
-use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
 use common\models\LoginForm;
 use common\models\User;
@@ -20,13 +20,12 @@ use const YII_ENV_TEST;
 /**
  * Site controller
  */
-class SiteController extends Controller
-{
+class SiteController extends Controller {
+
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
+    public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::className(),
@@ -56,8 +55,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
-    {        
+    public function actions() {
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -74,26 +72,25 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
-    {
-        MediaAliyunAction::addVideoTranscode('1');
-        MediaAliyunAction::addVideoTranscode('2');
-        MediaAliyunAction::addVideoTranscode('3');
-        MediaAliyunAction::addVideoTranscode('4');
+    public function actionIndex() {
+        //MediaAliyunAction::addVideoTranscode('1');
+        //MediaAliyunAction::addVideoTranscode('2');
+        //MediaAliyunAction::addVideoTranscode('3');
+        //MediaAliyunAction::addVideoTranscode('4');
         return $this->render('index');
     }
-    
+
     public function actionUpdateUser($id) {
         /* @var $user User */
         $post = \Yii::$app->request->post();
         $user = User::findOne(['id' => $id]);
-        if($user->load($post)){
-            if($user->validate() && $user->save()){
+        if ($user->load($post)) {
+            if ($user->validate() && $user->save()) {
                 \Yii::$app->response->format = 'json';
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK,null,$user->toArray());
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $user->toArray());
             }
-        }else{
-            return $this->renderAjax('_test_form',['model' => $user]);
+        } else {
+            return $this->renderAjax('_test_form', ['model' => $user]);
         }
     }
 
@@ -102,8 +99,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionLogin()
-    {
+    public function actionLogin() {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -116,7 +112,7 @@ class SiteController extends Controller
             $model->password = '';
 
             return $this->render('login', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -126,8 +122,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionLogout()
-    {
+    public function actionLogout() {
         Yii::$app->user->logout();
 
         return $this->goHome();
@@ -138,8 +133,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionContact()
-    {
+    public function actionContact() {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
@@ -151,7 +145,7 @@ class SiteController extends Controller
             return $this->refresh();
         } else {
             return $this->render('contact', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -161,8 +155,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionAbout()
-    {
+    public function actionAbout() {
         return $this->render('about');
     }
 
@@ -171,8 +164,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionSignup()
-    {
+    public function actionSignup() {
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
@@ -183,7 +175,7 @@ class SiteController extends Controller
         }
 
         return $this->render('signup', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -192,8 +184,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionRequestPasswordReset()
-    {
+    public function actionRequestPasswordReset() {
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
@@ -206,7 +197,7 @@ class SiteController extends Controller
         }
 
         return $this->render('requestPasswordResetToken', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -217,8 +208,7 @@ class SiteController extends Controller
      * @return mixed
      * @throws BadRequestHttpException
      */
-    public function actionResetPassword($token)
-    {
+    public function actionResetPassword($token) {
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidParamException $e) {
@@ -232,7 +222,8 @@ class SiteController extends Controller
         }
 
         return $this->render('resetPassword', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
+
 }

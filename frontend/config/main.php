@@ -46,13 +46,16 @@ return [
             ],
         ],
     ],
-    // 媒体库
+    // 媒体云服务平台
     'modules' => [
         'media_library' => [
             'class' => 'frontend\modules\media_library\Module',
         ],
         'order_admin' => [
             'class' => 'frontend\modules\order_admin\Module',
+        ],
+        'media' => [
+            'class' => 'frontend\modules\media\Module',
         ],
     ],
     

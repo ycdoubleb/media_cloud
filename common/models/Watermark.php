@@ -122,19 +122,6 @@ class Watermark extends ActiveRecord
         ];
     }
     
-    public function afterFind()
-    {
-        if($this->width != 0){
-            $this->width = self::valuable($this->width);
-        }
-        if($this->height != 0){
-            $this->height = self::valuable($this->height);
-        }
-        
-        $this->dx = self::valuable($this->dx);
-        $this->dy = self::valuable($this->dy);
-    }
-    
     /**
      * 获取已启用的所有水印图
      * @param integer|array $id
@@ -179,8 +166,10 @@ class Watermark extends ActiveRecord
                 'Dy' => self::valuable($cw->dy),    //垂直偏移
                 'ReferPos' => $cw->refer_pos,                       //位置
             ];
-            if($cw->width != 0 && $cw->height != 0){
+            if($cw->width != 0){
                 $cw_t['Width'] = self::valuable($cw->width);        //宽;
+            }
+            if($cw->height != 0){
                 $cw_t['Height'] = self::valuable($cw->height);      //高
             }
             

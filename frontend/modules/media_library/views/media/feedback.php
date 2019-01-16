@@ -2,6 +2,7 @@
 
 use common\models\media\MediaIssue;
 use common\models\vk\CustomerAdmin;
+use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -9,6 +10,8 @@ use yii\widgets\ActiveForm;
 
 /* @var $this View */
 /* @var $model CustomerAdmin */
+
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', '{Feedback}{Problem}',[
     'Feedback' => Yii::t('app', 'Feedback'),
@@ -60,6 +63,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                     <?= Html::activeHiddenInput($model, 'media_id') ?>
                     <!--问题类型-->
                     <?= $form->field($model, 'type')->radioList(MediaIssue::$issueName,[
+                        'value' => MediaIssue::ISSUE_OTHER,   // 默认选中值
                         'itemOptions'=>[
                             'labelOptions'=>[
                                 'style'=>[
@@ -98,8 +102,18 @@ $js = <<<JS
     //提交表单
     $("#submitsave").click(function(){
         $.post("../media/feedback?id={$model->media_id}", $('#form-admin').serialize(),function(data){
-            if(data['code'] == '200'){
-                
+            if(data['code'] == '0'){
+                $.notify({
+                    message: data['msg']
+                },{
+                    type: 'success'
+                });
+            }else{
+                $.notify({
+                    message: data['msg']
+                },{
+                    type: 'danger'
+                });
             }
         });
     });   

@@ -14,8 +14,8 @@ MainAssets::register($this);
 ModuleAssets::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Resources}{Detail}', [
-    'Resources' => Yii::t('app', 'Resources'),
+$this->title = Yii::t('app', '{Media}{Detail}', [
+    'Media' => Yii::t('app', 'Media'),
     'Detail' => Yii::t('app', 'Detail')
 ]);
 ?>
@@ -86,12 +86,12 @@ $this->title = Yii::t('app', '{Resources}{Detail}', [
                             'attributes' => [
                                 [
                                     'attribute' => 'id',
-                                    'label' => Yii::t('app', 'Resources Sn')
+                                    'label' => Yii::t('app', 'Media Sn')
                                 ],
                                 [
                                     'attribute' => 'type_id',
-                                    'label' => Yii::t('app', '{Resources}{Type}',[
-                                        'Resources' => Yii::t('app', 'Resources'),
+                                    'label' => Yii::t('app', '{Media}{Type}',[
+                                        'Media' => Yii::t('app', 'Media'),
                                         'Type' => Yii::t('app', 'Type'),
                                     ]),
                                     'value' => function($model){
@@ -100,8 +100,8 @@ $this->title = Yii::t('app', '{Resources}{Detail}', [
                                 ],
                                 [
                                     'attribute' => 'name',
-                                    'label' => Yii::t('app', '{Resources}{Name}',[
-                                        'Resources' => Yii::t('app', 'Resources'),
+                                    'label' => Yii::t('app', '{Media}{Name}',[
+                                        'Media' => Yii::t('app', 'Media'),
                                         'Name' => Yii::t('app', 'Name'),
                                     ])
                                 ],

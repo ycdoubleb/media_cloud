@@ -9,8 +9,9 @@ use common\models\order\OrderAction;
 use common\models\order\OrderGoods;
 use common\models\order\PlayApprove;
 use common\models\order\searchs\CartSearch;
-use common\models\order\searchs\OrderGoodsSearch;
+use frontend\modules\order_admin\utils\ExportUtils;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -33,6 +34,15 @@ class CartController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -233,28 +243,6 @@ class CartController extends Controller
     {
         return $this->renderAjax('payment-method', ['id' => $id]);
     }
-
-    /**
-     * 订单核查
-     * 
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        // 使用主布局main的布局样式
-        $this->layout = '@app/views/layouts/main';
-        
-        $searchModel = new OrderGoodsSearch();
-        $dataProvider = $searchModel->searchMedia($id, Yii::$app->request->queryParams);
-        
-        return $this->render('view', [
-            'model' => Order::findOne($id),
-            'dataProvider' => $dataProvider,
-            'filters' => Yii::$app->request->queryParams,
-        ]);
-    }
     
     /**
      * 线下支付提交审批
@@ -272,10 +260,7 @@ class CartController extends Controller
             return $this->redirect(['order/index']);
         }
         // 判断是否已经存在
-//        $model = PlayApprove::findOne(['order_id' => $id, 'created_by' => Yii::$app->user->id]);
-//        if($model == null){
-            $model = new PlayApprove(['order_id' => $id, 'created_by' => Yii::$app->user->id]);    // 支付核对模型
-//        }
+        $model = new PlayApprove(['order_id' => $id, 'created_by' => Yii::$app->user->id]);    // 支付核对模型
             
         if($model->load(Yii::$app->request->post()) && $model->save()){
             //更改订单信息
@@ -294,6 +279,25 @@ class CartController extends Controller
         return $this->render('play-approve', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * 下载支付审批申请模板
+     * @param integer $id 订单ID
+     */
+    public function actionDownload($id)
+    {
+        ExportUtils::getInstance()->downloadTable($id);
+    }
+
+
+    /**
+     * 导出媒体清单
+     * @param integer $id 订单ID
+     */
+    public function actionExportList($id)
+    {
+        ExportUtils::getInstance()->exportMediaLists($id);
     }
 
     /**

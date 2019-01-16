@@ -3,6 +3,11 @@
 use common\models\order\Order;
 use yii\widgets\DetailView;
 
+/**
+ * simple-view 订单核查页的子页面
+ * 订单信息页
+ */
+
 ?>
 <div class="panel-left">
     <?= DetailView::widget([
@@ -15,8 +20,8 @@ use yii\widgets\DetailView;
             ],
             [
                 'attribute' => 'goods_num',
-                'label' => Yii::t('app', '{Resources}{Total}',[
-                    'Resources' => Yii::t('app', 'Resources'),
+                'label' => Yii::t('app', '{Media}{Total}',[
+                    'Media' => Yii::t('app', 'Media'),
                     'Total' => Yii::t('app', 'Total'),
                 ])
             ],

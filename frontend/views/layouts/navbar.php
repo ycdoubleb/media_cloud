@@ -18,7 +18,7 @@ NavBar::begin([
 ]);
 
 $menuItems = [
-    ['label' => '资源库', 'url' => ['/media_library/media']],
+    ['label' => '媒体库', 'url' => ['/media_library/media']],
     ['label' => '我的', 'url' => ['/order_admin/order'], 'visible' => !Yii::$app->user->isGuest],
 ];
 
@@ -51,9 +51,14 @@ echo Nav::widget([
     'route' => $route,
 ]);
 
+//购物车
+$cat = common\models\order\Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]); 
+$cat_num = count($cat) > 99 ? '99' : count($cat);
+$is_hidden = $cat_num == 0 ? 'hidden' : '';
+
 $menuItems = [
     [
-        'label' => '<i class="glyphicon glyphicon-shopping-cart"></i>',
+        'label' => "<i class='glyphicon glyphicon-shopping-cart'><div id='cart-num' class='cart-num $is_hidden'>$cat_num</div></i>",
         'url' => ['/order_admin/cart/index'],
         'visible' => !Yii::$app->user->isGuest,
         'encode' => false,

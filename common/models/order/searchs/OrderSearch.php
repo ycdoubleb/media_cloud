@@ -2,6 +2,7 @@
 
 namespace common\models\order\searchs;
 
+use common\models\media\Acl;
 use common\models\media\Media;
 use common\models\media\MediaType;
 use common\models\order\Order;
@@ -9,6 +10,7 @@ use common\models\order\OrderGoods;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
@@ -82,7 +84,7 @@ class OrderSearch extends Order
         // grid filtering conditions
         $query->andFilterWhere(['order_status' => $order_status,]);
 
-        // 关键查询
+        // 关键字查询
         $query->andFilterWhere(['or',
             ['Order.order_sn' => $keyword],         //订单编号
             ['like', 'Order.order_name', $keyword], //订单名称
@@ -101,48 +103,78 @@ class OrderSearch extends Order
      * @return ActiveDataProvider
      */
     public function searchResources($params)
-    {
-        $keyword = ArrayHelper::getValue($params, 'OrderSearch.keyword');
-        
-        $query = (new Query())->select(['Order.id'])
+    {        
+        $query = self::find()->select(['OrderGoods.goods_id'])
                 ->from(['Order' => Order::tableName()]);
+        // 关联查询媒体
+        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], '(OrderGoods.order_id = Order.id AND OrderGoods.order_sn = Order.order_sn)');
 
+        // 复制媒体对象
+        $copyMedia= clone $query;
+        
         $query->addSelect(['Media.cover_url', 'Media.id AS media_id', 'Media.name AS media_name',
             'Order.order_sn', 'Order.order_name', 'MediaType.name AS type_name', 'Media.price', 
             'Media.duration', 'Media.size', 'Order.created_at', ]);
         // add conditions that should always apply here
 
-        //过滤条件
+        // 必要过滤条件
         $query->andFilterWhere([
-            'Order.order_status' => 11, 'Order.play_status' => 1, 
+            'Order.order_status' => Order::ORDER_STATUS_TO_BE_CONFIRMED,
+            'Order.order_status' => Order::ORDER_STATUS_CONFIRMED, 'Order.play_status' => 1, 
             'Order.created_by' => Yii::$app->user->id
         ]);
-        // 查询媒体
-        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], '(OrderGoods.order_id = Order.id AND OrderGoods.order_sn = Order.order_sn)');
+        // 关联查询媒体
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
-        // 查询媒体类型
+        // 关联查询媒体类型
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
         
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
         // 关键字查询
         $query->andFilterWhere(['or',
-            ['Media.id' => $keyword],           //媒体编号
-            ['like', 'Media.name', $keyword],   //媒体名称
-            ['Order.order_sn' => $keyword],         //订单编号
-            ['like', 'Order.order_name', $keyword], //订单名称
+            ['Media.id' => $this->keyword],           //媒体编号
+            ['like', 'Media.name', $this->keyword],   //媒体名称
+            ['Order.order_sn' => $this->keyword],         //订单编号
+            ['like', 'Order.order_name', $this->keyword], //订单名称
         ]);
 
+        // 查找Acl列表
+        $aclResults = $this->findAclByMediaId($copyMedia);
+        // 媒体数据
+        $mediaResults = $query->asArray()->all();
+        
+        //合并查询后的结果
+        foreach ($mediaResults as &$item) {
+            $item['acl'] = [];
+            foreach ($aclResults as $value) {
+                if($item['goods_id'] == $value['media_id']){
+                    $item['acl'] += [
+                        $value['level'] => $value['id']
+                    ] ;
+                }
+            }
+        }
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => array_values($mediaResults),
+        ]);
+        
         return $dataProvider;
+    }
+    
+    /**
+     * 根据媒体ID查找数据
+     * @param array $id
+     * @return array
+     */
+    protected function findAclByMediaId($id)
+    {
+        $videoUrl = Acl::find()
+                ->select(['id', 'media_id', 'level'])
+                ->where(['media_id' => $id])
+                ->asArray()->all();
+
+        return $videoUrl;
     }
 }

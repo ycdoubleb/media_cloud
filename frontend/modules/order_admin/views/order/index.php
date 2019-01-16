@@ -153,14 +153,15 @@ $this->title = Yii::t('app', 'Order');
                                    'title' => Yii::t('app', 'Payment'),
                                    'aria-label' => Yii::t('app', 'Payment'),
                                    'data-pjax' => '0',
-                                   'target' => '_blank'
+                                   'target' => '',
+                                    'onclick' => 'showModal($(this).attr("href"));return false;'
                                ];
                                $buttonHtml = [
                                    'name' => '立即付款',
-                                   'url' => ['cart/place-order', 'id' => $data['id']],
+                                   'url' => ['cart/payment-method', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == 0,
+                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
@@ -172,14 +173,14 @@ $this->title = Yii::t('app', 'Order');
                                    'title' => Yii::t('app', 'Confirm'),
                                    'aria-label' => Yii::t('app', 'Confirm'),
                                    'data-pjax' => '0',
-                                   'target' => '_blank'
+                                   'target' => ''
                                ];
                                $buttonHtml = [
                                    'name' => '确认开通',
                                    'url' => ['confirm', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['play_status'] == 10,
+                                   'conditions' => $data['order_status'] == Order::ORDER_STATUS_TO_BE_CONFIRMED,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
@@ -198,7 +199,7 @@ $this->title = Yii::t('app', 'Order');
                                    'url' => ['delete', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == 6,
+                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';

@@ -2,6 +2,7 @@
 
 use common\models\order\Order;
 use frontend\modules\order_admin\assets\ModuleAssets;
+use kartik\growl\GrowlAsset;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
@@ -10,6 +11,7 @@ use yii\web\View;
 /* @var $model Order */
 
 ModuleAssets::register($this);
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', '{Order}{Detail}', [
     'Order' => Yii::t('app', 'Order'),
@@ -26,10 +28,17 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         </span>
         <div class="btngroup pull-right">
             <?php 
-                if($model->order_status == 0){
-                    echo Html::a('立即付款', ['create'], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']).' ';
-                        
-                    echo Html::a('取消订单', ['create'], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
+                // 代付款或审核失败
+                if($model->order_status == 0 || $model->order_status == Order::ORDER_STATUS_AUDIT_FAILURE){
+                    echo Html::a('立即付款', ['cart/payment-method', 'id' => $model->id], [
+                        'class' => 'btn btn-highlight btn-flat', 
+                        'onclick' => 'showModal($(this).attr("href"));return false;'
+                    ]).' ';
+                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
+                }
+                // 审核通过
+                if($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED){
+                    echo Html::a('确认开通', ['confirm', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat', 'target' => '_blank']); 
                 }
             ?>
         </div>
@@ -45,23 +54,25 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         <!--箭头-->
         <img src="/imgs/site/seg_green.png">
         <!--付款成功后变绿-->
-        <div class="success-payment progress-block <?= $model->play_status == 11 ? 'active' : '';?>">
+        <div class="success-payment progress-block <?= ($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED 
+                    || $model->order_status == Order::ORDER_STATUS_CONFIRMED)? 'active' : '';?>">
             付款成功<br>
-            <?= $model->play_status == 11 ? date('Y-m-d H:i', $model->play_at) : '';?>
+            <?= ($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED 
+                    || $model->order_status == Order::ORDER_STATUS_CONFIRMED) ? date('Y-m-d H:i', $model->play_at) : '';?>
         </div>
         <!--箭头 付款成功后变绿-->
-        <img src="/imgs/site/seg_<?= $model->play_status == 11 ? 'green' : 'default';?>.png">
+        <img src="/imgs/site/seg_<?= $model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED ? 'green' : 'default';?>.png">
         <!--确认开通后变绿-->
-        <div class="confirm-open progress-block <?= $model->order_status == 11 ? 'active' : '';?>">
+        <div class="confirm-open progress-block <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'active' : '';?>">
             确认开通<br>
-            <?= $model->order_status == 11 ? date('Y-m-d H:i', $model->confirm_at) : '';?>
+            <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? date('Y-m-d H:i', $model->confirm_at) : '';?>
         </div>
         <!--箭头 确认开通后变绿-->
-        <img src="/imgs/site/seg_<?= $model->order_status == 11 ? 'green' : 'default';?>.png">
+        <img src="/imgs/site/seg_<?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'green' : 'default';?>.png">
         <!--确认开通后变绿-->
-        <div class="complete progress-block <?= $model->order_status == 11 ? 'active' : '';?>">
+        <div class="complete progress-block <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'active' : '';?>">
             完成<br>
-            <?= $model->order_status == 11 ? date('Y-m-d H:i', $model->confirm_at) : '';?>
+            <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? date('Y-m-d H:i', $model->confirm_at) : '';?>
         </div>
     </div>
     
@@ -77,7 +88,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         <?= Html::a('支付审核', array_merge(['view'], array_merge($filter, ['tabs' => 'payment']))) ?>
                     </li>
                     <li id="resources">
-                        <?= Html::a('资源列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
+                        <?= Html::a('媒体列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
                     </li>
                 </ul>
             </div>
@@ -92,7 +103,8 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                             'auditingData' => $auditingData,
                         ]);
                     } else {
-                        echo $this->render('____resourceslist', [
+                        echo $this->render('____mediaslist', [
+                            'model' => $model,
                             'resourcesData' => $resourcesData,
                         ]);
                     } 
@@ -107,6 +119,23 @@ $js = <<<JS
     //标签页选中效果
     $(".mc-tabs ul li[id=$tabs]").addClass('active');
         
+    //点击复制视频地址
+    var btns = document.querySelectorAll('a');
+    var clipboard = new ClipboardJS(btns);
+    clipboard.on('success', function(e) {
+        $.notify({
+            message: '复制成功',
+        },{
+            type: "success",
+        });
+    });
+    clipboard.on('error', function(e) {
+        $.notify({
+            message: '复制失败',
+        },{
+            type: "danger",
+        });
+    });
 JS;
 $this->registerJs($js, View::POS_READY);
 ?>

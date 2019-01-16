@@ -9,6 +9,7 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 
 /* @var $this View */
+/* 线下支付页 */
 
 $this->title = Yii::t('app', 'Offline Payment');
 
@@ -40,7 +41,11 @@ ModuleAssets::register($this);
                 </button>
                 <p class="alert-link">线下支付审批</p>
                 <p>说明：本审批xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx!</p>
-                <p>流程：1、下载线下支付审批申请模板<?= Html::a('（下载）', Aliyun::absolutePath('static/doc/template/video_import_template.xlsx?rand='. rand(0, 9999)), ['class' => 'alert-link']) ?></p>
+                <p></p>
+                <p>流程：1、下载线下支付审批申请模板<?= Html::a('（下载）', ['download', 'id' => $model->order_id], 
+                        ['class' => 'alert-link']) ?>，
+                    媒体清单<?= Html::a('（下载）', ['export-list', 'id' => $model->order_id], ['class' => 'alert-link'])?>
+                </p>
                 <p style="text-indent: 3em;">2、完成必要信息填写。</p>
                 <p style="text-indent: 3em;">3、回到本页面上传线下支付审批申请（支付凭证）。</p>
                 <p style="text-indent: 3em;">4、等候审核通过。</p>
@@ -50,7 +55,7 @@ ModuleAssets::register($this);
                 <span>填写支付信息</span>
                 <div class="approve-form mc-form">
                     <?php $form = ActiveForm::begin([
-    //                    'action' => ['play-approve'],
+                        //'action' => ['play-approve'],
                         'method' => 'post',
                         'options' => [
                             'id' => 'approve-form',

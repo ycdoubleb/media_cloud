@@ -22,7 +22,7 @@ $this->title = Yii::t('app', 'Favorites');
 ?>
 <div class="favorites-index main">
     <div class="mc-title">
-        <span>我的收藏</span>
+        <span><?= Yii::t('app', '{My}{Favorites}', ['My' => Yii::t('app', 'My'), 'Favorites' => Yii::t('app', 'Favorites')])?></span>
     </div>
     <?= $this->render('_search', [
         'searchModel' => $searchModel,
@@ -58,15 +58,15 @@ $this->title = Yii::t('app', 'Favorites');
                 ],
                 [
                     'attribute' => 'media_id',
-                    'label' => Yii::t('app', 'Resources Sn'),
+                    'label' => Yii::t('app', 'Media Sn'),
                     'headerOptions' => [
                         'style' => 'width: 120px',
                     ],
                 ],
                 [
                     'attribute' => 'media_name',
-                    'label' => Yii::t('app', '{Resources}{Name}',[
-                        'Resources' => Yii::t('app', 'Resources'),
+                    'label' => Yii::t('app', '{Media}{Name}',[
+                        'Media' => Yii::t('app', 'Media'),
                         'Name' => Yii::t('app', 'Name')
                     ]),
                 ],
@@ -79,8 +79,8 @@ $this->title = Yii::t('app', 'Favorites');
                 ],
                 [
                     'attribute' => 'price',
-                    'label' => Yii::t('app', '{Resources}{Price}',[
-                        'Resources' => Yii::t('app', 'Resources'),
+                    'label' => Yii::t('app', '{Media}{Price}',[
+                        'Media' => Yii::t('app', 'Media'),
                         'Price' => Yii::t('app', 'Price')
                     ]),
                     'headerOptions' => [

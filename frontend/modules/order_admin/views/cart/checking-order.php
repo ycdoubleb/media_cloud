@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $searchModel CartSearch */
 /* @var $dataProvider ActiveDataProvider */
+/* 下单购买页 */
 
 $this->title = Yii::t('app', '{Checking}{Order}', [
     'Checking' => Yii::t('app', 'Checking'),
@@ -103,7 +104,7 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'media_id',
-                                'label' => Yii::t('app', 'Resources Sn'),
+                                'label' => Yii::t('app', 'Media Sn'),
                                 'headerOptions' => [
                                     'style' => 'width: 120px',
                                 ],
@@ -122,8 +123,8 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'media_name',
-                                'label' => Yii::t('app', '{Resources}{Name}',[
-                                    'Resources' => Yii::t('app', 'Resources'),
+                                'label' => Yii::t('app', '{Media}{Name}',[
+                                    'Media' => Yii::t('app', 'Media'),
                                     'Name' => Yii::t('app', 'Name')
                                 ]),
                             ],
@@ -156,8 +157,8 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'price',
-                                'label' => Yii::t('app', '{Resources}{Price}',[
-                                    'Resources' => Yii::t('app', 'Resources'),
+                                'label' => Yii::t('app', '{Media}{Price}',[
+                                    'Media' => Yii::t('app', 'Media'),
                                     'Price' => Yii::t('app', 'Price')
                                 ]),
                                 'headerOptions' => [

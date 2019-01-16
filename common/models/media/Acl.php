@@ -59,6 +59,17 @@ class Acl extends ActiveRecord
     /** 视频质量-超清 */
     const LEVEL_FD = 4;
     
+    /** 视频质量-原始 */
+    const LEVEL_ORIGINAL = 0;
+    /** 视频质量-流畅 */
+    const LEVEL_LD = 1;
+    /** 视频质量-标清 */
+    const LEVEL_SD = 2;
+    /** 视频质量-高清 */
+    const LEVEL_HD = 3;
+    /** 视频质量-超清 */
+    const LEVEL_FD = 4;
+    
     /**
      * 状态
      * @var array 

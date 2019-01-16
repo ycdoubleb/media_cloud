@@ -3,6 +3,7 @@
 namespace backend\modules\operation_admin\controllers;
 
 use backend\modules\operation_admin\searchs\PlayApproveSearch;
+use common\models\media\Acl;
 use common\models\order\Order;
 use common\models\order\PlayApprove;
 use Yii;
@@ -66,7 +67,7 @@ class OrderApproveController extends Controller
     }
     
     /**
-     * 通过申请
+     * 通过审核
      * 如果成功，浏览器将被重定向到“view”页面。
      * @param string $id
      * @return mixed
@@ -87,6 +88,7 @@ class OrderApproveController extends Controller
                 $orderModel = Order::findOne($model->order_id);
                 $orderModel->order_status = Order::ORDER_STATUS_TO_BE_CONFIRMED;
                 $orderModel->save(true, ['order_status']);
+                Acl::saveAcl($model->order_id);
             }
 
             Yii::$app->getSession()->setFlash('success','操作成功！');
@@ -98,7 +100,7 @@ class OrderApproveController extends Controller
     }
     
     /**
-     * 不通过申请
+     * 不通过审核
      * 如果成功，浏览器将被重定向到“view”页面。
      * @param string $id
      * @return mixed
@@ -118,7 +120,11 @@ class OrderApproveController extends Controller
                 $model->handled_at = time();
                 $model->feedback = $feedback;
 
-                $model->save();
+                if($model->save()){
+                    $orderModel = Order::findOne($model->order_id);
+                    $orderModel->order_status = Order::ORDER_STATUS_AUDIT_FAILURE;
+                    $orderModel->save(true, ['order_status']);
+                }
 
                 Yii::$app->getSession()->setFlash('success','操作成功！');                
             }else{

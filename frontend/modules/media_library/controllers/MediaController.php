@@ -49,6 +49,11 @@ class MediaController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['view'],   //媒体详情
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
                 ],
             ]
         ];

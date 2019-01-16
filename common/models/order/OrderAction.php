@@ -78,13 +78,11 @@ class OrderAction extends ActiveRecord
      * @param string $content   内容（字符串）| 加载渲染的模板
      * @param int $order_status 订单状态
      * @param int $play_status  支付状态
+     * @param int $created_by   操作人id（0为用户操作）,关联admin_user表id字段
      * @return ApiResponse
      */
-    public static function savaOrderAction($order_id, $title, $content, $order_status, $play_status)
+    public static function savaOrderAction($order_id, $title, $content, $order_status, $play_status, $created_by = 0)
     {
-        $data = []; // 返回的数据
-        /** 开启事务 */
-        $trans = Yii::$app->db->beginTransaction();
         try
         {  
             $model = new OrderAction([
@@ -93,20 +91,14 @@ class OrderAction extends ActiveRecord
                 'content' => $content,
                 'order_status' => $order_status,
                 'play_status' => $play_status,
-                'created_by' => Yii::$app->user->id,
+                'created_by' => $created_by,
             ]);
              
-            if($model->save()){
-                $trans->commit();  //提交事务
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_OK);
-            }else{
-                $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
+            if(!$model->save()){
+                throw new Exception('保存失败：' . $model->getErrorSummary(true));
             }
         }catch (Exception $ex) {
-            $trans ->rollBack(); //回滚事务
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            throw new Exception($ex->getMessage());
         }
-        
-        return $data;
     }
 }

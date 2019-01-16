@@ -161,7 +161,7 @@ $this->title = Yii::t('app', 'Order');
                                    'url' => ['cart/payment-method', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == 0,
+                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
@@ -199,7 +199,7 @@ $this->title = Yii::t('app', 'Order');
                                    'url' => ['delete', 'id' => $data['id']],
                                    'options' => $options,
                                    'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == 6,
+                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
                                    'adminOptions' => true,
                                ];
                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';

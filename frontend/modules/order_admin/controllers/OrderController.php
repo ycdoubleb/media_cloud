@@ -3,6 +3,7 @@
 namespace frontend\modules\order_admin\controllers;
 
 use common\models\order\Order;
+use common\models\order\OrderAction;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\models\order\searchs\OrderSearch;
 use common\models\order\searchs\PlayApproveSearch;
@@ -94,7 +95,9 @@ class OrderController extends Controller
         $model = $this->findModel($id);
         $model->order_status = Order::ORDER_STATUS_CONFIRMED; //把订单状态改为取消状态
         $model->confirm_at = time();
-        $model->save();
+        if($model->save()){
+            OrderAction::savaOrderAction($id, '订单确认', '订单确认', $model->order_status, $model->play_status);
+        }
         
         return $this->redirect(['index']);
     }
@@ -169,7 +172,9 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
         $model->order_status = Order::ORDER_STATUS_CANCELLED; //把订单状态改为取消状态
-        $model->save();
+        if($model->save()){
+            OrderAction::savaOrderAction($id, '取消订单', '取消订单', $model->order_status, $model->play_status);
+        }
         
         return $this->redirect(['index']);
     }

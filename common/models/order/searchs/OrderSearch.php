@@ -103,9 +103,7 @@ class OrderSearch extends Order
      * @return ActiveDataProvider
      */
     public function searchResources($params)
-    {
-        $keyword = ArrayHelper::getValue($params, 'OrderSearch.keyword');
-        
+    {        
         $query = self::find()->select(['OrderGoods.goods_id'])
                 ->from(['Order' => Order::tableName()]);
         // 关联查询媒体
@@ -136,9 +134,9 @@ class OrderSearch extends Order
         // 关键字查询
         $query->andFilterWhere(['or',
             ['Media.id' => $this->keyword],           //媒体编号
-            ['like', 'Media.name', $keyword],   //媒体名称
-            ['Order.order_sn' => $keyword],         //订单编号
-            ['like', 'Order.order_name', $keyword], //订单名称
+            ['like', 'Media.name', $this->keyword],   //媒体名称
+            ['Order.order_sn' => $this->keyword],         //订单编号
+            ['like', 'Order.order_name', $this->keyword], //订单名称
         ]);
 
         // 查找Acl列表

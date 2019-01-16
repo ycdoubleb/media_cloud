@@ -237,6 +237,7 @@ $js = <<<JS
                 },{
                     type: 'success'
                 });
+                location.reload();  //刷新页面
             }else{
                 $.notify({
                     message: rel['msg'] 

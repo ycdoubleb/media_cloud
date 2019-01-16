@@ -28,12 +28,17 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         </span>
         <div class="btngroup pull-right">
             <?php 
-                if($model->order_status == 0){
+                // 代付款或审核失败
+                if($model->order_status == 0 || $model->order_status == Order::ORDER_STATUS_AUDIT_FAILURE){
                     echo Html::a('立即付款', ['cart/payment-method', 'id' => $model->id], [
                         'class' => 'btn btn-highlight btn-flat', 
                         'onclick' => 'showModal($(this).attr("href"));return false;'
                     ]).' ';
                     echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
+                }
+                // 审核通过
+                if($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED){
+                    echo Html::a('确认开通', ['confirm', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat', 'target' => '_blank']); 
                 }
             ?>
         </div>

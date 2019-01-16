@@ -19,8 +19,8 @@ class UseController extends Controller
         $acl->visit_count = $acl->visit_count + 1;
         $acl->save();
         
-        return $this->render('link',[
-            'model' => $acl
-        ]);
+        $url = $acl->url."?".http_build_query(\Yii::$app->request->getQueryParams());
+        
+        return $this->redirect($url);
     }
 }

@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
  * This is the model class for table "{{%acl}}".
  *
  * @property string $id
+ * @property string $sn         编号
  * @property string $name       访问名称（媒体名称Or媒体名称_格式）
  * @property string $order_id   订单ID，关联order表id字段
  * @property string $order_sn   订单编号，关联order表order_sn字段
@@ -43,32 +44,21 @@ class Acl extends ActiveRecord
     /** 状态-正常 */
     const STATUS_NORMAL = 1;
    
+    /** 视频质量-原始 */
+    const LEVEL_ORIGINAL = 0;
+    /** 视频质量-流畅 */
+    const LEVEL_LD = 1;
+    /** 视频质量-标清 */
+    const LEVEL_SD = 2;
+    /** 视频质量-高清 */
+    const LEVEL_HD = 3;
+    /** 视频质量-超清 */
+    const LEVEL_FD = 4;
+    
     /**
      * @see redis
      */
     public static $redisKey = 'mc_acl:';
-    
-    /** 视频质量-原始 */
-    const LEVEL_ORIGINAL = 0;
-    /** 视频质量-流畅 */
-    const LEVEL_LD = 1;
-    /** 视频质量-标清 */
-    const LEVEL_SD = 2;
-    /** 视频质量-高清 */
-    const LEVEL_HD = 3;
-    /** 视频质量-超清 */
-    const LEVEL_FD = 4;
-    
-    /** 视频质量-原始 */
-    const LEVEL_ORIGINAL = 0;
-    /** 视频质量-流畅 */
-    const LEVEL_LD = 1;
-    /** 视频质量-标清 */
-    const LEVEL_SD = 2;
-    /** 视频质量-高清 */
-    const LEVEL_HD = 3;
-    /** 视频质量-超清 */
-    const LEVEL_FD = 4;
     
     /**
      * 状态
@@ -117,7 +107,7 @@ class Acl extends ActiveRecord
             [['order_id', 'media_id', 'level', 'user_id', 'status', 'visit_count', 'expire_at', 'created_at', 'updated_at'], 'integer'],
             [['media_id'], 'required'],
             [['name'], 'string', 'max' => 100],
-            [['order_sn'], 'string', 'max' => 20],
+            [['sn', 'order_sn'], 'string', 'max' => 20],
             [['url'], 'string', 'max' => 255],
         ];
     }
@@ -129,6 +119,7 @@ class Acl extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
+            'sn' => Yii::t('app', 'Sn'), 
             'name' => Yii::t('app', 'Name'),
             'order_id' => Yii::t('app', 'Order ID'),
             'order_sn' => Yii::t('app', 'Order Sn'),
@@ -232,24 +223,30 @@ class Acl extends ActiveRecord
     }
     
     /**
-     * 按ID获取ACL信息
-     * @param int|string $id
-     * @param array $fields
+     * 按Sn获取ACL信息
+     * @param int|string $sn    编码
+     * @param array $fields     获取指定字段
      * @return array
      */
-    public static function getAclInfoById($id = 0, $fields = []){
-        $id = intval($id);
-        if($id < 1) return [];
+    public static function getAclInfoBySn($sn, $fields = [])
+    {
+        // 从缓存取出分类数据
+        $acls = RedisService::getHash(self::$redisKey . $sn, $fields); 
 
-        $info  = RedisService::getHash(self::$redisKey . $id, $fields); 
-        if(empty($info)){
-            $_info = sel::findOne($id); //数据库读取数据
-            if($_info){
-                RedisService::setHash(self::$redisKey . $id, $_info->attributes);
-                $info = ArrayHelper::filter($_info->attributes, $fields); //获取指定字段
+        // 没有缓存则从数据库获取数据
+        if(empty(array_filter($acls))){
+            // 数据库读取数据
+            $acls = self::findOne(['sn' => $sn, 'status' => 1]);
+            if($acls){
+                $acls = $acls->toArray();
+                // 设置缓存
+                RedisService::setHash(self::$redisKey . $sn, $acls);
+                if(!empty($fields)){
+                    $acls = ArrayHelper::filter($acls, $fields); //获取指定字段
+                }
             }
         }
-        var_dump($info);exit;
-        return $info;
+        
+        return $acls;
     }
 }

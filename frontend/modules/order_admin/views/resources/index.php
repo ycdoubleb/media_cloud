@@ -157,7 +157,7 @@ $this->title = Yii::t('app', 'Media');
                         'value' => function ($data) {
                             foreach ($data['acl'] as $key => $value){
                                 // 访问链接
-                                $urls = Url::to(["/media/use/link?id=$value"], true);
+                                $urls = Url::to(["/media/use/link?sn=$value"], true);
                                 switch ($key){
                                     case Acl::LEVEL_ORIGINAL:   //原始
                                         $contents = '<a href="javascript:;" data-clipboard-text="'.$urls.'" style="color:#39f">'.Acl::$levelMap[$key].'</a><br>';

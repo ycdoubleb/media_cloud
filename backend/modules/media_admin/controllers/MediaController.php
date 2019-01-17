@@ -130,7 +130,7 @@ class MediaController extends Controller
                 // 转码需求
                 $mts_need = ArrayHelper::getValue($post, 'Media.mts_need');
                 // 水印id
-                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
+                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids' , []));
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;

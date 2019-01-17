@@ -97,7 +97,8 @@ class MediaTypeDetail extends ActiveRecord
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
             $this->ext = '.' . $this->name;
-            $this->mime_type = MIMEUtil::$mime[strtolower($this->name)];
+            $this->mime_type = isset(MIMEUtil::$mime[strtolower($this->name)]) ? 
+                    MIMEUtil::$mime[strtolower($this->name)] : '';
             return true;
         }
         return false;

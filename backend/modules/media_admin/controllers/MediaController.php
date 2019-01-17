@@ -129,7 +129,7 @@ class MediaController extends Controller
                 // 转码需求
                 $mts_need = ArrayHelper::getValue($post, 'Media.mts_need');
                 // 水印id
-                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
+                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids' , []));
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
@@ -228,17 +228,34 @@ class MediaController extends Controller
     }
     
     /**
+     * 批量编辑 媒体属性标签
+     * @param string $id
+     * @return mixed
+     */
+    public function actionBatchEditAttribute()
+    {
+        return $this->renderAjax('____edit_attribute', [
+            'ids' => explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id')),    // 所有媒体id
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrSelected' => [],
+            'tagsSelected' => [],
+        ]);
+    }
+    
+    /**
      * 编辑 媒体属性标签
-     * 如果更新成功，浏览器将被重定向到“view”页面。
+     * 如果更新成功，浏览器将被重定向到“当前页”页面。
      * @param string $id
      * @return mixed
      */
     public function actionEditAttribute($id)
-    {
+    {       
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
-        
-        if ($model->load($post)) {
+
+        if (Yii::$app->request->isPost) {
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
             try
             {
                 // 属性值
@@ -253,15 +270,15 @@ class MediaController extends Controller
                 // 保存标签关联
                 MediaTagRef::saveMediaTagRef($model->id, $tags);
 
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                
             } catch (Exception $ex) {
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
-            
-            return $this->redirect(['view', 'id' => $model->id]);
         }
             
         return $this->renderAjax('____edit_attribute', [
-            'model' => $model,
+            'ids' => explode(',', $id),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'attrSelected' => ArrayHelper::map(MediaAttValueRef::getMediaAttValueRefByMediaId($model->id), 'attr_id', 'attr_value_id'),
             'tagsSelected' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),

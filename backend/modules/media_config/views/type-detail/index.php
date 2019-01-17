@@ -7,6 +7,7 @@ use kartik\widgets\Select2;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 /* @var $this View */
@@ -46,7 +47,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => '',
                 'headerOptions' => [
                     'style' => [
-                        'width' => '300px',
+                        'width' => '150px',
+                    ],
+                ],
+            ],
+            [
+                'attribute' => 'mime_type',
+                'label' => Yii::t('app', '{Mime}{Type}', [
+                    'Mime' => Yii::t('app', 'Mime'), 'Type' => Yii::t('app', 'Type')
+                ]),
+                'filter' => '',
+                'class' => GridViewChangeSelfColumn::class,
+                'plugOptions' => [
+                    'type' => 'input',
+                    'url' => Url::to(['change-value'], true),
+                ],
+                'headerOptions' => [
+                    'style' => [
+                        'width' => '250px',
                     ],
                 ],
             ],
@@ -58,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'headerOptions' => [
                     'style' => [
-                        'width' => '300px',
+                        'width' => '200px',
                     ],
                 ],
             ],
@@ -82,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'headerOptions' => [
                     'style' => [
-                        'width' => '300px',
+                        'width' => '200px',
                     ],
                 ],
             ],

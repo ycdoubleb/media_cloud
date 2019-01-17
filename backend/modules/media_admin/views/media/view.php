@@ -153,7 +153,7 @@ $this->params['breadcrumbs'][] = $this->title;
             
         </div>
         
-       <!--视频发布-->
+       <!--媒体预览-->
         <div role="tabpanel" class="tab-pane fade" id="preview" aria-labelledby="preview-tab">
             
             <p>

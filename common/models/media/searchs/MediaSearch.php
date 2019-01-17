@@ -43,7 +43,7 @@ class MediaSearch extends Media
     {
         return [
             [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'cover_url', 'url', 'keyword', 'attribute_value_id', 'nickname'], 'safe'],
+            [['name', 'cover_url', 'url', 'keyword', 'attribute_value_id', 'nickname', 'ext'], 'safe'],
             [['price', 'duration'], 'number'],
         ];
     }

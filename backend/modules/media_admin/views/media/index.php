@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="pull-right">
                 <?= Html::a(Yii::t('app', '{Reset}{Tag}', [
                     'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
-                ]), ['edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
+                ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
                 <?= ' ' . Html::a(Yii::t('app', '{Approve}{Into}{DB}', [
                     'Approve' => Yii::t('app', 'Approve'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
                 ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']); ?>
@@ -324,24 +324,48 @@ $this->params['breadcrumbs'][] = $this->title;
 $js = <<<JS
         
     // 弹出媒体编辑页面面板
-    $('#btn-editAttribute, #btn-addApply, #btn-delApply').click(function(e){
+    $('#btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
-        var val = [],
-            checkBoxs = $('input[name="selection[]"]'), 
+        var val = getCheckBoxsValue(), 
             url = $(this).attr("href");
-        // 循环组装媒体id
-        for(i in checkBoxs){
-            if(checkBoxs[i].checked){
-               val.push(checkBoxs[i].value);
-            }
-        }
         if(val.length > 0){
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?media_id=" + val);
         }else{
             alert("请选择需要申请的媒体");
         }
-    });    
+    });
+       
+    // 出媒体编辑标签面板
+    $('#btn-editAttribute').click(function(e){
+        e.preventDefault();
+        var val = getCheckBoxsValue(), 
+            url = $(this).attr("href");
+        if(val.length > 0){
+            $(".myModal").html("");
+            $('.myModal').modal("show").load(url + "?id=" + val);
+        }else{
+            alert("请选择需要申请的媒体");
+        }
+    }); 
+        
+    /**
+     * 获取 getCheckBoxsValue
+     * @returns {Array|getcheckBoxsValue.val}
+     */
+    function getCheckBoxsValue(){
+        var val = [],
+            checkBoxs = $('input[name="selection[]"]');
+        // 循环组装媒体id
+        for(i in checkBoxs){
+            if(checkBoxs[i].checked){
+               val.push(checkBoxs[i].value);
+            }
+        }
+        
+        return val
+    }
+    
     
 JS;
     $this->registerJs($js,  View::POS_READY);

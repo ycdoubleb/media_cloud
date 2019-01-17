@@ -13,6 +13,9 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
     'Attribute' => Yii::t('app', 'Attribute'), 'Tag' => Yii::t('app', 'Tag')
 ]);
 
+//所有媒体id
+$ids = json_encode($ids);
+
 ?>
 <div class="media-edit-attribute">
     
@@ -22,7 +25,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
             'class' => 'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['edit-attribute', 'id' => $model->id],
+//        'action' => ['edit-attribute', 'id' => $model->id],
     ]); ?>
     
     <div class="modal-dialog modal-lg" role="document">
@@ -38,10 +41,9 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
             <div class="modal-body">
     
                 <?= $this->render('____form_attribute_dom', [
-                    'model' => $model,
                     'attrMap' => $attrMap,
-                    'attrSelected' => $attrSelected,
-                    'tagsSelected' => $tagsSelected,
+                    'attrSelected' => isset($attrSelected) ? $attrSelected : null,
+                    'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
                 ]) ?>
                 
             </div>
@@ -50,6 +52,12 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
                 
                 <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
                 
+                <!--加载-->
+                <div class="loading-box" style="text-align: right">
+                    <span class="loading" style="display: none"></span>
+                    <span class="no_more" style="display: none">提交中...</span>
+                </div>
+        
             </div>
                 
        </div>
@@ -61,10 +69,28 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
 
 <?php
 $js = <<<JS
-                
+   
+    var ids = $ids;
+    var isPageLoading = false;
+        
     // 提交表单    
     $("#submitsave").click(function(){
-        $('#media-form').submit();
+        var _self = $(this);
+        if(!isPageLoading){
+            isPageLoading = true;   //设置已经加载当中...
+            $.each(ids, function(index, mediaId){
+                $.post('/media_admin/media/edit-attribute?id=' + mediaId, $('#media-form').serialize(), function(response){
+                    if(response.code == "0" && index >= ids.length - 1){
+                        isPageLoading = false;  //取消设置加载当中...
+//                        _self.show();
+//                        $('.loading-box .loading, .loading-box .no_more').hide();
+                        window.location.reload();
+                    }
+                });
+            });
+            _self.hide();
+            $('.loading-box .loading, .loading-box .no_more').show();
+        }
     });
 
 JS;

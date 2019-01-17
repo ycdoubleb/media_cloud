@@ -150,7 +150,7 @@ class OrderSearch extends Order
             foreach ($aclResults as $value) {
                 if($item['goods_id'] == $value['media_id']){
                     $item['acl'] += [
-                        $value['level'] => $value['id']
+                        $value['level'] => $value['sn']
                     ] ;
                 }
             }
@@ -171,7 +171,7 @@ class OrderSearch extends Order
     protected function findAclByMediaId($id)
     {
         $videoUrl = Acl::find()
-                ->select(['id', 'media_id', 'level'])
+                ->select(['sn', 'media_id', 'level'])
                 ->where(['media_id' => $id])
                 ->asArray()->all();
 

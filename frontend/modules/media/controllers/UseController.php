@@ -2,6 +2,8 @@
 
 namespace frontend\modules\media\controllers;
 
+use common\models\media\Acl;
+use Yii;
 use yii\web\Controller;
 
 /**
@@ -13,13 +15,14 @@ class UseController extends Controller
      * Lists all Acl models.
      * @return mixed
      */
-    public function actionLink($id)
+    public function actionLink($sn)
     {
-        $acl = \common\models\media\Acl::findOne(['id' => $id, 'status' => 1]);
-        $acl->visit_count = $acl->visit_count + 1;
-        $acl->save();
-        
-        $url = $acl->url."?".http_build_query(\Yii::$app->request->getQueryParams());
+        $acl = Acl::getAclInfoBySn($sn);
+
+        if(empty($acl)){
+            throw new \yii\web\NotFoundHttpException('找不到对应的媒体！');
+        }
+        $url = $acl['url']."?".http_build_query(Yii::$app->request->getQueryParams());
         
         return $this->redirect($url);
     }

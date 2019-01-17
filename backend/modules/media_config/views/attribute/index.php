@@ -116,7 +116,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ]),
                 'value' => function($model){
-                    return $model->input_type;
+                    return MediaAttribute::$inputTypeMap[$model->input_type];
                 },
                 'headerOptions' => [
                     'style' => [

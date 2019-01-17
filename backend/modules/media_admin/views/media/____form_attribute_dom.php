@@ -3,6 +3,7 @@
 use common\models\media\MediaAttribute;
 use common\widgets\tagsinput\TagsInputAsset;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 TagsInputAsset::register($this);
@@ -10,63 +11,57 @@ TagsInputAsset::register($this);
 ?>
 
 <!--属性-->
-<?php 
-    $attrValMap = [];
-    foreach ($attrMap as $attr): 
-        // 分割属性的值，生成属性对应值的数组
-        $mediaAttrValue = explode(',', $attr['attr_value']);
-        foreach ($mediaAttrValue as $attr_val) {
-            // 分割成val=>name
-            $value = explode('_', $attr_val);   
-            // 生成以属性id索引的下拉列表
-            $attrValMap[$attr['id']][$value[0]] = $value[1];
-        }
-?>
+<?php foreach ($attrMap as $atts): ?>
 
-<?php if($attr['is_required']): ?>
-
-<div class="form-group field-media-attribute_value required">
-    <?= Html::label('<span class="form-must text-danger">*</span>' . $attr['name'] . '：', 'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
-    <div class="col-lg-7 col-md-7">
-        <?php
-            switch ($attr['input_type']){
-                case MediaAttribute::SINGLE_SELECT_INPUT_TYPE:
-                    echo Select2::widget([
-                        'id' => "media-attribute_value-{$attr['id']}",
-                        'name' => "Media[attribute_value][{$attr['id']}]",
-                        'data' => $attrValMap[$attr['id']],
-                        'value' => !empty($attrSelected) ? $attrSelected[$attr['id']] : null,
-                        'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', 'All')],
-                        'pluginOptions' => ['allowClear' => true],
-                        'pluginEvents' => [
-//                            'change' => 'function(){ validateAttributeValue($(this))}'
-                        ]
-                    ]);
-                    break;
-                case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
-                    echo Html::checkboxList("Media[attribute_value][{$attr['id']}][]", 
-                        !empty($attrSelected) ? explode('，', $attrSelected[$attr['id']]) : null, $attrValMap[$attr['id']], [
-                        'style' => 'margin-right: -35px;',
-                        'itemOptions'=>[
-//                            'onchange' => "validateCheckboxList()",
-                            'labelOptions'=>[
-                                'style'=>[
-                                    'margin'=>'5px 25px 10px 0px',
-                                    'color' => '#666666',
-                                    'font-weight' => 'normal',
-                                ]
+    <div class="form-group field-media-attribute_value <?= $atts['is_required'] ? 'required' : '' ?>">
+        
+        <?= Html::label(($atts['is_required'] ? '<span class="form-must text-danger">*</span>' : null) . $atts['name'] . '：', 
+            'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+        
+        <div class="col-lg-7 col-md-7">
+            <?php //!empty($attrSelected) ? explode('，', $attrSelected[$attr['id']]) : null
+                // !empty($attrSelected) ? $attrSelected[$attr['id']] : null,
+                switch ($atts['input_type']){
+                    case MediaAttribute::SINGLE_SELECT_INPUT_TYPE:
+                        echo Select2::widget([
+                            'id' => "media-attribute_value-{$atts['attr_id']}",
+                            'name' => "Media[attribute_value][{$atts['attr_id']}]",
+                            'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
+                            'value' => !empty($attrSelected) ? $attrSelected[$atts['attr_id']] : null, 
+                            'hideSearch' => true,
+                            'options' => ['placeholder' => Yii::t('app', 'All')],
+                            'pluginOptions' => ['allowClear' => true],
+                            'pluginEvents' => [
+    //                            'change' => 'function(){ validateAttributeValue($(this))}'
                             ]
-                        ],
-                    ]);
-                    break;
-            }
-        ?>
+                        ]);
+                        break;
+                    case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
+                        echo Html::checkboxList("Media[attribute_value][{$atts['attr_id']}][]", 
+                                !empty($attrSelected) ? explode('，', $attrSelected[$atts['attr_id']]) : null, 
+                                ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'), 
+                                [
+                                    'style' => 'margin-right: -35px;',
+                                    'itemOptions'=>[
+            //                            'onchange' => "validateCheckboxList()",
+                                        'labelOptions'=>[
+                                            'style'=>[
+                                                'margin'=>'5px 25px 10px 0px',
+                                                'color' => '#666666',
+                                                'font-weight' => 'normal',
+                                            ]
+                                        ]
+                                    ],
+                                ]
+                            );
+                        break;
+                }
+            ?>
+        </div>
+        
+        <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
+        
     </div>
-    <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
-</div>
-
-<?php endif; ?>
 
 <?php endforeach; ?>
 

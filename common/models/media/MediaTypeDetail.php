@@ -109,7 +109,7 @@ class MediaTypeDetail extends ActiveRecord
      * 如果是转字符串，则默认返回类型拓展的mime_type
      * @param int $type_id
      * @param bool $asString    默认是 true
-     * @return array
+     * @return array 默认是返回所有Mime类型
      */
     public static function getMediaTypeDetailByTypeId($type_id = null, $asString = true)
     {
@@ -129,6 +129,11 @@ class MediaTypeDetail extends ActiveRecord
         // 查询结果
         $detailResult = $query->asArray()->all();
         
-        return $asString ? implode(',', ArrayHelper::getColumn($detailResult, 'mime_type')) : $detailResult;
+        // 是否返回所有Mime类型
+        if($asString){
+            return implode(',', ArrayHelper::getColumn($detailResult, 'mime_type'));
+        }
+        
+        return $detailResult;
     }
 }

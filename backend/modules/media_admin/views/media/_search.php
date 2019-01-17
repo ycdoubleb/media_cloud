@@ -79,37 +79,28 @@ use yii\widgets\ActiveForm;
         <div class="form-group field-mediasearch-attribute_value_id">
             <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id">属性选项：</label>
             <div class="col-lg-10 col-md-10">
-                <?php 
-                    /**
-                     * 生成属性选项
-                     */
-                    $attrValMap = [];
-                    foreach ($attrMap as $attr){
-                        // 分割属性的值，生成属性对应值的数组
-                        $mediaAttrValue = explode(',', $attr['attr_value']);
-                        // 组装生成属性值下拉选择框
-                        foreach ($mediaAttrValue as $attr_val){
-                            // 分割成val=>name
-                            $value = explode('_', $attr_val);
-                            // 生成以属性id索引的下拉列表
-                            $attrValMap[$attr['id']][$value[0]] = $value[1];
-                        }
-                        if($attr['index_type'] > 0){
-                            echo "<div id='DepDropdown_{$attr['id']}' . class='dep-dropdowns'>";
-                            echo Select2::widget([
-                                'id' => "attribute_value_{$attr['id']}",
+                
+                <?php foreach ($attrMap as $atts): ?>
+                
+                    <?php if($atts['index_type'] > 0): ?>
+                        <div id="DepDropdown_<?= $atts['attr_id'] ?>" class="dep-dropdowns">
+
+                            <?= Select2::widget([
+                                'id' => "attribute_value_{$atts['attr_id']}",
                                 'name' => 'MediaSearch[attribute_value_id][]',
                                 'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
-                                'data' => $attrValMap[$attr['id']],
+                                'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
                                 'hideSearch' => true,
-                                'options' => ['placeholder' => $attr['name']],
+                                'options' => ['placeholder' => $atts['name']],
                                 'pluginOptions' => ['allowClear' => true],
                                 'pluginEvents' => ['change' => 'function(){ submitForm()}']
-                            ]);                       
-                            echo '</div>';
-                        }
-                    } 
-                ?>
+                            ]) ?>
+
+                        </div>
+                    <?php endif; ?>
+               
+                <?php endforeach;?>
+                
             </div>
         </div>
         
@@ -119,7 +110,7 @@ use yii\widgets\ActiveForm;
             <div class="col-lg-6 col-md-6">
                 
                 <!--运营者-->
-                <div id="DepDropdown_operator" class="dep-dropdowns" style="margin-right: 0">
+                <div id="DepDropdown_operator" class="dep-dropdowns">
                     <?= Select2::widget([
                         'id' => 'mediasearch-owner_id',
                         'name' => 'MediaSearch[owner_id]',
@@ -133,7 +124,7 @@ use yii\widgets\ActiveForm;
                 </div>
                 
                 <!--上传者-->
-                <div id="DepDropdown-uploader" class="dep-dropdowns" style="margin-right: 0">
+                <div id="DepDropdown-uploader" class="dep-dropdowns">
                     <?= Select2::widget([
                         'id' => 'mediasearch-created_by',
                         'name' => 'MediaSearch[created_by]',
@@ -147,7 +138,7 @@ use yii\widgets\ActiveForm;
                 </div>
                 
                  <!--状态-->
-                <div id="DepDropdown_status" class="dep-dropdowns" style="margin-right: 0">
+                <div id="DepDropdown_status" class="dep-dropdowns">
                     <?= Select2::widget([
                         'id' => 'mediasearch-status',
                         'name' => 'MediaSearch[status]',

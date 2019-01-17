@@ -87,7 +87,8 @@ class OrderApproveController extends Controller
             if($model->save()){
                 $orderModel = Order::findOne($model->order_id);
                 $orderModel->order_status = Order::ORDER_STATUS_TO_BE_CONFIRMED;
-                $orderModel->save(true, ['order_status']);
+                $orderModel->play_status = Order::PLAY_STATUS_PAID;
+                $orderModel->save(true, ['order_status', 'play_status']);
                 Acl::saveAcl($model->order_id);
             }
 

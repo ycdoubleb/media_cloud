@@ -19,6 +19,7 @@ use common\utils\DateUtil;
 use Yii;
 use yii\base\Exception;
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -81,7 +82,7 @@ class MediaController extends Controller
         return $this->render('view', [
             'model' => $model,
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id, false), 'name', 'icon_url'),
-            'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
+            'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false),
             'tagsDataProvider' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
             'videoDataProvider' => new ArrayDataProvider([
                 'allModels' => $model->videoUrls,
@@ -237,8 +238,6 @@ class MediaController extends Controller
         return $this->renderAjax('____edit_attribute', [
             'ids' => explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id')),    // 所有媒体id
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
-            'attrSelected' => [],
-            'tagsSelected' => [],
         ]);
     }
     
@@ -280,7 +279,7 @@ class MediaController extends Controller
         return $this->renderAjax('____edit_attribute', [
             'ids' => explode(',', $id),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
-            'attrSelected' => ArrayHelper::map(MediaAttValueRef::getMediaAttValueRefByMediaId($model->id), 'attr_id', 'attr_value_id'),
+            'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
             'tagsSelected' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
         ]);
     }
@@ -364,7 +363,7 @@ class MediaController extends Controller
                 // 保存媒体详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码
-                MediaAliyunAction::addVideoTranscode($model->id);   
+                MediaAliyunAction::addVideoTranscode($model->id, true);   
                 // 保存操作记录
                 MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 

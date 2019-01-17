@@ -4,6 +4,7 @@ namespace common\models\media;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\redis\ActiveQuery;
 
 /**
@@ -104,33 +105,68 @@ class MediaAttribute extends ActiveRecord
     
     /**
      * 获取媒体属性
-     * @param string|array $media_id
      * @param string $category_id
-     * @return array
+     * @return array => [
+     *    array => [
+     *       attr_id,category_id,attr_name,index_type,input_type,value_length,
+     *       sort_order, is_required, is_del,
+     *       childrens => [
+     *          [
+     *              attr_val_id,
+     *              attr_val_value,
+     *          ]
+     *       ]
+     *    ]
+     * ]
      */
-    public static function getMediaAttributeByCategoryId($media_id = null, $category_id = null)
+    public static function getMediaAttributeByCategoryId($category_id = null)
     {
         $query = self::find()->from(['Attribute' => self::tableName()]);
-        // 查询的字段
-        $query->select(['Attribute.*', "GROUP_CONCAT(DISTINCT AttributeValue.id, '_', AttributeValue.value) AS attr_value"]);
-        // 必要条件
-        $query->andFilterWhere([
-            'Attribute.is_del' => 0,
-            'AttributeValue.is_del' => 0,
-        ]);
-        // 按media_id条件查询
-        $query->andFilterWhere(['media_id' => $media_id]);
-        // 按category_id条件查询
-        $query->andFilterWhere(['category_id' => $category_id]);
+        
         // 关联属性值表
         $query->leftJoin(['AttributeValue' => MediaAttributeValue::tableName()], 'AttributeValue.attribute_id = Attribute.id');
-        // 关联媒体属性值关联表
-        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], 'AttrValueRef.attribute_id = Attribute.id');
-        // 按category_id分组
-        $query->groupBy(['category_id', 'Attribute.id']);
+
+        // 查询的字段
+        $query->select([
+            'Attribute.id as attr_id', 'Attribute.category_id', 'Attribute.name', 'Attribute.index_type',
+            'Attribute.input_type', 'Attribute.value_length', 'Attribute.sort_order', 'Attribute.is_required', 'Attribute.is_del',
+            'AttributeValue.id as attr_val_id', 'AttributeValue.value'
+        ]);
+        
+        // 按条件查询
+        $query->andFilterWhere([
+            'Attribute.is_del' => 0, 'AttributeValue.is_del' => 0, 'category_id' => $category_id
+        ]);
+        
+        // 按属性值id分组
+        $query->groupBy(['AttributeValue.id']);
         // 按sort_order上升排序
         $query->orderBy('sort_order');
         
-        return $query->asArray()->all();
+        // 查询结果
+        $queryResult_2 = $queryResult_1 = $query->asArray()->all();
+        
+        $results = [];
+        /* 组装返回的数据 */
+        for($y = 0; $y < count($queryResult_1); $y++){
+            for($x = 0; $x < count($queryResult_2); $x++){
+                if($queryResult_1[$y]['attr_id'] == $queryResult_2[$x]['attr_id']){
+                    $queryResult_1[$y]['childrens'][] = [
+                        'attr_val_id' => $queryResult_2[$x]['attr_val_id'],
+                        'attr_val_value' => $queryResult_2[$x]['value'],
+                    ];
+                }
+            }
+            
+            unset($queryResult_1[$y]['attr_val_id']);
+            unset($queryResult_1[$y]['value']);
+            
+            $results[] = $queryResult_1[$y];
+        }
+        
+        // 以attr_id为键值
+        $results = ArrayHelper::index($results, 'attr_id');
+        
+        return $results;
     }
 }

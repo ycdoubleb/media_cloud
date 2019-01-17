@@ -58,17 +58,70 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     
 </div>
 
+<script type="text/javascript">
+    
+    //url
+    var url = "anew-upload?id=<?= $model->id ?>";
+    //批量上传控制器
+    var mediaBatchUpload;
+    /**
+     * html 加载完成后初始化所有组件
+     * @returns {void}
+     */
+    window.onload = function(){
+        initBatchUpload();        //初始批量上传
+        initSubmit();             //初始提交
+    }
+    
+    /************************************************************************************
+    *
+    * 初始化批量上传
+    *
+    ************************************************************************************/
+    function initBatchUpload(){
+        mediaBatchUpload = new mediaupload.MediaBatchUpload({
+            media_url : url,
+        });
+        console.log(mediaBatchUpload);
+    }
+    
+    /**
+     * 上传完成后返回的文件数据
+     * @param {object} data
+     * @returns {Array|uploaderMedias}
+     */
+    function uploadComplete(data){
+        mediaBatchUpload.addMediaData(data);
+    }
+    
+    /**
+     * 删除上传列表中的文件
+     * @param {object} data
+     * @returns {undefined}
+     */
+    function fileDequeued(data){
+        mediaBatchUpload.delMediaData(data.dbFile);
+    }
+    
+    /************************************************************************************
+     *
+     * 初始化提交
+     *
+     ************************************************************************************/ 
+    function initSubmit(){
+        // 提交删除
+        $("#submitsave").click(function(){
+            var formdata = $('#media-form').serialize();
+            mediaBatchUpload.submit(formdata);
+        });
+    }
+    
+</script>
+
 <?php
 $js = <<<JS
         
-    // 初始化
-    window.mediaBatchUpload = new mediaupload.MediaBatchUpload({media_url: "anew-upload?id={$model->id}"});
-        
-    // 提交表单    
-    $("#submitsave").click(function(){
-        var formdata = $('#media-form').serialize();
-        window.mediaBatchUpload.submit(formdata);
-    });
+    window.onload();
 
 JS;
     $this->registerJs($js,  View::POS_READY);

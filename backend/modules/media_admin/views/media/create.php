@@ -71,7 +71,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             ])) ?>
             
             <?= $this->render('____form_attribute_dom', [
-                'attrMap' => $attrMap
+                'attrMap' => $attrMap,
+                'attrSelected' => isset($attrSelected) ? $attrSelected : null,
+                'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
             ]) ?>
 
             <?= $this->render('____form_upload_dom', [
@@ -177,14 +179,8 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             media_data_tr_dom : php_media_data_tr_dom,
         });
         
-        /** 上传完成 */
-//        $(mediaBatchUpload).on('submitFinished',function(){
-//            createResultInfo(this.medias);            
-//        });
-        
         // 关闭模态框事件
         $('.myModal').on('hidden.bs.modal', function (e) {
-//            $progress = $('.result-info').find('div.result-progress').removeAttr('style').html('0%');
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
         });
@@ -197,7 +193,6 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      */
     function uploadComplete(data){
         mediaBatchUpload.addMediaData(data);
-//        uploaderMedias.push(data);        
     }
     
     /**
@@ -208,37 +203,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     function fileDequeued(data){
         mediaBatchUpload.delMediaData(data.dbFile);
     }
-    
-    /**
-     * 视图 创建结果信息
-     * @param {array} medias
-     * @returns {undefined}
-     */
-//    function createResultInfo(medias) {
-//        var max_num = medias.length,
-//            completed_num = 0;
-//            
-//        $progress = $('.result-info').find('div.result-progress');
-//        $hint = $('.result-info').find('p.result-hint');
-//        $table = $('.result-info').find('table.result-table');
-//        $tbody = $table.find('tbody');
-//        
-//        $.each(medias,function(index, mediaData){
-//            if(this.submit_result){
-//                completed_num++;
-//            }else{
-//                $(Wskeee.StringUtil.renderDOM(php_media_data_tr_dom, mediaData)).appendTo($tbody);
-//            }
-//        });
-//        
-//        percent = completed_num / max_num  * 100 + '%'
-//        $progress.css({width: percent}).html(percent);
-//        
-//        $hint.find('span.max_num').html(max_num);
-//        $hint.find('span.completed_num').html(completed_num);
-//        $hint.find('span.lose_num').html(max_num - completed_num);
-//    }
-//    
+
     /************************************************************************************
      *
      * 初始化提交
@@ -248,7 +213,6 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         // 弹出提交结果
         $("#submitsave").click(function(){
             $('.myModal').modal("show");
-//            mediaBatchUpload.init(uploaderMedias);
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });

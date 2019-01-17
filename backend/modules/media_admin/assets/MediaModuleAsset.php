@@ -17,7 +17,6 @@ class MediaModuleAsset extends AssetBundle
     ];
     public $js = [
         'js/media-batch-upload.js',
-//        'js/media-batch-operate.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

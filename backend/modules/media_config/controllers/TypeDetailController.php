@@ -6,8 +6,11 @@ use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaTypeDetailSearch;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+
+
 
 /**
  * TypeDetailController implements the CRUD actions for MediaTypeDetail model.
@@ -40,7 +43,13 @@ class TypeDetailController extends GridViewChangeSelfController
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]);
     }
 

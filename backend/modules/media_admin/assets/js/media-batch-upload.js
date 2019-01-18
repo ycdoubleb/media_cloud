@@ -343,7 +343,6 @@
             var index = _self.medias.indexOf(md)
             _self.medias.splice(index, 1);
         }
-        console.log(_self.medias);
     }
     
     /**

@@ -2,12 +2,13 @@
 
 namespace backend\modules\media_config\controllers;
 
-use Yii;
 use common\models\media\MediaType;
 use common\models\media\searchs\MediaTypeSearch;
+use Yii;
+use yii\data\ArrayDataProvider;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TypeController implements the CRUD actions for MediaType model.
@@ -40,7 +41,13 @@ class TypeController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]);
     }
 

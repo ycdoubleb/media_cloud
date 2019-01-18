@@ -268,9 +268,9 @@ class Dir extends ActiveRecord
      * @param integer $parent_id    父级id
      * @return array
      */
-    public static function getDirListFramework($ids = [], $parent_id = 0, $sort_order = 'is_public'){
+    public static function getDirListFramework($ids = [], $parent_id = '0', $sort_order = 'is_public'){
         self::initCache();
-        
+
         ArrayHelper::multisort(self::$dirs, $sort_order, SORT_DESC);
         //组装目录结构
         $listFramework = [];

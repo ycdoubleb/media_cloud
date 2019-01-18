@@ -15,11 +15,9 @@ use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
 use common\models\Watermark;
-use common\utils\DateUtil;
 use Yii;
 use yii\base\Exception;
 use yii\data\ArrayDataProvider;
-use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -61,7 +59,10 @@ class MediaController extends Controller
             'filters' => $results['filter'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
-                'key' => 'id'
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
@@ -137,7 +138,7 @@ class MediaController extends Controller
                     // 保存关联的属性值
                     MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
                     // 保存关联的标签
-                    MediaTagRef::saveMediaTagRef($model->id, $tags);
+                    if(!$tags) MediaTagRef::saveMediaTagRef($model->id, $tags);
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
                     /** 保存水印图： 1媒体类型是视频,2自动转码 */
@@ -198,7 +199,6 @@ class MediaController extends Controller
                     '存储目录' => isset($newAttributes['dir_id']) && $newAttributes['dir_id'] != $oldAttributes['dir_id'] ? $model->dir->getFullPath() : null,
                     '媒体名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
                     '价格' => isset($newAttributes['price']) && $newAttributes['price'] != $oldAttributes['price'] ? Yii::$app->formatter->asCurrency($model->price) : null,
-                    '内容' => !empty($model->detail) && $model->detail->content != $content ? $content : null
                 ];
                 
                 if($model->validate() && $model->save()){
@@ -307,14 +307,7 @@ class MediaController extends Controller
 
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
-                    '媒体类型' => isset($newAttributes['type_id']) && $newAttributes['type_id'] != $oldAttributes['type_id'] ? $model->mediaType->name : null,
-                    '存储目录' => isset($newAttributes['dir_id']) && $newAttributes['dir_id'] != $oldAttributes['dir_id'] ? $model->dir->getFullPath() : null,
-                    '媒体文件' => isset($newAttributes['file_id']) && $newAttributes['file_id'] != $oldAttributes['file_id'] ? $model->uploadfile->name : null,
                     '媒体名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
-                    '封面路径' => isset($newAttributes['cover_url']) && $newAttributes['cover_url'] != $oldAttributes['cover_url'] ? $model->cover_url : null,
-                    '原始路径' => isset($newAttributes['url']) && $newAttributes['url'] != $oldAttributes['url'] ? $model->url : null,
-                    '时长' => isset($newAttributes['duration']) && $newAttributes['duration'] != $oldAttributes['duration'] ? DateUtil::timeToInt($model->duration) : null,
-                    '大小' => isset($newAttributes['size']) && $newAttributes['size'] != $oldAttributes['size'] ? Yii::$app->formatter->asShortSize($model->size) : null,
                 ];
                 
                 if($model->validate() && $model->save()){

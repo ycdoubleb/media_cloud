@@ -7,8 +7,12 @@ use common\models\media\searchs\MediaAttributeSearch;
 use common\models\media\searchs\MediaAttributeValueSearch;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+
+
+
 
 /**
  * AttributeController implements the CRUD actions for MediaAttribute model.
@@ -41,7 +45,13 @@ class AttributeController extends GridViewChangeSelfController
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]);
     }
 

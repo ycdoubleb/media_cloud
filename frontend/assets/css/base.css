@@ -136,6 +136,9 @@ textarea {
     display: block;
     width: 100%;
     background-color: transparent;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
 }
 
 .mc-modal .modal-content {

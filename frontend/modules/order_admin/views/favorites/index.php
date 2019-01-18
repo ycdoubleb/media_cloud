@@ -60,7 +60,7 @@ $this->title = Yii::t('app', 'Favorites');
                     'attribute' => 'media_id',
                     'label' => Yii::t('app', 'Media Sn'),
                     'headerOptions' => [
-                        'style' => 'width: 120px',
+                        'style' => 'width: 80px',
                     ],
                 ],
                 [
@@ -88,7 +88,7 @@ $this->title = Yii::t('app', 'Favorites');
                         'Price' => Yii::t('app', 'Price')
                     ]),
                     'headerOptions' => [
-                        'style' => 'width: 100px',
+                        'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
                         return '￥'. $data['price'];
@@ -98,7 +98,7 @@ $this->title = Yii::t('app', 'Favorites');
                     'attribute' => 'duration',
                     'label' => Yii::t('app', 'Duration'),
                     'headerOptions' => [
-                        'style' => 'width: 90px',
+                        'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
                         return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -108,7 +108,7 @@ $this->title = Yii::t('app', 'Favorites');
                     'attribute' => 'size',
                     'label' => Yii::t('app', 'Size'),
                     'headerOptions' => [
-                        'style' => 'width: 100px',
+                        'style' => 'width: 90px',
                     ],
                     'value' => function($data) {
                         return Yii::$app->formatter->asShortSize($data['size']);
@@ -121,7 +121,7 @@ $this->title = Yii::t('app', 'Favorites');
                         'Time' => Yii::t('app', 'Time')
                     ]),
                     'headerOptions' => [
-                        'style' => 'width: 100px',
+                        'style' => 'width: 90px',
                     ],
                     'value' => function ($data) {
                        return date('Y-m-d H:i', $data['created_at']); 

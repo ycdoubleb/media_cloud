@@ -21,7 +21,7 @@ and open the template in the editor.
 }
 
 .content .media-index .mc-title .active .glyphicon {
-    background-color: #f9f9f9;
+    background-color: #f2f2f2;
 }
 
 .content .media-index .mc-title .glyphicon-th-large{
@@ -60,9 +60,18 @@ and open the template in the editor.
     margin-right: 5px;
 }
 
+.media-index .mc-title .result-num {
+    display: inline-block;
+}
+
+.media-index .mc-title .result-num span {
+    font-size: 13px;
+    color: #999999;
+}
+
 /*更改表格样式*/
 .media-index .mc-table > tbody > tr:hover {
-    background-color: #f9f9f9 !important;
+    background-color: #f2f2f2 !important;
 }
 
 .media-index .mc-table > tbody > tr > th,

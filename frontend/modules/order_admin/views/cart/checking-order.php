@@ -106,7 +106,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'media_id',
                                 'label' => Yii::t('app', 'Media Sn'),
                                 'headerOptions' => [
-                                    'style' => 'width: 120px',
+                                    'style' => 'width: 80px',
                                 ],
                             ],
                             [
@@ -143,7 +143,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'duration',
                                 'label' => Yii::t('app', 'Duration'),
                                 'headerOptions' => [
-                                    'style' => 'width: 90px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -153,7 +153,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'size',
                                 'label' => Yii::t('app', 'Size'),
                                 'headerOptions' => [
-                                    'style' => 'width: 100px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return Yii::$app->formatter->asShortSize($data['size']);
@@ -166,7 +166,7 @@ ModuleAssets::register($this);
                                     'Price' => Yii::t('app', 'Price')
                                 ]),
                                 'headerOptions' => [
-                                    'style' => 'width: 100px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return '￥'. $data['price'];

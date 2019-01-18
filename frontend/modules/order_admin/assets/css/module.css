@@ -98,6 +98,7 @@ and open the template in the editor.
 
 .user-update .choice-panel .mc-panel .mc-tabs a {
     font-size: 14px;
+    color: #999999;
 }
 
 .user-update .choice-panel .mc-panel .mc-tabs .active {

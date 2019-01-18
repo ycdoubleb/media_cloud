@@ -28,7 +28,7 @@ use yii\helpers\Html;
                     'attribute' => 'goods_id',
                     'label' => Yii::t('app', 'Media Sn'),
                     'headerOptions' => [
-                        'style' => 'width: 120px',
+                        'style' => 'width: 80px',
                     ],
                 ],
                 [
@@ -61,7 +61,7 @@ use yii\helpers\Html;
                     'attribute' => 'duration',
                     'label' => Yii::t('app', 'Duration'),
                     'headerOptions' => [
-                        'style' => 'width: 90px',
+                        'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
                         return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -71,7 +71,7 @@ use yii\helpers\Html;
                     'attribute' => 'size',
                     'label' => Yii::t('app', 'Size'),
                     'headerOptions' => [
-                        'style' => 'width: 100px',
+                        'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
                         return Yii::$app->formatter->asShortSize($data['size']);
@@ -84,7 +84,7 @@ use yii\helpers\Html;
                         'Price' => Yii::t('app', 'Price')
                     ]),
                     'headerOptions' => [
-                        'style' => 'width: 100px',
+                        'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
                         return '￥'. $data['price'];

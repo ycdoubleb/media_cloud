@@ -2,8 +2,8 @@
     <td><input type="checkbox" name="selection[]" value="{%id%}"></td>
     <td><img src="{%cover_img%}" width="70px"/></td>
     <td>{%id%}</td>
-    <td>{%name%}</td>
-    <td>{%dir_id%}</td>
+    <td><span class="multi-line-clamp" style="-webkit-line-clamp:4">{%name%}</span></td>
+    <td><span class="multi-line-clamp" style="-webkit-line-clamp:4">{%dir_id%}</span></td>
     <td>{%type_name%}</td>
     <td>￥{%price%}</td>
     <td>{%duration%}</td>

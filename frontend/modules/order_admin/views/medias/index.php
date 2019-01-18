@@ -53,7 +53,7 @@ $this->title = Yii::t('app', 'Media');
                         'attribute' => 'media_id',
                         'label' => Yii::t('app', 'Media Sn'),
                         'headerOptions' => [
-                            'style' => 'width: 70px',
+                            'style' => 'width: 80px',
                         ],
                     ],
                     [
@@ -75,7 +75,7 @@ $this->title = Yii::t('app', 'Media');
                         ]),
                         'headerOptions' => [
                             'style' => [
-                                'width' => '160px',
+                                'width' => '140px',
                             ],
                         ],
                         'format' => 'raw',
@@ -118,7 +118,7 @@ $this->title = Yii::t('app', 'Media');
                         'attribute' => 'duration',
                         'label' => Yii::t('app', 'Duration'),
                         'headerOptions' => [
-                            'style' => 'width: 70px',
+                            'style' => 'width: 80px',
                         ],
                         'value' => function($data) {
                             return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -128,7 +128,7 @@ $this->title = Yii::t('app', 'Media');
                         'attribute' => 'size',
                         'label' => Yii::t('app', 'Size'),
                         'headerOptions' => [
-                            'style' => 'width: 100px',
+                            'style' => 'width: 80px',
                         ],
                         'value' => function($data) {
                             return Yii::$app->formatter->asShortSize($data['size']);

@@ -49,8 +49,8 @@ use yii\widgets\ActiveForm;
             <!--关键字-->
             <div class="col-lg-6 col-md-6">
                 <div class="form-group field-mediasearch-keyword">
-                    <label class="col-lg-3 col-md-3 control-label form-label" for="mediasearch-keyword"></label>
-                    <div class="col-lg-9 col-md-9" style="padding-left: 0;">
+                    <label class="col-lg-6 col-md-6 control-label form-label" for="mediasearch-keyword"></label>
+                    <div class="col-lg-6 col-md-6" style="padding-left: 0;">
                         <?php
                             $keyword = ArrayHelper::getValue($filters, 'MediaSearch.keyword');
                             echo kartik\helpers\Html::input('text', 'MediaSearch[keyword]', $keyword, [

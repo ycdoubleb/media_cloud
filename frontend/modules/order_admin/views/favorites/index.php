@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Favorites');
         <div class="favorites-table">
             <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'tableOptions' => ['class' => 'table table-bordered mc-table'],
+            'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
             'layout' => "{items}\n{pager}\n{summary}",
             'rowOptions'=>function($searchModel){
                 return ['id' => "tr-".$searchModel['media_id'], 'data-value' => $searchModel['media_id']];
@@ -69,6 +69,10 @@ $this->title = Yii::t('app', 'Favorites');
                         'Media' => Yii::t('app', 'Media'),
                         'Name' => Yii::t('app', 'Name')
                     ]),
+                    'format' => 'raw',
+                    'value' => function($data){
+                        return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">'.$data['media_name'].'</span>';
+                    }
                 ],
                 [
                     'attribute' => 'type_name',

@@ -16,7 +16,7 @@ ModuleAssets::register($this);
 <div class="play-approve-index">
     <?= GridView::widget([
         'dataProvider' => $auditingData,
-        'tableOptions' => ['class' => 'table table-bordered mc-table'],
+        'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
         'layout' => "{items}\n{pager}\n{summary}",
         'columns' => [
             [
@@ -52,7 +52,6 @@ ModuleAssets::register($this);
                 'value' => function ($data) {
                    return date('Y-m-d H:i', $data['created_at']); 
                 },
-                'contentOptions' => ['style' => 'font-size: 13px'],
             ],
             [
                 'attribute' => 'content',
@@ -60,7 +59,10 @@ ModuleAssets::register($this);
                     'Payment' => Yii::t('app', 'Payment'),
                     'Illustration' => Yii::t('app', 'Illustration')
                 ]),
-                'contentOptions' => ['style' => 'font-size: 13px'],
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return '<span class="multi-line-clamp">' . $data['content'] . '</span>';
+                },
             ],
 //            [
 //                'attribute' => 'status',
@@ -90,7 +92,6 @@ ModuleAssets::register($this);
                         '<i class="glyphicon glyphicon-remove-sign" style="font-size: 24px; color: #fc583d;"></i>' :
                             '<i class="glyphicon glyphicon-ok-sign" style="font-size: 24px; color: #28b28b;"></i>') : '';
                 },
-                'contentOptions' => ['style' => 'font-size: 13px'],
             ],
             [
                 'attribute' => 'handled_at',
@@ -104,12 +105,14 @@ ModuleAssets::register($this);
                 'value' => function ($data) {
                    return empty($data['handled_at']) ? '' : date('Y-m-d H:i', $data['handled_at']); 
                 },
-                'contentOptions' => ['style' => 'font-size: 13px'],
             ],
             [
                 'attribute' => 'feedback',
                 'label' => Yii::t('app', 'Remarks'),
-                'contentOptions' => ['style' => 'font-size: 13px'],
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return '<span class="multi-line-clamp">' . $data['feedback'] . '</span>';
+                },
             ],            
         ],
     ]); ?>

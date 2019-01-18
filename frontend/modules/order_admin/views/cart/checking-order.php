@@ -93,7 +93,7 @@ ModuleAssets::register($this);
                 <div class="meida-table">
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        'tableOptions' => ['class' => 'table table-bordered mc-table'],
+                        'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
                         'layout' => "{items}\n{pager}",
                         'columns' => [
                             [
@@ -115,10 +115,10 @@ ModuleAssets::register($this);
                                 'format' => 'raw',
                                 'value' => function($data){
                                     return '<img src="'.Aliyun::absolutePath(!empty($data['cover_url']) ? 
-                                            $data['cover_url'] : 'static/imgs/notfound.png').'" style="width: 70px"/>';
+                                            $data['cover_url'] : 'static/imgs/notfound.png').'" style="height: 48px"/>';
                                 },
                                 'headerOptions' => [
-                                    'style' => 'width: 80px',
+                                    'style' => 'width: 100px',
                                 ],
                             ],
                             [
@@ -127,6 +127,10 @@ ModuleAssets::register($this);
                                     'Media' => Yii::t('app', 'Media'),
                                     'Name' => Yii::t('app', 'Name')
                                 ]),
+                                'format' => 'raw',
+                                'value' => function($data){
+                                    return '<span class="multi-line-clamp">'.$data['media_name'].'</span>';
+                                }
                             ],
                             [
                                 'attribute' => 'type_name',
@@ -224,7 +228,7 @@ ModuleAssets::register($this);
             <div class="pull-right">
                 <?= Html::a('提交订单', 'javascript:;', [
                     'id' => 'place_order',
-                    'class' => 'btn btn-highlight btn-flat', 'title' => '提交订单']);
+                    'class' => 'btn btn-highlight btn-flat-lg', 'title' => '提交订单']);
                 ?>
             </div>
         </div>

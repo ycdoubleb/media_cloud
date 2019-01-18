@@ -102,7 +102,7 @@ class OrderSearch extends Order
      *
      * @return ActiveDataProvider
      */
-    public function searchResources($params)
+    public function searchMedias($params)
     {        
         $query = self::find()->select(['OrderGoods.goods_id'])
                 ->from(['Order' => Order::tableName()]);
@@ -119,8 +119,8 @@ class OrderSearch extends Order
 
         // 必要过滤条件
         $query->andFilterWhere([
-            'Order.order_status' => Order::ORDER_STATUS_TO_BE_CONFIRMED,
-            'Order.order_status' => Order::ORDER_STATUS_CONFIRMED, 'Order.play_status' => 1, 
+            'Order.order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
+            'Order.play_status' => 1, 
             'Order.created_by' => Yii::$app->user->id
         ]);
         // 关联查询媒体
@@ -128,7 +128,6 @@ class OrderSearch extends Order
         // 关联查询媒体类型
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
         
-
         $this->load($params);
 
         // 关键字查询
@@ -138,7 +137,7 @@ class OrderSearch extends Order
             ['Order.order_sn' => $this->keyword],         //订单编号
             ['like', 'Order.order_name', $this->keyword], //订单名称
         ]);
-
+        
         // 查找Acl列表
         $aclResults = $this->findAclByMediaId($copyMedia);
         // 媒体数据
@@ -173,6 +172,7 @@ class OrderSearch extends Order
         $videoUrl = Acl::find()
                 ->select(['sn', 'media_id', 'level'])
                 ->where(['media_id' => $id])
+                ->orderBy('level')
                 ->asArray()->all();
 
         return $videoUrl;

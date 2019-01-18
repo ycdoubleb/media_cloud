@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
                     ])->label('');?>
                 </div>
                 <div class="col-log-2 col-md-2 form-group">
-                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat-lg']) ?>
                 </div>
             </div>
             <div class="col-log-6 col-md-6" style="padding-right: 5px;">
@@ -44,9 +44,10 @@ use yii\widgets\ActiveForm;
                     </div>
                     <?php
                     echo Html::a('立即购买', ['checking-order'], 
-                        ['class' => 'btn btn-highlight btn-flat', 'title' => '立即购买']) . '&nbsp;';
+                        ['class' => 'btn btn-highlight btn-flat-lg', 'title' => '立即购买']);
                     echo Html::a('移出购物车', ['del-media'], 
-                        ['class' => 'btn btn-default btn-flat', 'title' => '移出购物车']);
+                        ['style' => 'margin-right:0px;',
+                            'class' => 'btn btn-default btn-flat-lg', 'title' => '移出购物车']);
                     ?>
                 </div>
             </div>

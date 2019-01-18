@@ -34,7 +34,7 @@ $this->title = Yii::t('app', 'Media');
         <div class="order-table">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'tableOptions' => ['class' => 'table table-bordered mc-table'],
+                'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
                 'layout' => "{items}\n{pager}\n{summary}",
                 'columns' => [
                     [
@@ -62,6 +62,10 @@ $this->title = Yii::t('app', 'Media');
                             'Media' => Yii::t('app', 'Media'),
                             'Name' => Yii::t('app', 'Name')
                         ]),
+                        'format' => 'raw',
+                        'value' => function($data){
+                            return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">'.$data['media_name'].'</span>';
+                        }
                     ],
                     [
                         'attribute' => 'order_sn',
@@ -76,7 +80,7 @@ $this->title = Yii::t('app', 'Media');
                         ],
                         'format' => 'raw',
                         'value' => function($data){
-                            return $data['order_sn'].'<br/>'.$data['order_name'];
+                            return $data['order_sn'].'<br/><span class="multi-line-clamp">'.$data['order_name'].'</span>';
                         }
                     ],
                     [

@@ -47,16 +47,14 @@ $this->title = Yii::t('app', 'Order');
         <div class="order-table">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'tableOptions' => ['class' => 'table table-bordered mc-table'],
+                'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
                 'layout' => "{items}\n{pager}\n{summary}",
                 'columns' => [
                     [
                         'attribute' => 'order_sn',
                         'label' => Yii::t('app', 'Order Sn'),
                         'headerOptions' => [
-                            'style' => [
-                                'width' => '160px',
-                            ],
+                            'style' => 'width: 130px',
                         ],
                     ],
                     [
@@ -65,10 +63,12 @@ $this->title = Yii::t('app', 'Order');
                             'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
                         ]),
                         'headerOptions' => [
-                            'style' => [
-                                'width' => '164px',
-                            ],
+                            'style' => 'width: 190px',
                         ],
+                        'format' => 'raw',
+                        'value' => function ($data) {
+                            return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">' . $data['order_name'] . '</span>';
+                        }
                     ],
                     [
                         'attribute' => 'order_status',
@@ -76,9 +76,7 @@ $this->title = Yii::t('app', 'Order');
                             'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
                         ]),
                         'headerOptions' => [
-                            'style' => [
-                                'width' => '70px',
-                            ],
+                            'style' => 'width: 70px',
                         ],
                         'value' => function ($data) {
                             return Order::$orderStatusName[$data['order_status']];
@@ -90,9 +88,7 @@ $this->title = Yii::t('app', 'Order');
                             'Order' => Yii::t('app', 'Order'), 'Amount' => Yii::t('app', 'Amount')
                         ]),
                         'headerOptions' => [
-                            'style' => [
-                                'width' => '80px',
-                            ],
+                            'style' => 'width: 80px',
                         ],
                         'value' => function($data) {
                             return '￥'. $data['order_amount'];
@@ -104,9 +100,7 @@ $this->title = Yii::t('app', 'Order');
                             'Resources' => Yii::t('app', 'Resources'), 'Total' => Yii::t('app', 'Total')
                         ]),
                         'headerOptions' => [
-                            'style' => [
-                                'width' => '70px',
-                            ],
+                            'style' => 'width: 70px',
                         ],
                     ],
                     [
@@ -124,13 +118,13 @@ $this->title = Yii::t('app', 'Order');
                         'class' => 'yii\grid\ActionColumn',
                         'header' => Yii::t('app', 'Operation'),
                         'template' => '{view}{place-order}{confirm}{delete}',
-                        'headerOptions' => ['style' => 'width: 335px'],
+                        'headerOptions' => ['style' => 'width: 275px'],
                         'contentOptions' => ['style' => 'text-align: left'],
                         'buttons' => [
                             'view' => function ($url, $data, $key) {
                                 $options = [
                                    'class' => 'btn btn-default btn-flat',
-                                   'style' => '',
+                                   'style' => 'margin-left:5px;',
                                    'title' => Yii::t('app', 'View'),
                                    'aria-label' => Yii::t('app', 'View'),
                                    'data-pjax' => '0',
@@ -188,7 +182,7 @@ $this->title = Yii::t('app', 'Order');
                             'delete' => function ($url, $data, $key) {
                                 $options = [
                                    'class' => 'btn btn-highlight btn-flat',
-                                   'style' => '',
+                                   'style' => 'margin-right:0px;',
                                    'title' => Yii::t('app', 'Cancel'),
                                    'aria-label' => Yii::t('app', 'Cancel'),
                                    'data-pjax' => '0',

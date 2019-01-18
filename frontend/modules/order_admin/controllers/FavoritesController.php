@@ -75,9 +75,11 @@ class FavoritesController extends Controller
                     $model->save();
                 }
             }
-            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            Yii::$app->getSession()->setFlash('success','加入购物车成功！');
+//            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
-            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
+            Yii::$app->getSession()->setFlash('error','加入购物车失败！失败原因::'.$ex->getMessage());
+            //return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
         }
 
     }
@@ -101,7 +103,7 @@ class FavoritesController extends Controller
         } catch (Exception $ex) {
             Yii::$app->getSession()->setFlash('error', '取消收藏失败！失败原因：'.$ex->getMessage());
         }
-        return $this->redirect('index');
+
     }
 
     /**

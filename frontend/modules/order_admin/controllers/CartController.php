@@ -202,7 +202,7 @@ class CartController extends Controller
                 }
                 Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
                     ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
-                
+                // 跳转到下单成功页
                 return $this->redirect(['place-order',
                     'id' => $order->id,
                 ]);
@@ -268,7 +268,7 @@ class CartController extends Controller
             $order->order_status = Order::ORDER_STATUS_TO_BE_AUDITED; //支付提交后把订单状态改为待审核
             $order->play_code = 'eeplay';   //支付方式
             $order->play_at = time();       //支付时间
-            $order->play_status = Order::PLAY_STATUS_PAID;  //支付状态改为已付款
+            $order->play_status = Order::PLAY_STATUS_UNPAID;  //支付状态任为未付款
             if($order->save()){
                 OrderAction::savaOrderAction($order->id, '支付', '提交审核', $order->order_status, $order->play_status);
             }

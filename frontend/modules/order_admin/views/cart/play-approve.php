@@ -81,7 +81,7 @@ ModuleAssets::register($this);
                     <?php ActiveForm::end(); ?>
                 </div>
 
-                <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-highlight btn-flat']) ?>
+                <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-highlight btn-flat-lg']) ?>
             </div>
         </div>
     </div>

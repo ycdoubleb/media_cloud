@@ -144,6 +144,7 @@ class OrderGoodsSearch extends OrderGoods
         $videoUrl = Acl::find()
                 ->select(['sn', 'media_id', 'level'])
                 ->where(['media_id' => $id])
+                ->orderBy('level')
                 ->asArray()->all();
 
         return $videoUrl;

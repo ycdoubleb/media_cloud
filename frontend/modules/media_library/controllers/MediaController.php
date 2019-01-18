@@ -68,7 +68,6 @@ class MediaController extends Controller
         $searchModel = new MediaSearch();
         $results = $searchModel->search(array_merge(Yii::$app->request->queryParams, ['limit' => 10]));
         $medias = array_values($results['data']['media']);                  //媒体数据
-        $mediaIds = ArrayHelper::getColumn($medias, 'id');
 
         $icons = [
             'video' => 'glyphicon glyphicon-facetime-video',
@@ -107,7 +106,7 @@ class MediaController extends Controller
             'searchModel' => $searchModel,      //搜索模型
             'filters' => $results['filter'],    //查询过滤的属性
             'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($mediaIds),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
     }
     
@@ -127,18 +126,43 @@ class MediaController extends Controller
             'is_del' => 0
         ]);
         
+        $attributeInfo = MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false); // 媒体属性
+        $tagsInfo = ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name');      // 标签信息
+
+        // 组装媒体属性
+        $attr = [];
+        foreach ($attributeInfo as $value) {
+            $attr[] = ['label' => $value['attr_name'], 'value' => $value['attr_value']];
+        }
+        
+        // 媒体基础数据
+        $datas = [
+            ['label' => '媒体编号', 'value' => $model->id],
+            ['label' => '媒体名称', 'value' => $model->name],
+            ['label' => '媒体类型', 'value' => $model->mediaType->name],
+            ['label' => '价格', 'value' => $model->price],
+            ['label' => '时长', 'value' => DateUtil::intToTime($model->duration, ':', true)],
+            ['label' => '大小', 'value' => Yii::$app->formatter->asShortSize($model->size)]
+        ];
+        
+        // 如果合并后数据为奇数 则添加一个数组
+        $result = array_merge($datas, $attr);
+        if(count($result)%2 == 1){
+            $result[] = ['label' => '', 'value' => ''];
+        }
+
         return $this->render('view', [
             'filters' => Yii::$app->request->queryParams,
             'model' => $model,
-            'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
-            'tagsDataProvider' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
+            'datas' => $result,
+            'tagsInfo' => implode('，', $tagsInfo),
             'hasFavorite' => !empty($hasFavorite),
         ]);
         
     }
     
     /**
-     * 把媒体加入购物车
+     * 把媒体批量加入购物车
      * @return minxd
      */
     public function actionAddCarts()
@@ -157,11 +181,13 @@ class MediaController extends Controller
                 }
                 $model->save();
             }
-            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            Yii::$app->getSession()->setFlash('success','加入购物车成功！');
+            //return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
-            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
+            Yii::$app->getSession()->setFlash('error','加入购物车失败！失败原因::'.$ex->getMessage());
+            //return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
         }
-        
+
     }
     
     /**
@@ -208,7 +234,7 @@ class MediaController extends Controller
                 }
                 Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
                     ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
-                
+                // 跳转到下单成功页
                 return $this->redirect(['/order_admin/cart/place-order',
                     'id' => $model->id,
                 ]);

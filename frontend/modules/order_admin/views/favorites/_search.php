@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
                     ])->label('');?>
                 </div>
                 <div class="col-log-2 col-md-2 form-group">
-                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat-lg']) ?>
                 </div>
             </div>
             <div class="col-log-6 col-md-6" style="padding-right: 5px;">
@@ -44,11 +44,12 @@ use yii\widgets\ActiveForm;
                     <?php
                     echo Html::a('加入购物车', 'javascript:;', ['id' => 'add-carts',
                         'data-url' => Url::to(['favorites/add-cart']),
-                        'class' => 'btn btn-highlight btn-flat', 'title' => '加入购物车',
-                    ]) . '&nbsp;';
+                        'class' => 'btn btn-highlight btn-flat-lg', 'title' => '加入购物车',
+                    ]);
                     echo Html::a('取消收藏', 'javascript:;', ['id' => 'del-favorites',
                         'data-url' => Url::to(['favorites/del-favorites']),
-                        'class' => 'btn btn-default btn-flat', 'title' => '取消收藏']);
+                        'style' => 'margin-right:0px',
+                        'class' => 'btn btn-default btn-flat-lg', 'title' => '取消收藏']);
                     ?>
                 </div>
             </div>
@@ -72,27 +73,26 @@ $js = <<<JS
             alert('请选择至少一条记录！'); return false;
         }
         var url=$(this).attr('data-url');
-        console.log(ids);
-        console.log(url);
         $.post(url, {ids}, function(rel){
+            location.reload();  //刷新页面
             // 把复选框全取消
-            $('input[name="selection_all"]').prop("checked",false);
-            $('input[name="selection[]"]').each(function(){
-                $(this).prop("checked",false);
-            });
-            if(rel['code'] == '0'){
-                $.notify({
-                    message: '成功加入购物车' 
-                },{
-                    type: 'success'
-                });
-            }else{
-                $.notify({
-                    message: rel['msg'] 
-                },{
-                    type: 'danger'
-                });
-            }
+//            $('input[name="selection_all"]').prop("checked",false);
+//            $('input[name="selection[]"]').each(function(){
+//                $(this).prop("checked",false);
+//            });
+//            if(rel['code'] == '0'){
+//                $.notify({
+//                    message: '成功加入购物车' 
+//                },{
+//                    type: 'success'
+//                });
+//            }else{
+//                $.notify({
+//                    message: rel['msg'] 
+//                },{
+//                    type: 'danger'
+//                });
+//            }
         });
     });
     
@@ -110,10 +110,10 @@ $js = <<<JS
         }else{
             alert('请选择至少一条记录！'); return false;
         }
-        // console.log(ids);
         var url=$(this).attr('data-url');
-        // console.log(url);
-        $.post(url, {ids});
+        $.post(url, {ids}, function(rel){
+            location.reload();  //刷新页面
+        });
     });
 JS;
 $this->registerJs($js, View::POS_READY);

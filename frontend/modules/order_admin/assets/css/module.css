@@ -15,6 +15,10 @@ and open the template in the editor.
     overflow-x: hidden;
     background-color: #ffffff;
     margin-bottom: 30px;
+    border-radius: 0px;
+    -moz-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    -webkit-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
 }
 
 .main .mc-tabs {
@@ -27,17 +31,49 @@ and open the template in the editor.
 
 .main .main-search .search-name {
     padding-left: 0px;
+    padding-right: 10px;
 }
 
 .main-search .mc-form .choice-info {
     vertical-align: middle;
     display: inline-block;
     margin-right: 20px;
+    color: #999999;
 }
 
 .main-search .mc-form .choice-info span {
     font-size: 16px;
     color: #FC583D;
+}
+
+/*设置左右两个面板*/
+.mediacloud .panel-left {
+    width: 50%;
+    display: inline-block;
+}
+.mediacloud .panel-right {
+    width: 50%;
+    float: right;
+}
+
+/*.order-index .mc-table > tbody > tr:hover {
+    background-color: #f9f9f9 !important;
+}*/
+
+/*更改表格样式*/
+.order-index .mc-table > tbody > tr > td,
+.resources-index .mc-table > tbody > tr > td ,
+.favorites-index .mc-table > tbody > tr > td ,
+.cart-index .mc-table > tbody > tr > td {
+    font-size: 12px !important;
+    height: 90px !important;
+}
+
+.order-view .play-approve-index .mc-table > tbody > tr > td,
+.order-view .media-list-index .mc-table > tbody > tr > td,
+.order_admin .checking-order .mc-table > tbody > tr > td {
+    font-size: 12px !important;
+    height: 60px !important;
 }
 
 /*******************************************************************************
@@ -120,7 +156,7 @@ and open the template in the editor.
     height: 100px;
     padding-top: 30px;
     text-align: center;
-    display: inline-block;
+    float: left;
 }
 
 .user-statistics .all-datas .left-img {
@@ -134,8 +170,7 @@ and open the template in the editor.
 .user-statistics .all-datas .statistics-num {
     display: inline-block;
     color: #999999;
-    padding-left: 6px;
-    
+    padding: 8px;
 }
 
 .user-statistics .all-datas .statistics-num span {
@@ -148,8 +183,13 @@ and open the template in the editor.
 }
 
 /*******************************************************************************
- * 订单详情页面
+ * 订单模块/列表和详情页面
  *******************************************************************************/
+.order-index .mc-tabs > ul > li > a {
+    text-align: center;
+    color: #666666;
+}
+
 .order-view .order-progress {
     margin-top: 40px;
     margin-bottom: 40px;
@@ -213,6 +253,7 @@ and open the template in the editor.
 .order-view .choice-panel .mc-panel .panel-content {
     padding-left: 10px;
     padding-right: 10px;
+    margin-bottom: 50px;
 }
 
 .order-view .choice-panel .mc-panel .mc-tabs {
@@ -345,6 +386,11 @@ and open the template in the editor.
     height: 84px;
 }
 
+.order_admin .checking-order.order-success .mc-table > tbody > tr > td {
+    font-size: 14px !important;
+    height: 48px !important;
+}
+
 .mediacloud .place-order .information .use-purpose .pull-left .glyphicon {
     font-size: 42px;
     color: #28b28b;
@@ -367,16 +413,6 @@ and open the template in the editor.
 
 .mediacloud .checking-order .mc-panel .table {
     border: 1px solid #e4e4e4;
-}
-
-.mediacloud .panel-left {
-    width: 50%;
-    float: left;
-}
-
-.mediacloud .panel-right {
-    width: 50%;
-    float: right;
 }
 
 .mediacloud .checking-order .panel-right .table .detail-th {
@@ -440,6 +476,25 @@ and open the template in the editor.
     font-size: 18px;
 }
 
+.simple-view .mc-tabs > ul > li > a {
+    color: #999999;
+}
+
+.simple-view .mc-tabs > ul > li.active > a,
+.simple-view .mc-title > ul > li:hover > a {
+    color: #fc583d;
+}
+
+.order_admin .simple-view .order-info .mc-table > tbody > tr > td {
+    font-size: 14px !important;
+    height: 48px !important;
+}
+
+.order_admin .simple-view .order-media .mc-table > tbody > tr > td {
+    font-size: 12px !important;
+    height: 60px !important;
+}
+
 .mediacloud .order-checking .container .pull-left img {
     width: 88px;
     height: 88px;
@@ -458,6 +513,9 @@ and open the template in the editor.
 .order_admin .header.play-approve {
     height: 100%;
     margin-bottom: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
 }
     
 .order_admin .header.play-approve .container .media-top {
@@ -497,6 +555,10 @@ and open the template in the editor.
 .order_admin .play-approve .main {
     width: 100%;
     margin-top: 30px;
+    margin-bottom: 162px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
 }
 
 .order_admin .play-approve .main span {

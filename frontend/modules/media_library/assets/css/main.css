@@ -8,15 +8,34 @@ and open the template in the editor.
     Author     : Administrator
 */
 
+.btn {
+    margin-right: 10px;
+}
+
+.media-view .mc-tabs > ul > li > a {
+    width: 130px;
+    text-align: center;
+    color: #666666;
+}
+
 /*******************************************************************************
  * 只有主布局时的样式
  *******************************************************************************/
 .mediacloud .header {
     display: inline-block;
     width: 100%;
-    height: 180px;
+    height: 100%;
     margin-bottom: 20px;
     background-color: #fff;
+    border-radius: 0px;
+    -moz-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    -webkit-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+}
+
+.mediacloud .header .container {
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .mediacloud .header .container .media-title {
@@ -25,16 +44,28 @@ and open the template in the editor.
 }
 
 .mediacloud .header .container .media-title .media-name{
-    font-size: 24px;
-}
-
-.mediacloud .header .container .media-title .media-name,
-.mediacloud .header .container .media-title .media-tags {
     display: block;
+    font-size: 24px;
+    color: #666666;
 }
 
-.mediacloud .header .container .operation .pull-left {
-    width: 500px;
+.mediacloud .header .container .media-title .media-tags {
+    font-size: 13px;
+    color: #999999;
+}
+
+.mediacloud .header .container .operation {
+    margin-bottom: 20px;
+}
+
+.mediacloud .header .container .operation .panel-left {
+    width: 50%;
+    display: inline-block
+}
+
+.mediacloud .header .container .operation .panel-right {
+    display: inline-block;
+    float: right;
 }
 
 .mediacloud .header .container .operation .btn-ellipse{
@@ -58,6 +89,10 @@ and open the template in the editor.
     width: 100%;
     background-color: #fff;
     margin-bottom: 30px;
+    border-radius: 0px;
+    -moz-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    -webkit-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
 }
 
 .content .common .mc-tabs {

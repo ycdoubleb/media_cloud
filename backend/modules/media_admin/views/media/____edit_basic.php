@@ -24,7 +24,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
         ],
         'action' => ['edit-basic', 'id' => $model->id],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\"><div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div></div>",  
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  

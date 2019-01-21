@@ -64,6 +64,7 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     var url = "anew-upload?id=<?= $model->id ?>";
     //批量上传控制器
     var mediaBatchUpload;
+    
     /**
      * html 加载完成后初始化所有组件
      * @returns {void}
@@ -79,10 +80,10 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     *
     ************************************************************************************/
     function initBatchUpload(){
+        
         mediaBatchUpload = new mediaupload.MediaBatchUpload({
             media_url : url,
         });
-        console.log(mediaBatchUpload);
     }
     
     /**
@@ -111,8 +112,9 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     function initSubmit(){
         // 提交删除
         $("#submitsave").click(function(){
-            var formdata = $('#media-form').serialize();
-            mediaBatchUpload.submit(formdata);
+            validateWebuploaderValue(mediaBatchUpload.medias.length);
+            if($('div.has-error').length > 0) return;
+            mediaBatchUpload.submit();
         });
     }
     

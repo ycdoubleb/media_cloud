@@ -35,12 +35,6 @@ and open the template in the editor.
     background: #f9f9f9;
 }
 
-.media-search .panel .dep-dropdowns {
-    display: inline-block;
-    width: 118px;
-    margin-right: 5px;
-}
-
 /*******************************************************************************
  *
  * media-form

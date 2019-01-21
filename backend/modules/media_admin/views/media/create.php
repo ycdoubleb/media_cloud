@@ -6,6 +6,7 @@ use common\models\media\Media;
 use common\widgets\depdropdown\DepDropdown;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -30,14 +31,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         'options'=>[
             'id' => 'media-form',
             'class' => 'form form-horizontal',
-            'enctype' => 'multipart/form-data',
-        ],
-        'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>\n<div class=\"col-lg-6 col-md-6\">{error}</div>",  
-            'labelOptions' => [
-                'class' => 'col-lg-1 col-md-1 control-label form-label',
-            ],  
-        ], 
+        ]
     ]); ?>
     
     <ul class="nav nav-tabs" role="tablist">
@@ -56,13 +50,22 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             
             <!--存储目录-->
             <?= $form->field($model, 'dir_id', [
-                'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>",
+                'template' => "{label}\n"
+                . "<div class=\"col-lg-7 col-md-7\">"
+                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+                . "</div>", 
+                'labelOptions' => [
+                    'class' => 'col-lg-1 col-md-1 control-label form-label',
+                ],  
             ])->widget(DepDropdown::class,[
                 'pluginOptions' => [
                     'url' => Url::to(['/media_config/dir/search-children']),
                     'max_level' => 10,
+                    'onChangeEvent' => new JsExpression("function(){ validateDirDepDropdownValue($('.dep-dropdown').children('select')) }")
                 ],
-                'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
+                
+                'items' => Dir::getDirsBySameLevel(null, Yii::$app->user->id, true, true),
                 'itemOptions' => [
                     'style' => 'width: 175px; display: inline-block;',
                 ],
@@ -72,6 +75,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             
             <?= $this->render('____form_attribute_dom', [
                 'attrMap' => $attrMap,
+                'isTagRequired' => $isTagRequired,
                 'attrSelected' => isset($attrSelected) ? $attrSelected : null,
                 'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
             ]) ?>
@@ -141,8 +145,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             </div>
             
             <div class="modal-footer">
+                <span class="text-default" style="font-size: 13px;">提交完成</span>
                 <?= Html::button(Yii::t('app', '{Anew}{Upload}', ['Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
-                    ]), ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']) 
+                    ]), ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary hidden']) 
                 ?>
                 <?= Html::button(Yii::t('app', 'Close'), ['id' => 'btn-close', 'class' => 'btn btn-default', 'data-dismiss' => 'modal']) ?>
             </div>
@@ -175,6 +180,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     *
     ************************************************************************************/
     function initBatchUpload(){
+        
         mediaBatchUpload = new mediaupload.MediaBatchUpload({
             media_data_tr_dom : php_media_data_tr_dom,
         });
@@ -212,10 +218,15 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     function initSubmit(){
         // 弹出提交结果
         $("#submitsave").click(function(){
+            validateDirDepDropdownValue($('.dep-dropdown').children('select'));
+            submitValidate();
+            validateWebuploaderValue(mediaBatchUpload.medias.length);
+            if($('div.has-error').length > 0) return;
             $('.myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });
+        
         // 重新上传
         $("#btn-anewUpload").click(function(){
             $table = $('.result-info').find('table.result-table');
@@ -223,6 +234,15 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });
+    }
+    
+    /**
+     * 验证存储目录下拉框是否有选择值
+     * @param {DepDropdown} _this
+     * @returns {undefined}
+     */
+    function validateDirDepDropdownValue(_this){
+        validateDepDropdownValue(_this);
     }
     
 </script>

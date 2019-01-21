@@ -71,7 +71,7 @@ class Tags extends ActiveRecord
     public static function saveTags($tags)
     {
         try {
-            if(is_string($tags)){
+            if(is_string($tags) && !empty($tags)){
                 //把全角",""、"替换为半角","
                 $tags = str_replace(['，','、'], ',', $tags);
                 $tags = explode(',', $tags);

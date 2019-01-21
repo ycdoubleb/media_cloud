@@ -26,6 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="play-approve-view">
 
     <p>
+        
+        <?php if(!$model->result): ?>
+        
         <?= Html::a(Yii::t('app', 'Pass'), ['pass-approve', 'id' => $model->id], [
             'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat',
             'data' => [
@@ -40,6 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
         
         <span class="text-danger">（请务必检查凭证金额与订单应付金额是否一致！）</span>
+        
+        <?php endif; ?>
         
     </p>
 

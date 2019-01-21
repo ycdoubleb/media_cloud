@@ -83,9 +83,8 @@ class MediaTagRef extends ActiveRecord
     {
         try {
             // 如果标签为空则返回
-            if($tags == null){
-                throw new Exception('标签不能为空。');
-            }
+            if($tags == null) return;
+            
             //删除已存在的标签
             self::updateAll(['is_del' => 1], ['object_id' => $media_id]);
             //准备数据

@@ -42,6 +42,7 @@ $ids = json_encode($ids);
     
                 <?= $this->render('____form_attribute_dom', [
                     'attrMap' => $attrMap,
+                    'isTagRequired' => $isTagRequired,
                     'attrSelected' => isset($attrSelected) ? $attrSelected : null,
                     'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
                 ]) ?>
@@ -75,13 +76,16 @@ $js = <<<JS
         
     // 提交表单    
     $("#submitsave").click(function(){
+        submitValidate();
+        if($('div.has-error').length > 0) return;
+        
         var _self = $(this);
         if(!isPageLoading){
-            isPageLoading = true;   //设置已经加载当中...
+            isPageLoading = true;   //设置已经提交当中...
             $.each(ids, function(index, mediaId){
                 $.post('/media_admin/media/edit-attribute?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
-                        isPageLoading = false;  //取消设置加载当中...
+                        isPageLoading = false;  //取消设置提交当中...
 //                        _self.show();
 //                        $('.loading-box .loading, .loading-box .no_more').hide();
                         window.location.reload();

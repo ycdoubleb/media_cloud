@@ -19,61 +19,75 @@ TagsInputAsset::register($this);
             'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
         
         <div class="col-lg-7 col-md-7">
-            <?php switch ($atts['input_type']){
-                case MediaAttribute::SINGLE_SELECT_INPUT_TYPE:
-                    echo Select2::widget([
-                        'id' => "media-attribute_value-{$atts['attr_id']}",
-                        'name' => "Media[attribute_value][{$atts['attr_id']}]",
-                        'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
-                        'value' => !empty($attrSelected) ? $attrSelected[$atts['attr_id']] : null, 
-                        'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', 'All')],
-                        'pluginOptions' => ['allowClear' => true],
-                        'pluginEvents' => [
-                            'change' => 'function(){ validateAttributeValue($(this))}'
-                        ]
-                    ]);
-                    break;
-                case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
-                    echo Html::checkboxList("Media[attribute_value][{$atts['attr_id']}][]", 
-                            !empty($attrSelected) ? explode('，', $attrSelected[$atts['attr_id']]) : null, 
-                            ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'), 
-                            [
-                                'style' => 'margin-right: -35px;',
-                                'itemOptions'=>[
-                                    'onclick' => 'validateCheckboxList($(this))',
-                                    'labelOptions'=>[
-                                        'style'=>[
-                                            'margin'=>'5px 25px 10px 0px',
-                                            'color' => '#666666',
-                                            'font-weight' => 'normal',
-                                        ]
-                                    ]
-                                ],
+            
+            <div class="col-lg-12 col-md-12 clean-padding">
+                <?php switch ($atts['input_type']){
+                    case MediaAttribute::SINGLE_SELECT_INPUT_TYPE:
+                        echo Select2::widget([
+                            'id' => "media-attribute_value-{$atts['attr_id']}",
+                            'name' => "Media[attribute_value][{$atts['attr_id']}]",
+                            'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
+                            'value' => !empty($attrSelected) ? $attrSelected[$atts['attr_id']] : null, 
+                            'hideSearch' => true,
+                            'options' => [
+                                'class' => 'media-attribute_value',
+                                'placeholder' => Yii::t('app', 'All')
+                            ],
+                            'pluginOptions' => ['allowClear' => true],
+                            'pluginEvents' => [
+                                'change' => 'function(){ validateDepDropdownValue($(this))}'
                             ]
-                        );
-                    break;
-            }?>
+                        ]);
+                        break;
+                    case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
+                        echo Html::checkboxList("Media[attribute_value][{$atts['attr_id']}][]", 
+                                !empty($attrSelected) ? explode('，', $attrSelected[$atts['attr_id']]) : null, 
+                                ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'), 
+                                [
+                                    'id' => "media-attribute_value-{$atts['attr_id']}",
+                                    'class' => 'form-control form-checkbox-control media-attribute_value',
+                                    'style' => 'margin-right: -30px;',
+                                    'itemOptions'=>[
+                                        'onclick' => 'validateCheckboxList($(this))',
+                                        'labelOptions'=>[
+                                            'style'=>[
+                                                'display' => 'inline',
+                                                'margin'=>'5px 20px 10px 0px',
+                                                'color' => '#666666',
+                                                'font-weight' => 'normal',
+                                            ]
+                                        ]
+                                    ],
+                                ]
+                            );
+                        break;
+                }?>
+            </div>    
+
+            <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>
+       
         </div>
-        
-        <div class="col-lg-7 col-md-7">
-            <div class="help-block"></div>
-        </div>
-        
+            
     </div>
 
 <?php endforeach; ?>
 
 <!--标签-->
-<div class="form-group field-media-tag_ids required">
-    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Tag') . '：', 'field-media-tag_ids', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+<div class="form-group field-media-tag_ids <?= isset($isTagRequired) && $isTagRequired ? 'required' : '' ?>">
+    <?= Html::label(
+        (isset($isTagRequired) && $isTagRequired ? '<span class="form-must text-danger">*</span>' : null) . Yii::t('app', 'Tag') . '：', 
+        'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    
     <div class="col-lg-7 col-md-7">
-        <?= Html::textInput('Media[tag_ids]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
-            'id' => 'media-tag_ids', 'class' => 'form-control', 'data-role' => 'tagsinput', 
-//            'placeholder' => '请输入至少5个标签'
-        ]) ?>
+        <div class="col-lg-12 col-md-12 clean-padding">
+            <?= Html::textInput('Media[tag_ids]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
+                'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
+                'onchange' => 'validateTags($(this))'
+            ]) ?>
+        </div>
+        <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>
     </div>
-    <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
+    
 </div>
 
 <script type="text/javascript">
@@ -83,18 +97,26 @@ TagsInputAsset::register($this);
      * @param {Object} _this
      * @returns {undefined}
      */
-    function validateAttributeValue(_this)
+    function validateDepDropdownValue(_this)
     {
         if(!_this.parents('div.form-group').hasClass('required')) return;
         
-        if(_this.val() == ''){
-            var label = _this.parents('div.form-group').find('label.form-label').text();
-            var relabel = label.replace('*', "");
-            _this.parents('div.form-group').addClass('has-error');
-            _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+        var tagName = _this.prop("tagName").toLowerCase();
+        
+        if(tagName == 'select'){
+            
+            if(_this.val() == ''){
+                var label = _this.parents('div.form-group').find('label.form-label').text();
+                var relabel = label.replace('*', "");
+                _this.parents('div.form-group').addClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+            }else{
+                _this.parents('div.form-group').removeClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html('');
+            }
+            
         }else{
-            _this.parents('div.form-group').removeClass('has-error');
-            _this.parents('div.form-group').find('div.help-block').html('');
+            return;
         }
     }
     
@@ -107,52 +129,80 @@ TagsInputAsset::register($this);
     function validateCheckboxList(_this)
     {
         if(!_this.parents('div.form-group').hasClass('required')) return;
-       
-        var name = _this.attr('name');
-        var checkBoxs = $('input[name="'+name+'"]');
-        for(var i in checkBoxs){
-            if(checkBoxs[i].checked){
-               checkBoxVals.push(checkBoxs[i].value);
+        
+        var tagName = _this.prop("tagName").toLowerCase();
+        
+        if(tagName == 'input'){
+            var name = _this.attr('name');
+            var checkBoxs = $('input[name="'+name+'"]');
+            for(var i in checkBoxs){
+                if(checkBoxs[i].checked){
+                   checkBoxVals.push(checkBoxs[i].value);
+                }
             }
-        }
+            
+            if(checkBoxVals.length <= 0 ){
+                var label = _this.parents('div.form-group').find('label.form-label').text();
+                var relabel = label.replace('*', "");
+                _this.parents('div.form-group').addClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+            }else{
+                _this.parents('div.form-group').removeClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html('');
+            }
+
+            checkBoxVals = [];
         
-        if(checkBoxVals.length <= 0 ){
-            var label = _this.parents('div.form-group').find('label.form-label').text();
-            var relabel = label.replace('*', "");
-            _this.parents('div.form-group').addClass('has-error');
-            _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
         }else{
-            _this.parents('div.form-group').removeClass('has-error');
-            _this.parents('div.form-group').find('div.help-block').html('');
+            return;
         }
-        
-        checkBoxVals = [];
     }
         
         
-    /** 验证标签不少于5个 */
+    /**
+     * 验证标签是否有值和标签个数的多少
+     * @param {Object} _this
+     * @returns {undefined}
+     */
     function validateTags(_this)
     {
-        if($('.field-media-tag_ids').find('span.tag').length < 5){
-            $('.field-media-tag_ids').addClass('has-error');
-            $('.field-media-tag_ids .help-block').html('标签个数不能少于5个');
+        if(!_this.parents('div.form-group').hasClass('required')) return;
+        
+        var tagName = _this.prop("tagName").toLowerCase();
+        
+        if(tagName == 'input'){
+        
+            var tags = _this.prev('div.bootstrap-tagsinput').find('span.tag');
+
+            if(tags.length < 5){
+                var label = _this.parents('div.form-group').find('label.form-label').text();
+                var relabel = label.replace('*', "");
+                _this.parents('div.form-group').addClass('has-error');
+                if(tags.length <= 0){
+                    _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+                }else{
+                    _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '个数不能少于5个。');
+                }
+            }else{
+                _this.parents('div.form-group').removeClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html('');
+            }
         }else{
-            $('.field-media-tag_ids').removeClass('has-error');
-            $('.field-media-tag_ids .help-block').html('');
+            return;
         }
     }
-    
-//    $('.bootstrap-tagsinput > input').change(function(){
-//        validateTags();
-//    });  
+  
+    /**
+     * 提交时验证
+     * @returns {undefined}
+     */
+    function submitValidate()
+    {
+        $('div.form-group').find('.media-attribute_value, .media-tag_id').each(function(){
+            validateDepDropdownValue($(this));
+            validateCheckboxList($(this).find('input'));
+            validateTags($(this));
+        });
+    }
   
 </script>
-
-<?php
-$js = <<<JS
-        
-      
-        
-JS;
-    //$this->registerJs($js,  View::POS_READY);
-?>

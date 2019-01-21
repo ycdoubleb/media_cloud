@@ -70,72 +70,68 @@ use yii\widgets\ActiveForm;
             ])) ?>
         </div>
 
-        <div class="col-lg-3 col-md-3">
-            <!--审核状态-->
-            <?= $form->field($model, 'status', [
-                'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">{input}</div>",  
-                'labelOptions' => [
-                    'class' => 'col-lg-3 col-md-3 control-label form-label',
-                ],
-            ])->widget(Select2::class, [
-                'data' => MediaApprove::$statusMap,
-                'hideSearch' => true,
-                'options' => ['placeholder' => Yii::t('app', 'All')],
-                'pluginOptions' => ['allowClear' => true],
-                'pluginEvents' => ['change' => 'function(){ submitForm()}']
-            ])->label(Yii::t('app', '{Auditing}{Status}：', [
-                'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')
-            ])) ?>
-        </div>
-
-        <div class="col-lg-3 col-md-3">
-            <!--审核结果-->
-            <?= $form->field($model, 'result', [
-                'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">{input}</div>",  
-                'labelOptions' => [
-                    'class' => 'col-lg-3 col-md-3 control-label form-label',
-                ],
-            ])->widget(Select2::class, [
-                'data' => MediaApprove::$resultMap,
-                'hideSearch' => true,
-                'options' => ['placeholder' => Yii::t('app', 'All')],
-                'pluginOptions' => ['allowClear' => true],
-                'pluginEvents' => ['change' => 'function(){ submitForm()}']
-            ])->label(Yii::t('app', '{Auditing}{Result}：', [
-                'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
-            ])) ?>
-        </div>
-        
-        <div class="col-lg-3 col-md-3">
-            <!--申请人-->
-            <?= $form->field($model, 'created_by', [
-                'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">{input}</div>",  
-                'labelOptions' => [
-                    'class' => 'col-lg-3 col-md-3 control-label form-label',
-                ],
-            ])->widget(Select2::class, [
-                'data' => $userMap,
-                'hideSearch' => true,
-                'options' => ['placeholder' => Yii::t('app', 'All')],
-                'pluginOptions' => ['allowClear' => true],
-                'pluginEvents' => ['change' => 'function(){ submitForm()}']
-            ])->label(Yii::t('app', 'Applicant') . '：') ?>
-        </div>
-        
-        <div class="col-lg-3 col-md-3">
-            <!--审核人-->
-            <?= $form->field($model, 'handled_by', [
-                'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">{input}</div>",  
-                'labelOptions' => [
-                    'class' => 'col-lg-3 col-md-3 control-label form-label',
-                ],
-            ])->widget(Select2::class, [
-                'data' => $userMap,
-                'hideSearch' => true,
-                'options' => ['placeholder' => Yii::t('app', 'All')],
-                'pluginOptions' => ['allowClear' => true],
-                'pluginEvents' => ['change' => 'function(){ submitForm()}']
-            ])->label(Yii::t('app', 'Verifier') . '：') ?>
+        <!--其他选项-->
+        <div class="form-group field-mediasearch-other_options">
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <div class="col-lg-10 col-md-10">
+                
+                <!--审核状态-->
+                <div id="DepDropdown_purchaser" class="dep-dropdowns">
+                    <?= $form->field($model, 'status', [
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => MediaApprove::$statusMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', '{Auditing}{Status}', [
+                            'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')
+                        ])],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>    
+                
+                <!--审核结果-->
+                <div id="DepDropdown_purchaser" class="dep-dropdowns">
+                    <?= $form->field($model, 'result', [
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => MediaApprove::$statusMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', '{Auditing}{Result}', [
+                            'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                        ])],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>    
+                
+                <!--申请人-->
+                <div id="DepDropdown_purchaser" class="dep-dropdowns">
+                   <?= $form->field($model, 'created_by',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => $userMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Applicant')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>
+                
+                <!--审核人-->
+                <div id="DepDropdown-handled_by" class="dep-dropdowns">
+                    <?= $form->field($model, 'handled_by',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => $userMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Verifier')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>
+                
+            </div>
         </div>
         
     </div>

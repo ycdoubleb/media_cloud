@@ -14,7 +14,11 @@ use yii\widgets\ActiveForm;
 
 <!--存储目录-->
 <?= $form->field($model, 'dir_id', [
-    'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>",
+    'template' => "{label}\n"
+        . "<div class=\"col-lg-7 col-md-7\">"
+            . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+            . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+        . "</div>", 
 ])->widget(DepDropdown::class,[
     'pluginOptions' => [
         'url' => Url::to(['/media_config/dir/search-children']),
@@ -25,21 +29,21 @@ use yii\widgets\ActiveForm;
     'itemOptions' => [
         'style' => 'width: 175px; display: inline-block;',
     ],
-])->label(Yii::t('app', '{Storage}{Dir}：', [
+])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Storage}{Dir}：', [
     'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
 ])) ?>
 
 <!--媒体名称-->
 <?= $form->field($model, 'name')->textInput([
     'placeholder' => '请输入媒体名称', 'maxlength' => true
-])->label(Yii::t('app', '{Media}{Name}：', [
+])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Name}：', [
     'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
 ])) ?>
 
 <!--媒体价格-->
 <?= $form->field($model, 'price')->textInput([
     'placeholder' => '请输入媒体价格', 'maxlength' => true, 'type' => 'number'
-])->label(Yii::t('app', '{Media}{Price}：', [
+])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Price}：', [
     'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
 ])) ?>
 

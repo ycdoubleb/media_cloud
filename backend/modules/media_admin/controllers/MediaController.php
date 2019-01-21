@@ -107,6 +107,7 @@ class MediaController extends Controller
             'created_by' => Yii::$app->user->id
         ]);
         $model->loadDefaultValues();
+        $model->scenario = Media::SCENARIO_CREATE;
         $post = Yii::$app->request->post();
         
         if ($model->load($post)) {
@@ -141,11 +142,8 @@ class MediaController extends Controller
                     if(!$tags) MediaTagRef::saveMediaTagRef($model->id, $tags);
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
-                    /** 保存水印图： 1媒体类型是视频,2自动转码 */
-                    if($model->mediaType->sign == MediaType::SIGN_VIDEO && $mts_need){
-                        // 保存媒体详情
-                        MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
-                    }
+                    // 保存媒体详情
+                    MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }
@@ -163,6 +161,7 @@ class MediaController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'isTagRequired' => false,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
             'wateFiles' => Watermark::getEnabledWatermarks(),
@@ -180,6 +179,7 @@ class MediaController extends Controller
     {
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
+        $model->scenario = Media::SCENARIO_UPDATE;
         
         if ($model->load($post)) {
             /** 开启事务 */
@@ -206,8 +206,9 @@ class MediaController extends Controller
                     // 保存媒体详情
                     MediaDetail::savaMediaDetail($model->id, ['content' => $content]);
                     // 保存操作记录
-                    MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
-                        $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                    if(!empty(array_filter($dataProvider))){
+                        MediaAction::savaMediaAction($model->id,  $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                    }
                 }
                 
                 if($is_submit){
@@ -237,6 +238,7 @@ class MediaController extends Controller
     {
         return $this->renderAjax('____edit_attribute', [
             'ids' => explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id')),    // 所有媒体id
+            'isTagRequired' => false,  // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
     }
@@ -278,6 +280,7 @@ class MediaController extends Controller
             
         return $this->renderAjax('____edit_attribute', [
             'ids' => explode(',', $id),
+            'isTagRequired' => true,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
             'tagsSelected' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
@@ -292,7 +295,7 @@ class MediaController extends Controller
      */
     public function actionAnewUpload($id)
     {
-        $model = $this->findModel($id);       
+        $model = $this->findModel($id);      
         
         if ($model->load(Yii::$app->request->post())) {
             /** 开启事务 */
@@ -313,8 +316,9 @@ class MediaController extends Controller
                 if($model->validate() && $model->save()){
                     $is_submit = true;
                     // 保存操作记录
-                    MediaAction::savaMediaAction($model->id,  empty(array_filter($dataProvider)) ? '无' :  
-                        $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                    if(!empty(array_filter($dataProvider))){
+                        MediaAction::savaMediaAction($model->id, $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                    }
                 }
                 
                 if($is_submit){
@@ -348,11 +352,11 @@ class MediaController extends Controller
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
         
-        if ($model->load($post)) {
+        if (Yii::$app->request->isPost) {
             try
             {
                 // 水印id
-                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids'));
+                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids', []));
                 // 保存媒体详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码

@@ -31,14 +31,14 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                 // 代付款或审核失败
                 if($model->order_status == 0 || $model->order_status == Order::ORDER_STATUS_AUDIT_FAILURE){
                     echo Html::a('立即付款', ['cart/payment-method', 'id' => $model->id], [
-                        'class' => 'btn btn-highlight btn-flat', 
+                        'class' => 'btn btn-highlight btn-flat-lg', 
                         'onclick' => 'showModal($(this).attr("href"));return false;'
                     ]).' ';
-                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat', 'target' => '_blank']);     
+                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat-lg', 'target' => '_blank']);     
                 }
                 // 审核通过
                 if($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED){
-                    echo Html::a('确认开通', ['confirm', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat', 'target' => '_blank']); 
+                    echo Html::a('确认开通', ['confirm', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat-lg', 'target' => '_blank']); 
                 }
             ?>
         </div>
@@ -61,7 +61,8 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                     || $model->order_status == Order::ORDER_STATUS_CONFIRMED) ? date('Y-m-d H:i', $model->play_at) : '';?>
         </div>
         <!--箭头 付款成功后变绿-->
-        <img src="/imgs/site/seg_<?= $model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED ? 'green' : 'default';?>.png">
+        <img src="/imgs/site/seg_<?= ($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED 
+                    || $model->order_status == Order::ORDER_STATUS_CONFIRMED) ? 'green' : 'default';?>.png">
         <!--确认开通后变绿-->
         <div class="confirm-open progress-block <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'active' : '';?>">
             确认开通<br>

@@ -254,16 +254,22 @@ a.desc:after {
     line-height: 23px;
     padding: 2px 10px;
 }
-/* 扁平 */
-.btn-flat{
-    line-height: 27px;
-    padding: 5px 23px;
-}
-/* 更扁平 */
+/* 小扁平 */
 .btn-flat-sm{
     line-height: 22px;
     padding: 3px 23px;
 }
+/* 正常扁平 */
+.btn-flat{
+    line-height: 24px;
+    padding: 5px 12px;
+}
+/* 大扁平 */
+.btn-flat-lg{
+    line-height: 27px;
+    padding: 5px 23px;
+}
+
 /* 危险 */
 .btn-highlight { 
     color: #fff; 

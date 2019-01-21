@@ -136,6 +136,9 @@ textarea {
     display: block;
     width: 100%;
     background-color: transparent;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
 }
 
 .mc-modal .modal-content {
@@ -277,7 +280,7 @@ textarea {
 
 .bar-step #progressbar li {
     list-style-type: none;
-    color: #333;
+    color: #999999;
     text-transform: uppercase;
     font-size: 14px;
     width: 24.9%;
@@ -293,8 +296,8 @@ textarea {
     line-height: 26px;
     display: block;
     font-size: 10px;
-    color: #333;
-    background: #eee;
+    color: #ffffff;
+    background-color: #999999;
     border-radius: 50%;
     margin: 0 auto 5px auto;
 }
@@ -304,7 +307,7 @@ textarea {
     content: '';
     width: 88%;
     height: 4px;
-    background-color: #eee;
+    background-color: #999999;
     position: absolute;
     left: -42%;
     top: 11px;

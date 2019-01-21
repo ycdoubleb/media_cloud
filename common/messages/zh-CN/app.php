@@ -361,6 +361,8 @@ return [
     'Exec Memory' => '执行内存',
     'Exec Time' => '执行时间',
     
+    //后台-统计
+    'Total Statistics' => '总统计',
     
     //后台-帮助中心
     'App' => '应用',

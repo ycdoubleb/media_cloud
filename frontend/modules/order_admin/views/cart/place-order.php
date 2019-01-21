@@ -47,12 +47,12 @@ ModuleAssets::register($this);
                     <div class="pull-right">
                         <?php
                         echo Html::a('立即付款', ['payment-method', 'id' => $model->id], [
-                            'class' => 'btn btn-highlight btn-flat', 'title' => '立即付款',
+                            'class' => 'btn btn-highlight btn-flat-lg', 'title' => '立即付款',
                             'onclick' => 'showModal($(this).attr("href"));return false;'
                         ]) . '&nbsp;&nbsp;';
                         echo Html::a('查看订单', ['order/view', 'id' => $model->id], [
                             'target' => '_black',
-                            'class' => 'btn btn-default btn-flat', 'title' => '查看订单'
+                            'class' => 'btn btn-default btn-flat-lg', 'title' => '查看订单'
                         ]);?>
                     </div>
                 </div>
@@ -62,7 +62,7 @@ ModuleAssets::register($this);
 
     <!--订单信息-->
     <div class="container content">
-        <div class="checking-order common">
+        <div class="checking-order order-success common">
             <div class="mc-tabs">
                 <ul class="list-unstyled">
                     <li class="active">

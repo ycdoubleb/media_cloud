@@ -33,7 +33,7 @@ $tabs = ArrayHelper::getValue($filters, 'tabs', 'order_info');  //显示内容
     </div>
     
     <!--内容显示-->
-    <div class="cart-view">
+    <div class="simple-view">
         <!--订单信息-->
         <div class="container content">
             <div class="checking-order common">

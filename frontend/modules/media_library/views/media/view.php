@@ -26,10 +26,10 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
         <div class="container">
             <div class="media-title">     
                 <span class="media-name"><?= $model->name;?></span>
-                <span class="media-tags"><?= implode('，', $tagsDataProvider) ?></span>
+                <span class="media-tags multi-line-clamp"><?= $tagsInfo; ?></span>
             </div>
             <div class="operation">
-                <div class="btngroup pull-left">
+                <div class="btngroup panel-left">
                     <?php
                         $class = $hasFavorite ? 'fav-red' : '';
                         $title = $hasFavorite ? '取消收藏' : '加入收藏';
@@ -43,13 +43,14 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                         ]);
                     ?>
                 </div>
-                <div class="btngroup pull-right">
+                <div class="btngroup panel-right">
                     <?php
                         echo Html::a('加入购物车', ['add-cart', 'id' => $model->id], [
-                            'class' => 'btn btn-highlight btn-flat', 'title' => '加入购物车'
-                        ]) . '&nbsp;';
+                            'class' => 'btn btn-highlight btn-flat-lg', 'title' => '加入购物车'
+                        ]);
                         echo Html::a('立即购买', ['checking-order', 'id' => $model->id], [
-                            'class' => 'btn btn-highlight btn-flat', 'title' => '立即购买'
+                            'style' => 'margin-right:0px;',
+                            'class' => 'btn btn-highlight btn-flat-lg', 'title' => '立即购买'
                         ]);
                     ?>
                 </div>
@@ -77,74 +78,20 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
             <!--详细信息-->
             <div class="mc-panel set-bottom">
                 <div class="resource-list">
-                    <!--左边显示-->
-                    <div class="panel-left">
-                        <?= DetailView::widget([
-                            'model' => $model,
-                            'options' => ['class' => 'table detail-view mc-table'],
-                            'template' => '<tr><th class="detail-th">{label}</th><td class="detail-td">{value}</td></tr>',
-                            'attributes' => [
-                                [
-                                    'attribute' => 'id',
-                                    'label' => Yii::t('app', 'Media Sn')
-                                ],
-                                [
-                                    'attribute' => 'type_id',
-                                    'label' => Yii::t('app', '{Media}{Type}',[
-                                        'Media' => Yii::t('app', 'Media'),
-                                        'Type' => Yii::t('app', 'Type'),
-                                    ]),
-                                    'value' => function($model){
-                                        return !empty($model->type_id) ? $model->mediaType->name : null;
-                                    },
-                                ],
-                                [
-                                    'attribute' => 'name',
-                                    'label' => Yii::t('app', '{Media}{Name}',[
-                                        'Media' => Yii::t('app', 'Media'),
-                                        'Name' => Yii::t('app', 'Name'),
-                                    ])
-                                ],
-                                [
-                                    'attribute' => 'price',
-                                ],
-                                [
-                                    'attribute' => 'duration',
-                                    'label' => Yii::t('app', 'Duration'),
-                                    'value' => function($model){
-                                        return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
-                                    },
-                                ],
-                                [
-                                    'attribute' => 'size',
-                                    'value' => function($model) {
-                                        return Yii::$app->formatter->asShortSize($model->size);
-                                    }
-                                ],
-                            ],
-                        ]);?>
-                    </div>
-                    <!--右边显示-->
-                    <div class="panel-right">
-                        <table id="w0" class="table detail-view mc-table">
+                    <table id="w0" class="table detail-view mc-table">
                         <tbody>
-                            <?php foreach ($attrDataProvider as $data): ?>
+                            <?php for($i=0; $i< count($datas)-1; $i += 2): ?>
+                                <tr>
+                                    <th class="detail-th"><?= $datas[$i]['label'] ?></th><td class="detail-td"><?= $datas[$i]['value'];?></td>
+                                    <th class="detail-th"><?= $datas[$i+1]['label'] ?></th><td class="detail-td"><?= $datas[$i+1]['value'];?></td>
+                                </tr>
+                            <?php endfor;?>
+                            
                             <tr>
-                                <th class="detail-th"><?= $data['attr_name'] ?></th>
-                                <td class="detail-td"><?= $data['attr_value'] ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <tr>
-                                <th class="detail-th">
-                                    <?= Yii::t('app', '{Media}{Tag}', [
-                                        'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
-                                    ]) ?>
-                                </th>
-                                <td class="detail-td"><?= implode('，', $tagsDataProvider) ?></td>
+                                <th class="detail-th">标签</th><td class="detail-td" colspan="3"><?= $tagsInfo;?></td>
                             </tr>
                         </tbody>
-                        </table>
-                    </div>
+                    </table>
                 </div>
                 <!--媒体预览-->
                 <div class="resource-show">

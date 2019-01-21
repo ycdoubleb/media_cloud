@@ -71,10 +71,16 @@ class ExportUtils
             ->setDescription('Test document for Office 2007 XLSX, generated using PHP classes.')
             ->setKeywords('office 2007 openxml php')
             ->setCategory('Test result file');
-        // 设置上下居中
+        // 设置上下左右居中
         $allCenter = [
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        // 设置上下居中
+        $verticalCenter = [
+            'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
         ];
@@ -98,14 +104,15 @@ class ExportUtils
         // 首行标题
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '媒体资源内部结算审批表');
         $spreadsheet->getActiveSheet()->mergeCells('A1:E1');    //合并单元格
-        $spreadsheet->getActiveSheet()->getStyle('A1:E1')->applyFromArray($allCenter); //设置上下居中
+        $spreadsheet->getActiveSheet()->getStyle('A1:E1')->applyFromArray($allCenter);  //设置上下左右居中
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(1)->setRowHeight(80);     //设置行高
         $spreadsheet->getActiveSheet()->getStyle('A1:E1')->getFont()->setBold(true)->setName('Arial')->setSize(16);
         // 次行日期 金额
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '申报日期：          年       月       日')
                 ->setCellValue('D2', '金额：')->setCellValue('E2', $order_info['order_amount'] . '元');
         $spreadsheet->getActiveSheet()->mergeCells('A2:C2');    //合并单元格
-        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(2)->setRowHeight(20);     //设置行高
+        $spreadsheet->getActiveSheet()->getStyle('A2:E2')->applyFromArray($verticalCenter); //设置上下居中
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(2)->setRowHeight(20);         //设置行高
         // 第3-4行
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '申报部门')->setCellValue('B3', $order_info['user_department'])
                 ->setCellValue('D3', '订单编号')->setCellValue('E3', $order_info['order_sn']);
@@ -127,7 +134,7 @@ class ExportUtils
         // 第7行
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体资源用途')
             ->setCellValue('B7', "\n请填写媒体资源使用的用途（用在哪个项目、课程）");
-        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(7)->setRowHeight(240);     //设置行高
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(7)->setRowHeight(320);     //设置行高
         $spreadsheet->getActiveSheet()->mergeCells('B7:E7');
         $spreadsheet->getActiveSheet()->getStyle('B7:E7')->getFont()->getColor()->setARGB('FF999999');
         // 第8行
@@ -238,48 +245,78 @@ class ExportUtils
             ->setDescription('Test document for Office 2007 XLSX, generated using PHP classes.')
             ->setKeywords('office 2007 openxml php')
             ->setCategory('Test result file');
-        // 设置上下居中
-        $styleArray = [
+        // 设置上下左右居中
+        $allCenter = [
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        // 设置上下居中
+        $verticalCenter = [
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+        // 设置边框
+        $borderStyle = [
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF999999'],
+                ],
             ],
         ];
        
         // 首行标题
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '订单媒体清单');
         $spreadsheet->getActiveSheet()->mergeCells('A1:G1');    //合并单元格
-        $spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray); //设置上下居中
+        $spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($allCenter);  //设置上下左右居中
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(1)->setRowHeight(60);     //设置行高
         $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true)->setName('Arial')->setSize(16);
         
         // 订单信息总览
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '订单编号：')->setCellValue('B2', $order_info['order_sn']);
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '订单编号')->setCellValue('B2', $order_info['order_sn']);
         $spreadsheet->getActiveSheet()->mergeCells('B2:G2');    //合并单元格
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '订单名称：')->setCellValue('B3', $order_info['order_name']);
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '订单名称')->setCellValue('B3', $order_info['order_name']);
         $spreadsheet->getActiveSheet()->mergeCells('B3:G3');
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A4', '购买人：')->setCellValue('B4', $order_info['created_by']);
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A4', '购买人')->setCellValue('B4', $order_info['created_by']);
         $spreadsheet->getActiveSheet()->mergeCells('B4:G4'); 
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '下单时间：')->setCellValue('B5', $order_info['created_at']);
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '下单时间')->setCellValue('B5', $order_info['created_at']);
         $spreadsheet->getActiveSheet()->mergeCells('B5:G5');
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '媒体总数：')->setCellValue('B6', $order_info['goods_num'] . '个');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '媒体总数')->setCellValue('B6', $order_info['goods_num'] . '个');
         $spreadsheet->getActiveSheet()->mergeCells('B6:G6');
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体总价：')->setCellValue('B7', $order_info['order_amount'] . '元');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体总价')->setCellValue('B7', $order_info['order_amount'] . '元');
         $spreadsheet->getActiveSheet()->mergeCells('B7:G7');
+        $start = 2;
+        for($start; $start <= 7; $start++){
+            $spreadsheet->getActiveSheet()->getStyle("A$start")->getFont()->setBold(true);      //设置字体加粗
+            $spreadsheet->getActiveSheet()->getStyle("A$start:G$start")->applyFromArray($verticalCenter);  //设置上下居中
+            $spreadsheet->setActiveSheetIndex(0)->getRowDimension($start)->setRowHeight(20);    //设置行高
+            $spreadsheet->getActiveSheet()->getStyle("A$start")->applyFromArray($borderStyle);  //设置边框
+            $spreadsheet->getActiveSheet()->getStyle("B$start:G$start")->applyFromArray($borderStyle);
+        }
         
         // 订单商品列表头
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '媒体编号')->setCellValue('B8', '媒体名称')
                 ->setCellValue('C8', '媒体类型')->setCellValue('D8', '媒体价格')->setCellValue('E8', '媒体时长')
                 ->setCellValue('F8', '媒体大小')->setCellValue('G8', '媒体数量');
-        $spreadsheet->getActiveSheet()->getStyle('A8:G8')->applyFromArray($styleArray);
+        $spreadsheet->getActiveSheet()->getStyle('A8:G8')->applyFromArray($allCenter);
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(8)->setRowHeight(28);
         // 订单商品列表
         $startRow = 9;
         foreach ($goodsDatas as $key => $goodsData) {
             $columnIndex = 1;
             $row = $key+$startRow;
-            $spreadsheet->setActiveSheetIndex(0)->getRowDimension($row)->setRowHeight(60);    //设置行高
-            $spreadsheet->getActiveSheet()->getStyle("A$row:G$row")->applyFromArray($styleArray);    //设置上下居中
+            $spreadsheet->setActiveSheetIndex(0)->getRowDimension($row)->setRowHeight(60);      //设置行高
+            $spreadsheet->getActiveSheet()->getStyle("A$row:G$row")->applyFromArray($allCenter);//设置上下左右居中
+            $spreadsheet->getActiveSheet()->getStyle("A$row")->applyFromArray($borderStyle);  //设置边框
+            $spreadsheet->getActiveSheet()->getStyle("B$row")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("C$row")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("D$row")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("E$row")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("F$row")->applyFromArray($borderStyle);
+            $spreadsheet->getActiveSheet()->getStyle("G$row")->applyFromArray($borderStyle);
             $spreadsheet->setActiveSheetIndex(0)
                     ->setCellValueByColumnAndRow($columnIndex, $row, $goodsData['goods_id'])
                     ->setCellValueByColumnAndRow(++$columnIndex, $row, $goodsData['media_name'])
@@ -291,7 +328,7 @@ class ExportUtils
         }
         
         //设置列宽
-        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(18);
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(12);
         $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(58);
         $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(10);
         $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);

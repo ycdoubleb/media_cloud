@@ -17,11 +17,15 @@ and open the template in the editor.
     top: 3px;
     text-align: center;
     color: #999;
+    border: 1px solid #e4e4e4;
 }
 
 .content .media-index .mc-title .active .glyphicon {
-    background-color: #f9f9f9;
-    border: 1px solid #e4e4e4;
+    background-color: #f2f2f2;
+}
+
+.content .media-index .mc-title .glyphicon-th-large{
+    border-left: transparent;
 }
 
 /*******************************************************************************
@@ -29,16 +33,51 @@ and open the template in the editor.
  *******************************************************************************/
 .header .mc-form {
     display: block;
-    border-bottom: none
+    border-bottom: none;
+    margin-bottom: 0px;
 }
 .media-form .search-panel {
     padding: 35px 0px; 
+}
+
+.media-form .search-icon {
+    width: 40px;
+    height: 40px;
+    float: right;
+    text-align: center;
+    color: #cccccc;
+    padding-top: 11px;
+    position: absolute;
+    bottom: 0px;
+    right: 15px;
+    z-index: 2;
+    cursor: pointer;
 }
 
 .media-form .search-panel .dep-dropdown {
     display: inline-block;
     width: 118px;
     margin-right: 5px;
+}
+
+.media-index .mc-title .result-num {
+    display: inline-block;
+}
+
+.media-index .mc-title .result-num span {
+    font-size: 13px;
+    color: #999999;
+}
+
+/*更改表格样式*/
+.media-index .mc-table > tbody > tr:hover {
+    background-color: #f2f2f2 !important;
+}
+
+.media-index .mc-table > tbody > tr > th,
+.media-index  .mc-table > tbody > tr > td {
+    font-size: 12px !important;
+    height: 90px !important;
 }
 
 .common .mc-panel {
@@ -67,6 +106,14 @@ and open the template in the editor.
     -webkit-transform: translate3d(0, -2px, 0);
     -moz-transform: translate3d(0, -2px, 0);
     transform: translate3d(0, -2px, 0);
+}
+
+.common .mc-panel .checkdiv {
+    width: 26px;
+    height: 26px;
+    display: inline-block;
+    position: absolute;
+    z-index: 1;
 }
 
 .common .mc-panel .checkbox{
@@ -135,8 +182,8 @@ and open the template in the editor.
 
 .media-view .mc-panel .resource-list {
     width: 100%;
-    height: 290px;
-    margin-bottom: 50px;
+    height: 100%;
+    margin-bottom: 80px;
 }
 
 .media-view .mc-panel .table {
@@ -145,7 +192,7 @@ and open the template in the editor.
 
 .resource-list .panel-left {
     width: 50%;
-    float: left;
+    display: inline-block;
 }
 
 .resource-list .panel-right {

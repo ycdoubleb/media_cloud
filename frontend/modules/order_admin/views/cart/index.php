@@ -33,7 +33,7 @@ $this->title = Yii::t('app', 'Cart');
         <div class="favorites-table">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'tableOptions' => ['class' => 'table table-bordered mc-table'],
+                'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
                 'layout' => "{items}\n{pager}\n{summary}",
                 'rowOptions'=>function($searchModel){
                     return ['id' => "tr-".$searchModel['media_id'], 'data-value' => $searchModel['media_id']];
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Cart');
                         'attribute' => 'media_id',
                         'label' => Yii::t('app', 'Media Sn'),
                         'headerOptions' => [
-                            'style' => 'width: 120px',
+                            'style' => 'width: 80px',
                         ],
                     ],
                     [
@@ -77,6 +77,10 @@ $this->title = Yii::t('app', 'Cart');
                             'Media' => Yii::t('app', 'Media'),
                             'Name' => Yii::t('app', 'Name')
                         ]),
+                        'format' => 'raw',
+                        'value' => function($data){
+                            return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">'.$data['media_name'].'</span>';
+                        }
                     ],
                     [
                         'attribute' => 'type_name',
@@ -92,7 +96,7 @@ $this->title = Yii::t('app', 'Cart');
                             'Price' => Yii::t('app', 'Price')
                         ]),
                         'headerOptions' => [
-                            'style' => 'width: 100px',
+                            'style' => 'width: 80px',
                         ],
                         'value' => function($data) {
                             return '￥'. $data['price'];
@@ -109,7 +113,7 @@ $this->title = Yii::t('app', 'Cart');
                         'attribute' => 'duration',
                         'label' => Yii::t('app', 'Duration'),
                         'headerOptions' => [
-                            'style' => 'width: 90px',
+                            'style' => 'width: 80px',
                         ],
                         'value' => function($data) {
                             return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -119,7 +123,7 @@ $this->title = Yii::t('app', 'Cart');
                         'attribute' => 'size',
                         'label' => Yii::t('app', 'Size'),
                         'headerOptions' => [
-                            'style' => 'width: 100px',
+                            'style' => 'width: 90px',
                         ],
                         'value' => function($data) {
                             return Yii::$app->formatter->asShortSize($data['size']);
@@ -132,7 +136,7 @@ $this->title = Yii::t('app', 'Cart');
                             'Time' => Yii::t('app', 'Time')
                         ]),
                         'headerOptions' => [
-                            'style' => 'width: 100px',
+                            'style' => 'width: 90px',
                         ],
                         'value' => function ($data) {
                            return date('Y-m-d H:i', $data['created_at']); 
@@ -180,6 +184,7 @@ $js = <<<JS
     $("#change-all").click(function(){
         var checked = this.checked;
         $.post('/order_admin/cart/change-all', {checked}, function(rel){
+            location.reload();  //刷新页面
             if(rel['code'] == '0'){
                 $('input[name="selection[]"]').each(function(){
                     $(this).prop("checked", rel['data']);
@@ -200,6 +205,7 @@ $js = <<<JS
     $(".change-one").click(function(){
         var id = this.value;
         $.post('/order_admin/cart/change-one', {id}, function(rel){
+            location.reload();  //刷新页面
             if(rel['code'] == '0'){
                 $('input[name="selection_all"]').prop("checked", rel['data']);
             }else{

@@ -93,7 +93,7 @@ ModuleAssets::register($this);
                 <div class="meida-table">
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        'tableOptions' => ['class' => 'table table-bordered mc-table'],
+                        'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
                         'layout' => "{items}\n{pager}",
                         'columns' => [
                             [
@@ -106,7 +106,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'media_id',
                                 'label' => Yii::t('app', 'Media Sn'),
                                 'headerOptions' => [
-                                    'style' => 'width: 120px',
+                                    'style' => 'width: 80px',
                                 ],
                             ],
                             [
@@ -115,10 +115,10 @@ ModuleAssets::register($this);
                                 'format' => 'raw',
                                 'value' => function($data){
                                     return '<img src="'.Aliyun::absolutePath(!empty($data['cover_url']) ? 
-                                            $data['cover_url'] : 'static/imgs/notfound.png').'" style="width: 70px"/>';
+                                            $data['cover_url'] : 'static/imgs/notfound.png').'" style="height: 48px"/>';
                                 },
                                 'headerOptions' => [
-                                    'style' => 'width: 80px',
+                                    'style' => 'width: 100px',
                                 ],
                             ],
                             [
@@ -127,6 +127,10 @@ ModuleAssets::register($this);
                                     'Media' => Yii::t('app', 'Media'),
                                     'Name' => Yii::t('app', 'Name')
                                 ]),
+                                'format' => 'raw',
+                                'value' => function($data){
+                                    return '<span class="multi-line-clamp">'.$data['media_name'].'</span>';
+                                }
                             ],
                             [
                                 'attribute' => 'type_name',
@@ -139,7 +143,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'duration',
                                 'label' => Yii::t('app', 'Duration'),
                                 'headerOptions' => [
-                                    'style' => 'width: 90px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
@@ -149,7 +153,7 @@ ModuleAssets::register($this);
                                 'attribute' => 'size',
                                 'label' => Yii::t('app', 'Size'),
                                 'headerOptions' => [
-                                    'style' => 'width: 100px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return Yii::$app->formatter->asShortSize($data['size']);
@@ -162,7 +166,7 @@ ModuleAssets::register($this);
                                     'Price' => Yii::t('app', 'Price')
                                 ]),
                                 'headerOptions' => [
-                                    'style' => 'width: 100px',
+                                    'style' => 'width: 80px',
                                 ],
                                 'value' => function($data) {
                                     return '￥'. $data['price'];
@@ -224,7 +228,7 @@ ModuleAssets::register($this);
             <div class="pull-right">
                 <?= Html::a('提交订单', 'javascript:;', [
                     'id' => 'place_order',
-                    'class' => 'btn btn-highlight btn-flat', 'title' => '提交订单']);
+                    'class' => 'btn btn-highlight btn-flat-lg', 'title' => '提交订单']);
                 ?>
             </div>
         </div>

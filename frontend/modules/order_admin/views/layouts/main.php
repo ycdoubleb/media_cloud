@@ -52,13 +52,13 @@ $menuItems = [
         ],
         [
             'module' => 'order_admin',
-            'controller' => 'resources',
+            'controller' => 'medias',
             'action' => 'index',
             'label' => Yii::t('app', '{My}{Media}', [
                 'My' => Yii::t('app', 'My'),
                 'Media' => Yii::t('app', 'Media'),
             ]),
-            'url' => ['/order_admin/resources/index'],
+            'url' => ['/order_admin/medias/index'],
             'icons' => null, 
             'condition' => true,
             'options' => ['class' => "links"]
@@ -92,7 +92,7 @@ $menuItems = [
     ]
 ];
 end($menuItems['admin']);   //数组中的最后一个元素的值
-$lastIndex = key($menuItems['admin']);  //获取数组最后一个的index
+
 //循环组装子菜单导航
 foreach ($menuItems as $index => $items) {
     foreach ($items as $key => $value) {
@@ -100,7 +100,7 @@ foreach ($menuItems as $index => $items) {
             && ($value['controller'] == $controllerId 
                || (is_array($value['controller']) ? in_array($controllerId, $value['controller']) : false));
         if($value['condition']){
-            $menuHtml[$index][] = ($is_select ? '<li class="active"><div class="white"></div>' : ($lastIndex == $key ? '<li class="remove">' : '<li class="">')).
+            $menuHtml[$index][] = ($is_select ? '<li class="active"><div class="white"></div>' : '<li class="">').
                 Html::a($value['icons'] . $value['label'], $value['url'], $value['options']).'</li>';
         }
     }

@@ -9,9 +9,9 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 
 /**
- * Resources controller for the `order_admin` module
+ * Medias controller for the `order_admin` module
  */
-class ResourcesController extends Controller
+class MediasController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class ResourcesController extends Controller
     public function actionIndex()
     {
         $searchModel = new OrderSearch();
-        $dataProvider = $searchModel->searchResources(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchMedias(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,

@@ -33,15 +33,15 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
         <div class="media-index common">
             <!--按钮-->
             <div class="mc-title clear-margin">
-                <span>结果列表（共查询到 <?= $totalCount; ?> 个媒体）</span>
+                <div class="result-num">结果列表（<span>共查询到 <?= $totalCount; ?> 个媒体</span>）</div>
                 <div class="btngroup pull-right">
                     <?php
                         echo Html::a('加入购物车', 'javascript:;', ['id' => 'add-carts',
                             'data-url' => Url::to(['add-carts']),
-                            'class' => 'btn btn-highlight btn-flat', 'title' => '加入购物车']) . '&nbsp;';
+                            'class' => 'btn btn-highlight btn-flat-lg', 'title' => '加入购物车']);
                         echo Html::a('立即购买', 'javascript:;', ['id' => 'buys',
                             'data-url' => Url::to(['checking-order']),
-                            'class' => 'btn btn-highlight btn-flat', 'title' => '立即购买']) . '&nbsp;';
+                            'class' => 'btn btn-highlight btn-flat-lg', 'title' => '立即购买']);
                         echo Html::a('<i class="glyphicon glyphicon-th-list"></i>', 
                             array_merge(['index'], array_merge($filters, ['pages' => 'list'])),
                                 ['id' => 'list', 'title' => '列表显示']);
@@ -56,18 +56,18 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
                 <?php if ($pages == 'list') {?>
                     <!--列表显示-->
                     <div class="meida-table">
-                        <table class="table table-bordered mc-table">
+                        <table class="table table-bordered table-striped mc-table">
                             <thead>
                                 <tr>
                                     <th style="width: 30px"><input type="checkbox" class="select-on-check-all" name="selection_all" value="1"></th>
-                                    <th style="width: 80px">预览</th>
-                                    <th>媒体编号</th>
-                                    <th>媒体名称</th>
-                                    <th>存储目录</th>
+                                    <th style="width: 90px">预览</th>
+                                    <th style="width: 75px">媒体编号</th>
+                                    <th style="width: 160px">媒体名称</th>
+                                    <th style="width: 160px">存储目录</th>
                                     <th style="width: 50px">类型</th>
-                                    <th>媒体价格</th>
-                                    <th style="width: 90px">时长</th>
-                                    <th style="width: 100px">大小</th>
+                                    <th style="width: 75px">媒体价格</th>
+                                    <th style="width: 65px">时长</th>
+                                    <th style="width: 75px">大小</th>
                                     <th>标签</th>
                                     <th style="width: 75px">操作</th>
                                 </tr>
@@ -162,8 +162,17 @@ $js = <<<JS
                                 $(this).find(".checkbox").addClass('hidden');
                             }
                         });
+                        //图表显示时
+                        item.find('.checkdiv').click(function(){
+                            if($(this).find(".checkbox").is(':checked')){
+                                $(this).find(".checkbox").prop("checked",false);
+                            }else{
+                                $(this).find(".checkbox").prop("checked",true);
+                            }
+                        });
                         //点击复选框事件
-                        item.find('input[name="selection[]"]').click(function(){
+                        item.find('input[name="selection[]"]').click(function(evt){
+                            evt.stopPropagation();  //阻止事件传递
                             var selected = 0;
                                 checkboxs = $('input[name="selection[]"]'),
                                 total = checkboxs.length;   //复选框总数
@@ -226,25 +235,26 @@ $js = <<<JS
         }
         var url=$(this).attr('data-url');
         $.post(url, {ids}, function(rel){
+            location.reload();  //刷新页面
             // 把复选框全取消
-            $('input[name="selection_all"]').prop("checked",false);
-            $('input[name="selection[]"]').each(function(){
-                $(this).prop("checked",false);
-            });
-            if(rel['code'] == '0'){
-                $.notify({
-                    message: '成功加入购物车' 
-                },{
-                    type: 'success'
-                });
-                location.reload();  //刷新页面
-            }else{
-                $.notify({
-                    message: rel['msg'] 
-                },{
-                    type: 'danger'
-                });
-            }
+//            $('input[name="selection_all"]').prop("checked",false);
+//            $('input[name="selection[]"]').each(function(){
+//                $(this).prop("checked",false);
+//            });
+//            if(rel['code'] == '0'){
+//                $.notify({
+//                    message: '成功加入购物车' 
+//                },{
+//                    type: 'success'
+//                });
+//                
+//            }else{
+//                $.notify({
+//                    message: rel['msg'] 
+//                },{
+//                    type: 'danger'
+//                });
+//            }
         });
     });
         

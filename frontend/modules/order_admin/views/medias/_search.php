@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
                     ])->label('');?>
                 </div>
                 <div class="col-log-2 col-md-2 form-group">
-                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat']) ?>
+                    <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default btn-flat-lg']) ?>
                 </div>
             </div>
             <div class="col-log-6 col-md-6"></div>

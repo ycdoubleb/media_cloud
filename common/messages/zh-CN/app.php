@@ -351,6 +351,7 @@ return [
     'Visit' => '访问',
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
+    'Media Operate' => '媒体运营',
     
     //后台-定时任务
     'Crontab' => '定时任务',

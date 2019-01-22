@@ -3,8 +3,10 @@
 namespace common\models\order;
 
 use common\models\api\ApiResponse;
+use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 
@@ -20,6 +22,9 @@ use yii\db\Exception;
  * @property string $created_by 操作人id（0为用户操作）,关联admin_user表id字段
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property Order $order
+ * @property User $createdBy 
  */
 class OrderAction extends ActiveRecord
 {
@@ -69,6 +74,22 @@ class OrderAction extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrder()
+    {
+        return $this->hasOne(Order::className(), ['id' => 'order_id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
     
     /**

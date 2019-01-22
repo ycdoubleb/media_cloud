@@ -84,7 +84,7 @@ class Tags extends ActiveRecord
                 $tag = trim($tag);
             }
             unset($tag);
-
+            
             //查找已经存在的
             $result = self::find()->where(['name' => $tags])->asArray()->all();
             $result = ArrayHelper::map($result, 'name', 'id');
@@ -97,9 +97,10 @@ class Tags extends ActiveRecord
                     $rows[] = [$tag];
                 }
             }
-
+            
             //批量插入数据
             Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['name'], $rows)->execute();
+            
             //返回所有标签
             return self::find()->where(['name' => $tags])->all();
             

@@ -111,10 +111,6 @@ class MediaController extends Controller
         $post = Yii::$app->request->post();
         
         if ($model->load($post)) {
-            // 类型详细
-            $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
-            // 保存媒体类型
-            $model->type_id = $typeDetail->type_id;
             // 返回json格式
             \Yii::$app->response->format = 'json';
             
@@ -123,11 +119,15 @@ class MediaController extends Controller
             try
             {   
                 $is_submit = false;
-                $data = []; // 返回的数据
+                
+                // 类型详细
+                $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
+                // 保存媒体类型
+                $model->type_id = $typeDetail->type_id;
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
-                $media_tags = ArrayHelper::getValue($post, 'Media.tag_ids');
+                $media_tags = ArrayHelper::getValue($post, 'Media.tags');
                 $tags = Tags::saveTags($media_tags);
                 // 转码需求
                 $mts_need = ArrayHelper::getValue($post, 'Media.mts_need');
@@ -139,7 +139,9 @@ class MediaController extends Controller
                     // 保存关联的属性值
                     MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
                     // 保存关联的标签
-                    if(!$tags) MediaTagRef::saveMediaTagRef($model->id, $tags);
+                    if(!empty($tags)){
+                        MediaTagRef::saveMediaTagRef($model->id, $tags);
+                    }
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存媒体详情
@@ -237,7 +239,7 @@ class MediaController extends Controller
     public function actionBatchEditAttribute()
     {
         return $this->renderAjax('____edit_attribute', [
-            'ids' => explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id')),    // 所有媒体id
+            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有媒体id
             'isTagRequired' => false,  // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
@@ -262,7 +264,7 @@ class MediaController extends Controller
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
-                $media_tags = ArrayHelper::getValue($post, 'Media.tag_ids');
+                $media_tags = ArrayHelper::getValue($post, 'Media.tags');
                 // 保存标签
                 $tags = Tags::saveTags($media_tags);
                 
@@ -279,7 +281,7 @@ class MediaController extends Controller
         }
             
         return $this->renderAjax('____edit_attribute', [
-            'ids' => explode(',', $id),
+            'ids' => json_encode(explode(',', $id)),
             'isTagRequired' => true,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),

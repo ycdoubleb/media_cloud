@@ -3,12 +3,14 @@
 namespace backend\modules\operation_admin\controllers;
 
 use backend\modules\operation_admin\searchs\AclSearch;
+use common\models\api\ApiResponse;
 use common\models\media\Acl;
 use common\models\media\AclAction;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\redis\Connection;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -38,7 +40,7 @@ class AclController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new AclSearch();
+        $searchModel = new AclSearch(['status' => Acl::STATUS_NORMAL]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -83,8 +85,38 @@ class AclController extends Controller
     }
     
     /**
+     * 刷新缓存
+     * 如果更新成功，浏览器将被重定向到“当前页”页面。
+     * @param string $id
+     * @return mixed
+     */
+    public function actionRefreshCach($id)
+    {
+        if(\Yii::$app->request->isPost){
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            try
+            {
+                $model = $this->findModel($id);
+                /* @var $rediis Connection */
+                $rediis = Yii::$app->redis;
+                // 删除指定缓存
+                $rediis->del(Acl::$redisKey . $model->sn);
+                
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                
+            } catch (Exception $ex) {
+                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, $ex->getMessage(), $ex->getTraceAsString());
+            }
+        }
+        
+        return $this->renderAjax('____refresh_cach', [
+            'ids' => json_encode(explode(',', $id)), // 所有id
+        ]);
+    }
+    
+    /**
      * 设置状态
-     * @param string $media_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */

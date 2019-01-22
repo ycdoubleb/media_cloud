@@ -111,3 +111,65 @@ and open the template in the editor.
     border: 1px solid #ddd;
     border-top: none;
 }
+
+/*******************************************************************************
+ *
+ * media-import-index & media-import-create
+ *
+********************************************************************************/
+.media-import-index .title,
+.media-import-create .title {
+    height: 50px;
+    line-height: 50px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.media-import-index .uploader {
+    position: relative;
+    display: inline-block;
+}
+
+.media-import-index .uploader .btn-pick {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background: #00a2d4;
+    color: #fff;
+    border-radius: 0px;
+    overflow: hidden;
+    height: 35px;
+}
+
+.media-import-index .uploader .file-box {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 82px;
+    height: 35px;
+    line-height: 35px;
+    overflow: hidden;
+}
+
+.media-import-index .uploader .file-box .file-input {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+    font-size: 0;
+}
+
+.media-import-index .alert-danger,
+.media-import-create .alert-danger {
+    color: #a94442 !important;
+    background-color: #f2dede !important;
+    border-color: #ebccd1 !important;
+}
+
+.media-import-index .alert-danger a,
+.media-import-create .alert-danger a{
+    text-decoration: none;
+}

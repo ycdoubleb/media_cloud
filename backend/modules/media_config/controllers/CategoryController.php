@@ -5,6 +5,7 @@ namespace backend\modules\media_config\controllers;
 use common\models\media\MediaCategory;
 use common\models\media\searchs\MediaCategorySearch;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -40,7 +41,13 @@ class CategoryController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]);
     }
 

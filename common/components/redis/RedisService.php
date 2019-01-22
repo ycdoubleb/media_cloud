@@ -64,40 +64,4 @@ class RedisService
 
         return $rs;
     }
-    
-    /**
-     * 设置访问量
-     * @param int|string $id
-     * @param string $keyName   
-     * @param int $increment
-     */
-    public static function incrementView($id, $keyName, $increment = 1){
-        $id = intval($id);
-        
-        /* @var $rediis Connection */
-        $rediis = Yii::$app->redis;
-        
-        if($id > 0 && $rediis->exists($keyName.$id)){
-            $rediis->hincrby($keyName.$id, 'view', $increment);
-        }
-
-    }
-    
-    /**
-     * 获取访问量
-     * @param int|string $id
-     * @param string $keyName   
-     * @param int $increment
-     */
-    public static function getIncrement($id, $keyName){
-        $id = intval($id);
-        
-        /* @var $rediis Connection */
-        $rediis = Yii::$app->redis;
-        
-        if($id > 0 && $rediis->exists($keyName.$id)){
-            $rediis->hlen($keyName.$id);
-        }
-
-    }
 }

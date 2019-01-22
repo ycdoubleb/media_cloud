@@ -45,7 +45,10 @@ class RecycleController extends Controller
             'filters' => $results['filter'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $results['data']['recycles'],
-                'key' => 'id'
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
         ]);

@@ -48,7 +48,10 @@ class ApproveController extends Controller
             'filters' => $results['filter'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $results['data']['approves'],
-                'key' => 'id'
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
         ]);
@@ -176,8 +179,9 @@ class ApproveController extends Controller
                                     // 如果视频转码需求是自动则转码
                                     if($mediaModel->detail->mts_need){
                                         MediaAliyunAction::addVideoTranscode($mediaModel->id);   // 转码
+                                    }else{
+                                        $mediaModel->status = Media::STATUS_PUBLISHED;
                                     }
-                                    $mediaModel->status = Media::STATUS_PUBLISHED;
                                 }else{
                                     $mediaModel->status = Media::STATUS_PUBLISHED;
                                 }

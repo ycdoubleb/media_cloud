@@ -293,7 +293,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => '操作',
                     'buttons' => [
                         'view' => function($url, $model){
-                            return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
+                            return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], [
+                                'class' => 'btn btn-default', 'target' => '_blank'
+                            ]);
                         },
                     ],
                     'headerOptions' => [

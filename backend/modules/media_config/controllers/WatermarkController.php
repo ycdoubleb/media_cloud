@@ -6,6 +6,7 @@ use common\models\searchs\WatermarkSearch;
 use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 
@@ -40,7 +41,13 @@ class WatermarkController extends GridViewChangeSelfController
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]);
     }
 

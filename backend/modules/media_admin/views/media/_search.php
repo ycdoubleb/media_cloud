@@ -50,7 +50,7 @@ use yii\widgets\ActiveForm;
                 'max_level' => 10,
                 'onChangeEvent' => new JsExpression('function(){ submitForm()}')
             ],
-            'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
+            'items' => Dir::getDirsBySameLevel(null, Yii::$app->user->id, true, true),
             'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
             'itemOptions' => [
                 'style' => 'width: 175px; display: inline-block;',
@@ -111,10 +111,9 @@ use yii\widgets\ActiveForm;
                 
                 <!--运营者-->
                 <div id="DepDropdown_operator" class="dep-dropdowns">
-                    <?= Select2::widget([
-                        'id' => 'mediasearch-owner_id',
-                        'name' => 'MediaSearch[owner_id]',
-                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.owner_id'),
+                    <?= $form->field($model, 'owner_id',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Operator')],
@@ -125,10 +124,9 @@ use yii\widgets\ActiveForm;
                 
                 <!--上传者-->
                 <div id="DepDropdown-uploader" class="dep-dropdowns">
-                    <?= Select2::widget([
-                        'id' => 'mediasearch-created_by',
-                        'name' => 'MediaSearch[created_by]',
-                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.created_by'),
+                    <?= $form->field($model, 'created_by',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Uploader')],
@@ -139,10 +137,9 @@ use yii\widgets\ActiveForm;
                 
                  <!--状态-->
                 <div id="DepDropdown_status" class="dep-dropdowns">
-                    <?= Select2::widget([
-                        'id' => 'mediasearch-status',
-                        'name' => 'MediaSearch[status]',
-                        'value' => ArrayHelper::getValue($filters, 'MediaSearch.status'),
+                    <?= $form->field($model, 'status',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
                         'data' => Media::$statusName,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', 'Status')],

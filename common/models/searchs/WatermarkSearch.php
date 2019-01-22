@@ -66,11 +66,6 @@ class WatermarkSearch extends Watermark
             ->andFilterWhere(['like', 'oss_key', $this->oss_key])
             ->andFilterWhere(['like', 'refer_pos', $this->refer_pos]);
 
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $query->all(),
-            'key' => 'id'
-        ]);
-        
-        return $dataProvider;
+        return $query->all();
     }
 }

@@ -49,6 +49,11 @@ use yii\db\ActiveRecord;
 class Media extends ActiveRecord
 {
     
+    /** 创建场景 */
+    const SCENARIO_CREATE = 'create';
+    /** 更新场景 */
+    const SCENARIO_UPDATE = 'update';
+    
     /** 状态-待入库 */
     const STATUS_INSERTING_DB = 1;
     /** 状态-已入库 */
@@ -96,6 +101,24 @@ class Media extends ActiveRecord
         self::MTS_STATUS_FAIL => '转码失败',
     ];
     
+    public function scenarios() {
+        return [
+            self::SCENARIO_CREATE => [
+                'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id',
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 
+                'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
+                'duration'
+            ],
+            self::SCENARIO_UPDATE => ['name', 'price', 'dir_id'],
+            self::SCENARIO_DEFAULT => [
+                'id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 
+                'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
+                'price', 'duration'
+            ]
+        ];
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -120,7 +143,11 @@ class Media extends ActiveRecord
     {
         return [
             [['category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status','is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-//            [['type_id'], 'required'],
+            [['dir_id'], 'required', 'message' => Yii::t('app', "{Storage}{Dir}{Can't be empty}", [
+                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir'),
+                "Can't be empty" => Yii::t('app', "Can't be empty.")
+            ]), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+            [['name', 'price'], 'required', 'on' => [self::SCENARIO_UPDATE]],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
             [['ext'], 'string', 'max' => 10],

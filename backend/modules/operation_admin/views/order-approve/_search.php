@@ -59,28 +59,40 @@ use yii\widgets\ActiveForm;
             'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
         ])) ?>
         
-        <!--购买人-->
-        <?= $form->field($model, 'created_by',[
-            'template' => "{label}\n<div class=\"col-lg-2 col-md-2\">{input}</div>",  
-        ])->widget(Select2::class, [
-            'data' => $createdByMap,
-            'hideSearch' => true,
-            'options' => ['placeholder' => Yii::t('app', 'All')],
-            'pluginOptions' => ['allowClear' => true],
-            'pluginEvents' => ['change' => 'function(){ submitForm()}']
-        ])->label(Yii::t('app', 'Purchaser') . '：') ?>
-        
-        <!--审核人-->
-        <?= $form->field($model, 'handled_by',[
-            'template' => "{label}\n<div class=\"col-lg-2 col-md-2\">{input}</div>",  
-        ])->widget(Select2::class, [
-            'data' => $handledByMap,
-            'hideSearch' => true,
-            'options' => ['placeholder' => Yii::t('app', 'All')],
-            'pluginOptions' => ['allowClear' => true],
-            'pluginEvents' => ['change' => 'function(){ submitForm()}']
-        ])->label(Yii::t('app', 'Handled By') . '：') ?>
-      
+        <!--其他选项-->
+        <div class="form-group field-mediasearch-other_options">
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <div class="col-lg-6 col-md-6">
+                
+                <!--购买人-->
+                <div id="DepDropdown_purchaser" class="dep-dropdowns">
+                   <?= $form->field($model, 'created_by',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => $createdByMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Purchaser')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>
+                
+                <!--审核人-->
+                <div id="DepDropdown-handled_by" class="dep-dropdowns">
+                    <?= $form->field($model, 'handled_by',[
+                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                    ])->widget(Select2::class, [
+                        'data' => $handledByMap,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Handled By')],
+                        'pluginOptions' => ['allowClear' => true],
+                        'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                    ]) ?>
+                </div>
+                
+            </div>
+        </div>
+                
     </div>    
 
     <?php ActiveForm::end(); ?>

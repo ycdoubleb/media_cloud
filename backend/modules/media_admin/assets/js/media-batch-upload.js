@@ -149,20 +149,27 @@
             max_num = _self.medias.length,
             completed_num = _self.completed_num;
             
-        $progress = this.resultinfo.find('div.result-progress');
-        $hint = this.resultinfo.find('p.result-hint');
-        $table = this.resultinfo.find('table.result-table');
+        $progress = _self.resultinfo.find('div.result-progress');
+        $hint = _self.resultinfo.find('p.result-hint');
+        $table = _self.resultinfo.find('table.result-table');
+        $footer = _self.resultinfo.next('div.modal-footer');
 
         if(mediaData.submit_result){
             _self.completed_num = ++completed_num;
         }else{
             $(Wskeee.StringUtil.renderDOM(_self.config['media_data_tr_dom'], mediaData)).appendTo($table.find('tbody'));
+            $footer.children('button#btn-anewUpload').removeClass('hidden');
         }
         
         $progress.css({width: parseInt(_self.completed_num / max_num * 100) + '%'}).html(parseInt(_self.completed_num / max_num * 100) + '%');
         $hint.find('span.max_num').html(max_num);
         $hint.find('span.completed_num').html(_self.completed_num);
         $hint.find('span.lose_num').html(max_num - _self.completed_num);
+        
+        // 上传完成显示
+        if(_self.completed_num == max_num){
+            $footer.children('span.text-default').removeClass('hidden');
+        }
     }
     
     //------------------------------------------------------
@@ -343,7 +350,6 @@
             var index = _self.medias.indexOf(md)
             _self.medias.splice(index, 1);
         }
-        console.log(_self.medias);
     }
     
     /**
@@ -353,6 +359,7 @@
      * @returns {void}
      */
     MediaBatchUpload.prototype.submit = function(submit_common_params, force){
+        console.log(submit_common_params, this.__parseURIComponent(submit_common_params));
         force = !!force;
         this.submit_index = -1;
         this.config['submit_common_params'] = $.extend(

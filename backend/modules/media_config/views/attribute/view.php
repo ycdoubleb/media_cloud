@@ -1,9 +1,7 @@
 <?php
 
 use common\models\media\MediaAttribute;
-use common\widgets\grid\GridViewChangeSelfColumn;
-use kartik\widgets\Select2;
-use yii\grid\GridView;
+use yii\data\ArrayDataProvider;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\web\YiiAsset;
@@ -94,7 +92,13 @@ YiiAsset::register($this);
         
         <?= $this->render('/attribute-value/index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $searchModel->search(['attribute_id' => $model->id]),
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $searchModel->search(['attribute_id' => $model->id]),
+                'key' => 'id',
+                'pagination' => [
+                    'defaultPageSize' => 10
+                ]
+            ]),
         ]) ?>
         
     </div>    

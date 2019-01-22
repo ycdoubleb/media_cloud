@@ -29,6 +29,8 @@ use yii\redis\ActiveQuery;
  * @property string $updated_at 更新时间
  * 
  * @property PlayApprove[] $playApproves    
+ * @property OrderGoods[] $goods    
+ * @property OrderAction[] $orderAction    
  * @property User $createdBy    关联用户表
  */
 class Order extends ActiveRecord
@@ -143,6 +145,23 @@ class Order extends ActiveRecord
     public function getPlayApproves()
     {
         return $this->hasMany(PlayApprove::class, ['order_id' => 'id']);
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getGoods()
+    {
+        return $this->hasMany(OrderGoods::class, ['order_id' => 'id'])->where(['is_del' => 0])
+            ->with('media');
+    }
+    
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrderAction()
+    {
+        return $this->hasMany(OrderAction::class, ['order_id' => 'id']);
     }
     
     /**

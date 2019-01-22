@@ -20,18 +20,5 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         
-        $id = 9;
-        
-        
-        $params['newInfo'] = Acl::getAclInfoById($id);
-        
-        RedisService::incrementView($id, Acl::$redisKey); //添加浏览量
-        
-        var_dump($params['newInfo']);exit;
-        
-        if (empty($params['newInfo'])) $this->redirect('site/error');
-        
-        
-        return $this->render('info', $params);
     }
 }

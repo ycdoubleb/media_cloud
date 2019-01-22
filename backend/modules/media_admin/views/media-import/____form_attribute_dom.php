@@ -27,7 +27,7 @@ TagsInputAsset::register($this);
                             'id' => "media-attribute_value-{$atts['attr_id']}",
                             'name' => "Media[attribute_value][{$atts['attr_id']}]",
                             'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
-                            'value' => !empty($attrSelected) ? $attrSelected[$atts['attr_id']] : null, 
+                            'value' => null, 
                             'hideSearch' => true,
                             'options' => [
                                 'class' => 'media-attribute_value',
@@ -40,8 +40,7 @@ TagsInputAsset::register($this);
                         ]);
                         break;
                     case MediaAttribute::MULTPLE_SELECT_INPUT_TYPE:
-                        echo Html::checkboxList("Media[attribute_value][{$atts['attr_id']}][]", 
-                                !empty($attrSelected) ? explode('，', $attrSelected[$atts['attr_id']]) : null, 
+                        echo Html::checkboxList("Media[attribute_value][{$atts['attr_id']}][]", null, 
                                 ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'), 
                                 [
                                     'id' => "media-attribute_value-{$atts['attr_id']}",
@@ -73,16 +72,14 @@ TagsInputAsset::register($this);
 <?php endforeach; ?>
 
 <!--标签-->
-<div class="form-group field-media-tag_ids <?= isset($isTagRequired) && $isTagRequired ? 'required' : '' ?>">
-    <?= Html::label(
-        (isset($isTagRequired) && $isTagRequired ? '<span class="form-must text-danger">*</span>' : null) . Yii::t('app', 'Tag') . '：', 
+<div class="form-group field-media-tag_ids">
+    <?= Html::label(Yii::t('app', 'Tag') . '：', 
         'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
     
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">
-            <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
-                'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
-                'onchange' => 'validateTags($(this))'
+            <?= Html::textInput('Media[tags]', null, [
+                'id' => 'media-tag_ids', 'class' => 'form-control media-tags', 'data-role' => 'tagsinput'
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>
@@ -157,40 +154,6 @@ TagsInputAsset::register($this);
             return;
         }
     }
-        
-        
-    /**
-     * 验证标签是否有值和标签个数的多少
-     * @param {Object} _this
-     * @returns {undefined}
-     */
-    function validateTags(_this)
-    {
-        if(!_this.parents('div.form-group').hasClass('required')) return;
-        
-        var tagName = _this.prop("tagName").toLowerCase();
-        
-        if(tagName == 'input'){
-        
-            var tags = _this.prev('div.bootstrap-tagsinput').find('span.tag');
-
-            if(tags.length < 5){
-                var label = _this.parents('div.form-group').find('label.form-label').text();
-                var relabel = label.replace('*', "");
-                _this.parents('div.form-group').addClass('has-error');
-                if(tags.length <= 0){
-                    _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
-                }else{
-                    _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '个数不能少于5个。');
-                }
-            }else{
-                _this.parents('div.form-group').removeClass('has-error');
-                _this.parents('div.form-group').find('div.help-block').html('');
-            }
-        }else{
-            return;
-        }
-    }
   
     /**
      * 提交时验证
@@ -198,10 +161,9 @@ TagsInputAsset::register($this);
      */
     function submitValidate()
     {
-        $('div.form-group').find('.media-attribute_value, .media-tags').each(function(){
+        $('div.form-group').find('.media-attribute_value').each(function(){
             validateDepDropdownValue($(this));
             validateCheckboxList($(this).find('input'));
-            validateTags($(this));
         });
     }
   

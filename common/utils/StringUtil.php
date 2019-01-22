@@ -158,5 +158,24 @@ class StringUtil {
         $orderSn = $yCode[intval(date('Y')) - $start_year] . strtoupper(dechex(date('m'))) . date('d') . substr(time(), -5) . substr(microtime(), 2, 5) . sprintf('%02d', rand(0, 99));
         return $orderSn;
     }
-
+    
+    /**
+     * 字符串大小转字节
+     * @param string $size
+     * @return interger
+     */
+    public static function StringSizeToBytes($size) {
+        //把所有字符转换为小写
+        $size = strtolower($size);  
+        //执行一个正则表达式的搜索和替换
+        $unit = preg_replace('/[^a-z]/', '', $size);
+        //截取单位前的数值
+        $value = substr($size, 0, strripos($size, $unit));
+        //定义一个单位数组
+        $units = ['b' => 0, 'kb' => 1, 'mb' => 2, 'gb' => 3, 'tb' => 4];
+        // 获取指数值
+        $exponent = isset($units[$unit]) ? $units[$unit] : 0;
+        //函数返回 1024 的几次方
+        return intval($value * pow(1024, $exponent));           
+    }
 }

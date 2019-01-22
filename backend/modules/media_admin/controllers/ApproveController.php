@@ -40,7 +40,7 @@ class ApproveController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new MediaApproveSearch();
+        $searchModel = new MediaApproveSearch(['status' => MediaApprove::STATUS_APPROVEING]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

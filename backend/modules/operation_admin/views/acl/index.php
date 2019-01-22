@@ -264,46 +264,26 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
         
-    // 导出 & 刷新
-    $('#btn-export, #btn-refreshCach').click(function(e){
+    // 导出 & 刷新 & 设置状态
+    $('#btn-export, #btn-refreshCach, #btn-setStatus').click(function(e){
         e.preventDefault();
-        var val = getCheckBoxsValue(),
-            url = $(this).attr("href");
-        if(val.length > 0){
-            console.log(url + "?id=" + val);
-        }else{
-            alert("请选择需要的id");
-        }
-    });  
-    
-    // 设置状态
-    $('#btn-setStatus').click(function(e){
-        e.preventDefault();
-        var val = getCheckBoxsValue(),
-            url = $(this).attr("href");
-        if(val.length > 0){
-            $(".myModal").html("");
-            $('.myModal').modal("show").load(url + "?id=" + val);
-        }else{
-            alert("请选择需要的id");
-        }
-    });
-        
-    /**
-     * 获取复选框的值, 并组装成数组
-     * @returns {Array|getCheckBoxsValue.val}
-     */
-    function getCheckBoxsValue(){
         var val = [],
-            checkBoxs = $('input[name="selection[]"]');
+            checkBoxs = $('input[name="selection[]"]'),
+            url = $(this).attr("href");
         // 循环组装id
         for(var i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);
             }
         }
-        return val;
-    }
+        
+        if(val.length > 0){
+            $(".myModal").html("");
+            $('.myModal').modal("show").load(url + "?id=" + val);
+        }else{
+            alert("请选择需要的id");
+        }
+    });  
     
 JS;
     $this->registerJs($js,  View::POS_READY);

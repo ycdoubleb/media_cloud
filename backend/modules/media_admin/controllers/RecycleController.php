@@ -37,7 +37,7 @@ class RecycleController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new MediaRecycleSearch();
+        $searchModel = new MediaRecycleSearch(['status' => MediaRecycle::STATUS_UNTREATED]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

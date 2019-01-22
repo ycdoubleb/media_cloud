@@ -83,8 +83,8 @@ class MediaTagRef extends ActiveRecord
     {
         try {
             // 如果标签为空则返回
-            if($tags == null) return;
-            
+            if(empty($tags)) return;
+
             //删除已存在的标签
             self::updateAll(['is_del' => 1], ['object_id' => $media_id]);
             //准备数据
@@ -93,6 +93,7 @@ class MediaTagRef extends ActiveRecord
                 /* @var $tag Tags */
                 $mediaTags[] = [$media_id, $tag->id];
             }
+            
             //保存关联
             \Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['object_id', 'tag_id'], $mediaTags)->execute();
             //累加引用次数

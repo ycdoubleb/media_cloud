@@ -40,7 +40,7 @@ class OrderApproveController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new PlayApproveSearch();
+        $searchModel = new PlayApproveSearch(['status' => PlayApprove::STATUS_TO_BE_AUDITED]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

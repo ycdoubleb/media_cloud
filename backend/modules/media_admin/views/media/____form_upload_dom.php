@@ -16,7 +16,7 @@ use yii\web\View;
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Webuploader::widget([
                 'id' => 'uploader-container',
-                'name' => 'Media[file_ids]',
+                'name' => 'Media[files]',
                 'pluginOptions' => [
                     //设置最大选择文件数
                     'fileNumLimit' => isset($mediaFiles) ? 1 : 100,

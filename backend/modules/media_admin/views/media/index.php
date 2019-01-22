@@ -325,7 +325,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
         
-    // 弹出媒体编辑页面面板
+    // 弹出媒体申请面板
     $('#btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 

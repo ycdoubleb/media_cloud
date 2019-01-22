@@ -103,6 +103,16 @@ use common\widgets\Menu;
                         ],
                     ],
                     [
+                        'label' => '统计',
+                        'icon' => 'bars',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '总统计', 'icon' => 'circle-o', 'url' => ['/statistics/all-statistics/index']],
+                            ['label' => '排行统计', 'icon' => 'circle-o', 'url' => ['/statistics/ranking-statistics/index']],
+                            ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],
+                        ]
+                    ],
+                    [
                         'label' => '帮助中心',
                         'icon' => 'bars',
                         'url' => '#',

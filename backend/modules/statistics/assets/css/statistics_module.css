@@ -1,0 +1,295 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2019-1-17, 13:59:22
+    Author     : Administrator
+*/
+
+/*******************************************************************************
+ * 公共样式
+ *******************************************************************************/
+.wrapper .content-wrapper {
+    background-color: #f2f2f2 !important;
+}
+.statistics-view {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 30px;
+    border: 1px solid #e4e4e4;
+    background: #ffffff;
+}
+
+.mc-title {
+    width: 100%;
+    height: 60px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #666;
+    line-height: 60px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.mc-title i {
+    color: #199ed8;
+    margin-right: 10px;
+}
+
+.mc-tabs {
+    display: inline-block;
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    /*margin-bottom: 15px;*/
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.mc-tabs > ul > li {
+    float: left;
+    margin-top: -2px;
+}
+
+.mc-tabs > ul > li > a {
+    display: inline-block;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #999999;
+    line-height: 48px;
+    font-size: 14px;
+}
+
+.mc-tabs > ul > li.active > a {
+    border-bottom: 2px solid #FC583D;
+}
+
+.mc-tabs > ul > li.active > a, .mc-title > ul > li:hover > a {
+    color: #fc583d;
+}
+
+.mc-form {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 15px;
+}
+
+.mc-form .form-group .control-label {
+    width: 63px;
+    color: #333333; 
+    padding-top: 10px; 
+    text-align: center;
+}
+
+.control-input {
+    display: inline-block;
+    padding-left: 0px;
+}
+
+.mc-panel {
+    width: 100%;
+    padding: 15px 20px 20px 20px;
+}
+
+.panel-left {
+    width: 42%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.panel-right {
+    width: 57%;
+    padding-left: 20px;
+    display: inline-block;
+}
+
+.table-bordered {
+    border: 1px solid #ddd !important;
+}
+/*******************************************************************************
+ * 总统计页样式
+ *******************************************************************************/
+.all-statistics-index {
+    padding-right: 20px;
+}
+
+.all-statistics-index .top-info {
+    height: 140px;
+    padding: 20px;
+    margin-bottom: 30px;
+    /*border: 1px solid #e4e4e4;*/
+    /*background: #f9f9f9;*/
+}
+
+.all-statistics-index .top-info .media-num ,
+.all-statistics-index .top-info .order-amount, 
+.all-statistics-index .top-info .visit-num {
+    padding-left: 0px;
+    display: inline-block;
+    width: 32%;
+    height: 100px;
+    margin-right: 20px;
+    background-color: #ffffff;
+    border-radius: 0px;
+    -moz-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    -webkit-box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+    box-shadow: 1px 1px 3px rgba(153, 153, 153, 0.349019607843137);
+}
+
+.all-statistics-index .top-info .visit-num {
+    margin-right: 0px;
+}
+
+.all-statistics-index .top-info .statistics-img {
+    width: 100px;
+    height: 100px;
+    padding-top: 30px;
+    text-align: center;
+    float: left;
+}
+
+.all-statistics-index .top-info .media-img {
+    background-color: #00c0ef;
+}
+
+.all-statistics-index .top-info .amount-img {
+    background-color: #dd4b39;
+}
+
+.all-statistics-index .top-info .visit-img {
+    background-color: #00a65a;
+}
+
+.all-statistics-index .top-info .statistics-num {
+    display: inline-block;
+    color: #999999;
+    padding: 8px;
+}
+
+.all-statistics-index .top-info .statistics-num span {
+    color: #333333;
+    font-size: 18px;
+}
+
+/*******************************************************************************
+ * 排行统计页样式
+ *******************************************************************************/
+.ranking-statistics-index .statistics-view .order-amount {
+    padding-left: 0px;
+    display: inline-block;
+    width: 60%;
+    height: 100px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e4;
+}
+
+.ranking-statistics-index .statistics-view .statistics-img {
+    width: 100px;
+    height: 100px;
+    padding-top: 30px;
+    text-align: center;
+    float: left;
+}
+
+.ranking-statistics-index .statistics-view .amount-img {
+    background-color: #dd4b39;
+}
+
+.ranking-statistics-index .statistics-view .click-img {
+    background-color: #00a65a;
+}
+
+.ranking-statistics-index .statistics-view .quote-img {
+    background-color: #f39c12;
+}
+
+.ranking-statistics-index .statistics-view .statistics-num {
+    display: inline-block;
+    color: #999999;
+    padding: 8px;
+}
+
+.ranking-statistics-index .statistics-view .statistics-num span {
+    color: #333333;
+    font-size: 18px;
+}
+
+/*******************************************************************************
+ * 单独统计页样式
+ *******************************************************************************/
+.single-statistics-index .mc-form {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.single-statistics-index .mc-form .form-group {
+    display: inline-block;
+}
+
+.single-statistics-index .mc-form .field-order-confirm_at {
+    padding-right: 15px;
+}
+
+.single-statistics-index .mc-form .field-media {
+    padding-left: 15px;
+}
+
+.single-statistics-index .mc-form .field-media .select-nickname {
+    width: 160px;
+    vertical-align: bottom;
+}
+
+.single-statistics-index .mc-panel .panel-content {
+    height: 420px;
+}
+
+.single-statistics-index .statistics-view .order-amount {
+    display: inline-block;
+    width: 31%;
+    height: 100px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e4;
+}
+
+.single-statistics-index .statistics-view .statistics-img {
+    width: 100px;
+    height: 100px;
+    padding-top: 30px;
+    text-align: center;
+    float: left;
+}
+
+.single-statistics-index .statistics-view .media-img {
+    background-color: #00c0ef;
+}
+
+.single-statistics-index .statistics-view .amount-img {
+    background-color: #dd4b39;
+}
+
+.single-statistics-index .statistics-view .quote-img {
+    background-color: #f39c12;
+}
+
+.single-statistics-index .statistics-view .play-img {
+    background-color: #00a65a;
+}
+
+.single-statistics-index .statistics-view .statistics-num {
+    display: inline-block;
+    color: #999999;
+    padding: 8px;
+}
+
+.single-statistics-index .statistics-view .statistics-num span {
+    color: #333333;
+    font-size: 18px;
+}

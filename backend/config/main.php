@@ -83,6 +83,10 @@ return [
         'operation_admin' => [
             'class' => 'backend\modules\operation_admin\Module',
         ],
+        //统计
+        'statistics' => [
+            'class' => 'backend\modules\statistics\Module',
+        ],
         //帮助中心管理
         'helpcenter_admin' => [
             'class' => 'backend\modules\helpcenter_admin\Module',

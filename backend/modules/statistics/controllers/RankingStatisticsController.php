@@ -54,7 +54,8 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['SUM(OrderGoods.amount) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
@@ -106,7 +107,8 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['SUM(Order.order_amount) AS value'])
                 ->from(['Order' => Order::tableName()])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
         
         /* 当时间段参数不为空时 */
@@ -156,7 +158,8 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['SUM(OrderGoods.amount) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
@@ -248,7 +251,6 @@ class RankingStatisticsController extends Controller
         
         // 媒体点击量表格数据
         $listsData = clone $query;
-        $totalResult = $totalResults['value'];
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');
         $listsData->orderBy(['value' => SORT_DESC]);   //倒序
@@ -279,7 +281,8 @@ class RankingStatisticsController extends Controller
                 ->select(['COUNT(Order.id) AS value'])
                 ->from(['Media' => Media::tableName()])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
@@ -311,7 +314,6 @@ class RankingStatisticsController extends Controller
         
         // 媒体点击量表格数据
         $listsData = clone $query;
-        $totalResult = $totalResults['value'];
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');
         $listsData->orderBy(['value' => SORT_DESC]);   //倒序
@@ -321,7 +323,7 @@ class RankingStatisticsController extends Controller
         ]);
         
         $resluts = [
-            'totalQuote' => $totalResult,
+            'totalQuote' => $totalResults['value'],
             'limitQuote' => $limitResult,
             'chartsData' => $chartsResult,
             'listsData' => $dataProvider,

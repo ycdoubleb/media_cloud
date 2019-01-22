@@ -72,7 +72,8 @@ class SingleStatisticsController extends Controller
             $orderQuery->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
         }
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount'])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
         $orderAmount = $orderQuery->one();
@@ -90,7 +91,8 @@ class SingleStatisticsController extends Controller
     {
         $query = (new Query())
                 ->from(['Order' => Order::tableName()])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->andFilterWhere(['Order.created_by' => $userId]);
         
         /* 当时间段参数不为空时 */
@@ -123,32 +125,37 @@ class SingleStatisticsController extends Controller
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Media.id' => $mediaId])
-//                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
-                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
-                ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
-                
+                ->andFilterWhere(['Media.id' => $mediaId]);
+        
+        // 克隆Query
+        $cloneQuery = clone $query;
+        $cloneQuery->andFilterWhere(['Order.order_status' => 
+                [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
+            ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
+            ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
+        
         /* 当时间段参数不为空时 */
         if($dateRange != null){
             $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+            $cloneQuery->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
         }
         
         // 媒体引用次数
-        $quoteQuery = clone $query;
-        $quoteQuery->addSelect(['COUNT(Order.id) AS quote_num']);
+        $quoteQuery = clone $cloneQuery;
+        $quoteQuery->addSelect(['COUNT(Order.id) AS quote_num'])
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
         $quoteNum = $quoteQuery->one();
         
         // 媒体总收入金额
-        $orderQuery = clone $query;
+        $orderQuery = clone $cloneQuery;
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount']);
         $orderAmount = $orderQuery->one();
          
         // 媒体总点击量
         $clickQuery = clone $query;
         $clickQuery->addSelect(['SUM(Acl.visit_count) AS click_num'])
-            ->leftJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id');   //已发布的媒体
+            ->leftJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id')
+            ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
         $clickNum = $clickQuery->one();        
 
         return array_merge($quoteNum,$orderAmount,$clickNum);
@@ -174,7 +181,8 @@ class SingleStatisticsController extends Controller
             $purchaser = (new Query())
                 ->select(['User.id', 'User.nickname'])
                 ->from(['Order' => Order::tableName()])
-                ->andFilterWhere(['Order.order_status' => Order::ORDER_STATUS_CONFIRMED])   //已确认的订单
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by')
                 ->all();
         

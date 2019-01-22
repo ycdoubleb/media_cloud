@@ -54,7 +54,8 @@ class AllStatisticsController extends Controller
                 ->select(['SUM(order_amount) AS total_order_amount'])
                 ->from(['Order' => Order::tableName()])
                 ->where(['order_status' =>
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])->one();
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]
+                )->one();
 
         return $query;
     }

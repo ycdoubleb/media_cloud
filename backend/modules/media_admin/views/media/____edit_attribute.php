@@ -20,7 +20,6 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
         'options'=>[
             'id' => 'media-form',
             'class' => 'form form-horizontal',
-            'enctype' => 'multipart/form-data',
         ],
 //        'action' => ['edit-attribute', 'id' => $model->id],
     ]); ?>

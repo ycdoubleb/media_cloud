@@ -5,7 +5,12 @@ use yii\web\View;
 
 /* @var $this View */
 
-$this->title = Yii::t('app', 'Refresh Cache');
+$this->title = Yii::t('app', '{Handle}{Result}', [
+    'Handle' => Yii::t('app', 'Handle'), 'Result' => Yii::t('app', 'Result')
+]);
+
+// 当前action
+$action = Yii::$app->controller->action->id
 
 ?>
 <div class="acl-refresh_cach">
@@ -38,13 +43,14 @@ $this->title = Yii::t('app', 'Refresh Cache');
 $js = <<<JS
    
     var ids = $ids;
+    var action = "$action";
     var increment = 0,
         complete_num = 0,
         max_num = ids.length,
         progress = $('#myModalBody').find('div.result-progress');
         
     $.each(ids, function(index, id){
-        $.post('/operation_admin/acl/refresh-cach?id=' + id, function(response){
+        $.post('/media_admin/recycle/' + action + '?id=' + id, function(response){
             if(response.code == "0"){
                 complete_num = ++increment;
                 if(index >= max_num - 1){

@@ -20,7 +20,6 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
         'options'=>[
             'id' => 'media-form',
             'class' => 'form form-horizontal',
-            'enctype' => 'multipart/form-data',
         ],
         'action' => ['edit-basic', 'id' => $model->id],
         'fieldConfig' => [  

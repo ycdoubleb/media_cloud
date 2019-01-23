@@ -12,9 +12,12 @@ use yii\widgets\ActiveForm;
 
 MediaModuleAsset::register($this);
 
-$this->title = Yii::t('app', '{Approve}{Reason}', [
-    'Approve' => Yii::t('app', 'Approve'), 'Reason' => Yii::t('app', 'Reason')
+$this->title = Yii::t('app', '{Apply}{Reason}', [
+    'Apply' => Yii::t('app', 'Apply'), 'Reason' => Yii::t('app', 'Reason')
 ]);
+
+// 当前action
+$action = Yii::$app->controller->action->id
 
 ?>
 <div class="media-approve-create">
@@ -23,7 +26,6 @@ $this->title = Yii::t('app', '{Approve}{Reason}', [
         'options'=>[
             'id' => 'media-approve-form',
             'class' => 'form form-horizontal',
-            'enctype' => 'multipart/form-data',
         ],
     ]); ?>
     
@@ -53,8 +55,14 @@ $this->title = Yii::t('app', '{Approve}{Reason}', [
             
             <div class="modal-footer">
                 
-                <?= Html::submitButton(Yii::t('app', 'Submit'), ['class' => 'btn btn-primary btn-flat']) ?>
-                                
+                <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
+                         
+                <!--加载-->
+                <div class="loading-box" style="text-align: right">
+                    <span class="loading" style="display: none"></span>
+                    <span class="no_more" style="display: none">提交中...</span>
+                </div>
+                
             </div>
                 
        </div>
@@ -63,3 +71,32 @@ $this->title = Yii::t('app', '{Approve}{Reason}', [
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$js = <<<JS
+   
+    var mediaIds = $mediaIds;
+    var action = "$action";
+    var isPageLoading = false;
+        
+    // 提交表单    
+    $("#submitsave").click(function(){
+        var _self = $(this);
+        if(!isPageLoading){
+            isPageLoading = true;   //设置已经提交当中...
+            $.each(mediaIds, function(index, mediaId){
+                $.post('/media_admin/approve/' + action + '?media_id=' + mediaId, $('#media-approve-form').serialize(), function(response){
+                    if(response.code == "0" && index >= mediaIds.length - 1){
+                        isPageLoading = false;  //取消设置提交当中...
+                        window.location.reload();
+                    }
+                });
+            });
+            _self.hide();
+            $('.loading-box .loading, .loading-box .no_more').show();
+        }
+    });
+
+JS;
+    $this->registerJs($js,  View::POS_READY);
+?>

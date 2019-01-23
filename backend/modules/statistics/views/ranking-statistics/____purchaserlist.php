@@ -38,6 +38,7 @@ use yii\grid\GridView;
             [
                 'attribute' => 'proportion',
                 'label' => Yii::t('app', 'Proportion'),
+                'format' => 'raw',
                 'value' => function($data) {
                     return Yii::$app->formatter->asPercent($data['proportion'], 2);
                 },

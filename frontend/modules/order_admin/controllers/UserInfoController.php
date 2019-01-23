@@ -48,14 +48,11 @@ class UserInfoController extends Controller
      * @return type
      */
     public function actionSetting()
-    {       
+    {
         $userModel = $this->findUserModel(Yii::$app->user->id);
         $userModel->scenario = User::SCENARIO_UPDATE;
         $peofileModel = $this->findProfileModel(Yii::$app->user->id);
 
-        if($userModel->id != Yii::$app->user->id){
-            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
         // 判断更改的数据
         $sets = ArrayHelper::getValue(Yii::$app->request->queryParams, 'set', 'base');
         if($sets == 'base'){
@@ -109,7 +106,9 @@ class UserInfoController extends Controller
      */
     protected function findUserModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        $model = User::findOne($id);
+        
+        if ($model != null) {
             return $model;
         }else{
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
@@ -125,7 +124,9 @@ class UserInfoController extends Controller
      */
     protected function findProfileModel($id)
     {
-        if (($model = UserProfile::findOne($id)) !== null) {
+        $model = UserProfile::findOne(['user_id' => $id]);
+        
+        if ($model != null) {
             return $model;
         }else{
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
@@ -141,7 +142,10 @@ class UserInfoController extends Controller
     {
         $query = (new Query())
                 ->select(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods'])
-                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->where([
+                    'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
+                    'created_by' => Yii::$app->user->id
+                ])
                 ->from(['Order' => Order::tableName()]);
         
         // 当时间段参数不为空时
@@ -163,7 +167,10 @@ class UserInfoController extends Controller
         $query = (new Query())
                 ->select(["CONCAT(FROM_UNIXTIME(confirm_at, '%c'), '月') AS name",
                     'SUM(order_amount) AS value'])
-                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->where([
+                    'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
+                    'created_by' => Yii::$app->user->id
+                ])
                 ->from(['Order' => Order::tableName()]);
         // 当年份参数不为空时
         if($year != null){
@@ -206,7 +213,10 @@ class UserInfoController extends Controller
     {
         $query = (new Query())
                 ->select(['confirm_at', "FROM_UNIXTIME(confirm_at, '%Y') AS years"])
-                ->where(['order_status' => Order::ORDER_STATUS_CONFIRMED])
+                ->where([
+                    'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
+                    'created_by' => Yii::$app->user->id
+                ])
                 ->from(['Order' => Order::tableName()])
                 ->groupBy('years')
                 ->all();

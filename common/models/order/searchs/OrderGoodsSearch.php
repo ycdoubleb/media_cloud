@@ -84,37 +84,33 @@ class OrderGoodsSearch extends OrderGoods
     /**
      * 订单核查页
      * 
-     * @param int $id   订单ID
+     * @param int $order_id   订单ID
+     * @param string $order_sn   订单编号
      * @return ActiveDataProvider
      */
-    public function searchMedia($id)
+    public function searchMedia($order_id, $order_sn = '')
     {
         $query = self::find()->select(['OrderGoods.goods_id'])
                 ->from(['OrderGoods' => OrderGoods::tableName()]);
-        
-        // 复制媒体对象
-        $copyMedia= clone $query;
         
         $query->addSelect(['Media.cover_url', 'Media.name AS media_name',
             'MediaType.name AS type_name', 'Media.price', 'Media.duration', 'Media.size', 'Media.url'
         ]);
         
         //过滤条件
-        $query->andFilterWhere(['or', 
-            ['OrderGoods.order_id' => $id],
-            ['OrderGoods.order_sn' => $id],
-        ]);
+        $query->andFilterWhere(['OrderGoods.order_id' => $order_id]);
+        $query->andFilterWhere(['OrderGoods.order_sn' => $order_sn]);
         
         // 查询媒体
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
         // 查询媒体类型
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
-        
+
         // 查找Acl列表
-        $aclResults = $this->findAclByMediaId($copyMedia);
+        $aclResults = $this->findAclByMediaId($order_id);
         // 媒体数据
         $mediaResults = $query->asArray()->all();
-        
+
         //合并查询后的结果
         foreach ($mediaResults as &$item) {
             $item['acl'] = [];
@@ -136,14 +132,14 @@ class OrderGoodsSearch extends OrderGoods
     
     /**
      * 根据媒体ID查找数据
-     * @param array $id
+     * @param int $order_id
      * @return array
      */
-    protected function findAclByMediaId($id)
+    protected function findAclByMediaId($order_id)
     {
         $videoUrl = Acl::find()
                 ->select(['sn', 'media_id', 'level'])
-                ->where(['media_id' => $id])
+                ->where(['order_id' => $order_id])
                 ->orderBy('level')
                 ->asArray()->all();
 

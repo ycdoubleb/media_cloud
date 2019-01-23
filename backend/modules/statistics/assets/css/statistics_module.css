@@ -179,6 +179,11 @@ and open the template in the editor.
 /*******************************************************************************
  * 排行统计页样式
  *******************************************************************************/
+.ranking-statistics-index .mc-tabs > ul > li > a {
+    width: 138px;
+    text-align: center;
+}
+
 .ranking-statistics-index .statistics-view .order-amount {
     padding-left: 0px;
     display: inline-block;
@@ -223,6 +228,11 @@ and open the template in the editor.
 /*******************************************************************************
  * 单独统计页样式
  *******************************************************************************/
+.single-statistics-index .mc-tabs > ul > li > a {
+    width: 102px;
+    text-align: center;
+}
+
 .single-statistics-index .mc-form {
     padding-left: 0px;
     padding-right: 0px;

@@ -99,7 +99,7 @@ class OrderController extends Controller
             OrderAction::savaOrderAction($id, '订单确认', '订单确认', $model->order_status, $model->play_status);
         }
         
-        return $this->redirect(['index']);
+        return $this->refresh();
     }
 
     /**
@@ -114,7 +114,7 @@ class OrderController extends Controller
         $this->layout = '@app/views/layouts/main';
         
         $searchModel = new OrderGoodsSearch();
-        $dataProvider = $searchModel->searchMedia($order_sn);
+        $dataProvider = $searchModel->searchMedia(null, $order_sn);
         
         return $this->render('simple-view', [
             'model' => Order::findOne(['order_sn' => $order_sn]),

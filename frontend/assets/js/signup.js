@@ -3,28 +3,6 @@ var current_fs, next_fs, previous_fs; //fieldsets
 var left, opacity, scale; //fieldset properties which we will animate
 var animating; //flag to prevent quick multi-click glitches
 
-//邀请码页下一步
-$(".next").click(function () {
-    var brand = $("#user-customer_id").val();
-    if (brand === "") {
-        alert("请输入您的邀请码！");
-        return false;
-    }
-    if (animating)
-        return false;
-    animating = true;
-
-    current_fs = $(this).parent();
-    next_fs = $(this).parent().next();
-
-    //activate next step on progressbar using the index of next_fs
-    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-    //show the next fieldset
-    next_fs.show();
-    next();
-});
-
 //用户账号密码页下一步
 $("#user-next").click(function () {
     var user = $("#user-username").val();
@@ -37,39 +15,6 @@ $("#user-next").click(function () {
       alert ("用户名不能包含中文！");
       return false;
     }
-    var pass = $("#user-password_hash").val();
-    var pass1 = $("#user-password2").val();
-    if (pass === "") {
-        alert("请输入密码！");
-        return false;
-    }
-    if (pass1 !== pass) {
-        alert("两次密码不一致！");
-        return false;
-    }
-
-    if (animating)
-        return false;
-    animating = true;
-
-    current_fs = $(this).parent();
-    next_fs = $(this).parent().next();
-
-    //activate next step on progressbar using the index of next_fs
-    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
-
-    //show the next fieldset
-    next_fs.show();
-    next();
-});
-
-//用户信息页下一步
-$("#info-next").click(function () {
-    var user = $("#user-nickname").val();
-    if (user === "") {
-        alert("请输入真实姓名！");
-        return false;
-    }
     var phone = $("#user-phone").val(),
             phoneReg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/,
             flag = phoneReg.test(phone);
@@ -78,6 +23,12 @@ $("#info-next").click(function () {
         return false;
     } else if (!flag) {
         alert("电话号码填写不正确！");
+        return false;
+    }
+    
+    var pass = $("#user-password_hash").val();
+    if (pass === "") {
+        alert("请输入密码！");
         return false;
     }
 

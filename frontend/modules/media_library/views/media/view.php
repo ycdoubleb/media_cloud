@@ -1,6 +1,5 @@
 <?php
 
-use common\utils\DateUtil;
 use frontend\modules\media_library\assets\MainAssets;
 use frontend\modules\media_library\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
@@ -8,7 +7,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\widgets\DetailView;
 
 MainAssets::register($this);
 ModuleAssets::register($this);

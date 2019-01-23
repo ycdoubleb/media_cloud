@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 /* @var $this View */
@@ -142,12 +143,12 @@ $this->title = Yii::t('app', 'Order');
                             },
                             'place-order' => function ($url, $data, $key) {
                                 $options = [
-                                   'class' => 'btn btn-highlight btn-flat',
-                                   'style' => '',
-                                   'title' => Yii::t('app', 'Payment'),
-                                   'aria-label' => Yii::t('app', 'Payment'),
-                                   'data-pjax' => '0',
-                                   'target' => '',
+                                    'class' => 'btn btn-highlight btn-flat',
+                                    'style' => '',
+                                    'title' => Yii::t('app', 'Payment'),
+                                    'aria-label' => Yii::t('app', 'Payment'),
+                                    'data-pjax' => '0',
+                                    'target' => '',
                                     'onclick' => 'showModal($(this).attr("href"));return false;'
                                ];
                                $buttonHtml = [
@@ -162,41 +163,43 @@ $this->title = Yii::t('app', 'Order');
                             },
                             'confirm' => function ($url, $data, $key) {
                                 $options = [
-                                   'class' => 'btn btn-primary btn-flat',
-                                   'style' => '',
-                                   'title' => Yii::t('app', 'Confirm'),
-                                   'aria-label' => Yii::t('app', 'Confirm'),
-                                   'data-pjax' => '0',
-                                   'target' => ''
-                               ];
-                               $buttonHtml = [
-                                   'name' => '确认开通',
-                                   'url' => ['confirm', 'id' => $data['id']],
-                                   'options' => $options,
-                                   'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == Order::ORDER_STATUS_TO_BE_CONFIRMED,
-                                   'adminOptions' => true,
-                               ];
-                               return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
+                                    'id' => 'submit',
+                                    'data-url' => Url::to(['confirm?id='.$data['id']], true),
+                                    'class' => 'btn btn-primary btn-flat',
+                                    'style' => '',
+                                    'title' => Yii::t('app', 'Confirm'),
+                                    'aria-label' => Yii::t('app', 'Confirm'),
+                                    'data-pjax' => '0',
+                                    'target' => ''
+                                ];
+                                $buttonHtml = [
+                                    'name' => '确认开通',
+                                    'url' => 'javascript:;',
+                                    'options' => $options,
+                                    'symbol' => '&nbsp;',
+                                    'conditions' => $data['order_status'] == Order::ORDER_STATUS_TO_BE_CONFIRMED,
+                                    'adminOptions' => true,
+                                ];
+                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
                             },
                             'delete' => function ($url, $data, $key) {
                                 $options = [
-                                   'class' => 'btn btn-highlight btn-flat',
-                                   'style' => 'margin-right:0px;',
-                                   'title' => Yii::t('app', 'Cancel'),
-                                   'aria-label' => Yii::t('app', 'Cancel'),
-                                   'data-pjax' => '0',
-                                   'target' => ''
-                               ];
-                               $buttonHtml = [
-                                   'name' => '取消订单',
-                                   'url' => ['delete', 'id' => $data['id']],
-                                   'options' => $options,
-                                   'symbol' => '&nbsp;',
-                                   'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
-                                   'adminOptions' => true,
-                               ];
-                               return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
+                                    'class' => 'btn btn-highlight btn-flat',
+                                    'style' => 'margin-right:0px;',
+                                    'title' => Yii::t('app', 'Cancel'),
+                                    'aria-label' => Yii::t('app', 'Cancel'),
+                                    'data-pjax' => '0',
+                                    'target' => ''
+                                ];
+                                $buttonHtml = [
+                                    'name' => '取消订单',
+                                    'url' => ['delete', 'id' => $data['id']],
+                                    'options' => $options,
+                                    'symbol' => '&nbsp;',
+                                    'conditions' => $data['order_status'] == 0 || $data['order_status'] == Order::ORDER_STATUS_AUDIT_FAILURE,
+                                    'adminOptions' => true,
+                                ];
+                                return $buttonHtml['conditions'] ? Html::a($buttonHtml['name'],$buttonHtml['url'],$buttonHtml['options']).' ' : '';
                             },
                         ]
                     ],
@@ -226,7 +229,14 @@ switch ($order_status) {
 $js = <<<JS
     //标签页选中效果
     $(".mc-tabs ul li[id=$is_active]").addClass('active');
-        
+       
+    //确认开通
+    $("#submit").click(function(){
+        var url = $(this).attr('data-url');
+        $.post(url, function(rel){
+            window.location.reload();  //刷新页面
+        });
+    });
 JS;
 $this->registerJs($js, View::POS_READY);
 ?>

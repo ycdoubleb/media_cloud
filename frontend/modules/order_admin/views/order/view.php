@@ -28,7 +28,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         </span>
         <div class="btngroup pull-right">
             <?php 
-                // 代付款或审核失败
+                // 待付款或审核失败
                 if($model->order_status == 0 || $model->order_status == Order::ORDER_STATUS_AUDIT_FAILURE){
                     echo Html::a('立即付款', ['cart/payment-method', 'id' => $model->id], [
                         'class' => 'btn btn-highlight btn-flat-lg', 
@@ -38,7 +38,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                 }
                 // 审核通过
                 if($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED){
-                    echo Html::a('确认开通', ['confirm', 'id' => $model->id], ['class' => 'btn btn-primary btn-flat-lg', 'target' => '_blank']); 
+                    echo Html::a('确认开通', 'javascript:;', ['id' => 'submit', 'class' => 'btn btn-primary btn-flat-lg']); 
                 }
             ?>
         </div>
@@ -116,9 +116,18 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
 </div>
 
 <?php
+$order_id = $model->id;   //订单ID
+
 $js = <<<JS
     //标签页选中效果
     $(".mc-tabs ul li[id=$tabs]").addClass('active');
+       
+    //确认开通
+    $("#submit").click(function(){
+        $.post("confirm?id=$order_id", function(rel){
+            window.location.reload();  //刷新页面
+        });
+    });
         
     //点击复制视频地址
     var btns = document.querySelectorAll('a');

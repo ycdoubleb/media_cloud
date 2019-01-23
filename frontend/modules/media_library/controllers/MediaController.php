@@ -182,10 +182,10 @@ class MediaController extends Controller
                 $model->save();
             }
             Yii::$app->getSession()->setFlash('success','加入购物车成功！');
-            //return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
             Yii::$app->getSession()->setFlash('error','加入购物车失败！失败原因::'.$ex->getMessage());
-            //return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
         }
 
     }

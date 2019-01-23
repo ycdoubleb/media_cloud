@@ -1,23 +1,23 @@
 <?php
 
-/* @var $this View */
-/* @var $form ActiveForm */
-/* @var $model LoginForm */
-
 use common\models\LoginForm;
 use frontend\assets\SiteAssets;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\web\View;
 
-$this->title = Yii::t('app', 'Login');
+/* @var $this View */
+/* @var $form ActiveForm */
+/* @var $model LoginForm */
 
 SiteAssets::register($this);
+
+$this->title = Yii::t('app', 'Login');
 
 ?>
 
 <div class="site-login">
-    <div class="vkonline" style='background-image: url("/imgs/site/site_loginbg.jpg");'>
+    <div class="mediacloud" style='background-image: url("/imgs/site/site_loginbg.jpg");'>
         <div class="platform container">
             <!--选择密码登录/短信登录-->
             <div class="tab-title" style="padding: 0px 20px">

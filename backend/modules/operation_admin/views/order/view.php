@@ -1,7 +1,13 @@
 <?php
 
 use backend\modules\operation_admin\assets\OperationModuleAsset;
+use common\models\media\MediaTypeDetail;
 use common\models\order\Order;
+use common\models\order\PlayApprove;
+use common\utils\DateUtil;
+use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\View;
 use yii\web\YiiAsset;
 use yii\widgets\DetailView;
@@ -18,6 +24,9 @@ $this->title = Yii::t('app', "{Order}{Detail}：{$model->order_name}", [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Order'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
+$mediaTypeIds = ArrayHelper::getColumn($goodsDataProvider->allModels, 'media.type_id');
+$iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url');
+
 ?>
 <div class="order-view">
 
@@ -26,10 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
         </li>
         <li role="presentation" class="">
-            <a href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">线下支付</a>
+            <a href="#pay" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">线下支付</a>
         </li>
         <li role="presentation" class="">
-            <a href="#video" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">资源列表</a>
+            <a href="#goods" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">资源列表</a>
         </li>
         <li role="presentation" class="">
             <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
@@ -114,6 +123,530 @@ $this->params['breadcrumbs'][] = $this->title;
         
         </div>
         
+        <!--线下支付-->
+        <div role="tabpanel" class="tab-pane fade" id="pay" aria-labelledby="pay-tab">
+            
+            <?= GridView::widget([
+                'dataProvider' => $playDataProvider,
+                'layout' => "{items}\n{summary}\n{pager}",
+                'columns' => [
+                    [
+                        'class' => 'yii\grid\SerialColumn',
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '50px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    
+                    [
+                        'label' => Yii::t('app', '{Payable}{Amount}', [
+                            'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
+                        ]),
+                        'value' => function($model){
+                            return !empty($model->order_id) ? Yii::$app->formatter->asCurrency($model->order->order_amount) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '80px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Purchaser'),
+                        'value' => function($model){
+                            return !empty($model->created_by) ? $model->createdBy->nickname : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '66px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Payment}{Voucher}', [
+                            'Payment' => Yii::t('app', 'Payment'), 'Voucher' => Yii::t('app', 'Voucher')
+                        ]),
+                        'format' => 'raw',
+                        'value' => function($model){
+                            return Html::a(Html::img($model->certificate_url, ['width' => 63, 'height' => 44]), null, [
+                                'title' => '单击放大查看', 'style' => 'cursor:pointer;', 'onclick' => 'amplifyPicture($(this));'
+                            ]);
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '75px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Payment}{Time}', [
+                            'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
+                        ]),
+                        'value' => function($model){
+                            return !empty($model->order_id) && $model->order->play_at > 0 ? date('Y-m-d H:i', $model->order->play_at) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '76px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                                'font-size' => '13px'
+                            ],
+                        ]
+                    ],           
+                    [
+                        'attribute' => 'content',
+                        'label' => Yii::t('app', '{Payment}{Illustration}', [
+                            'Payment' => Yii::t('app', 'Payment'), 'Illustration' => Yii::t('app', 'Illustration')
+                        ]),
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '155px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Auditing}{Result}', [
+                            'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                        ]),
+                        'value' => function($model){
+                            return $model->status == 1 ? PlayApprove::$resultName[$model->result] : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '66px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Verifier'),
+                        'value' => function($model){
+                            return !empty($model->handled_by) ? $model->handledBy->nickname : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '66px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Auditing}{Time}', [
+                            'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
+                        ]),
+                        'value' => function($model){
+                            return !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '76px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                                'font-size' => '13px'
+                            ],
+                        ]
+                    ],
+                    [
+                        'attribute' => 'feedback',
+                        'label' => Yii::t('app', '{Feedback}{Info}', [
+                            'Feedback' => Yii::t('app', 'Feedback'), 'Info' => Yii::t('app', 'Info')
+                        ]),
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '155px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+                ],
+            ]); ?>
+            
+        </div>
+        
+        <!--媒体列表-->
+        <div role="tabpanel" class="tab-pane fade" id="goods" aria-labelledby="goods-tab">
+            
+            <?= GridView::widget([
+                'dataProvider' => $goodsDataProvider,
+    //            'filterModel' => $searchModel,
+                'layout' => "{items}\n{summary}\n{pager}",
+                'columns' => [
+                    [
+                        'class' => 'yii\grid\SerialColumn',
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '50px',
+                                'padding' => '8px 2px',
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ]
+                    ],
+
+                    [
+                        'attribute' => 'goods_id',
+                        'label' => Yii::t('app', '{Media}{Number}', [
+                            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                        ]),
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '66px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Thumb Image'),
+                        'format' => 'raw',
+                        'value' => function($model) use($iconMap){
+                            if(!empty($model->goods_id)){
+                                if($model->media->cover_url != null){
+                                    $cover_url = $model->media->cover_url;
+                                }else if(isset($iconMap[$model->media->ext])){
+                                    $cover_url = $iconMap[$model->media->ext];
+                                }else{
+                                    $cover_url = '';
+                                }
+                                return Html::img($cover_url, ['width' => 87, 'height' => 74]);
+                            }else{
+                                return null;
+                            }
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '96px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],                    
+                    [
+                        'label' => Yii::t('app', '{Media}{Name}', [
+                            'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                        ]),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ? $model->media->name : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '180px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Type'),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ? $model->media->mediaType->name : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '66px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],    
+                    [
+                        'label' => Yii::t('app', 'Duration'),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ? DateUtil::intToTime($model->media->duration, ':', true) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '76px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],            
+                    [
+                        'label' => Yii::t('app', 'Size'),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ? Yii::$app->formatter->asShortSize($model->media->size) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '86px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Operator'),
+                        'value' => function($model){
+                            return !empty($model->goods_id) && !empty($model->media->owner_id) ? $model->media->owner->nickname : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '76px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],            
+                    [
+                        'label' => Yii::t('app', '{Media}{Price}', [
+                            'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
+                        ]),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ? Yii::$app->formatter->asCurrency($model->media->price) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '70px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],            
+                    [
+                        'label' => Yii::t('app', 'Tag'),
+                        'value' => function($model){
+                            return !empty($model->goods_id) ?  implode(',', ArrayHelper::getColumn($model->media->mediaTagRefs, 'tags.name')) : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '196px',
+                                'padding' => '8px 4px'
+                            ]
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 4px'
+                            ],
+                        ]
+                    ],
+
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'header' => '操作',
+                        'buttons' => [
+                            'media' => function($url, $model){
+                                return Html::a('查看', ['/media_admin/media/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);
+                            },
+                        ],
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '80px',
+                                'padding' => '8px 2px',
+                            ],
+                        ],
+                        'contentOptions' => [
+                            'style' => [
+                                'padding' => '8px 2px',
+                            ],
+                        ],
+
+                        'template' => '{media}',
+                    ],
+                ],
+            ]); ?>
+            
+        </div>
+        
+        <!--操作记录-->
+        <div role="tabpanel" class="tab-pane fade" id="action" aria-labelledby="action-tab">
+            
+            <?= GridView::widget([
+                'dataProvider' => $actionDataProvider,
+                'layout' => "{items}\n{summary}\n{pager}",  
+                'columns' => [
+                    [
+                        'class' => 'yii\grid\SerialColumn',
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '30px',
+                            ],
+                        ],
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Operate}{Type}', [
+                            'Operate' => Yii::t('app', 'Operate'), 'Type' => Yii::t('app', 'Type')
+                        ]),
+                        'value' => function($model){
+                            return $model->title;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '120px',
+                            ]
+                        ],
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Created By'),
+                        'value' => function($model){
+                            return !empty($model->created_by) ? $model->createdBy->nickname : null;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '120px',
+                            ]
+                        ],
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Content'),
+                        'format' => 'raw',
+                        'value' => function($model){
+                            return $model->content;
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '750px',
+                            ]
+                        ],
+                    ],
+                    [
+                        'label' => Yii::t('app', '{Operate}{Time}', [
+                            'Operate' => Yii::t('app', 'Operate'), 'Time' => Yii::t('app', 'Time')
+                        ]),
+                        'value' => function($model){
+                            return date('Y-m-d H:i', $model->created_at);
+                        },
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '120px',
+                            ]
+                        ],
+                    ],
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'header' => '操作',
+                        'buttons' => [
+                            'view' => function($url, $model){
+                                return Html::a(Yii::t('app', 'View'), ['view-action', 'id' => $model->id], [
+                                    'id' => 'btn-viewAction', 'class' => 'btn btn-default', 'onclick' => 'showModal($(this)); return false;'
+                                ]);
+                            },
+                        ],
+                        'headerOptions' => [
+                            'style' => [
+                                'width' => '80px',
+                            ],
+                        ],
+
+                        'template' => '{view}',
+                    ],
+                ],
+            ]); ?>
+            
+        </div>
+        
     </div>
 
 </div>
+
+
+<!--加载模态框-->
+<?= $this->render('/layouts/modal'); ?>
+
+
+<script type="text/javascript">
+    
+    /**
+     * 放大图片查看
+     * @param {object} _this
+     * @returns {undefined}
+     */
+    function amplifyPicture(_this){
+        var url = _this.children('img').attr('src');
+        $(".modal-body").html("");
+        $('.modal-body').html($('<img src="" width="100%"/>').attr('src', url));
+        $('.myModal').modal("show");
+    }
+    
+    
+</script>

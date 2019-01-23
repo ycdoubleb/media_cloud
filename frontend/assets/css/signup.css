@@ -43,7 +43,7 @@
     color: #333;
     text-transform: uppercase;
     font-size: 14px;
-    width: 24.9%;
+    width: 50%;
     float: left;
     position: relative;
 }
@@ -64,11 +64,11 @@
 /*进度条连接线-样式*/
 .site-signup #msform #progressbar li:after {
     content: '';
-    width: 88%;
+    width: 95%;
     height: 2px;
     background-color: #eee;
     position: absolute;
-    left: -44%;
+    left: -47%;
     top: 9px;
     z-index: 0; /*设置在它后面的数*/
 }
@@ -87,16 +87,17 @@
 }
 
 .site-signup #msform fieldset {
+    /*堆叠fieldsets*/
+    position: absolute;
+    width: 400px;
+    height: 500px;
+    margin: 0 20%;
+    padding: 10px 30px;
     background: white;
     border: 0 none;
     box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.1);
-    padding: 10px 30px;
     box-sizing: border-box;
-    width: 80%;
-    margin: 0 10%;
-    /*堆叠fieldsets*/
-    position: absolute;
 }
 
 .site-signup .form-group input {
@@ -114,7 +115,7 @@
 
 .site-signup .name-info {
     height: 15px;
-    bottom: 135px;
+    bottom: 188px;
     color: #666666;
     position: absolute;
 }
@@ -130,7 +131,7 @@
 
 /*除了第一个fieldset，其他都隐藏*/
 .site-signup #msform fieldset:not(:first-of-type) {
-	display: none;
+    display: none;
 }
 
 /*所有输入框的样式*/
@@ -188,11 +189,11 @@
 
 /*验证码*/
 .site-signup .field-user-code .icon-y {
-    right: 275px !important;
+    right: 180px !important;
 }
 
 .site-signup .field-user-code .icon-n {
-    right: 275px !important;
+    right: 180px !important;
 }
 
 

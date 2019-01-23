@@ -253,8 +253,7 @@ class Media extends ActiveRecord
      */
     public function getVideoUrls()
     {
-        return $this->hasMany(VideoUrl::className(), ['media_id' => 'id'])
-           ->where(['media_id' => $this->id, 'is_del' => 0]);
+        return $this->hasMany(VideoUrl::className(), ['media_id' => 'id'])->where(['is_del' => 0]);
     }
     
     /**
@@ -262,7 +261,6 @@ class Media extends ActiveRecord
      */
     public function getMediaAction()
     {
-        return $this->hasMany(MediaAction::className(), ['media_id' => 'id'])
-           ->where(['media_id' => $this->id]);
+        return $this->hasMany(MediaAction::className(), ['media_id' => 'id']);
     }
 }

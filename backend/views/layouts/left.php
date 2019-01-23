@@ -74,8 +74,8 @@ use common\widgets\Menu;
                         'items' => [
                             ['label' => '上传媒体', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
                             ['label' => '媒体列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media']],
-                            ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve', 'MediaApproveSearch' => ['status' => MediaApprove::STATUS_APPROVEING]]],
-                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle', 'MediaRecycleSearch' => ['status' => MediaRecycle::STATUS_UNTREATED]]],
+                            ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve']],
+                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle']],
                         ],
                     ],
                     [
@@ -97,10 +97,20 @@ use common\widgets\Menu;
                         'url' => '#',
                         'items' => [
                             ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/operation_admin/order/index']],
-                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/order-approve/index', 'PlayApproveSearch' => ['status' => PlayApprove::STATUS_TO_BE_AUDITED]]],
+                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/order-approve/index']],
                             ['label' => '媒体运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods']],
                             ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl']],
                         ],
+                    ],
+                    [
+                        'label' => '统计',
+                        'icon' => 'bars',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => '总统计', 'icon' => 'circle-o', 'url' => ['/statistics/all-statistics/index']],
+                            ['label' => '排行统计', 'icon' => 'circle-o', 'url' => ['/statistics/ranking-statistics/index']],
+                            ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],
+                        ]
                     ],
                     [
                         'label' => '帮助中心',

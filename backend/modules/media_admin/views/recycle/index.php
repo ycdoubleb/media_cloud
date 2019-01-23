@@ -264,10 +264,13 @@ $this->params['breadcrumbs'][] = $this->title;
     
 </div>
 
+<!--加载模态框-->
+<?= $this->render('/layouts/modal'); ?>
+
 <?php
 $js = <<<JS
         
-    // 还原或删除
+    // 还原 & 删除
     $('#btn-recovery, #btn-delete').click(function(e){
         e.preventDefault();
         var val = [],
@@ -281,7 +284,8 @@ $js = <<<JS
         }
         if(val.length > 0){
             if(confirm("确定执行该操作") == true){
-                window.location.href = url + "?id=" + val;
+                $(".myModal").html("");
+                $('.myModal').modal("show").load(url + "?id=" + val);
             }
         }else{
             alert("请选择需要的id");

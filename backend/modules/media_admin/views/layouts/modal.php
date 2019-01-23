@@ -9,7 +9,7 @@ use common\widgets\ueditor\UeditorAsset;
 ?>
 
 <div class="modal fade myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             
             <div class="modal-header">
@@ -20,7 +20,7 @@ use common\widgets\ueditor\UeditorAsset;
             <div class="modal-body" id="myModalBody">内容</div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="button" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default btn-flat" data-dismiss="modal" aria-label="Close">关闭</button>
             </div>
             
        </div>

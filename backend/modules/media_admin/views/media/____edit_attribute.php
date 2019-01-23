@@ -13,9 +13,6 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
     'Attribute' => Yii::t('app', 'Attribute'), 'Tag' => Yii::t('app', 'Tag')
 ]);
 
-//所有媒体id
-$ids = json_encode($ids);
-
 ?>
 <div class="media-edit-attribute">
     
@@ -23,7 +20,6 @@ $ids = json_encode($ids);
         'options'=>[
             'id' => 'media-form',
             'class' => 'form form-horizontal',
-            'enctype' => 'multipart/form-data',
         ],
 //        'action' => ['edit-attribute', 'id' => $model->id],
     ]); ?>

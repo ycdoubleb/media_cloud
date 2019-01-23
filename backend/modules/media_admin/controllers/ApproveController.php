@@ -3,12 +3,14 @@
 namespace backend\modules\media_admin\controllers;
 
 use common\components\aliyuncs\MediaAliyunAction;
+use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaApprove;
 use common\models\media\MediaRecycle;
 use common\models\media\MediaType;
 use common\models\media\searchs\MediaApproveSearch;
 use Yii;
+use yii\base\Exception;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -40,7 +42,7 @@ class ApproveController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new MediaApproveSearch();
+        $searchModel = new MediaApproveSearch(['status' => MediaApprove::STATUS_APPROVEING]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -59,110 +61,143 @@ class ApproveController extends Controller
 
     /**
      * 申请入库。
-     * 如果申请成功，浏览器将被重定向到“index”页面。
+     * 如果申请成功，浏览器将被重定向到“当前”页面。
+     * @param string $media_id
      * @return mixed
      */
-    public function actionAddApply()
+    public function actionAddApply($media_id)
     {
-        if(\Yii::$app->request->isPost){
-            // 所有媒体id
-            $mediaIds = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'media_id'));  
-            // 申请说明
-            $content = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.content'); 
+        // 所有媒体id
+        $mediaIds = explode(',', $media_id);
+        $post = Yii::$app->request->post();
 
-            //查找已经存在的
-            $result = MediaApprove::find()->from(['Approve' => MediaApprove::tableName()])
-                ->select(['Approve.*', 'Media.status as media_status'])
-                ->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id')
-                ->where(['Approve.media_id' => $mediaIds])
-                ->orWhere(['or', ['Media.status' => Media::STATUS_INSERTED_DB], ['Media.status' => Media::STATUS_PUBLISHED]])
-                ->andWhere(['or', ['Approve.result' => 1], ['Approve.status' => 0]])->asArray()->all();
-            $result = ArrayHelper::index($result, 'media_id');
-
-            foreach($mediaIds as $id){
-                // 过滤已经存在或通过的申请
-                if(!isset($result[$id])){
-                    // 新建一个申请入库
-                    $model = new MediaApprove(['media_id' => $id,'type' => MediaApprove::TYPE_INTODB_APPROVE,
-                        'content' => $content, 'created_by' => Yii::$app->user->id]);
+        if (Yii::$app->request->isPost) {
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                //查找已经存在的
+                $result = MediaApprove::find()->where(['media_id' => $mediaIds])
+                    ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
+                $result = ArrayHelper::index($result, 'media_id');
+                // 申请说明
+                $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
+                // 过滤已存在的
+                if(!in_array($media_id, array_keys($result))){
+                    $model = new MediaApprove([
+                        'media_id' => $media_id,'type' => MediaApprove::TYPE_INTODB_APPROVE,
+                        'content' => $content, 'created_by' => Yii::$app->user->id
+                    ]);
                     $model->save();
-                }else if($result[$id]['status'] == MediaApprove::STATUS_APPROVEING){
-                    $model = MediaApprove::findOne($result[$id]['id']);
+                }
+                // 如果状态是【待审核】才更新
+                if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
+                    $model = MediaApprove::findOne($result[$media_id]['id']);
                     $model->type = MediaApprove::TYPE_INTODB_APPROVE;
                     $model->content = $content;
-                    $model->update();
+                    $model->save();
                 }
+
+                $trans->commit();  //提交事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                
+            } catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
-            
-            Yii::$app->getSession()->setFlash('success','申请成功！');
-            
-            return $this->redirect(['media/index']);
         }
-        
-        return $this->renderAjax('____apply');
+            
+        return $this->renderAjax('____apply', [
+            'mediaIds' => json_encode($mediaIds)
+        ]);
     }
     
     /**
      * 申请删除。
-     * 如果申请成功，浏览器将被重定向到“index”页面。
+     * 如果申请成功，浏览器将被重定向到“当前”页面。
+     * @param string $media_id
      * @return mixed
      */
-    public function actionDelApply()
+    public function actionDelApply($media_id)
     {
-        if(\Yii::$app->request->isPost){
-            // 所有媒体id
-            $mediaIds = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'media_id'));  
-            // 申请说明
-            $content = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.content'); 
+        // 所有媒体id
+        $mediaIds = explode(',', $media_id);
+        $post = Yii::$app->request->post();
 
-            //查找已经存在的
-            $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
-            $result = ArrayHelper::index($result, 'media_id');
-
-            foreach($mediaIds as $id){
-                // 过滤已经存在或通过的申请
-                if(!isset($result[$id])){
-                    // 新建一个删除申请
-                    $model = new MediaApprove(['media_id' => $id,'type' => MediaApprove::TYPE_DELETE_APPROVE,
-                        'content' => $content, 'created_by' => Yii::$app->user->id]);
+        if (Yii::$app->request->isPost) {
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                //查找已经存在的
+                $result = MediaApprove::find()->where(['media_id' => $mediaIds])
+                    ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
+                $result = ArrayHelper::index($result, 'media_id');
+                // 申请说明
+                $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
+                // 过滤已存在的
+                if(!in_array($media_id, array_keys($result))){
+                    $model = new MediaApprove([
+                        'media_id' => $media_id,'type' => MediaApprove::TYPE_DELETE_APPROVE,
+                        'content' => $content, 'created_by' => Yii::$app->user->id
+                    ]);
                     $model->save();
-                }else if($result[$id]['status'] == MediaApprove::STATUS_APPROVEING){
-                    $model = MediaApprove::findOne($result[$id]['id']);
+                }
+                // 如果状态是【待审核】才更新
+                if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
+                    $model = MediaApprove::findOne($result[$media_id]['id']);
                     $model->type = MediaApprove::TYPE_DELETE_APPROVE;
                     $model->content = $content;
-                    $model->update();
+                    $model->save();
                 }
+
+                $trans->commit();  //提交事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                
+            } catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
-            
-            Yii::$app->getSession()->setFlash('success','申请成功！');
-            
-            return $this->redirect(['media/index']);
         }
-        
-        return $this->renderAjax('____apply');
+            
+        return $this->renderAjax('____apply', [
+            'mediaIds' => json_encode($mediaIds)
+        ]);
     }
 
     /**
      * 通过申请
-     * 如果成功，浏览器将被重定向到“index”页面。
+     * 如果成功，浏览器将被重定向到“当前”页面。
+     * @param string $id
      * @return mixed
      */
-    public function actionPassApprove()
+    public function actionPassApprove($id)
     {
+        // 所有id
+        $ids = explode(',', $id);
+        $post = Yii::$app->request->post();
+        
         if(\Yii::$app->request->isPost){
-            // 所有id
-            $ids = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'));  
-            // 反馈信息
-            $feedback = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.feedback'); 
-
-            //查找已经存在的
-            $result = MediaApprove::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
-            $result = ArrayHelper::index($result, 'id');
-
-            foreach($ids as $id){
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                //查找已经存在的
+                $result = MediaApprove::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
+                $result = ArrayHelper::index($result, 'id');
+                // 反馈信息
+                $feedback = ArrayHelper::getValue($post, 'MediaApprove.feedback'); 
                 // 过滤已经审批的
-                if(!isset($result[$id])){
+                if(!in_array($id, array_keys($result))){
                     $model = MediaApprove::findOne($id);
                     /* 需要保存的申请数据 */
                     $model->status = MediaApprove::STATUS_APPROVED;
@@ -199,36 +234,48 @@ class ApproveController extends Controller
                         }
                     }
                 }
+                
+                $trans->commit();  //提交事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+                
+            } catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
-            
-            Yii::$app->getSession()->setFlash('success','审批成功！');
-            
-            return $this->redirect(['index']);
         }
         
-        return $this->renderAjax('____approve');
+        return $this->renderAjax('____approve', [
+            'ids' => json_encode($ids)
+        ]);
     }
     
     /**
      * 不通过申请
-     * 如果成功，浏览器将被重定向到“index”页面。
+     * 如果成功，浏览器将被重定向到“当前”页面。
+     * @param string $id
      * @return mixed
      */
-    public function actionNotApprove()
-    {
+    public function actionNotApprove($id)
+    {   
+        // 所有id
+        $ids = explode(',', $id);
+        $post = Yii::$app->request->post();
+        
         if(\Yii::$app->request->isPost){
-            // 所有id
-            $ids = explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'));  
-            // 反馈信息
-            $feedback = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.feedback'); 
-
-            //查找已经存在的
-            $result = MediaApprove::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
-            $result = ArrayHelper::index($result, 'id');
-
-            foreach($ids as $id){
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                //查找已经存在的
+                $result = MediaApprove::find()->where(['id' => $ids, 'status' => 1])->asArray()->all();
+                $result = ArrayHelper::index($result, 'id');
+                // 反馈信息
+                $feedback = ArrayHelper::getValue($post, 'MediaApprove.feedback'); 
                 // 过滤已经审批的
-                if(!isset($result[$id])){
+                if(!in_array($id, array_keys($result))){
                     $model = MediaApprove::findOne($id);
                     /* 需要保存的申请数据 */
                     $model->status = MediaApprove::STATUS_APPROVED;
@@ -238,13 +285,18 @@ class ApproveController extends Controller
                     $model->handled_at = time();
                     $model->save();
                 }
-            }
+
+                $trans->commit();  //提交事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
-            Yii::$app->getSession()->setFlash('success','审批成功！');
-            
-            return $this->redirect(['index']);
+            } catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            }
         }
         
-        return $this->renderAjax('____approve');
+        return $this->renderAjax('____approve', [
+            'ids' => json_encode($ids)
+        ]);
     }
 }

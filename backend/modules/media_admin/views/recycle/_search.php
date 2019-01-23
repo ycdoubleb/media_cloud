@@ -63,7 +63,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'status', [
                         'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
                     ])->widget(Select2::class, [
-                        'data' => MediaApprove::$statusMap,
+                        'data' => MediaRecycle::$statusMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', '{Handle}{Status}', [
                             'Handle' => Yii::t('app', 'Handle'), 'Status' => Yii::t('app', 'Status')
@@ -101,14 +101,14 @@ use yii\widgets\ActiveForm;
                     ]) ?>
                 </div>
                 
-                <!--审核人-->
+                <!--处理人-->
                 <div id="DepDropdown-handled_by" class="dep-dropdowns">
                     <?= $form->field($model, 'handled_by',[
                         'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', 'Verifier')],
+                        'options' => ['placeholder' => Yii::t('app', 'Handler')],
                         'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>

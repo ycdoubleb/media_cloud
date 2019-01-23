@@ -38,11 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a(Yii::t('app', '{Reset}{Tag}', [
                     'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
                 ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{Approve}{Into}{DB}', [
-                    'Approve' => Yii::t('app', 'Approve'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
+                <?= ' ' . Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
+                    'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
                 ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{Approve}{Delete}', [
-                    'Approve' => Yii::t('app', 'Approve'), 'Delete' => Yii::t('app', 'Delete')
+                <?= ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
+                    'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
                 ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']); ?>
             </div>
             
@@ -325,7 +325,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
         
-    // 弹出媒体编辑页面面板
+    // 弹出媒体申请面板
     $('#btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 

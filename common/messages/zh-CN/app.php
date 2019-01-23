@@ -351,6 +351,7 @@ return [
     'Visit' => '访问',
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
+    'Media Operate' => '媒体运营',
     
     //后台-定时任务
     'Crontab' => '定时任务',
@@ -363,6 +364,12 @@ return [
     
     //后台-统计
     'Total Statistics' => '总统计',
+    'Ranking Statistics' => '排行统计',
+    'Single Statistics' => '单独统计',
+    'Operator' => '运营人',
+    'Proportion' => '占比',
+    'Expenditure' => '支出',
+    'Click' => '点击',
     
     //后台-帮助中心
     'App' => '应用',

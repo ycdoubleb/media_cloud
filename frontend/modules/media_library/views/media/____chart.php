@@ -15,7 +15,7 @@
         <div class="tuip">
             <div class="pull-left {%icon%}" title="{%type_name%}"></div>
             <div class="pull-right">
-                <a href="/media_library/media/add-carts?id={%id%}" class="add-cart">加入购物车</a>&nbsp;
+                <a href="javascript:;" data-url="/media_library/media/add-carts" data-id="{%id%}" class="add-cart">加入购物车</a>&nbsp;
                 <a href="/media_library/media/checking-order?id={%id%}" class="buy-now">立即购买</a>
             </div>
         </div>

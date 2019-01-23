@@ -20,22 +20,42 @@
         var _self = this;
         
         this.id = id;  
-        this.file_id = data.id;                             //文件id
-        this.name = data.name;                              //文件名
-        this.cover_url = data.thumb_url;                    //文件缩略图
-        this.url = data.url;                                //文件绝对路径
-        this.duration = data.metadata.duration;             //文件时长
-        this.size = data.size;                              //文件大小
-        this.ext = data.ext;                                //文件后缀名
-        this.oss_key = data.oss_key                         //文件oss_key
-        this.md5 = data.md5                                 //文件MD5
-
-        this.media_id = null;                               //媒体id
-        this.submit_status = 0;                             //提交状态 0/1/2 未提交/提交中/已提交
-        this.submit_result = false;                         //提交结果 false/true 失败/成功
-        this.submit_feedback = ''                           //提交反馈
-
-        this.errors = {};                                   //错误 key:mes
+        //文件id
+        this.file_id = data.id;        
+        //文件名
+        this.name = data.name;        
+        //文件缩略图
+        this.cover_url = data.thumb_url;   
+        //文件原路径
+        this.url = data.url;                                
+        //文件时长
+        if(!!data.metadata){    // 如果data.metadata存在则调用子级数据
+            this.duration = data.metadata.duration;
+        }else{
+            this.duration = data.duration;
+        }
+        //文件大小
+        this.size = data.size;     
+        //文件后缀名
+        this.ext = data.ext;       
+        //文件oss_key
+        this.oss_key = data.oss_key       
+        //文件MD5
+        this.md5 = data.md5                                 
+        // 标签
+        this.media_tags = data.tags
+        
+        //媒体id
+        this.media_id = null;           
+        //提交状态 0/1/2 未提交/提交中/已提交
+        this.submit_status = 0;      
+        //提交结果 false/true 失败/成功
+        this.submit_result = false;     
+         //提交反馈
+        this.submit_feedback = ''                          
+        
+        //错误 key:mes
+        this.errors = {};                                   
         
     }
    
@@ -84,6 +104,7 @@
                 size: this.size, 
                 ext: this.ext,
                 oss_key: this.oss_key,
+                media_tags: this.media_tags
             }
         };
     };
@@ -169,6 +190,7 @@
         // 上传完成显示
         if(_self.completed_num == max_num){
             $footer.children('span.text-default').removeClass('hidden');
+            $footer.children('button#btn-anewUpload').addClass('hidden');
         }
     }
     
@@ -210,6 +232,7 @@
             if (md.validate()) {
                 var submit_common_params = this.config['submit_common_params'];
                 postData = $.extend(postData, submit_common_params);
+                console.log(postData);
                 md.setSubmitResult(1);  //设置提交中
                 $.post(this.config['media_url'], postData, function (response) {
                     try {
@@ -309,7 +332,7 @@
         medias = medias || [];
         var _self = this, mediaData;
         //array to MediaData
-         for(var index in medias){
+        for(var index in medias){
             mediaData = new MediaData(Number(index) + 1, medias[index]);
             _self.medias.push(mediaData);
         }
@@ -359,7 +382,6 @@
      * @returns {void}
      */
     MediaBatchUpload.prototype.submit = function(submit_common_params, force){
-        console.log(submit_common_params, this.__parseURIComponent(submit_common_params));
         force = !!force;
         this.submit_index = -1;
         this.config['submit_common_params'] = $.extend(

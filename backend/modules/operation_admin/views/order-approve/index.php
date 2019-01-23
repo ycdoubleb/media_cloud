@@ -281,37 +281,10 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 </div>
 
-<!--模态框-->
-<div class="modal fade myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            
-            <div class="modal-body" id="myModalBody">
-                <img src="" width="100%"/>
-            </div>
-            
-       </div>
-    </div> 
-</div>
+<!--加载模态框-->
+<?= $this->render('/layouts/modal'); ?>
 
 <script type="text/javascript">
-    
-    /**
-     * html 加载完成后初始化方法
-     * @returns {void}
-     */
-    window.onload = function(){
-        amplifyPicture();
-        
-        // 关闭模态框注销img的路径
-        $('#myModal').on('hidden.bs.modal', function (e) {
-            $('#myModalBody img').attr('src', '');
-        })
-    }
     
     /**
      * 放大图片查看
@@ -320,7 +293,7 @@ $this->params['breadcrumbs'][] = $this->title;
      */
     function amplifyPicture(_this){
         var url = _this.children('img').attr('src');
-        $('#myModalBody img').attr('src', url);
+        $('#myModalBody').html($('<img src="" width="100%"/>').attr('src', url));
         $('.myModal').modal("show");
     }
     

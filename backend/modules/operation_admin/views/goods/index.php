@@ -14,7 +14,7 @@ use yii\web\View;
 
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', 'Order Goods');
+$this->title = Yii::t('app', 'Media Operate');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-goods-index">

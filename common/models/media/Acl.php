@@ -6,6 +6,7 @@ use common\components\redis\RedisService;
 use common\models\order\Order;
 use common\models\order\OrderGoods;
 use common\models\User;
+use common\utils\StringUtil;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -187,12 +188,14 @@ class Acl extends ActiveRecord
                 // 所需字段
                 $query ->select([
                     'Goods.goods_id AS media_id', 'Media.name', 'Goods.order_id', 'Goods.order_sn', 
-                    'Goods.created_by as user_id', 'VideoUrl.level',
-                    "IF(MediaType.sign = '".MediaType::SIGN_VIDEO."', VideoUrl.url, Media.url) as url",
+                    'Goods.created_by as user_id', "IF(VideoUrl.level IS NUll, 0, VideoUrl.level) AS level",
+                    "IF(MediaType.sign = '".MediaType::SIGN_VIDEO."' and MediaDetail.mts_need = 1, VideoUrl.url, Media.url) as url",
                 ]);        
 
                 // 关联媒体表
                 $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id');
+                // 关联媒体详情表
+                $query->leftJoin(['MediaDetail' => MediaDetail::tableName()], 'MediaDetail.media_id = Media.id');
                 // 关联媒体类型表
                 $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
                 // 关联视频地址表
@@ -204,9 +207,9 @@ class Acl extends ActiveRecord
                 // 查询结果
                 $goodsRows = $query->asArray()->all();
 
-                // 合并创建时间和更新时间
+                // 合并sn、level、created_at、updated_at
                 foreach ($goodsRows as &$item){
-                    $item['level'] = empty($item['level']) ? 0 : $item['level'];
+                    $item['sn'] = StringUtil::getRandomSN();
                     $item['created_at'] = time();
                     $item['updated_at'] = time();
                 }

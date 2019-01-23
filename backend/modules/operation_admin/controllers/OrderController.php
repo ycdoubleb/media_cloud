@@ -4,6 +4,7 @@ namespace backend\modules\operation_admin\controllers;
 
 use backend\modules\operation_admin\searchs\OrderSearch;
 use common\models\order\Order;
+use common\models\order\OrderAction;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
@@ -58,11 +59,37 @@ class OrderController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'playDataProvider' => new ArrayDataProvider([
+                'allModels' => $model->playApproves
+            ]),
+            'goodsDataProvider' => new ArrayDataProvider([
+                'allModels' => $model->goods
+            ]),
+            'actionDataProvider' => new ArrayDataProvider([
+                'allModels' => $model->orderAction
+            ]),
+                
         ]);
     }
    
+    /**
+     * 查看 媒体操作
+     * @param string $id
+     * @return mixed
+     */
+    public function actionViewAction($id)
+    {
+       $model = OrderAction::findOne($id);        
+        
+        return $this->renderAjax('____view_action', [
+            'model' => $model,
+        ]);
+    }
+    
     /**
      * 根据其主键值查找订单模型。
      * 如果找不到模型，将引发404 HTTP异常。

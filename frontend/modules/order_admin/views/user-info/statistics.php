@@ -3,7 +3,7 @@
 use common\widgets\charts\ChartAsset;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use kartik\daterange\DateRangePicker;
-use kartik\widgets\DatePicker;
+use kartik\widgets\Select2;
 use yii\web\View;
 
 /* 
@@ -57,7 +57,7 @@ ChartAsset::register($this);
                     </div>
                     <div class="statistics-num left-price">
                         <p>总支出金额</p>
-                        <span><?= $totalPay['total_price'];?></span>
+                        <span><?= Yii::$app->formatter->asCurrency(empty($totalPay['total_price']) ? 0 : $totalPay['total_price']);?></span>
                     </div>
                 </div>
                 <div class="pull-right">
@@ -66,7 +66,7 @@ ChartAsset::register($this);
                     </div>
                     <div class="statistics-num right-num">
                         <p>总购买资源数</p>
-                        <span><?= $totalPay['total_goods'];?></span>
+                        <span><?= empty($totalPay['total_goods']) ? 0 : $totalPay['total_goods'];?></span>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@ ChartAsset::register($this);
                 <div class="form-group field-order-confirm_at required" style="margin-bottom: 0px">
                     <label class="col-lg-2 col-md-2 control-label" style="color: #999999; padding-top: 10px; text-align: left;">年度月支出金额:</label>
                     <div class="col-lg-2 col-md-2" style="padding-left: 0px;">
-                        <?= \kartik\widgets\Select2::widget([
+                        <?= Select2::widget([
                             'name' => 'year',
                             'value' => $year,
                             'data' => $years,

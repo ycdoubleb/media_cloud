@@ -80,7 +80,7 @@ TagsInputAsset::register($this);
     
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">
-            <?= Html::textInput('Media[tag_ids]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
+            <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
                 'onchange' => 'validateTags($(this))'
             ]) ?>
@@ -198,7 +198,7 @@ TagsInputAsset::register($this);
      */
     function submitValidate()
     {
-        $('div.form-group').find('.media-attribute_value, .media-tag_id').each(function(){
+        $('div.form-group').find('.media-attribute_value, .media-tags').each(function(){
             validateDepDropdownValue($(this));
             validateCheckboxList($(this).find('input'));
             validateTags($(this));

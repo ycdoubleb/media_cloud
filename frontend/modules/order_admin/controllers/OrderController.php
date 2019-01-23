@@ -2,6 +2,7 @@
 
 namespace frontend\modules\order_admin\controllers;
 
+use common\models\api\ApiResponse;
 use common\models\order\Order;
 use common\models\order\OrderAction;
 use common\models\order\searchs\OrderGoodsSearch;
@@ -92,14 +93,16 @@ class OrderController extends Controller
      */
     public function actionConfirm($id)
     {
+        Yii::$app->getResponse()->format = 'json';
+        
         $model = $this->findModel($id);
         $model->order_status = Order::ORDER_STATUS_CONFIRMED; //把订单状态改为取消状态
         $model->confirm_at = time();
         if($model->save()){
-            OrderAction::savaOrderAction($id, '订单确认', '订单确认', $model->order_status, $model->play_status);
+            OrderAction::savaOrderAction($id, '订单确认', '订单确认', $model->order_status, $model->play_status, Yii::$app->user->id);
         }
-        
-        return $this->redirect(['index']);
+
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK);
     }
 
     /**
@@ -114,7 +117,7 @@ class OrderController extends Controller
         $this->layout = '@app/views/layouts/main';
         
         $searchModel = new OrderGoodsSearch();
-        $dataProvider = $searchModel->searchMedia($order_sn);
+        $dataProvider = $searchModel->searchMedia(null, $order_sn);
         
         return $this->render('simple-view', [
             'model' => Order::findOne(['order_sn' => $order_sn]),
@@ -173,7 +176,7 @@ class OrderController extends Controller
         $model = $this->findModel($id);
         $model->order_status = Order::ORDER_STATUS_CANCELLED; //把订单状态改为取消状态
         if($model->save()){
-            OrderAction::savaOrderAction($id, '取消订单', '取消订单', $model->order_status, $model->play_status);
+            OrderAction::savaOrderAction($id, '取消订单', '取消订单', $model->order_status, $model->play_status, Yii::$app->user->id);
         }
         
         return $this->redirect(['index']);

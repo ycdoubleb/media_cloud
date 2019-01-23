@@ -1,5 +1,29 @@
+/**发送手机验证码按钮**/
+.site-login .time_button,
+.site-signup .time_button, 
+.get-password .time_button {
+    float: right;
+    width: 140px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #337ab7;
+    border: 1px solid #ccc;
+    box-sizing: border-box;	
+    vertical-align: middle;
+    cursor: pointer;
+    color: #fff;
+}
+
+.site-login .time_button.unabled,
+.site-signup .time_button.unabled, 
+.get-password .time_button.unabled {
+    background-color: lightblue;
+    color: #eee;
+    cursor: default;
+}
 /************************************登录页样式*********************************/
-.site-login .vkonline {
+.site-login .mediacloud {
     width: 100%;
     min-height: 940px;
     background-size: cover;
@@ -8,7 +32,7 @@
     background-color: #ebebeb;
 }
 
-.site-login .vkonline .platform {
+.site-login .mediacloud .platform {
     width: 400px;
     height: 500px;
     padding: 10px;
@@ -18,13 +42,13 @@
     font-size: 0px;
 }
 
-.site-login .vkonline .platform .tab-title img {
+.site-login .mediacloud .platform .tab-title img {
     position: absolute;
     top: 5px;
     right: 5px;
 }
 
-.site-login .vkonline .platform .tab-list {
+.site-login .mediacloud .platform .tab-list {
     width: 370px;
     height: 60px;
     display: table-cell;
@@ -33,14 +57,14 @@
     border-bottom: 1px solid #eee;
 }
 
-.site-login .vkonline .platform .tab-list .pas-login.active,
-.site-login .vkonline .platform .tab-list .phone-login.active {
+.site-login .mediacloud .platform .tab-list .pas-login.active,
+.site-login .mediacloud .platform .tab-list .phone-login.active {
     color: #333;
     border-bottom: 2px solid #333;
 }
 
-.site-login .vkonline .platform .tab-list .pas-login,
-.site-login .vkonline .platform .tab-list .phone-login{
+.site-login .mediacloud .platform .tab-list .pas-login,
+.site-login .mediacloud .platform .tab-list .phone-login{
     width: 60px;
     height: 59px;
     line-height: 65px;
@@ -53,7 +77,7 @@
     color: #999;
 }
 
-.site-login .vkonline .platform .name {
+.site-login .mediacloud .platform .name {
     height: auto;
     text-align: left;
     margin-left: 15px;
@@ -63,39 +87,46 @@
     top: 10px;
 }
 
-.site-login .vkonline .platform .frame {
+.site-login .mediacloud .platform .frame {
     width: 100%;
     position: relative;
     font-size: 14px;
 }
 
-.site-login .vkonline .platform .frame .attr-name{
+.site-login .mediacloud .platform .frame .attr-name{
     height: 69px;
     margin-top: 41px;
     padding-right: 20px !important;
 }
 
-.site-login .vkonline .platform .frame .attr-phone{
+.site-login .mediacloud .platform .frame .attr-phone{
     height: 69px;
     margin-top: 41px;
     padding-left: 15px;
     padding-right: 20px !important;
 }
 
-.site-login .vkonline .platform .frame .attr-pass{
+.site-login .mediacloud .platform .frame .attr-pass{
     height: 69px;
     padding-right: 20px !important;
 }
 
-.site-login .vkonline .platform .frame .btn-primary,
+.site-login .mediacloud .platform .frame .btn-primary,
 .form-control{
     height: 40px  !important;
     border-radius: 0px  !important;
 }
 
-.site-login .vkonline .field-user-code {
+.site-login .mediacloud .field-user-code {
     height: 69px;
     margin-bottom: 0px;
+}
+
+.forget {
+    height: 40px;
+    padding-top: 10px;
+    padding-right: 16px;
+    text-align: right;
 }
 
 /** 短信找回密码页面 **/

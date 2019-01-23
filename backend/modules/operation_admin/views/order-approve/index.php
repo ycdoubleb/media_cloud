@@ -282,7 +282,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <!--加载模态框-->
-<?= $this->render('/layouts/modal'); ?>> 
+<?= $this->render('/layouts/modal'); ?>
 
 <script type="text/javascript">
     

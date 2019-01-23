@@ -5,6 +5,12 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordAccessTokenExpire' => 3600 * 24 * 7,
     /* 
+     * redis 配置
+     */
+    'redis' => [
+        'prefix' => 'mediacloud:',                  //区分其它应用
+    ],
+    /* 
      * ueditor 富文本配置
      * 该配置会覆盖 common\modules\ueditor\Config.php $config 
      */

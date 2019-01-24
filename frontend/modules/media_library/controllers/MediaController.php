@@ -222,7 +222,7 @@ class MediaController extends Controller
         if($model->load(Yii::$app->request->post()) && $model->save()){
             try {
                 // 保存订单操作记录
-                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status);
+                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
                 
                 // 保存订单媒体表
                 $data = [];

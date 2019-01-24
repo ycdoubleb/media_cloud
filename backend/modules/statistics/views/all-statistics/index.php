@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <img src="/imgs/data.png"/>
             </div>
             <div class="statistics-num">
-                <p>资源总数量</p>
+                <p>媒体总数量</p>
                 <span><?= $total_media_num['total_media_num'];?></span>
             </div>
         </div>
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     
     <div class="statistics-view col-lg-12">
-        <div class="mc-title">资源类型占比</div>
+        <div class="mc-title">媒体类型占比</div>
         <div class="mc-panel">
             <div id="statisticsChart" class="chart" style="height: 500px;"></div>
         </div>

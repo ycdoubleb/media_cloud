@@ -27,6 +27,7 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
         'searchModel' => $searchModel,
         'attrMap' => $attrMap,
         'filters' => $filters,
+        'pages' => $pages,
     ])?>
     <!--内容部分-->
     <div class="container content">
@@ -187,6 +188,14 @@ $js = <<<JS
                             }else{
                                 $('input[name="selection_all"]').prop("checked",false);
                             }
+                        });
+                        //加入购物车
+                        item.find('.add-cart').click(function(){
+                            var url = $(this).attr('data-url'),
+                                ids = $(this).attr('data-id');
+                            $.post(url, {ids}, function(rel){
+                                window.location.reload();  //刷新页面
+                            });
                         });
                     }
                     //如果当前页大于最大页数显示“没有更多了”

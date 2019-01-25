@@ -182,10 +182,10 @@ class MediaController extends Controller
                 $model->save();
             }
             Yii::$app->getSession()->setFlash('success','加入购物车成功！');
-            //return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
             Yii::$app->getSession()->setFlash('error','加入购物车失败！失败原因::'.$ex->getMessage());
-            //return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
         }
 
     }
@@ -222,7 +222,7 @@ class MediaController extends Controller
         if($model->load(Yii::$app->request->post()) && $model->save()){
             try {
                 // 保存订单操作记录
-                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status);
+                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
                 
                 // 保存订单媒体表
                 $data = [];

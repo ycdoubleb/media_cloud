@@ -16,10 +16,10 @@ use yii\web\View;
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Webuploader::widget([
                 'id' => 'uploader-container',
-                'name' => 'Media[files]',
+                'name' => 'Media[files][]',
                 'pluginOptions' => [
                     //设置最大选择文件数
-                    'fileNumLimit' => isset($mediaFiles) ? 1 : 100,
+                    'fileNumLimit' => !$model->isNewRecord ? 1 : 100,
                     //设置是否自动开始上传
                     'auto' => true,
                     //设置分页，每页显示多少项
@@ -31,7 +31,8 @@ use yii\web\View;
                 ],
                 'pluginEvents' => [
                     'uploadComplete' => 'function(evt, data){ uploadComplete(data) }',
-                    'fileDequeued' => 'function(evt, file){ fileDequeued(file) }'
+                    'fileDequeued' => 'function(evt, file){ fileDequeued(file) }',
+                    "uploadFinished" => 'function(evt,file){ uploadFinished(file) }',
                 ],
             ]);
             ?>

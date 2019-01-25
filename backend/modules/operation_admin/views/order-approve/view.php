@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         
-        <?php if(!$model->result): ?>
+        <?php if(!$model->status && !$model->result): ?>
         
         <?= Html::a(Yii::t('app', 'Pass'), ['pass-approve', 'id' => $model->id], [
             'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat',

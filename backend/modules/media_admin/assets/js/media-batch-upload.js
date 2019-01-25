@@ -180,6 +180,7 @@
         }else{
             $(Wskeee.StringUtil.renderDOM(_self.config['media_data_tr_dom'], mediaData)).appendTo($table.find('tbody'));
             $footer.children('button#btn-anewUpload').removeClass('hidden');
+            _self.__initPageNav();
         }
         
         $progress.css({width: parseInt(_self.completed_num / max_num * 100) + '%'}).html(parseInt(_self.completed_num / max_num * 100) + '%');
@@ -232,12 +233,17 @@
             if (md.validate()) {
                 var submit_common_params = this.config['submit_common_params'];
                 postData = $.extend(postData, submit_common_params);
-                console.log(postData);
                 md.setSubmitResult(1);  //设置提交中
                 $.post(this.config['media_url'], postData, function (response) {
                     try {
                         //code 不为0即为失败
-                        md.setSubmitResult(2, response.code == "0", response.msg, response.data);
+                        if(response.code == "0"){
+                            md.setSubmitResult(2, true, response.msg, response.data);
+                        }else if(response.code == "10002"){
+                            md.setSubmitResult(2, false, '上传失败，请重新上传');
+                        }else{
+                            md.setSubmitResult(2, false, response.msg);
+                        }
                         
                     } catch (e) {
                         if (console) {
@@ -317,6 +323,52 @@
         return target;
     };
     
+    /**
+     * 初始分页
+     * @private
+     */
+    MediaBatchUpload.prototype.__initPageNav = function(){
+        var _self = this;
+        
+        var options = {
+            currentPage: 1,
+            totalPages: 1,
+            bootstrapMajorVersion: 3,
+            onPageChanged: function(event, oldPage, newPage){
+                currentPage = newPage;
+                _self.__reflashPageNav(currentPage);
+            }
+        };
+
+        _self.resultinfo.find('.pagination').bootstrapPaginator(options);
+        _self.__reflashPageNav(1);
+    };
+    
+    /**
+     * 刷新分页
+     * @private
+     */
+    MediaBatchUpload.prototype.__reflashPageNav = function(page){
+        var _self = this;
+    
+        var $pagination = _self.resultinfo.find('.pagination').data()['bootstrapPaginator']
+        var $trs = _self.resultinfo.find('table.result-table tbody tr');
+        var $summary = _self.resultinfo.find('.summary');
+        var pageSize = 10;
+
+        $pagination.setOptions({
+            totalPages: Math.ceil($trs.length / pageSize)
+        });
+
+        var start = (page-1)*pageSize;
+        var end = (page*pageSize > $trs.length ? $trs.length : page*pageSize);
+
+        $trs.hide();
+        $trs.slice(start,end).show();
+
+        $summary.html("第"+(start >= end ? end : start + 1)+"-"+end+"条，共"+$trs.length+"条数据");
+    };
+    
     
     //--------------------------------------------------------------------------
     //
@@ -390,6 +442,7 @@
         );
         this.config['submit_force'] = force;
         this.__submitNext();
+        this.__initPageNav();
     };
     
     

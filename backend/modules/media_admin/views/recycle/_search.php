@@ -78,7 +78,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'result', [
                         'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
                     ])->widget(Select2::class, [
-                        'data' => MediaApprove::$statusMap,
+                        'data' => MediaRecycle::$resultMap,
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', '{Handle}{Result}', [
                             'Handle' => Yii::t('app', 'Handle'), 'Result' => Yii::t('app', 'Result')

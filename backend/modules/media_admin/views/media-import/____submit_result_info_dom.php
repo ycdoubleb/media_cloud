@@ -35,6 +35,13 @@ use yii\helpers\Html;
                     </thead>
                     <tbody></tbody>
                 </table>
+                
+                <!--总结-->
+                <div class="summary"></div>
+                
+                <!--分页-->
+                <div class="page"><ul class="pagination"></ul></div>
+                
             </div>
             
             <div class="modal-footer">

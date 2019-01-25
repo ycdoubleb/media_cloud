@@ -21,7 +21,7 @@ $this->title = Yii::t('app', '{Batch}{Import}{Media}', [
     <!--警告框-->
     <?= $this->render('____media_warning_box_dom') ?>
     
-    <div class="title">上传信息表：</div>
+    <span class="title">上传信息表：</span>
         
     <?php $form = ActiveForm::begin([
         'options'=>[

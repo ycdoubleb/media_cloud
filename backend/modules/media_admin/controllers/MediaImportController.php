@@ -2,6 +2,7 @@
 
 namespace backend\modules\media_admin\controllers;
 
+use common\components\aliyuncs\Aliyun;
 use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaAction;
@@ -9,6 +10,7 @@ use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
 use common\models\media\MediaTagRef;
+use common\models\media\MediaType;
 use common\models\media\MediaTypeDetail;
 use common\models\Tags;
 use common\utils\DateUtil;
@@ -16,7 +18,7 @@ use common\utils\StringUtil;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yii;
 use yii\db\Exception;
-use yii\filters\AccessControl;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -37,18 +39,9 @@ class MediaImportController extends Controller{
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'create' => ['POST'],
+//                    'create' => ['POST'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ]
-                ],
-            ]
         ];
     }
     
@@ -75,6 +68,7 @@ class MediaImportController extends Controller{
         $post = Yii::$app->request->post();
         
         if($model->load($post)){
+//            var_dump($post);exit;
             Yii::$app->response->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
@@ -82,18 +76,17 @@ class MediaImportController extends Controller{
             {   
                 $is_submit = false;
                 
-                // 后缀名
-                $model->ext = substr($model->url, strrpos($model->url, '.')+1);
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
+                if($typeDetail == null){
+                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
+                }
                 // 保存媒体类型
                 $model->type_id = $typeDetail->type_id;
                 // 大小
                 $model->size = StringUtil::StringSizeToBytes($model->size);
                 // 时长
                 $model->duration = DateUtil::timeToInt($model->duration);
-                // 封面图
-                $model->cover_url = str_replace($model->ext, 'jpg', $model->url);
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
@@ -152,7 +145,9 @@ class MediaImportController extends Controller{
                 //组装对应数组值
                 foreach ($sheetdata[2] as $key => $value) {
                     if(!empty($value)){ //值非空
+                        $ext = substr($sheetdata[$row]['A'], strrpos($sheetdata[$row]['A'], '.')+1);
                         $sheetColumns[$value] = trim($sheetdata[$row][$key]);
+                        $sheetColumns['ext'] = $ext;
                     }
                 }
                 //判断每一行是否存在空值，若存在则过滤
@@ -161,6 +156,63 @@ class MediaImportController extends Controller{
                 }
             }
         }
+        
+        $exts = ArrayHelper::getColumn($dataProvider, 'ext');
+        $iconMap = $this->getMediaTypeDetailByName($exts);
+        foreach ($dataProvider as &$data){
+            $rand = rand(0, 9999);
+            if(isset($iconMap[$data['ext']])){
+                switch ($iconMap[$data['ext']]['sign']){
+                    case MediaType::SIGN_VIDEO:
+                        $data['thumb_url'] = str_replace($data['ext'], 'jpg', $data['url'])."?rand={$rand}";
+                        break;
+                    case MediaType::SIGN_IMAGE:
+                        $data['thumb_url'] = str_replace($data['ext'], 'jpg', $data['url'])."?rand={$rand}";
+                        break;
+                    case MediaType::SIGN_AUDIO:
+                        $data['thumb_url'] = $iconMap[$data['ext']]['icon_url']."?rand={$rand}";
+                        break;
+                    case MediaType::SIGN_DOCUMENT:
+                        $data['thumb_url'] = $iconMap[$data['ext']]['icon_url']."?rand={$rand}";
+                        break;
+                }
+            } else {
+                $data['thumb_url'] = Aliyun::absolutePath('static/imgs/notfound.png')."?rand={$rand}";
+            }
+        }
+        
         return $dataProvider;
+    }
+    
+    
+    /**
+     * 获取媒体类型拓展信息
+     * 如果是转字符串，则默认返回类型拓展的mime_type
+     * @param string $ext
+     * @return array ArrayMap
+     */
+    private static function getMediaTypeDetailByName($ext)
+    {
+        $query = (new Query())->from(['TypeDetail' => MediaTypeDetail::tableName()]);
+        // 关联属性值表
+        $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = TypeDetail.type_id');
+        // 查询的字段
+        $query->select(['MediaType.sign', 'TypeDetail.name', 'TypeDetail.icon_url']);
+        // 必要条件
+        $query->andFilterWhere([
+            'TypeDetail.is_del' => 0,
+            'MediaType.is_del' => 0,
+            'TypeDetail.name' => $ext,
+        ]);
+        
+        $results = [];
+        foreach($query->all() as $item){
+            $results[$item['name']] = [
+                'sign' => $item['sign'],
+                'icon_url' => $item['icon_url'],
+            ];
+        }
+        
+        return $results;
     }
 }

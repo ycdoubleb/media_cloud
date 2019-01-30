@@ -161,15 +161,3 @@ and open the template in the editor.
     cursor: pointer;
     font-size: 0;
 }
-
-.media-import-index .alert-danger,
-.media-import-create .alert-danger {
-    color: #a94442 !important;
-    background-color: #f2dede !important;
-    border-color: #ebccd1 !important;
-}
-
-.media-import-index .alert-danger a,
-.media-import-create .alert-danger a{
-    text-decoration: none;
-}

@@ -245,6 +245,31 @@ a.desc:after {
     border-color: #999999; 
 }
 
+/*******************************************************************************
+ *
+ * alert-danger  警戒-危险 
+ *
+ *******************************************************************************/
+.content-wrapper .alert-danger{
+    color: #a94442 !important;
+    background-color: #f2dede !important;
+    border-color: #ebccd1 !important;
+}
+
+.content-wrapper .alert-danger a{
+    text-decoration: none;
+}
+/*******************************************************************************
+ *
+ * alert-danger  警戒-警告
+ *
+ *******************************************************************************/
+.content-wrapper .alert-warning {
+    color: #8a6d3b !important;
+    background-color: #fcf8e3 !important;
+    border-color: #faebcc !important;
+}
+
 /*****************************************************
 *
 * 进度条

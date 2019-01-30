@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 ?>
 
-<div class="modal fade myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             

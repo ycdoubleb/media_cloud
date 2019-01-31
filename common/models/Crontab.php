@@ -57,6 +57,7 @@ class Crontab extends ActiveRecord {
 
     /**
      * {@inheritdoc}
+     * 偷偷和你说个
      */
     public function rules() {
         return [

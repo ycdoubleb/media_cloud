@@ -18,22 +18,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'crontab_str')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'last_rundate')->textInput() ?>
-
-    <?= $form->field($model, 'next_rundate')->textInput() ?>
-
-    <?= $form->field($model, 'exec_memory')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'exec_time')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'is_del')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput(['maxlength' => true]) ?>
-
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>

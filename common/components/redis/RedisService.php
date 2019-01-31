@@ -5,63 +5,48 @@ namespace common\components\redis;
 use Yii;
 use yii\redis\Connection;
 
+/**
+ * @property Redis $r Redis
+ */
 class RedisService
 {     
     /**
-     * @desc 设置redis hash数据
-     * @param string $redisKey
-     * @param array $table
-     * @param int $expire 过期时间单位秒
-     * @return bool
+     *
+     * @var Redis 
      */
-    public static  function setHash($redisKey = '', $table = [], $expire = 0 ){
-        if(empty($redisKey) || empty($table)) return false;
-        
-        /* @var $rediis Connection */
-        $rediis = Yii::$app->redis;
-        
-        $params = [$redisKey];
-        foreach ($table as $key => $value){
-            if(!empty($value)){
-                if(is_bool($value)){
-                    $value = (int)$value;
-                }
-                $params[] = $key;
-                $params[] = $value;
-            }
-        }
-
-        if(count($params) > 1) $rediis->executeCommand('HMSET', $params);
-    }
-
+    private static $_redis; 
+    
     /**
-     * @desc 读取redis Hash数据
-     * @param string $redisKey
-     * @param array $fields
-     * @return array
+     * 
+     * @return Redis;
      */
-    public static function getHash($redisKey = '', $fields = []){
-        $data = $rs =  [];
-        
-        /* @var $rediis Connection */
-        $rediis = Yii::$app->redis;
-        
-        if(empty($fields)){
-            $data = $rediis->HGetall(trim($redisKey));
-
-            $count = count($data);
-            for($i = 0 ; $i < $count ; $i++){
-                if($i % 2 != 0){
-                    $rs[$data[$i - 1]] = $data[$i];
-                }
-            }
-        }else{
-            $fieldCount = count($fields);
-            for($i = 0 ; $i < $fieldCount ; $i++){
-                $rs[$fields[$i]] = $rediis->HGet($redisKey, $fields[$i]);
-            }
+    public static function getRedis(){
+        if(self::$_redis == null){
+            self::$_redis = new Redis();
         }
-
-        return $rs;
+        return self::$_redis;
+    }
+    
+    /**
+     * 生成16位随机码
+     * @param array $codes              开始字符数组
+     * @param interger $start_year      开始年份
+     * @return string
+     */
+    public static function getRandomSN($codes = null, $start_year = 2019) {
+        $yCode = $codes ? $codes : array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L','M','N');
+        $key_sn = $yCode[intval(date('Y')) - $start_year] . strtoupper(dechex(date('m'))) . date('d') . substr(time(), -5);
+        $key = "RandomSN:$key_sn";
+        $num = 1;
+        $r = self::getRedis();
+        //一秒内包括 99999 个自增ID
+        if($r->exists($key)){
+            $num = $r->incr($key);
+        }else{
+            //不存先创建一个，并设置1分钟过期
+            $r->setex($key, 60, 1);
+        }
+        $orderSn = $key_sn .sprintf('%05d', $num). sprintf('%02d', rand(0, 99));
+        return $orderSn;
     }
 }

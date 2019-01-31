@@ -1,5 +1,6 @@
 <?php
 
+use common\models\media\Acl;
 use frontend\modules\media_library\assets\MainAssets;
 use frontend\modules\media_library\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
@@ -95,7 +96,7 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                 <div class="resource-show">
                     <?php
                         $mediaType = $model->mediaType->sign;
-                        $mediaUrl = $model->url;
+                        $mediaUrl = Url::to(['/media/use/temp-link', 'sn' => Acl::getTempSnByMid($model->id)]);
                         switch ($mediaType){
                             case 'video' : 
                                 echo '<video src="'.$mediaUrl.'" id="disabled" controls="controls" controlslist="nodownload" width="100%"></video>';

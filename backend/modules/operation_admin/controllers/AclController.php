@@ -98,10 +98,7 @@ class AclController extends Controller
             try
             {
                 $model = $this->findModel($id);
-                /* @var $rediis Connection */
-                $rediis = Yii::$app->redis;
-                // 删除指定缓存
-                $rediis->del(Acl::$redisKey . $model->sn);
+                Acl::clearCache($model->sn);
                 
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 

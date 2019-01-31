@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\redis\ActiveQuery;
 
 /**
  * This is the model class for table "{{%banner}}".
@@ -21,6 +22,8 @@ use yii\db\ActiveRecord;
  * @property string $created_by 创建人ID
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
+ * 
+ * @property AdminUser $adminUser   创建人
  */
 class Banner extends ActiveRecord
 {
@@ -116,5 +119,14 @@ class Banner extends ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+    
+    /**
+     * 关联获取创建者
+     * @return ActiveQuery
+     */
+    public function getAdminUser()
+    {
+        return $this->hasOne(AdminUser::class, ['id' => 'created_by']);
     }
 }

@@ -52,6 +52,7 @@ use common\widgets\Menu;
                             ['label' => '文件管理', 'icon' => 'circle-o', 'url' => ['/system_admin/uploadfile'],],
                             ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab'],],
                             ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup']],
+                            ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner']],
                         ],
                     ],
                     [
@@ -112,15 +113,15 @@ use common\widgets\Menu;
                             ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],
                         ]
                     ],
-                    [
-                        'label' => '帮助中心',
-                        'icon' => 'bars',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => '文章分类列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/category']],
-                            ['label' => '文章列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/post']],
-                        ],
-                    ],
+//                    [
+//                        'label' => '帮助中心',
+//                        'icon' => 'bars',
+//                        'url' => '#',
+//                        'items' => [
+//                            ['label' => '文章分类列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/category']],
+//                            ['label' => '文章列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/post']],
+//                        ],
+//                    ],
                 ]);
             }
         ?>

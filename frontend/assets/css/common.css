@@ -119,8 +119,8 @@ a.desc:after {
 .nav li a{
     color: #666666;
     font-size: 16px;
-    padding-top: 14px;
-    padding-bottom: 13px;
+    padding-top: 13px;
+    /*padding-bottom: 13px;*/
 }
 .nav li a:hover,
 .nav li a:focus{
@@ -146,7 +146,7 @@ a.desc:after {
 /* LOGO样式 */
 .navbar-brand {
     position: relative;
-    /*height: 60px;*/
+    height: 60px;
     margin-right: 80px;
 }
 .navbar-brand img {
@@ -156,6 +156,7 @@ a.desc:after {
 /*购物车样式*/
 .navbar-nav .glyphicon-shopping-cart {
     font-size: 18px;
+    top: 0px;
 }
 .navbar-nav .cart-num {
     display: inline-block;

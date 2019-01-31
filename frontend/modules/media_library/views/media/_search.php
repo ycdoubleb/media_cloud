@@ -3,6 +3,7 @@
 use common\models\media\MediaType;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -53,7 +54,7 @@ use yii\widgets\ActiveForm;
                     <div class="col-lg-6 col-md-6" style="padding-left: 0;">
                         <?php
                             $keyword = ArrayHelper::getValue($filters, 'MediaSearch.keyword');
-                            echo kartik\helpers\Html::input('text', 'MediaSearch[keyword]', $keyword, [
+                            echo Html::input('text', 'MediaSearch[keyword]', $keyword, [
                                 'id' => 'mediasearch-keyword',
                                 'class' => 'form-control',
                                 'placeholder' => '请输入媒体名称或者标签',
@@ -92,6 +93,8 @@ use yii\widgets\ActiveForm;
                     </div>
                 </div>
             </div>
+            <!--选项卡 显示列表or图表-->
+            <?= Html::hiddenInput('pages', $pages, '')?>
         </div>
         <?php ActiveForm::end(); ?>
     </div>

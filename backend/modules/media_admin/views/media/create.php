@@ -20,7 +20,8 @@ $this->title = Yii::t('app', '{Create}{Media}', [
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Media'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-//加载 WATERMARK_DOM 模板
+
+//加载 MEDIADATATR DOM 模板
 $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom'));
 
 ?>
@@ -53,7 +54,11 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             <?= $form->field($model, 'dir_id', [
                 'template' => "{label}\n"
                 . "<div class=\"col-lg-7 col-md-7\">"
-                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}"
+                        . "<div class=\"col-lg-1 col-md-1 clean-padding\">"
+                            . "<a href=\"/media_config/dir/create\" class=\"btn btn-default\" onclick=\"showModal($(this)); return false;\">新建目录</a>"
+                        . "</div>"
+                    . "</div>\n"
                     . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
                 . "</div>", 
                 'labelOptions' => [
@@ -82,6 +87,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             ]) ?>
 
             <?= $this->render('____form_upload_dom', [
+                'model' => $model,
                 'mimeTypes' => $mimeTypes
             ]) ?>
 
@@ -101,7 +107,13 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <div class="form-group">
             <?= Html::label(null, null, ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
             <div class="col-lg-11 col-md-11">
-                <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
+                <?= Html::button(Yii::t('app', 'Submit'), [
+                    'id' => 'submitsave', 
+                    'class' => 'btn btn-success btn-flat',
+                    'data-toggle' => "tooltip", 
+                    'data-placement' => "top", 
+                    'title' => "Tooltip on top"
+                ]) ?>
             </div> 
         </div>
     
@@ -112,6 +124,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 </div>
 
 <!--模态框-->
+<?= $this->render('/layouts/modal'); ?>
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
@@ -121,6 +134,8 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     var mediaBatchUpload;
     //上传工具的媒体
     var uploaderMedias = [];
+    //是否已上传完成所有文件
+    window.isUploadFinished = false;
     
     /**
      * html 加载完成后初始化所有组件
@@ -131,7 +146,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         initWatermark();          //初始水印
         initSubmit();             //初始提交
     }
-    
+        
     /************************************************************************************
     *
     * 初始化批量上传
@@ -144,7 +159,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         });
         
         // 关闭模态框事件
-        $('.myModal').on('hidden.bs.modal', function (e) {
+        $('#myModal').on('hidden.bs.modal', function (e) {
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
         });
@@ -165,7 +180,17 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {undefined}
      */
     function fileDequeued(data){
+        mediaBatchUpload.completed_num -= 1;
         mediaBatchUpload.delMediaData(data.dbFile);
+    }
+    
+    /**
+     * 完成上传列表中的所有文件
+     * @param {object} data
+     * @returns {undefined}
+     */
+    function uploadFinished(data){        
+        window.isUploadFinished = true;
     }
 
     /************************************************************************************
@@ -179,14 +204,15 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             validateDirDepDropdownValue($('.dep-dropdown').children('select'));
             submitValidate();
             validateWebuploaderValue(mediaBatchUpload.medias.length);
-            if($('div.has-error').length > 0) return;
-            $('.myModal').modal("show");
+            if($('div.has-error').length > 0 || !window.isUploadFinished) return;
+            $('#myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });
         
         // 重新上传
         $("#btn-anewUpload").click(function(){
+            $(this).addClass('hidden');
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
             var formdata = $('#media-form').serialize();

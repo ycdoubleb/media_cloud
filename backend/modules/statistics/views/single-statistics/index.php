@@ -52,9 +52,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);?>
                         </div>
                     </div>
-                    <!--媒体编号搜索-->
+                    <!--特定搜索-->
                     <div class="form-group field-media required">
                         <?php if($tabs != 'media'):?>
+                            <!--姓名搜索-->
                             <label class="control-label">姓名:</label>
                             <div class="control-input select-nickname">
                                 <?= \kartik\widgets\Select2::widget([
@@ -70,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ])?>
                             </div>
                         <?php else:?>
+                            <!--媒体编号搜索-->
                             <label class="control-label">编号:</label>
                             <div class="control-input">
                                 <?= Html::input('text', 'media_id', $mediaId, [

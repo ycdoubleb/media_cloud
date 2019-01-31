@@ -1,11 +1,10 @@
 <?php
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
-use common\components\aliyuncs\Aliyun;
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\widgets\depdropdown\DepDropdown;
-use yii\data\ArrayDataProvider;
+use common\widgets\pagination\PaginationAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -16,6 +15,7 @@ use yii\widgets\ActiveForm;
 /* @var $model Media */
 
 MediaModuleAsset::register($this);
+PaginationAsset::register($this);
 
 $this->title = Yii::t('app', '{Submit}{Media}', [
     'Submit' => Yii::t('app', 'Submit'), 'Media' => Yii::t('app', 'Media')
@@ -32,7 +32,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     <!--警告框-->
     <?= $this->render('____media_warning_box_dom') ?>
     
-    <div class="title">媒体公共属性配置：</div>
+    <span class="title">媒体公共属性配置：</span>
     
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -45,7 +45,11 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <?= $form->field($model, 'dir_id', [
             'template' => "{label}\n"
             . "<div class=\"col-lg-7 col-md-7\">"
-                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}"
+                    . "<div class=\"col-lg-1 col-md-1 clean-padding\">"
+                        . "<a href=\"/media_config/dir/create\" class=\"btn btn-default\" onclick=\"showModal($(this)); return false;\">新建目录</a>"
+                    . "</div>"
+                . "</div>\n"
                 . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
             . "</div>", 
             'labelOptions' => [
@@ -71,14 +75,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             'attrSelected' => isset($attrSelected) ? $attrSelected : null,
             'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
         ]) ?>
-
+        
         <?= $this->render('____media_upload_table_dom', [
-            'dataProvider' => new ArrayDataProvider([
-                'allModels' => $medias,
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
-            ]),
+            'dataProvider' => $medias
         ]) ?>
         
         <div class="form-group">
@@ -92,6 +91,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 </div>
 
 <!--模态框-->
+<?= $this->render('/layouts/modal'); ?>
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
@@ -127,7 +127,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         mediaBatchUpload.init(medias);
         
         // 关闭模态框事件
-        $('.myModal').on('hidden.bs.modal', function (e) {
+        $('#myModal').on('hidden.bs.modal', function (e) {
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
         });
@@ -144,13 +144,14 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             validateDirDepDropdownValue($('.dep-dropdown').children('select'));
             submitValidate();
             if($('div.has-error').length > 0) return;
-            $('.myModal').modal("show");
+            $('#myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });
         
         // 重新上传
         $("#btn-anewUpload").click(function(){
+            $(this).addClass('hidden');
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
             var formdata = $('#media-form').serialize();

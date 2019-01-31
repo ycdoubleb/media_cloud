@@ -3,8 +3,14 @@
 namespace frontend\controllers;
 
 use common\models\api\ApiResponse;
+use common\models\Banner;
 use common\models\LoginForm;
+use common\models\media\Media;
+use common\models\media\MediaType;
+use common\models\order\Order;
+use common\models\order\OrderGoods;
 use common\models\User;
+use common\models\UserProfile;
 use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
@@ -78,11 +84,18 @@ class SiteController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
-        //MediaAliyunAction::addVideoTranscode('1');
-        //MediaAliyunAction::addVideoTranscode('2');
-        //MediaAliyunAction::addVideoTranscode('3');
-        //MediaAliyunAction::addVideoTranscode('4');
-        return $this->render('index');
+        /* 宣传 */
+        $banners = Banner::find()
+                ->where(['is_publish' => Banner::YES_PUBLISH])
+                ->orderBy('sort_order')
+                ->all();
+        
+        return $this->render('index', [
+            'banners' => $banners,
+            'totals' => $this->getTotalMediaNumber(),
+            'month' => $this->getTotalMediaNumber(true),
+            'amount' => $this->getTotalOrderAmount()
+        ]);
     }
 
     public function actionUpdateUser($id) {
@@ -366,6 +379,80 @@ class SiteController extends Controller {
     }
 
     /**
+     * 获取媒体数量
+     * 统计媒体类型饼图信息
+     * @param bool $month   是否需要过滤非本月数据
+     * @return array
+     */
+    protected function getTotalMediaNumber($month = false)
+    {
+        $query = (new Query())
+                ->from(['Media' => Media::tableName()])
+                ->where(['status' => Media::STATUS_PUBLISHED, 'del_status' => 0]);
+        
+        /* 过滤非本月的数据 */
+        if($month){
+            $monthStart = date('Y-m-01',strtotime(date('Y-m-d'))); 
+            $monthEnd = date('Y-m-t',strtotime(date('Y-m-d'))); 
+            $query->andFilterWhere(['between', 'Media.created_at', strtotime($monthStart), strtotime($monthEnd)]);
+        }
+        
+        // 媒体总数量
+        $totalQuery = clone $query;
+        $totalNumber = $totalQuery->addSelect(['COUNT(id) AS total_media_num'])->one();
+        
+        // 媒体类型统计
+        $statisticsQuery = clone $query;
+        $statisticsByType = $statisticsQuery
+                ->addSelect(['MediaType.name', 'COUNT(Media.id) AS value'])
+                ->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id')
+                ->groupBy('MediaType.id')
+                ->all();
+        
+        $data = [
+            'totalNumber' => $totalNumber['total_media_num'],
+            'statisticsByType' => $statisticsByType,
+        ];
+
+        return $data;
+    }
+    
+    /**
+     * 获取总收入金额
+     * 统计各个媒体类型的收入金额饼图信息
+     * @return array
+     */
+    protected function getTotalOrderAmount()
+    {
+        $query = (new Query())
+                ->from(['Order' => Order::tableName()])
+                ->where(['order_status' =>
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]
+                );
+        
+        // 总收入
+        $totalQuery = clone $query;
+        $totalAmount = $totalQuery->addSelect(['SUM(order_amount) AS total_order_amount'])->one();
+        
+        // 各个媒体类型的收入
+        $statisticsQuery = clone $query;
+        $statisticsByType = $statisticsQuery
+                ->addSelect(['MediaType.name', 'SUM(order_amount) AS value'])
+                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id')
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id')
+                ->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id')
+                ->groupBy('MediaType.id')
+                ->all();
+
+        $data = [
+            'totalAmount' => $totalAmount['total_order_amount'],
+            'statisticsByType' => $statisticsByType,
+        ];
+
+        return $data;
+    }
+    
+    /**
      * 注册
      * @param type $post
      * @return type
@@ -394,7 +481,7 @@ class SiteController extends Controller {
 
         //保存用户扩展信息
         if ($isTrue) {
-            $userProfile = new \common\models\UserProfile();
+            $userProfile = new UserProfile();
             $userProfile->user_id = $user->id;
             $userProfile->company = $company;
             $userProfile->department = $department;

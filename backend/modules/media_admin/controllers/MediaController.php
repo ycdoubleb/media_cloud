@@ -122,6 +122,9 @@ class MediaController extends Controller
                 
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
+                if($typeDetail == null){
+                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
+                }
                 // 保存媒体类型
                 $model->type_id = $typeDetail->type_id;
                 // 属性值

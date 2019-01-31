@@ -191,7 +191,7 @@ class CartController extends Controller
                 }
                 // 保存订单操作记录
                 $order = Order::findOne(['order_sn' => $order_sn]);
-                OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status);
+                OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status, Yii::$app->user->id);
                 // 保存订单媒体表
                 $data = [];
                 foreach ($dataProvider->models as $value) {
@@ -270,7 +270,7 @@ class CartController extends Controller
             $order->play_at = time();       //支付时间
             $order->play_status = Order::PLAY_STATUS_UNPAID;  //支付状态任为未付款
             if($order->save()){
-                OrderAction::savaOrderAction($order->id, '支付', '提交审核', $order->order_status, $order->play_status);
+                OrderAction::savaOrderAction($order->id, '支付', '提交审核', $order->order_status, $order->play_status, Yii::$app->user->id);
             }
             
             return $this->redirect(['order/view', 'id' => $model->order_id]);

@@ -105,30 +105,96 @@ class Dir extends ActiveRecord
         return $this->hasMany(Media::class, ['dir_id' => 'id']);
     }
     
-    public function beforeSave($insert) {
-        if (parent::beforeSave($insert)) {
-            //设置等级
-            if (empty($this->parent_id)) {
-                $this->parent_id = 0;
-            }
-            
-            $this->level = $this->parent_id == 0 ? 1 : self::getDirById($this->parent_id)->level + 1;
-            return true;
-        }
-        return false;
-    }
     
     /**
-     * 检查目标路径是否存在，不存即创建目标
-     * @param string $uploadpath    目录路径
-     * @return string
+     * 保存目录
+     * @param string $name  名称
+     * @param integer $parent_id   上一级id
+     * @return integer $id  目录id
      */
-    private function fileExists($uploadpath) {
-
-        if (!file_exists($uploadpath)) {
-            mkdir($uploadpath);
+    public static function saveDir($name, $parent_id = 0)
+    {
+        $dirModel = self::findOne(['name' => $name, 'parent_id' => $parent_id]);
+        
+        if($dirModel == null ){
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {  
+                $dirModel = new Dir([
+                    'name' => trim($name), 'parent_id' => $parent_id, 
+                    'created_by' => \Yii::$app->user->id
+                ]);
+                //如果parent_id == 0，则level = 1，否则level就是父级的level + 1
+                if($dirModel->parent_id == 0){
+                    $dirModel->level = 1;
+                }else{
+                    $dirModel->level = self::getDirById($dirModel->parent_id)->level + 1;
+                }
+                //如果保存成功则更新路径和提交事务
+                if($dirModel->save()){
+                    $dirModel->updateParentPath();      //更新路径
+                    $trans->commit();  //提交事务
+                }
+                self::invalidateCache();    //清除缓存    
+            }catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+            }
         }
-        return $uploadpath;
+        
+        return $dirModel->id;
+    }
+
+    /**
+     * 检查目录是否存在
+     * @param string $dir_path    目录结构
+     * @param string $dir_id      目录id
+     * @return
+     */
+    public static function checkIsTheDirExists($dir_path, $dir_id = 0)
+    {
+        if(is_string($dir_path) && !empty($dir_path)){
+            //把全角"/" "\"替换为">"
+            $dir_path = str_replace(["/", "\\"], ">", $dir_path);
+            //目录结构
+            $dir_path = explode('>', $dir_path);    
+        }else{
+            return;
+        }
+        //计算上传的目录个数
+        $dirCount = count($dir_path);   
+        //过滤数组中值两端的空格
+        array_walk_recursive($dir_path, function(&$val){$val = trim($val);});   
+        
+        //查询已存在的目录
+        $existDirs = [];   //已存在目录
+        $dirQuery = self::find()->select(['id', 'path'])->where(['name' => $dir_path]);
+        $dirDataProvider = $dirQuery->all();
+        //获取需要的已存在目录
+        foreach ($dirDataProvider as $dir) {
+            //获取已存在的目录的全路径
+            $full_path = $dir->getFullPath();
+            //上传目录的路径和存在的目录路径相同，则返回id
+            if($dir_path == $full_path){
+                $existDirPath = explode(',', $dir->path);
+                foreach ($existDirPath as $id) {
+                    if($id > 0) $existDirs[] = $id;
+                }
+            }
+        }
+        
+        //计算已存在的目录个数
+        $dirsCount = count($existDirs);    
+        //如果已存在的目录大于0，则目录id为最后一个已存在的目录id， 否则新建目录
+        if($dirsCount > 0){
+            $dir_id = end($existDirs);
+        }else{
+            $dir_id = self::saveDir($dir_path[0], $dir_id);
+            for($i = 1; $i < $dirCount; $i++){
+                if($dir_id == null) break;
+                $dir_id = self::saveDir($dir_path[$i], $dir_id);
+            }
+        }
     }
     
     //==========================================================================

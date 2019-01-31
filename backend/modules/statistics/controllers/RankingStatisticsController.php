@@ -221,7 +221,7 @@ class RankingStatisticsController extends Controller
                 ->select(['SUM(Acl.visit_count) AS value'])
                 ->from(['Media' => Media::tableName()])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
-                ->leftJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id')
+                ->rightJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
         /* 当时间段参数不为空时 */

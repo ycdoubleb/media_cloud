@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\modules\media_admin\assets;
+namespace common\widgets\pagination;
 
 use yii\web\AssetBundle;
 use const YII_DEBUG;
@@ -8,16 +8,15 @@ use const YII_DEBUG;
 /**
  * Main backend application asset bundle.
  */
-class MediaModuleAsset extends AssetBundle
+class PaginationAsset extends AssetBundle
 {
-    public $sourcePath = '@backend/modules/media_admin/assets';
-    public $baseUrl = '@backend/modules/media_admin/assets';
+    public $sourcePath = '@common/widgets/pagination';
+    public $baseUrl = '@common/widgets/pagination';
     public $css = [
-        'css/media_module.css',
+        'css/pagination.css',
     ];
     public $js = [
-        'js/media-batch-upload.js',
-        'js/bootstrap-paginator.min.js',
+        'js/pagination.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

@@ -92,9 +92,9 @@ class ApproveController extends Controller
                         'content' => $content, 'created_by' => Yii::$app->user->id
                     ]);
                     $model->save();
-                }
+                    
                 // 如果状态是【待审核】才更新
-                if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
+                }else if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
                     $model = MediaApprove::findOne($result[$media_id]['id']);
                     $model->type = MediaApprove::TYPE_INTODB_APPROVE;
                     $model->content = $content;
@@ -148,9 +148,9 @@ class ApproveController extends Controller
                         'content' => $content, 'created_by' => Yii::$app->user->id
                     ]);
                     $model->save();
-                }
+                    
                 // 如果状态是【待审核】才更新
-                if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
+                }else if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
                     $model = MediaApprove::findOne($result[$media_id]['id']);
                     $model->type = MediaApprove::TYPE_DELETE_APPROVE;
                     $model->content = $content;

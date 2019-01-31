@@ -27,6 +27,7 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
         'searchModel' => $searchModel,
         'attrMap' => $attrMap,
         'filters' => $filters,
+        'pages' => $pages,
     ])?>
     <!--内容部分-->
     <div class="container content">

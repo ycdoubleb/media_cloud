@@ -98,13 +98,13 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                         $mediaUrl = $model->url;
                         switch ($mediaType){
                             case 'video' : 
-                                echo '<video src="'.$mediaUrl.'" controls="controls" width="100%"></video>';
+                                echo '<video src="'.$mediaUrl.'" id="disabled" controls="controls" controlslist="nodownload" width="100%"></video>';
                                 break;
                             case 'audio' : 
-                                echo '<audio src="'.$mediaUrl.'" controls="controls" style="width:100%"></audio>';
+                                echo '<audio src="'.$mediaUrl.'" id="disabled" controls="controls" controlslist="nodownload" style="width:100%"></audio>';
                                 break;
                             case 'image' : 
-                                echo Html::img($mediaUrl, ['style' => 'width:100%']);
+                                echo Html::img($mediaUrl, ['id' => "disabled", 'style' => 'width:100%']);
                                 break;
                             case 'document' : 
                                 echo '<iframe src="http://eezxyl.gzedu.com/?furl='.$mediaUrl.'" width="100%" height="700" style="border: none"></iframe>';
@@ -118,7 +118,14 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
 </div>
 <?php
 $pages = ArrayHelper::getValue($filters, 'pages', 'details');   //排序
+
 $js = <<<JS
+        
+    // video/audio/img标签禁用右键菜单
+    $(document).ready(function(){
+        $('#disabled').bind('contextmenu',function() { return false; });
+    })
+        
     // 选中效果
     $(".mc-tabs ul li[id=$pages]").addClass('active');
         

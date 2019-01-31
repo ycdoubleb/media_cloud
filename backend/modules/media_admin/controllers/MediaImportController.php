@@ -105,7 +105,7 @@ class MediaImportController extends Controller{
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存媒体详情
-                    MediaDetail::savaMediaDetail($model->id, ['content' => null]);
+                    MediaDetail::savaMediaDetail($model->id, ['mts_need' => 1]);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }

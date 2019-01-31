@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%media_approve}}".
@@ -148,5 +149,31 @@ class MediaApprove extends ActiveRecord
     public function getCreatedBy()
     {
         return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
+    }
+    
+    /**
+     * 保存媒体审核
+     * @param int $media_id
+     * @param string $content   内容（字符串）| 加载渲染的模板
+     * @param int $type   
+     * @throws Exception
+     */
+    public static function savaMediaApprove($media_id, $content, $type)
+    {
+        try
+        {  
+            $model = new MediaApprove([
+                'media_id' => $media_id,
+                'type' => $type,
+                'content' => $content, 
+                'created_by' => Yii::$app->user->id
+            ]);
+             
+            if(!$model->save()){
+                throw new Exception('保存失败：' . $model->getErrorSummary(true));
+            }
+        }catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
     }
 }

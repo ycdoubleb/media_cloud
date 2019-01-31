@@ -21,6 +21,7 @@ use yii\web\View;
 class GridViewChangeSelfColumn extends DataColumn {
 
     const PLUGIN_NAME = 'GridViewChangeSelfColumn';
+
     /**
      * 选项属性
      * @var array [labels,values,url,type]<br/>
@@ -30,6 +31,12 @@ class GridViewChangeSelfColumn extends DataColumn {
      * type     string      设置组件类型，checkbox 对错型触发式按钮，input 输入框更新 <br/>
      */
     public $plugOptions = [];
+
+    /**
+     * Input 属性
+     * @var type 
+     */
+    public $inputOptions = [];
 
     /**
      * 设置禁用启用
@@ -44,7 +51,7 @@ class GridViewChangeSelfColumn extends DataColumn {
 
     public function init() {
         $this->plugOptions = array_merge([
-            'plugin_id' => self::PLUGIN_NAME.'_'. rand(1, 99999),
+            'plugin_id' => self::PLUGIN_NAME . '_' . rand(1, 99999),
             //按钮显示，值为0 否，1 是
             'labels' => ['否', '是'],
             'values' => [0, 1],
@@ -73,7 +80,7 @@ class GridViewChangeSelfColumn extends DataColumn {
                 $acts[$this->plugOptions['type']] => "GridViewChangeSelfColumn_ChangeVal('$key','$this->attribute',this)"
             ];
         } else {
-            $inputOptions = ['disabled' => true,'style' => ['opacity' => 0.5]];
+            $inputOptions = ['disabled' => true, 'style' => ['opacity' => 0.5]];
         }
 
         $labels = $this->plugOptions['labels'];
@@ -83,7 +90,7 @@ class GridViewChangeSelfColumn extends DataColumn {
                         'class' => $value == $values[1] ? 'yes' : 'no',
             ]));
         } else if ($this->plugOptions['type'] == 'input') {
-            return Html::tag('input', '', array_merge($inputOptions, [
+            return Html::tag('input', '', array_merge($this->inputOptions, $inputOptions, [
                         'class' => 'form-control',
                         'value' => $value,
             ]));
@@ -102,7 +109,7 @@ class GridViewChangeSelfColumn extends DataColumn {
         //当前组件数据更改时调用的联接
         $url = $this->plugOptions['url'];
         $plugin_name = self::PLUGIN_NAME;
-        
+
         $js = <<<JS
             //创建组件数据中心，保存各个组件的labels和values
             window.$plugin_name = window.$plugin_name || {};

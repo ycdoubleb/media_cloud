@@ -6,11 +6,11 @@ use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaAction;
+use common\models\media\MediaApprove;
 use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
 use common\models\media\MediaTagRef;
-use common\models\media\MediaType;
 use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
@@ -149,6 +149,8 @@ class MediaController extends Controller
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存媒体详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
+                    // 保存媒体审核
+                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }

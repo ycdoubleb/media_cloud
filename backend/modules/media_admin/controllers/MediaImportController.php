@@ -6,6 +6,7 @@ use common\components\aliyuncs\Aliyun;
 use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaAction;
+use common\models\media\MediaApprove;
 use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
@@ -106,6 +107,8 @@ class MediaImportController extends Controller{
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存媒体详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => 1]);
+                    // 保存媒体审核
+                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }

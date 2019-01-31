@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
             <!--媒体类型-->
             <div class="col-lg-6 col-md-6" style="padding-left: 3px;">
                 <?= $form->field($searchModel, 'type_id')->checkboxList(MediaType::getMediaByType(), [
-//                    'value' => ArrayHelper::getValue($filters, 'CourseSearch.level', ''),
+                    'value' => ArrayHelper::getValue($filters, 'MediaSearch.type_id', [1, 2, 3, 4]),
                     'itemOptions'=>[
                         'onclick' => 'submitForm();',
                         'labelOptions'=>[

@@ -54,7 +54,11 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             <?= $form->field($model, 'dir_id', [
                 'template' => "{label}\n"
                 . "<div class=\"col-lg-7 col-md-7\">"
-                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}"
+                        . "<div class=\"col-lg-1 col-md-1 clean-padding\">"
+                            . "<a href=\"/media_config/dir/create\" class=\"btn btn-default\" onclick=\"showModal($(this)); return false;\">新建目录</a>"
+                        . "</div>"
+                    . "</div>\n"
                     . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
                 . "</div>", 
                 'labelOptions' => [
@@ -120,6 +124,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 </div>
 
 <!--模态框-->
+<?= $this->render('/layouts/modal'); ?>
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
@@ -141,7 +146,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         initWatermark();          //初始水印
         initSubmit();             //初始提交
     }
-    
+        
     /************************************************************************************
     *
     * 初始化批量上传
@@ -154,7 +159,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         });
         
         // 关闭模态框事件
-        $('.myModal').on('hidden.bs.modal', function (e) {
+        $('#myModal').on('hidden.bs.modal', function (e) {
             $table = $('.result-info').find('table.result-table');
             $table.find('tbody').html('');
         });
@@ -200,7 +205,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             submitValidate();
             validateWebuploaderValue(mediaBatchUpload.medias.length);
             if($('div.has-error').length > 0 || !window.isUploadFinished) return;
-            $('.myModal').modal("show");
+            $('#myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);
         });

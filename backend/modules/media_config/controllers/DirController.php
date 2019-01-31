@@ -4,9 +4,9 @@ namespace backend\modules\media_config\controllers;
 
 use common\models\api\ApiResponse;
 use common\models\media\Dir;
-use common\models\media\searchs\DirSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -47,38 +47,19 @@ class DirController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionCreate($id = null)
+    public function actionCreate($id = 0)
     {
-        $model = new Dir(['created_by' => \Yii::$app->user->id,]);
-        $model->loadDefaultValues();
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            /** 开启事务 */
-            $trans = Yii::$app->db->beginTransaction();
-            try {
-                $is_submit = false;
-                if($id !== null) $model->parent_id = $id;
-                if($model->save()){
-                    $is_submit = true;
-                    $model->updateParentPath();
-                    Dir::invalidateCache();
-                }else{
-                    Yii::$app->getSession()->setFlash('error', '保存失败::' . implode('；', $model->getErrorSummary(true)));
-                }
-                
-                if($is_submit) $trans->commit();  //提交事务
-                
-            } catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
-            }
+        if (Yii::$app->request->isPost) {
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
             
-            return $this->redirect(['index']);
+            $dir_path = ArrayHelper::getValue(Yii::$app->request->post(), 'dir_path');
+            Dir::checkIsTheDirExists($dir_path, $id);
+            
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         }
 
-        return $this->renderAjax('create', [
-            'model' => $model,
-        ]);
+        return $this->renderAjax('create');
     }
 
     /**
@@ -93,7 +74,7 @@ class DirController extends Controller
         $model = $this->findModel($id);
         
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $targetModel = Dir::getDirById($model->parent_id); //目标模型
+            if(empty($model->parent_id)) $model->parent_id = 0;
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
             try
@@ -202,7 +183,7 @@ class DirController extends Controller
             
             return $this->redirect(['index']);
         }
-
+        
         return $this->renderAjax('move', [
             'move_ids' => implode(',', $move_ids),    //所选的目录id
             'dataProvider' => Dir::getDirListFramework($move_ids),    //用户自定义的目录结构

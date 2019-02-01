@@ -74,6 +74,8 @@ class OrderGoodsSearch extends OrderGoods
         // 查询数据
         $query = self::find()->from(['Goods' => self::tableName()]);
         
+        $this->load($params);  
+        
         // 关联媒体表
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id');
         // 关联用户表

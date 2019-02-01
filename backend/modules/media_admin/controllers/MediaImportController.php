@@ -148,7 +148,7 @@ class MediaImportController extends Controller{
                 //组装对应数组值
                 foreach ($sheetdata[2] as $key => $value) {
                     if(!empty($value)){ //值非空
-                        $ext = substr($sheetdata[$row]['A'], strrpos($sheetdata[$row]['A'], '.')+1);
+                        $ext = substr($sheetdata[$row]['B'], strrpos($sheetdata[$row]['B'], '.')+1);
                         $sheetColumns[$value] = trim($sheetdata[$row][$key]);
                         $sheetColumns['ext'] = $ext;
                     }

@@ -67,14 +67,19 @@ class SingleStatisticsController extends Controller
         $mediaQuery = clone $query;
         $mediaQuery->addSelect(['COUNT(Media.id) AS media_num'])
             ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);   //已发布的媒体
+        /* 当年份/月份参数不为空时 */
+        if($year != null || $month != null){
+            $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%Y')" => $year]);
+            $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%m')" => $month]);
+        }
         $mediaNum = $mediaQuery->one();
         
         // 媒体总收入金额
         $orderQuery = clone $query;
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount'])
                 ->andFilterWhere(['Order.order_status' => 
@@ -101,7 +106,7 @@ class SingleStatisticsController extends Controller
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->andFilterWhere(['Order.created_by' => $userId]);
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
@@ -138,7 +143,7 @@ class SingleStatisticsController extends Controller
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
@@ -160,7 +165,7 @@ class SingleStatisticsController extends Controller
         $clickQuery->addSelect(['MediaVisitLog.visit_count AS click_num'])
             ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
             ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $clickQuery->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
             $clickQuery->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);

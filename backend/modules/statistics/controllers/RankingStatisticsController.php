@@ -65,7 +65,7 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
 
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
@@ -117,7 +117,7 @@ class RankingStatisticsController extends Controller
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
@@ -171,7 +171,7 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
@@ -232,7 +232,7 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
@@ -299,7 +299,7 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
-        /* 当时间段参数不为空时 */
+        /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);

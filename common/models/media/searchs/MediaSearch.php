@@ -34,7 +34,12 @@ class MediaSearch extends Media
      * @var string 
      */
     public $nickname;
-
+    
+    /**
+     * 标签
+     * @var string 
+     */
+//    public $tags;
 
     /**
      * {@inheritdoc}
@@ -43,7 +48,7 @@ class MediaSearch extends Media
     {
         return [
             [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'cover_url', 'url', 'keyword', 'attribute_value_id', 'nickname', 'ext'], 'safe'],
+            [['name', 'cover_url', 'url', 'keyword', 'attribute_value_id', 'nickname', 'ext', 'tags'], 'safe'],
             [['price', 'duration'], 'number'],
         ];
     }
@@ -66,6 +71,9 @@ class MediaSearch extends Media
      */
     public function search($params)
     {        
+        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        
         // 查询媒体数据
         $query = self::find()->from(['Media' => self::tableName()]);
 
@@ -75,6 +83,8 @@ class MediaSearch extends Media
         $query->leftJoin(['AdminUser' => AdminUser::tableName()], '(AdminUser.id = Media.owner_id or AdminUser.id =Media.created_by)');
         // 复制查询
         $queryCopy = clone $query;
+        
+        $totalCount = $queryCopy->count('Media.id');
         
         // 关联媒体属性值关系表
         $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
@@ -112,6 +122,9 @@ class MediaSearch extends Media
         // 按媒体id分组
         $query->groupBy(['Media.id']);
         
+        //显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
         // 过滤重复
         $query->with('dir', 'mediaType', 'mediaTagRefs', 'owner', 'createdBy');
         
@@ -124,10 +137,19 @@ class MediaSearch extends Media
         
         return [
             'filter' => $params,
+            'total' => $totalCount,
             'data' => [
                 'users' => $userResults,
                 'medias' => $mediaResults
             ],
         ];
+    }
+    
+    /**
+     * 获取标签
+     * @return string
+     */
+    public function getTags(){
+        return implode(',', ArrayHelper::getColumn($this->mediaTagRefs, 'tags.name'));
     }
 }

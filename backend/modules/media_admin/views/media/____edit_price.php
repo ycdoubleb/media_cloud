@@ -1,16 +1,14 @@
 <?php
 
-use common\models\media\Media;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
 /* @var $this View */
-/* @var $model Media */
 
-$this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
-    'Edit' => Yii::t('app', 'Edit'), 'Media' => Yii::t('app', 'Media'),
-    'Basic' => Yii::t('app', 'Basic'), 'Info' => Yii::t('app', 'Info')
+$this->title = Yii::t('app', '{Reset}{Media}{Price}', [
+    'Reset' => Yii::t('app', 'Reset'), 'Media' => Yii::t('app', 'Media'),
+    'Price' => Yii::t('app', 'Price')
 ]);
 
 ?>
@@ -21,16 +19,9 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
             'id' => 'media-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['edit-basic', 'id' => $model->id],
-        'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\"><div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div></div>",  
-            'labelOptions' => [
-                'class' => 'col-lg-1 col-md-1 control-label form-label',
-            ],  
-        ], 
     ]); ?>
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">
@@ -42,11 +33,32 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
             
             <div class="modal-body">
     
-                <?= $this->render('____form_basic_dom', [
-                    'model' => $model,
-                    'form' => $form,
-                ]) ?>
-                
+                <!--媒体价格-->
+                <div class="form-group field-media-price required">
+                    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Price}：', [
+                        'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
+                    ]), 'media-price', ['class' => 'col-lg-2 col-md-2 control-label form-label']) ?>
+                    
+                    <div class="col-lg-7 col-md-7">
+                        <div class="col-lg-12 col-md-12 clean-padding">
+                            
+                            <?= Html::textInput('Media[price]', '0.00', [
+                                'id' => 'media-price', 'class' => 'form-control',
+                                'type' => 'number', 'placeholder' => '请输入媒体价格',
+                                'aria-required' => true, 'aria-invalid' => false
+                            ]) ?>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-12 col-md-12 clean-padding">
+                        
+                        <div class="help-block"></div>
+                            
+                    </div>
+                        
+                </div>
+                    
             </div>
             
             <div class="modal-footer">
@@ -67,6 +79,7 @@ $this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
     <?php ActiveForm::end(); ?>
     
 </div>
+
 
 <?php
 $js = <<<JS

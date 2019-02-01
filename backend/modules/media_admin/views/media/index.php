@@ -4,18 +4,24 @@ use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
 use common\models\media\searchs\MediaSearch;
 use common\utils\DateUtil;
+use common\widgets\grid\GridViewChangeSelfColumn;
+use common\widgets\tagsinput\TagsInputAsset;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use yii\data\ActiveDataProvider;
+use yii\data\Pagination;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
+use yii\widgets\LinkPager;
 
 /* @var $this View */
 /* @var $searchModel MediaSearch */
 /* @var $dataProvider ActiveDataProvider */
 
 MediaModuleAsset::register($this);
+TagsInputAsset::register($this);
 
 $this->title = Yii::t('app', '{Media}{List}', [
     'Media' => Yii::t('app', 'Media'), 'List' => Yii::t('app', 'List')
@@ -35,6 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
         
         <div class="title">
             <div class="pull-right">
+                <?= Html::a(Yii::t('app', '{Reset}{Price}', [
+                    'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
+                ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); ?>
                 <?= Html::a(Yii::t('app', '{Reset}{Tag}', [
                     'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
                 ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
@@ -50,8 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
     
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-    //        'filterModel' => $searchModel,
             'layout' => "{items}\n{summary}\n{pager}",  
+            'summaryOptions' => ['class' => 'hidden'],
+            'pager' => [
+                'options' => ['class' => 'hidden']
+            ],
             'columns' => [
                 [
                     'class' => 'yii\grid\CheckboxColumn',
@@ -113,9 +125,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                     'label' => Yii::t('app', 'Name'),
+                    'class' => GridViewChangeSelfColumn::class,
+                    'plugOptions' => [
+                        'type' => 'input',
+                        'url' => Url::to(['change-value'], true),
+                    ],
                     'headerOptions' => [
                         'style' => [
-                            'width' => '146px',
+                            'width' => '175px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -134,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '146px',
+                            'width' => '160px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -151,7 +168,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '50px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -169,7 +186,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '76px',
+                            'width' => '65px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -187,7 +204,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '86px',
+                            'width' => '80px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -205,7 +222,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '76px',
+                            'width' => '65px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -223,7 +240,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '76px',
+                            'width' => '60px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -240,7 +257,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '60px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -271,13 +288,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
+                    'attribute' => 'tags',
                     'label' => Yii::t('app', 'Tag'),
-                    'value' => function($model){
-                        return implode(',', ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'));
-                    },
+                    'class' => GridViewChangeSelfColumn::class,
+                    'plugOptions' => [
+                        'type' => 'input',
+                        'url' => Url::to(['change-tags'], true),
+                    ],
+                    'inputOptions' => [
+                        'data-role' => 'tagsinput',
+                    ],
                     'headerOptions' => [
                         'style' => [
-                            'width' => '196px',
+                            'width' => '220px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -300,7 +323,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'headerOptions' => [
                         'style' => [
-                            'width' => '66px',
+                            'width' => '65px',
                             'padding' => '8px 4px'
                         ],
                     ],
@@ -314,6 +337,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
         ]); ?>
+        
+        <?php
+            $page = ArrayHelper::getValue($filters, 'page', 1);
+            $pageCount = ceil($totalCount / 10);
+            if($pageCount > 0){
+                echo '<div class="summary">' . 
+                        '第 <b>' . (($page * 10 - 10) + 1) . '</b>-<b>' . ($page != $pageCount ? $page * 10 : $totalCount) .'</b> 条，总共 <b>' . $totalCount . '</b> 条数据。' .
+                    '</div>';
+            }
+
+            echo LinkPager::widget([  
+                'pagination' => new Pagination([
+                    'totalCount' => $totalCount,  
+                ]),  
+            ])
+        ?>
     
     </div>
     
@@ -339,7 +378,7 @@ $js = <<<JS
     });
        
     // 出媒体编辑标签面板
-    $('#btn-editAttribute').click(function(e){
+    $('#btn-editPrice, #btn-editAttribute').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
             url = $(this).attr("href");

@@ -15,18 +15,18 @@ use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
 use common\models\Watermark;
+use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\base\Exception;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * MediaController implements the CRUD actions for Media model.
  */
-class MediaController extends Controller
+class MediaController extends GridViewChangeSelfController
 {
     /**
      * {@inheritdoc}
@@ -57,12 +57,13 @@ class MediaController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'filters' => $results['filter'],     //查询过滤的属性
+            'totalCount' => $results['total'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
+//                'pagination' => [
+//                    'defaultPageSize' => 10
+//                ]
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
@@ -175,7 +176,19 @@ class MediaController extends Controller
             'wateSelected' => [],
         ]);
     }
-
+    
+    /**
+     * 批量编辑 媒体价格
+     * @param string $id
+     * @return mixed
+     */
+    public function actionBatchEditPrice()
+    {
+        return $this->renderAjax('____edit_price', [
+            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有媒体id
+        ]);
+    }
+    
     /**
      * 编辑 媒体基本信息
      * 如果更新成功，浏览器将被重定向到“view”页面。
@@ -189,6 +202,8 @@ class MediaController extends Controller
         $model->scenario = Media::SCENARIO_UPDATE;
         
         if ($model->load($post)) {
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
             try
@@ -220,19 +235,18 @@ class MediaController extends Controller
                 
                 if($is_submit){
                     $trans->commit();  //提交事务
-                    Yii::$app->getSession()->setFlash('success','操作成功！');
+                    return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 }
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
-            }
-            
-            return $this->redirect(['view', 'id' => $model->id]);
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            }            
         }
         
         return $this->renderAjax('____edit_basic', [
-            'model' => $model
+            'model' => $model,
+            'ids' => json_encode(explode(',', $id)),
         ]);
     }
     
@@ -385,6 +399,29 @@ class MediaController extends Controller
             'wateFiles' => Watermark::getEnabledWatermarks(),
             'wateSelected' => explode(',', $model->detail->mts_watermark_ids)
         ]);
+    }
+    
+    /**
+     * 更新标签
+     * @param type $id          id
+     * @param type $fieldName   字段名
+     * @param type $value       新值
+     */
+    public function actionChangeTags($id,$fieldName,$value){
+        Yii::$app->getResponse()->format = 'json';
+        try
+        {
+            // 标签
+            $tags = Tags::saveTags($value);
+            // 保存关联的标签
+            if(!empty($tags)){
+                MediaTagRef::saveMediaTagRef($id, $tags);
+            }
+        } catch (Exception $ex) {
+            return ['result' => 0,'message' => sprintf("%s $fieldName = $value %s！%s", Yii::t('app', 'Update'),  Yii::t('app', 'Fail'), $ex->getMessage())];
+        }
+        
+        return ['result' => 1,'message' => sprintf('%s%s', Yii::t('app', 'Update'),  Yii::t('app', 'Success'))];
     }
     
     /**

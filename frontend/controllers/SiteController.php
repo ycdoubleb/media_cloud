@@ -392,9 +392,9 @@ class SiteController extends Controller {
         
         /* 过滤非本月的数据 */
         if($month){
-            $monthStart = date('Y-m-01',strtotime(date('Y-m-d'))); 
-            $monthEnd = date('Y-m-t',strtotime(date('Y-m-d'))); 
-            $query->andFilterWhere(['between', 'Media.created_at', strtotime($monthStart), strtotime($monthEnd)]);
+            $monthStart = mktime(0,0,0,date('m'),1,date('Y')); 
+            $monthEnd = mktime(23,59,59,date('m'),date('t'),date('Y')); 
+            $query->andFilterWhere(['between', 'Media.created_at', $monthStart, $monthEnd]);
         }
         
         // 媒体总数量

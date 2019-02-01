@@ -9,7 +9,6 @@ use common\models\media\MediaType;
 use common\models\Tags;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -17,11 +16,6 @@ use yii\helpers\ArrayHelper;
  */
 class MediaSearch extends Media 
 {
-    /**
-     * 声明静态属性
-     * @var Query 
-     */
-    private static $query;
     /**
      * 属性值id
      * @var array 
@@ -69,6 +63,24 @@ class MediaSearch extends Media
         $query = self::find()->select(['Media.id'])->from(['Media' => Media::tableName()]);
         $this->load($params);
         
+        // 主要过滤条件
+        $query->andFilterWhere([
+            'Media.del_status' => 0,
+            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
+            'Media.type_id' => $this->type_id
+        ]);
+        // 属性值条件
+        if(!empty($this->attribute_value_id)){
+            foreach ($this->attribute_value_id as $value) {
+                $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $value]);
+            }
+        }
+        // 模糊查询
+        $query->andFilterWhere(['or',
+            ['like', 'Media.name', $this->keyword],
+            ['like', 'Tags.name', $this->keyword],
+        ]);
+        
         // 关联查询媒体类型
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
         // 关联媒体属性值关系表
@@ -86,24 +98,6 @@ class MediaSearch extends Media
         // 查询媒体数据
         $query->addSelect(['Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
                 'MediaType.sign AS type_sign', 'price', 'duration', 'size', 
-        ]);
-        
-        // 主要过滤条件
-        $query->andFilterWhere([
-            'Media.del_status' => 0,
-            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
-            'Media.type_id' => $this->type_id
-        ]);
-        // 属性值条件
-        if(!empty($this->attribute_value_id)){
-            foreach ($this->attribute_value_id as $value) {
-                $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $value]);
-            }
-        }
-        // 模糊查询
-        $query->andFilterWhere(['or',
-            ['like', 'Media.name', $this->keyword],
-            ['like', 'Tags.name', $this->keyword],
         ]);
         
         //以媒体id为分组

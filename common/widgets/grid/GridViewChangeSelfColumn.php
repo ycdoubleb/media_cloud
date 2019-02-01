@@ -116,7 +116,8 @@ class GridViewChangeSelfColumn extends DataColumn {
             //添加当前组件数据到数据中心
             window.$plugin_name ['$plugin_id'] = {
                 'labels':$labels,
-                'values':$values
+                'values':$values,
+                'url':"$url"
             };
                 
             /**
@@ -132,6 +133,7 @@ class GridViewChangeSelfColumn extends DataColumn {
                 var plugin_data = window.$plugin_name [plugin_id];
                 var labels = plugin_data['labels'];
                 var values = plugin_data['values'];
+                var url = plugin_data['url'];
                 var value;
                 if($(obj).hasClass('no')) // 图片点击是否操作
                 {          
@@ -145,9 +147,8 @@ class GridViewChangeSelfColumn extends DataColumn {
                 }else{ // 其他输入框操作7
                     value = $(obj).val();
                 }
-
                 $.ajax({
-                    url:"$url",
+                    url:url,
                     data:{id:id,fieldName:fieldName,value:value},
                     success: function(data){
                         if(data['result'] == 0){

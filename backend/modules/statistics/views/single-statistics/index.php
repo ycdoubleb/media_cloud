@@ -2,7 +2,7 @@
 
 use backend\modules\statistics\assets\StatisticsModuleAsset;
 use common\widgets\charts\ChartAsset;
-use kartik\daterange\DateRangePicker;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -37,18 +37,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!--时间段搜索-->
                     <div class="form-group field-order-confirm_at required">
                         <label class="control-label">时间:</label>
-                        <div class="control-input">
-                            <?= DateRangePicker::widget([
-                                'value' => $dateRange,
-                                'name' => 'dateRange',
-                                //'presetDropdown' => true,
-                                'hideInput' => true,
-                                'convertFormat' => true,
-                                'pluginOptions' => [
-                                    'locale' => ['format' => 'Y-m-d'],
-                                    'allowClear' => true,
-                                ],
-                                'pluginEvents' => ['change' => 'function() { submitForm(); }']
+                        <div class="control-input years-input">
+                            <?= Select2::widget([
+                                'name' => 'year',
+                                'value' => $year,
+                                'data' => $years,
+                                'hideSearch' => true,
+                                'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                            ]);?>
+                        </div>
+                        <div class="control-input months-input">
+                            <?= Select2::widget([
+                                'name' => 'month',
+                                'value' => $month,
+                                'data' => $months,
+                                'hideSearch' => true,
+                                'pluginEvents' => ['change' => 'function(){ submitForm()}']
                             ]);?>
                         </div>
                     </div>
@@ -58,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <!--姓名搜索-->
                             <label class="control-label">姓名:</label>
                             <div class="control-input select-nickname">
-                                <?= \kartik\widgets\Select2::widget([
+                                <?= Select2::widget([
                                     'name' => 'nickname',
                                     'data' => $nicknameData,
                                     'value' => $userId,
@@ -73,14 +77,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php else:?>
                             <!--媒体编号搜索-->
                             <label class="control-label">编号:</label>
-                            <div class="control-input">
+                            <div class="control-input" style="vertical-align: bottom">
                                 <?= Html::input('text', 'media_id', $mediaId, [
                                     'class' => 'form-control mediaid-value'
                                 ])?>
                             </div>
                         <?php endif;?>
-                        <?= Html::a('统计', 'javascript:;', ['id' => 'submit', 'class' => 'btn btn-primary', 
-                            'style' => 'margin-left:15px;'])?>
+                        <?= Html::a('统计', 'javascript:;', ['id' => 'submit', 'class' => 'btn btn-primary btn-flat', 
+                            'style' => 'margin-left:15px; vertical-align:bottom'])?>
                     </div>
                     
                     <!--选项卡 显示条件-->

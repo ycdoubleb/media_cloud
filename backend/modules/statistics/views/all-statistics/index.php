@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="statistics-num">
                 <p>总点击量</p>
-                <span><?= $total_visit_num['total_visit_num'];?></span>
+                <span><?= $total_visit_num;?></span>
             </div>
         </div>
     </div>

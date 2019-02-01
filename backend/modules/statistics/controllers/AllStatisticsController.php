@@ -2,8 +2,9 @@
 
 namespace backend\modules\statistics\controllers;
 
-use common\models\media\Acl;
+use common\models\log\MediaVisitLog;
 use common\models\media\Media;
+use common\models\media\MediaType;
 use common\models\order\Order;
 use yii\db\Query;
 use yii\web\Controller;
@@ -67,11 +68,16 @@ class AllStatisticsController extends Controller
     protected function getTotalVisitNumber()
     {
         $query = (new Query())
-                ->select(['SUM(visit_count) AS total_visit_num'])
-                ->from(['Acl' => Acl::tableName()])
-                ->one();
-
-        return $query;
+                ->select(['MediaVisitLog.visit_count AS value'])
+                ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
+                ->all();
+        
+        $totalResults = 0;
+        foreach ($query as $value) {
+            $totalResults += $value['value'];
+        }
+        
+        return $totalResults;
     }
     
     /**
@@ -84,7 +90,7 @@ class AllStatisticsController extends Controller
                 ->select(['MediaType.name', 'COUNT(Media.id) AS value'])
                 ->from(['Media' => Media::tableName()])
                 ->where(['status' => Media::STATUS_PUBLISHED, 'del_status' => 0])
-                ->leftJoin(['MediaType' => \common\models\media\MediaType::tableName()], 'MediaType.id = Media.type_id')
+                ->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id')
                 ->groupBy('MediaType.id')
                 ->all();
 

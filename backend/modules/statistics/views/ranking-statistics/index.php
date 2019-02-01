@@ -2,8 +2,7 @@
 
 use backend\modules\statistics\assets\StatisticsModuleAsset;
 use common\widgets\charts\ChartAsset;
-use kartik\daterange\DateRangePicker;
-use yii\helpers\ArrayHelper;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -25,18 +24,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!--时间段搜索-->
                 <div class="form-group field-order-confirm_at required">
                     <label class="control-label">时间:</label>
-                    <div class="control-input">
-                        <?= DateRangePicker::widget([
-                            'value' => $dateRange,
-                            'name' => 'dateRange',
-                            //'presetDropdown' => true,
-                            'hideInput' => true,
-                            'convertFormat' => true,
-                            'pluginOptions' => [
-                                'locale' => ['format' => 'Y-m-d'],
-                                'allowClear' => true,
-                            ],
-                            'pluginEvents' => ['change' => 'function() { submitForm(); }']
+                    <div class="control-input years-input">
+                        <?= Select2::widget([
+                            'name' => 'year',
+                            'value' => $year,
+                            'data' => $years,
+                            'hideSearch' => true,
+                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                        ]);?>
+                    </div>
+                    <div class="control-input months-input">
+                        <?= Select2::widget([
+                            'name' => 'month',
+                            'value' => $month,
+                            'data' => $months,
+                            'hideSearch' => true,
+                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
                         ]);?>
                     </div>
                 </div>

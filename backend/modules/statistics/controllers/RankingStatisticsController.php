@@ -3,7 +3,7 @@
 namespace backend\modules\statistics\controllers;
 
 use common\models\AdminUser;
-use common\models\media\Acl;
+use common\models\log\MediaVisitLog;
 use common\models\media\Media;
 use common\models\order\Order;
 use common\models\order\OrderGoods;
@@ -28,27 +28,32 @@ class RankingStatisticsController extends Controller
     {
         /* @var $request Request */
         $request = Yii::$app->getRequest();
-        $dateRange = $request->getQueryParam('dateRange');
+        $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');
+        $month = $request->getQueryParam('month') == null ? '' : $request->getQueryParam('month');
 
         return $this->render('index', [
-            'operator' => $this->getAmountByOperator($dateRange),   //运营人
-            'purchaser' => $this->getAmountByPurchaser($dateRange), //购买人
-            'income' => $this->getAmountByMedia($dateRange),        //媒体收入
-            'click' => $this->getClickByMedia($dateRange),          //媒体点击量
-            'quote' => $this->getQuoteByMedia($dateRange),          //媒体引用量
+            'operator' => $this->getAmountByOperator($year, $month),   //运营人
+            'purchaser' => $this->getAmountByPurchaser($year, $month), //购买人
+            'income' => $this->getAmountByMedia($year, $month),        //媒体收入
+            'click' => $this->getClickByMedia($year, $month),          //媒体点击量
+            'quote' => $this->getQuoteByMedia($year, $month),          //媒体引用量
 
+            'year' => $year,
+            'month' => $month,
+            'years' => $this->getYears(),
+            'months' => $this->getMonths(),
             'tabs' => ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'operator'),    // 过滤条件tabs
-            'dateRange' => $dateRange,
             'filters' => Yii::$app->request->queryParams,  //过滤条件
         ]);
     }
     
     /**
      * 根据运营人收入金额统计
-     * @param array $dateRange 时间段
+     * @param array $year   年份
+     * @param array $month  月份
      * @return ArrayDataProvider
      */
-    protected function getAmountByOperator($dateRange)
+    protected function getAmountByOperator($year, $month)
     {
         /* @var $query Query */
         $query = (new Query())
@@ -59,11 +64,11 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
-        
+
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 运营人总收入金额
@@ -98,10 +103,11 @@ class RankingStatisticsController extends Controller
     
     /**
      * 根据购买人支出金额统计
-     * @param array $dateRange 时间段
+     * @param array $year   年份
+     * @param array $month  月份
      * @return ArrayDataProvider
      */
-    protected function getAmountByPurchaser($dateRange)
+    protected function getAmountByPurchaser($year, $month)
     {
         /* @var $query Query */
         $query = (new Query())
@@ -112,9 +118,9 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 购买人总支出金额
@@ -149,10 +155,11 @@ class RankingStatisticsController extends Controller
     
     /**
      * 根据媒体收入金额统计
-     * @param array $dateRange 时间段
+     * @param array $year   年份
+     * @param array $month  月份
      * @return ArrayDataProvider
      */
-    protected function getAmountByMedia($dateRange)
+    protected function getAmountByMedia($year, $month)
     {
         /* @var $query Query */
         $query = (new Query())
@@ -165,9 +172,9 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 媒体收入总金额
@@ -211,28 +218,32 @@ class RankingStatisticsController extends Controller
     
     /**
      * 根据媒体点击量统计
-     * @param array $dateRange 时间段
+     * @param array $year   年份
+     * @param array $month  月份
      * @return ArrayDataProvider
      */
-    protected function getClickByMedia($dateRange)
+    protected function getClickByMedia($year, $month)
     {
         /* @var $query Query */
         $query = (new Query())
-                ->select(['SUM(Acl.visit_count) AS value'])
-                ->from(['Media' => Media::tableName()])
+                ->select(['MediaVisitLog.visit_count AS value'])
+                ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
-                ->rightJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id')
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Acl.updated_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
         }
         
         // 媒体总点击量
         $totalClick = clone $query;
-        $totalResults = $totalClick->one();
+        $totalResults = 0;
+        foreach ($totalClick->all() as $value) {
+            $totalResults += $value['value'];
+        }
         
         // 媒体点击量前20名的总量
         $limitClick = clone $query;
@@ -260,7 +271,7 @@ class RankingStatisticsController extends Controller
         ]);
         
         $resluts = [
-            'totalClick' => empty($totalResults['value']) ? 0 : $totalResults['value'],
+            'totalClick' => $totalResults,
             'limitClick' => $limitResult,
             'chartsData' => $chartsResult,
             'listsData' => $dataProvider,
@@ -271,10 +282,11 @@ class RankingStatisticsController extends Controller
     
     /**
      * 根据媒体引用次数统计
-     * @param array $dateRange 时间段
+     * @param array $year   年份
+     * @param array $month  月份
      * @return ArrayDataProvider
      */
-    protected function getQuoteByMedia($dateRange)
+    protected function getQuoteByMedia($year, $month)
     {
         /* @var $query Query */
         $query = (new Query())
@@ -288,9 +300,9 @@ class RankingStatisticsController extends Controller
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 媒体总引用次数
@@ -330,5 +342,50 @@ class RankingStatisticsController extends Controller
         ];
 
         return $resluts;
+    }
+    
+    /**
+     * 年份
+     * @return array
+     */
+    protected function getYears()
+    {
+        $startYear = 2019;                  // 平台开始使用年份
+        $theYear = date('Y',time());        // 当前年份
+        $addYear = $theYear - $startYear;   // 平台已经使用了N年
+        
+        $years = ['' => '全部'];
+        for($i = 0; $i <= $addYear; $i++){
+            $years += [
+                $startYear + $i => $startYear + $i . '年'
+            ];
+        }
+        
+        return $years;
+    }
+    
+    /**
+     * 月份
+     * @return array
+     */
+    protected function getMonths()
+    {
+        $month = [
+            '' => '全年',
+            '01' => '01月',
+            '02' => '02月',
+            '03' => '03月',
+            '04' => '04月',
+            '05' => '05月',
+            '06' => '06月',
+            '07' => '07月',
+            '08' => '08月',
+            '09' => '09月',
+            '10' => '10月',
+            '11' => '11月',
+            '12' => '12月',
+        ];
+        
+        return $month;
     }
 }

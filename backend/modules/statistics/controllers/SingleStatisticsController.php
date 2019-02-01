@@ -3,7 +3,7 @@
 namespace backend\modules\statistics\controllers;
 
 use common\models\AdminUser;
-use common\models\media\Acl;
+use common\models\log\MediaVisitLog;
 use common\models\media\Media;
 use common\models\order\Order;
 use common\models\order\OrderGoods;
@@ -27,18 +27,22 @@ class SingleStatisticsController extends Controller
     {
         /* @var $request Request */
         $request = Yii::$app->getRequest();
-        $dateRange = $request->getQueryParam('dateRange');  //时间段
+        $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');
+        $month = $request->getQueryParam('month') == null ? '' : $request->getQueryParam('month');
         $userId = $request->getQueryParam('nickname');      //购买人 or 运营人
         $mediaId = $request->getQueryParam('media_id');     //媒体编号
         $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'operator');    // 过滤条件tabs
         
         return $this->render('index', [
-            'operator' => $this->getStatisticsByOperator($dateRange, $userId),
-            'purchaser' => $this->getStatisticsByPurchaser($dateRange, $userId),
-            'media' => $this->getStatisticsByMedia($dateRange, $mediaId),
+            'operator' => $this->getStatisticsByOperator($year, $month, $userId),   //运营人
+            'purchaser' => $this->getStatisticsByPurchaser($year, $month, $userId), //购买人
+            'media' => $this->getStatisticsByMedia($year, $month, $mediaId),        //媒体
             
             'tabs' => $tabs,
-            'dateRange' => $dateRange,
+            'year' => $year,
+            'month' => $month,
+            'years' => $this->getYears(),
+            'months' => $this->getMonths(),
             'userId' => $userId,
             'mediaId' => $mediaId,
             'nicknameData' => $this->getNickname($tabs),
@@ -48,11 +52,12 @@ class SingleStatisticsController extends Controller
     
     /**
      * 统计运营人所拥有的媒体数量及其收入金额
-     * @param string $dateRange
-     * @param integer $userId
+     * @param array $year   年份
+     * @param array $month  月份
+     * @param integer $userId   运营人ID
      * @return array
      */
-    protected function getStatisticsByOperator($dateRange, $userId)
+    protected function getStatisticsByOperator($year, $month, $userId)
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
@@ -67,9 +72,9 @@ class SingleStatisticsController extends Controller
         // 媒体总收入金额
         $orderQuery = clone $query;
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $orderQuery->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount'])
                 ->andFilterWhere(['Order.order_status' => 
@@ -83,11 +88,12 @@ class SingleStatisticsController extends Controller
     
     /**
      * 统计购买人所购买的媒体数量及其支出金额
-     * @param string $dateRange
-     * @param integer $userId
+     * @param array $year   年份
+     * @param array $month  月份
+     * @param integer $userId   购买人ID
      * @return array
      */
-    protected function getStatisticsByPurchaser($dateRange, $userId)
+    protected function getStatisticsByPurchaser($year, $month, $userId)
     {
         $query = (new Query())
                 ->from(['Order' => Order::tableName()])
@@ -96,9 +102,9 @@ class SingleStatisticsController extends Controller
                 ->andFilterWhere(['Order.created_by' => $userId]);
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 购买媒体数量
@@ -117,46 +123,52 @@ class SingleStatisticsController extends Controller
     
     /**
      * 统计媒体的引用次数/总收入金额/总点击量
-     * @param string $dateRange
-     * @param integer $mediaId
+     * @param array $year   年份
+     * @param array $month  月份
+     * @param integer $mediaId  媒体ID
      * @return array
      */
-    protected function getStatisticsByMedia($dateRange, $mediaId)
+    protected function getStatisticsByMedia($year, $month, $mediaId)
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Media.id' => $mediaId]);
-        
-        // 克隆Query
-        $cloneQuery = clone $query;
-        $cloneQuery->andFilterWhere(['Order.order_status' => 
-                [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
-            ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
-            ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
+                ->andFilterWhere(['Media.id' => $mediaId])
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
+                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
+                ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
         
         /* 当时间段参数不为空时 */
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $cloneQuery->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($year != null || $month != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
         // 媒体引用次数
-        $quoteQuery = clone $cloneQuery;
+        $quoteQuery = clone $query;
         $quoteQuery->addSelect(['COUNT(Order.id) AS quote_num'])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
         $quoteNum = $quoteQuery->one();
         
         // 媒体总收入金额
-        $orderQuery = clone $cloneQuery;
+        $orderQuery = clone $query;
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount']);
         $orderAmount = $orderQuery->one();
          
         // 媒体总点击量
-        $clickQuery = clone $query;
-        $clickQuery->addSelect(['SUM(Acl.visit_count) AS click_num'])
-            ->leftJoin(['Acl' => Acl::tableName()], 'Acl.media_id = Media.id')
+        $clickQuery = (new Query())->from(['MediaVisitLog' => MediaVisitLog::tableName()]);
+        $clickQuery->addSelect(['MediaVisitLog.visit_count AS click_num'])
+            ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
             ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
-        $clickNum = $clickQuery->one();        
+        /* 当时间段参数不为空时 */
+        if($year != null || $month != null){
+            $clickQuery->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
+            $clickQuery->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
+        }
+        $clickNum['click_num'] = 0;
+        foreach ($clickQuery->all() as $value) {
+            $clickNum['click_num'] += $value['click_num'];
+        }
 
         return array_merge($quoteNum,$orderAmount,$clickNum);
     }
@@ -190,5 +202,50 @@ class SingleStatisticsController extends Controller
         }
 
         return $nickname;
+    }
+    
+    /**
+     * 年份
+     * @return array
+     */
+    protected function getYears()
+    {
+        $startYear = 2019;                  // 平台开始使用年份
+        $theYear = date('Y',time());        // 当前年份
+        $addYear = $theYear - $startYear;   // 平台已经使用了N年
+        
+        $years = ['' => '全部'];
+        for($i = 0; $i <= $addYear; $i++){
+            $years += [
+                $startYear + $i => $startYear + $i . '年'
+            ];
+        }
+        
+        return $years;
+    }
+    
+    /**
+     * 月份
+     * @return array
+     */
+    protected function getMonths()
+    {
+        $month = [
+            '' => '全年',
+            '01' => '01月',
+            '02' => '02月',
+            '03' => '03月',
+            '04' => '04月',
+            '05' => '05月',
+            '06' => '06月',
+            '07' => '07月',
+            '08' => '08月',
+            '09' => '09月',
+            '10' => '10月',
+            '11' => '11月',
+            '12' => '12月',
+        ];
+        
+        return $month;
     }
 }

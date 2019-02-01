@@ -9,7 +9,6 @@ use common\models\media\MediaType;
 use common\models\Tags;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -17,11 +16,6 @@ use yii\helpers\ArrayHelper;
  */
 class MediaSearch extends Media 
 {
-    /**
-     * 声明静态属性
-     * @var Query 
-     */
-    private static $query;
     /**
      * 属性值id
      * @var array 
@@ -38,8 +32,8 @@ class MediaSearch extends Media
      */
     public function rules() {
         return [
-            [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by',
-                    'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status',
+                'del_status', 'is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['name', 'cover_url', 'url', 'attribute_value_id', 'keyword'], 'safe'],
             [['price', 'duration'], 'number'],
         ];
@@ -69,25 +63,6 @@ class MediaSearch extends Media
         $query = self::find()->select(['Media.id'])->from(['Media' => Media::tableName()]);
         $this->load($params);
         
-        // 关联查询媒体类型
-        $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
-        // 关联媒体属性值关系表
-        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
-        // 关联媒体标签关系表
-        $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
-        // 关联标签表
-        $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
-        
-        // 复制媒体对象
-        $copyMedia= clone $query;    
-        // 查询媒体下的标签
-        $tagRefQuery = MediaTagRef::getTagsByObjectId($copyMedia, false);
-        $tagRefQuery->addSelect(["GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tag_name"]);
-        // 查询媒体数据
-        $query->addSelect(['Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
-                'MediaType.sign AS type_sign', 'price', 'duration', 'size', 
-        ]);
-        
         // 主要过滤条件
         $query->andFilterWhere([
             'Media.del_status' => 0,
@@ -106,10 +81,28 @@ class MediaSearch extends Media
             ['like', 'Tags.name', $this->keyword],
         ]);
         
+        // 复制媒体对象
+        $copyMedia= clone $query;
+        // 查询媒体下的标签
+        $tagRefQuery = MediaTagRef::getTagsByObjectId($copyMedia, false);
+        $tagRefQuery->addSelect(["GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tag_name"]);
         //以媒体id为分组
         $query->groupBy(['Media.id']);
         //查询总数
         $totalCount = $query->count('id');
+        
+        // 关联媒体标签关系表
+        $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
+        // 关联标签表
+        $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
+        // 关联查询媒体类型
+        $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
+        // 关联媒体属性值关系表
+        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
+        // 查询媒体数据
+        $query->addSelect(['Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
+                'MediaType.sign AS type_sign', 'price', 'duration', 'size', 
+        ]);
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
         

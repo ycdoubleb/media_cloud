@@ -151,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'headerOptions' => [
                         'style' => [
-                            'width' => '160px',
+                            'width' => '125px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -201,6 +201,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => Yii::t('app', 'Size'),
                     'value' => function($model){
                         return Yii::$app->formatter->asShortSize($model->size);
+                    },
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '80px',
+                            'padding' => '8px 4px'
+                        ]
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ]
+                ],
+                [
+                    'attribute' => 'price',
+                    'label' => Yii::t('app', '{Media}{Price}', [
+                        'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
+                    ]),
+                    'value' => function($model){
+                        return Yii::$app->formatter->asCurrency($model->price);
                     },
                     'headerOptions' => [
                         'style' => [
@@ -300,7 +320,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'headerOptions' => [
                         'style' => [
-                            'width' => '220px',
+                            'width' => '175px',
                             'padding' => '8px 4px'
                         ]
                     ],

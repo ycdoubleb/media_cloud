@@ -42,6 +42,8 @@ class GoodsController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'filters' => $results['filter'],     //查询过滤的属性
+            'totalCount' => $results['total'],     //查询过滤的属性
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $results['data']['goods'],
                 'key' => 'id'

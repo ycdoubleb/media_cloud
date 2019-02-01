@@ -7,6 +7,7 @@ use common\models\media\Media;
 use common\models\order\OrderGoods;
 use common\models\User;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * OrderGoodsSearch represents the model behind the search form of `common\models\order\OrderGoods`.
@@ -67,6 +68,9 @@ class OrderGoodsSearch extends OrderGoods
      */
     public function search($params)
     {
+        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        
         // 查询数据
         $query = self::find()->from(['Goods' => self::tableName()]);
         
@@ -89,8 +93,18 @@ class OrderGoodsSearch extends OrderGoods
         // 模糊查询
         $query->andFilterWhere(['like', 'Media.name', $this->meida_name]);
         
+        // 按商品id分组
+        $query->groupBy(['Goods.id']);
+        
+        // 计算总数
+        $totalCount = $query->count('*');
+        
+        //显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+       
         // 过滤重复
-        $query->with('media', 'order', 'createdBy');
+        $query->with('media', 'order', 'createdBy', 'media.createdBy');
+        
         // 用户结果
         $uploadedByResult = $queryCopy->select(['AdminUser.id', 'AdminUser.nickname'])
             ->groupBy(['AdminUser.id'])->all();
@@ -102,6 +116,7 @@ class OrderGoodsSearch extends OrderGoods
         
         return [
             'filter' => $params,
+            'total' => $totalCount,
             'data' => [
                 'uploadedBys' => $uploadedByResult,
                 'createdBys' => $createdByResult,

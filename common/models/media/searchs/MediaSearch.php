@@ -84,8 +84,6 @@ class MediaSearch extends Media
         // 复制查询
         $queryCopy = clone $query;
         
-        $totalCount = $queryCopy->count('Media.id');
-        
         // 关联媒体属性值关系表
         $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
         // 关联媒体标签关系表
@@ -121,6 +119,9 @@ class MediaSearch extends Media
         
         // 按媒体id分组
         $query->groupBy(['Media.id']);
+        
+        // 计算总数
+        $totalCount = $query->count('*');
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);

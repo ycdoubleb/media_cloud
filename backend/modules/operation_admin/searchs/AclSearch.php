@@ -5,6 +5,7 @@ namespace backend\modules\operation_admin\searchs;
 use common\models\media\Acl;
 use common\models\User;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * AclSearch represents the model behind the search form of `common\models\media\Acl`.
@@ -46,6 +47,9 @@ class AclSearch extends Acl
      */
     public function search($params)
     {
+        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        
         // 查询数据
         $query = self::find()->from(['Acl' => self::tableName()]);
 
@@ -64,9 +68,22 @@ class AclSearch extends Acl
             'Acl.user_id' => $this->user_id,
             'Acl.status' => $this->status,
         ]);
+        
         // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name]);
 
+        // 按商品id分组
+        $query->groupBy(['Acl.id']);
+        
+        // 计算总数
+        $totalCount = $query->count('*');
+        
+        //显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
+        // 关联
+        $query->with('media', 'order', 'user');
+        
         // 用户查询结果
         $userResults = $queryCopy->select(['User.id', 'User.nickname'])->groupBy('User.id')->all();
 
@@ -75,6 +92,7 @@ class AclSearch extends Acl
         
         return [
             'filter' => $params,
+            'total' => $totalCount,
             'data' => [
                 'users' => $userResults,
                 'acls' => $aclResults,

@@ -61,9 +61,6 @@ class MediaController extends GridViewChangeSelfController
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
-//                'pagination' => [
-//                    'defaultPageSize' => 10
-//                ]
             ]),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),

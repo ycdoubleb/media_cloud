@@ -61,6 +61,9 @@ class PlayApproveSearch extends PlayApprove
      */
     public function search($params)
     {
+        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        
         $query = self::find()->from(['Approve' => PlayApprove::tableName()]);
         
         $this->load($params);
@@ -88,6 +91,12 @@ class PlayApproveSearch extends PlayApprove
         // 按审批id分组
         $query->groupBy(['Approve.id']);
         
+        // 计算总数
+        $totalCount = $query->count('*');
+        
+        //显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
         // 过滤重复
         $query->with('order', 'handledBy', 'createdBy');
 
@@ -102,6 +111,7 @@ class PlayApproveSearch extends PlayApprove
 
         return [
             'filter' => $params,
+            'total' => $totalCount,
             'data' => [
                 'createdBys' => $createdByResults,
                 'handledBys' => $handledByResults,

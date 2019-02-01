@@ -5,6 +5,7 @@ namespace backend\modules\operation_admin\searchs;
 use common\models\order\Order;
 use common\models\User;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * OrderSearch represents the model behind the search form of `common\models\order\Order`.
@@ -47,6 +48,9 @@ class OrderSearch extends Order
      */
     public function search($params)
     {
+        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        
         $query = self::find()->from(['Order' => self::tableName()]);
 
         $this->load($params);
@@ -55,7 +59,7 @@ class OrderSearch extends Order
         $query->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
         // 复制对象
         $queryCopy = clone $query;
-
+        
         // 条件查询
         $query->andFilterWhere([
             'order_sn' => $this->order_sn,
@@ -69,6 +73,12 @@ class OrderSearch extends Order
         // 按订单id分组
         $query->groupBy(['Order.id']);
         
+        // 计算总数
+        $totalCount = $query->count('*');
+        
+        //显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
         // 关联
         $query->with('createdBy');
         
@@ -80,6 +90,7 @@ class OrderSearch extends Order
         
         return [
             'filter' => $params,
+            'total' => $totalCount,
             'data' => [
                 'users' => $userResults,
                 'orders' => $orderResults,

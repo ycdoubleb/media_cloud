@@ -349,8 +349,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             echo LinkPager::widget([  
                 'pagination' => new Pagination([
-                    'totalCount' => $totalCount,  
+                    'totalCount' => $totalCount,
                 ]),  
+                'maxButtonCount' => 5
             ])
         ?>
     

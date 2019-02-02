@@ -80,17 +80,7 @@ class MediaSearch extends Media
             ['like', 'Media.name', $this->keyword],
             ['like', 'Tags.name', $this->keyword],
         ]);
-        
-        // 复制媒体对象
-        $copyMedia= clone $query;
-        // 查询媒体下的标签
-        $tagRefQuery = MediaTagRef::getTagsByObjectId($copyMedia, false);
-        $tagRefQuery->addSelect(["GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tag_name"]);
-        //以媒体id为分组
-        $query->groupBy(['Media.id']);
-        //查询总数
-        $totalCount = $query->count('id');
-        
+
         // 关联媒体标签关系表
         $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
         // 关联标签表
@@ -99,22 +89,36 @@ class MediaSearch extends Media
         $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
         // 关联媒体属性值关系表
         $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
+        //以媒体id为分组
+        $query->groupBy(['Media.id']);
+        //查询总数
+        $totalCount = $query->count('id');
+        
         // 查询媒体数据
         $query->addSelect(['Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
                 'MediaType.sign AS type_sign', 'price', 'duration', 'size', 
         ]);
-        //显示数量
+        // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
-        
-        //查询课程结果
+        // 查询媒体结果
         $meidaResult = $query->asArray()->all();
-        //查询标签结果
+        
+        // 获取显示的媒体ID
+        $mediaIds = [];
+        foreach ($meidaResult as $value) {
+            $mediaIds[] .= $value['id'];
+        }
+        // 查询媒体下的标签
+        $tagRefQuery = MediaTagRef::getTagsByObjectId($mediaIds, false);
+        $tagRefQuery->addSelect(["GROUP_CONCAT(Tags.`name` ORDER BY TagRef.id ASC SEPARATOR ',') AS tag_name"]);
+        // 查询标签结果
         $tagRefResult = $tagRefQuery->asArray()->all(); 
-        //以media_id为索引
+        
+        // 以media_id为索引
         $medias = ArrayHelper::index($meidaResult, 'id');
         $results = ArrayHelper::index($tagRefResult, 'object_id');
 
-        //合并查询后的结果
+        // 合并查询后的结果
         foreach ($medias as $id => $item) {
             if(isset($results[$id])){
                 $medias[$id] += $results[$id];

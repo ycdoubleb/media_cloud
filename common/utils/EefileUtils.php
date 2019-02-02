@@ -23,7 +23,7 @@ class EefileUtils {
      */
     public static function getVideoData($video_path) {
         $serverURL = 'http://eefile.gzedu.com/video/getVideoInfoByUrl.do?formMap.VIDEO_URL=';
-        $authUrl = $serverURL . $video_path;
+        $authUrl = $serverURL . trim($video_path);
         //调用api获取视频详细数据
         $curl = new Curl();
         $response = simplexml_load_string($curl->get($authUrl));

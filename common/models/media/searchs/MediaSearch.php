@@ -85,13 +85,13 @@ class MediaSearch extends Media
         $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
 
         // 查询媒体数据
-        $query = self::find()->from(['Media' => self::tableName()])->select(['Media.*']);
+        $query = self::find()->from(['Media' => self::tableName()]);
         
         // 属性关联
         if(count($attrValIds) > 0){
-            $query->leftJoin(['AttValRef' => MediaAttValueRef::tableName()], '(AttValRef.media_id = Media.id and AttValRef.is_del = 0)');
-            foreach ($attrValIds as $id){
-                $query->andFilterWhere(['AttValRef.attribute_value_id' => $id]);
+            foreach ($attrValIds as $index => $id){
+                $query->leftJoin(["AttValRef_$index" => MediaAttValueRef::tableName()], "(AttValRef_$index.media_id = Media.id and AttValRef_$index.is_del = 0)");
+                $query->andFilterWhere(["AttValRef_$index.attribute_value_id" => $id]);
             }
         }
         
@@ -116,18 +116,27 @@ class MediaSearch extends Media
             ['like', 'Media.tags', $this->keyword],
         ]);
         
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Media.id) AS totalCount'])
+            ->asArray()->one();
+        
+        // 显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
         // 按媒体id分组
-        $query->groupBy('Media.id');
+        $query->select(['Media.*'])->groupBy('Media.id');
         
         // 过滤重复
         $query->with('dir', 'mediaType', 'mediaTagRefs', 'owner', 'createdBy');
         
         return [
             'filter' => $params,
-            'total' => $query->count('id'),
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'users' => $userResults,
-                'medias' => $query->offset(($page - 1) * $limit)->limit($limit)->all()
+                'medias' => $query->all()
             ],
         ];
     }

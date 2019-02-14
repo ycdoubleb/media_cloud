@@ -80,7 +80,7 @@ TagsInputAsset::register($this);
     
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">
-            <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? implode(',', $tagsSelected) : null, [
+            <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? $tagsSelected : null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
                 'onchange' => 'validateTags($(this))'
             ]) ?>

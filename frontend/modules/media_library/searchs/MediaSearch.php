@@ -61,7 +61,7 @@ class MediaSearch extends Media
         // 主要过滤条件
         $query->andFilterWhere([
             'Media.del_status' => 0,
-//            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
+            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
             'Media.type_id' => $this->type_id
         ]);        
         // 属性值过滤条件
@@ -78,12 +78,10 @@ class MediaSearch extends Media
         
         //以媒体id为分组
         $query->groupBy(['Media.id']);
-        //查询总数
-        $totalCount = $query->count();
         
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $query->count('id'), //查询总数
         ];
     }
     
@@ -107,14 +105,16 @@ class MediaSearch extends Media
         // 主要过滤条件
         $query->andFilterWhere([
             'Media.del_status' => 0,
-//            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
+            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
             'Media.type_id' => $this->type_id
         ]);        
         // 属性值过滤条件
         if (count($att_value_ids) > 0) {
             // 关联媒体属性值关系表
             $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id AND AttrValueRef.is_del = 0)');
-            $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $att_value_ids]);
+            foreach ($att_value_ids as $id){
+                $query->andFilterWhere(['AttValRef.attribute_value_id' => $id]);
+            }
         }
         // 模糊查询
         $query->andFilterWhere(['or',

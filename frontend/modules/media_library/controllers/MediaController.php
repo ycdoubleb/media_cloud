@@ -67,8 +67,25 @@ class MediaController extends Controller
     {
         $searchModel = new MediaSearch();
         $results = $searchModel->search(array_merge(Yii::$app->request->queryParams, ['limit' => 10]));
+        
+        return $this->render('index',[
+            'searchModel' => $searchModel,      //搜索模型
+            'filters' => $results['filter'],    //查询过滤的属性
+            'totalCount' => $results['total'],  //总数量
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+        ]);
+    }
+    
+    /**
+     * Index（媒体库）页媒体列表数据
+     * @return ApiResponse
+     */
+    public function actionMediaData()
+    {
+        $searchModel = new MediaSearch();
+        $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]));
         $medias = array_values($results['data']['media']);                  //媒体数据
-
+        
         $icons = [
             'video' => 'glyphicon glyphicon-facetime-video',
             'image' => 'glyphicon glyphicon-picture',
@@ -86,7 +103,7 @@ class MediaController extends Controller
             $item['tags'] = isset($item['tag_name']) ? $item['tag_name'] : 'null';
             $item['icon'] = isset($icons[$item['type_sign']]) ? $icons[$item['type_sign']] : '';
         }
-
+            
         //如果是ajax请求，返回json
         if(\Yii::$app->request->isAjax){
             Yii::$app->getResponse()->format = 'json';
@@ -102,14 +119,9 @@ class MediaController extends Controller
             }
         }
         
-        return $this->render('index',[
-            'searchModel' => $searchModel,      //搜索模型
-            'filters' => $results['filter'],    //查询过滤的属性
-            'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
-        ]);
+        return $this->render('media-data');
     }
-    
+
     /**
      * Displays a single Media model.
      * @param string $id
@@ -242,15 +254,13 @@ class MediaController extends Controller
                 Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
             }
         }
-        
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => array_values($medias),
-            'key' => 'id',
-        ]);
 
         return $this->render('checking-order', [
             'model' => $model,    // 订单模型
-            'dataProvider' => $dataProvider,
+            'dataProvider' =>  new ArrayDataProvider([
+                'allModels' => array_values($medias),
+                'key' => 'id',
+            ]),
             'sel_num' => count($media_ids),      // 选中数量
             'total_price' => $total_price,  // 选中的媒体总价
         ]);

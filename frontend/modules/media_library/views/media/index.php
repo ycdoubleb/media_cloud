@@ -120,12 +120,12 @@ $js = <<<JS
     var isPageLoading = false;
     $(window).scroll(function(){
         if($(document).scrollTop() >= $(document).height() - $(window).height() - 300){
-            loaddata(page, '/media_library/media/index');
+            loaddata(page, '/media_library/media/media-data');
         }
     });
         
     //加载第一页的课程数据
-    loaddata(page, '/media_library/media/index');
+    loaddata(page, '/media_library/media/media-data');
     /**
      * 加载数据
      * @param int target_page 指定页

@@ -145,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
                             ]) ?>
                         </th>
-                        <td class="detail-td"><?= implode('，', $tagsDataProvider) ?></td>
+                        <td class="detail-td"><?= $model->tags ?></td>
                     </tr>
                 </tbody>
                 

@@ -30,6 +30,7 @@ use yii\db\ActiveRecord;
  * @property int $mts_status        转码状态 0无转码 1未转码 2转码中 3已转码 4转码失败
  * @property int $del_status        删除状态 0正常 1申请删除 2逻辑删除 3物理删除
  * @property int $is_link           是否联接地址 0否 1是
+ * @property int $tags              标签，多个使用逗号分隔
  * @property string $created_by 创建人id，关联admin_user表id字段
  * @property string $updated_by 最后最新人id，关联admin_user表id
  * @property string $created_at 创建时间
@@ -105,14 +106,14 @@ class Media extends ActiveRecord
         return [
             self::SCENARIO_CREATE => [
                 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id',
-                'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by', 
                 'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
                 'duration'
             ],
-            self::SCENARIO_UPDATE => ['name', 'price', 'dir_id'],
+            self::SCENARIO_UPDATE => ['name', 'price', 'dir_id', 'tags'],
             self::SCENARIO_DEFAULT => [
                 'id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 
-                'size', 'status', 'mts_status', 'del_status', 'is_link', 'created_by', 
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by', 
                 'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
                 'price', 'duration'
             ]
@@ -151,7 +152,7 @@ class Media extends ActiveRecord
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
             [['ext'], 'string', 'max' => 10],
-            [['cover_url', 'url'], 'string', 'max' => 255],
+            [['cover_url', 'url', 'tags'], 'string', 'max' => 255],
         ];
     }
 

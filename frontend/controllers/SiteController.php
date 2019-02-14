@@ -210,6 +210,39 @@ class SiteController extends Controller {
     }
     
     /**
+     * 重置密码请求（短信验证）
+     * @return mix
+     */
+    public function actionGetPassword() {
+        return $this->render('get-password');
+    }
+    
+    /**
+     * 重置密码（短信验证）
+     * @return mix
+     */
+    public function actionSetPassword() {
+        $sessonPhone = Yii::$app->session->get('code_phone');
+        if (empty($sessonPhone)) {
+            return $this->goHome();
+        }
+        $model = User::findOne(['phone' => $sessonPhone]);
+        $model->password_hash = '';
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->setPassword($model->password_hash);
+            if ($model->save(false)) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'New password saved.'));
+//                unset(Yii::$app->session['code_timeOut']);  //销毁sesson
+                return $this->goHome();
+            }
+        }
+
+        return $this->render('set-password', [
+                    'model' => $model,
+        ]);
+    }
+    
+    /**
      * Requests password reset.
      *
      * @return mixed
@@ -273,7 +306,7 @@ class SiteController extends Controller {
 
         //检查提交的号码是否存在
         $hasPhone = (new Query())->select(['id'])->from(['User' => User::tableName()])
-                ->where(['status' => User::STATUS_ACTIVE, 'phone' => $phone])
+                ->andFilterWhere(['status' => User::STATUS_ACTIVE, 'phone' => $phone])
                 ->one();
         if ($name == 'signup') {      //注册页面
             if (empty($hasPhone)) {
@@ -313,9 +346,9 @@ class SiteController extends Controller {
         \Yii::$app->getResponse()->format = 'json';
         $post = \Yii::$app->request->post();
         $phone = ArrayHelper::getValue($post, 'phone');   //获取输入的邀请码
-
+        
         $hasPhone = (new Query())->select(['id'])->from(['User' => User::tableName()])
-                ->where(['status' => User::STATUS_ACTIVE, 'phone' => $phone])
+                ->andFilterWhere(['status' => User::STATUS_ACTIVE, 'phone' => $phone])
                 ->one();
 
         if (empty($hasPhone)) {
@@ -388,7 +421,7 @@ class SiteController extends Controller {
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
-                ->where(['status' => Media::STATUS_PUBLISHED, 'del_status' => 0]);
+                ->andFilterWhere(['status' => Media::STATUS_PUBLISHED, 'del_status' => 0]);
         
         /* 过滤非本月的数据 */
         if($month){
@@ -426,7 +459,7 @@ class SiteController extends Controller {
     {
         $query = (new Query())
                 ->from(['Order' => Order::tableName()])
-                ->where(['order_status' =>
+                ->andFilterWhere(['order_status' =>
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]
                 );
         
@@ -461,7 +494,6 @@ class SiteController extends Controller {
     public function signup($post) {
         $user = new User();
         
-        $username = ArrayHelper::getValue($post, 'User.username');  //用户名
         $phone = ArrayHelper::getValue($post, 'User.phone');        //联系方式
         $nickname = ArrayHelper::getValue($post, 'User.nickname');  //姓名
         $password_hash = ArrayHelper::getValue($post, 'User.password_hash');    //密码
@@ -470,7 +502,7 @@ class SiteController extends Controller {
         $department = ArrayHelper::getValue($post, 'User.department');    //部门名称
         
         //赋值保存用户信息
-        $user->username = $username;
+        $user->username = $phone;
         $user->nickname = $nickname;
         $user->phone = $phone;
         $user->avatar = ($user->sex == null) ? '/upload/avatars/default.jpg' :

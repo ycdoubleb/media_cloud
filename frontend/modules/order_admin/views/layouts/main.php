@@ -109,7 +109,7 @@ $admin = implode("", $menuHtml['admin']);
 
 $userDetails = common\models\User::findOne(Yii::$app->user->id);
 $userAvatar = $userDetails->avatar;
-$userName = $userDetails->username;
+$userName = $userDetails->nickname;
 $html = <<<Html
     <!-- 头部 -->
     <header style="height:30px;"></header>

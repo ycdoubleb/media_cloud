@@ -416,7 +416,7 @@ class MediaController extends GridViewChangeSelfController
                 $tags = Tags::saveTags($value);
                 // 保存关联的标签
                 if(!empty($tags)){
-                    MediaTag/Ref::saveMediaTagRef($id, $tags);
+                    MediaTagRef::saveMediaTagRef($id, $tags);
                 }
             }
         } catch (Exception $ex) {

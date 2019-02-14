@@ -54,59 +54,60 @@ class MediaApproveSearch extends MediaApprove
      */
     public function search($params)
     {
-        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
-        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        $this->load($params);
         
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);      
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           
+        
+        //所有用户
+        $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
+        
+        // 查询审核列表
         $query = self::find()->from(['Approve' => MediaApprove::tableName()]);
         
-        $this->load($params);
-
-        // 关联用户表         
-        $query->leftJoin(['AdminUser' => AdminUser::tableName()], '(AdminUser.id = Approve.handled_by or AdminUser.id =Approve.created_by)');
-        // 复制查询
-        $queryCopy = clone $query;
+//        ->select(['Approve.*', 'COUNT(Approve.id) AS totalCount']);
         
         // 关联媒体表
-        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id');
+        if(!empty($this->media_id) || !empty($this->media_name)){
+            $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id');
+            // 按媒体id查询
+            $query->andFilterWhere(['Approve.media_id' => $this->media_id]);
+            // 模糊查询
+            $query->andFilterWhere(['like', 'Media.name', $this->media_name]);
+        }
         
         // 必要要条件
         $query->andFilterWhere([
-            'Approve.media_id' => $this->media_id,
             'Approve.type' => $this->type,
             'Approve.status' => $this->status,
             'Approve.result' => $this->result,
             'Approve.handled_by' => $this->handled_by,
             'Approve.created_by' => $this->created_by,
         ]);
-
-        // 模糊查询
-        $query->andFilterWhere(['like', 'Media.name', $this->media_name]);
+       
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Approve.id) AS totalCount'])
+            ->asArray()->one();
         
-        // 按审批id分组
-        $query->groupBy(['Approve.id']);
+        // 按审核id分组
+        $query->select(['Approve.*'])->groupBy(['Approve.id']);
         
-        // 计算总数
-        $totalCount = $query->count('*');
-        
-        //显示数量
+        // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
         
         // 过滤重复
         $query->with('media', 'media.mediaType', 'handledBy', 'createdBy');
-
-        // 用户查询结果
-        $userResults = $queryCopy->select(['AdminUser.id', 'AdminUser.nickname'])
-            ->groupBy('AdminUser.id')->all();
-            
-        // 审批查询结果
-        $approveResults = $query->all();
-        
+               
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'users' => $userResults,
-                'approves' => $approveResults
+                'approves' => $query->all()
             ],
         ];
     }

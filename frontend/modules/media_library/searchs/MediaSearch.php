@@ -68,7 +68,9 @@ class MediaSearch extends Media
         if (count($att_value_ids) > 0) {
             // 关联媒体属性值关系表
             $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id AND AttrValueRef.is_del = 0)');
-            $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $att_value_ids]);
+            foreach ($att_value_ids as $id){
+                $query->andFilterWhere(['AttrValueRef.attribute_value_id' => $id]);
+            }
         }        
         // 模糊查询
         $query->andFilterWhere(['or',
@@ -113,7 +115,7 @@ class MediaSearch extends Media
             // 关联媒体属性值关系表
             $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id AND AttrValueRef.is_del = 0)');
             foreach ($att_value_ids as $id){
-                $query->andFilterWhere(['AttValRef.attribute_value_id' => $id]);
+                $query->andFilterWhere(['AttrValueRef.attribute_value_id' => $id]);
             }
         }
         // 模糊查询

@@ -91,14 +91,6 @@ class BaseUser extends ActiveRecord implements IdentityInterface{
         if (parent::beforeSave($insert)) {
             //上传头像
             $upload = UploadedFile::getInstance($this, 'avatar');
-            if ($upload != null) {
-                //获取后缀名，默认为 png 
-                $ext = pathinfo($upload->name,PATHINFO_EXTENSION);
-                $img_path = "upload/avatars/{$this->username}.{$ext}";
-                //上传到阿里云
-                Aliyun::getOss()->multiuploadFile($img_path, $upload->tempName);
-                $this->avatar = $img_path . '?rand=' . rand(0, 9999);                
-            }
             
             if ($this->scenario == self::SCENARIO_CREATE) {
                 $this->setPassword($this->password_hash);

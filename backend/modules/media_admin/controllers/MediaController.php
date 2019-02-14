@@ -280,15 +280,16 @@ class MediaController extends GridViewChangeSelfController
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
-                $media_tags = ArrayHelper::getValue($post, 'Media.tags');
+                $model->tags = ArrayHelper::getValue($post, 'Media.tags');
                 // 保存标签
-                $tags = Tags::saveTags($media_tags);
+                $tags = Tags::saveTags($model->tags);
                 
-                // 保存属性关联
-                MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
-                // 保存标签关联
-                MediaTagRef::saveMediaTagRef($model->id, $tags);
-
+                if($model->save()){
+                    // 保存属性关联
+                    MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
+                    // 保存标签关联
+                    MediaTagRef::saveMediaTagRef($model->id, $tags);
+                }
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
@@ -301,7 +302,7 @@ class MediaController extends GridViewChangeSelfController
             'isTagRequired' => true,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
-            'tagsSelected' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
+            'tagsSelected' => $model->tags,
         ]);
     }
     
@@ -408,11 +409,15 @@ class MediaController extends GridViewChangeSelfController
         Yii::$app->getResponse()->format = 'json';
         try
         {
-            // 标签
-            $tags = Tags::saveTags($value);
-            // 保存关联的标签
-            if(!empty($tags)){
-                MediaTagRef::saveMediaTagRef($id, $tags);
+            $model = $this->findModel($id);
+            $model[$fieldName] = $value;
+            if($model->validate(false) && $model->save()){
+                // 标签
+                $tags = Tags::saveTags($value);
+                // 保存关联的标签
+                if(!empty($tags)){
+                    MediaTag/Ref::saveMediaTagRef($id, $tags);
+                }
             }
         } catch (Exception $ex) {
             return ['result' => 0,'message' => sprintf("%s $fieldName = $value %s！%s", Yii::t('app', 'Update'),  Yii::t('app', 'Fail'), $ex->getMessage())];

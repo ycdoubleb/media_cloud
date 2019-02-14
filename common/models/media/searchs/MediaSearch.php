@@ -10,6 +10,7 @@ use common\models\media\MediaTagRef;
 use common\models\Tags;
 use Yii;
 use yii\base\Model;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -71,26 +72,30 @@ class MediaSearch extends Media
      */
     public function search($params)
     {        
-        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
-        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
-        
-        // 查询媒体数据
-        $query = self::find()->from(['Media' => self::tableName()]);
-
         $this->load($params);
         
-        // 关联用户表         
-        $query->leftJoin(['AdminUser' => AdminUser::tableName()], '(AdminUser.id = Media.owner_id or AdminUser.id =Media.created_by)');
-        // 复制查询
-        $queryCopy = clone $query;
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);                             
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        //属性值
+        $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);
         
-        // 关联媒体属性值关系表
-        $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id and AttrValueRef.is_del = 0)');
-        // 关联媒体标签关系表
-        $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
-        // 关联标签表
-        $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
+        //所有用户
+        $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
+
+        // 查询媒体数据
+        $query = self::find()->from(['Media' => self::tableName()])->select(['Media.*']);
         
+        // 属性关联
+        if(count($attrValIds) > 0){
+            $query->leftJoin(['AttValRef' => MediaAttValueRef::tableName()], '(AttValRef.media_id = Media.id and AttValRef.is_del = 0)');
+            foreach ($attrValIds as $id){
+                $query->andFilterWhere(['AttValRef.attribute_value_id' => $id]);
+            }
+        }
+        
+        // 目录过滤
         if(!empty($this->dir_id)){
             $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, true);
             $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
@@ -105,52 +110,25 @@ class MediaSearch extends Media
             'Media.del_status' => 0,
         ]);
         
-        // 属性值条件
-        if(!empty($this->attribute_value_id)){
-            foreach ($this->attribute_value_id as $value) {
-                $query->andFilterWhere (['AttrValueRef.attribute_value_id' => $value]);
-            }
-        }
         // 模糊查询
-        $query->andFilterWhere(['or', 
-            ['like', 'Media.name', $this->keyword], 
-            ['like', 'Tags.name', $this->keyword]
+        $query->andFilterWhere(['or',
+            ['like', 'Media.name', $this->keyword],
+            ['like', 'Media.tags', $this->keyword],
         ]);
         
         // 按媒体id分组
-        $query->groupBy(['Media.id']);
-        
-        // 计算总数
-        $totalCount = $query->count('*');
-        
-        //显示数量
-        $query->offset(($page - 1) * $limit)->limit($limit);
+        $query->groupBy('Media.id');
         
         // 过滤重复
         $query->with('dir', 'mediaType', 'mediaTagRefs', 'owner', 'createdBy');
         
-        // 用户查询结果
-        $userResults = $queryCopy->select(['AdminUser.id', 'AdminUser.nickname'])
-            ->groupBy('AdminUser.id')->all();
-            
-        // 媒体查询结果
-        $mediaResults = $query->all();
-        
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $query->count('id'),
             'data' => [
                 'users' => $userResults,
-                'medias' => $mediaResults
+                'medias' => $query->offset(($page - 1) * $limit)->limit($limit)->all()
             ],
         ];
-    }
-    
-    /**
-     * 获取标签
-     * @return string
-     */
-    public function getTags(){
-        return implode(',', ArrayHelper::getColumn($this->mediaTagRefs, 'tags.name'));
     }
 }

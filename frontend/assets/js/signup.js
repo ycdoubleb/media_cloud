@@ -5,16 +5,6 @@ var animating; //flag to prevent quick multi-click glitches
 
 //用户账号密码页下一步
 $("#user-next").click(function () {
-    var user = $("#user-username").val();
-    if (user === "") {
-        alert("请输入用户名！");
-        return false;
-    }
-    if(/[\u4E00-\u9FA5]/g.test(user))
-    {
-      alert ("用户名不能包含中文！");
-      return false;
-    }
     var phone = $("#user-phone").val(),
             phoneReg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/,
             flag = phoneReg.test(phone);

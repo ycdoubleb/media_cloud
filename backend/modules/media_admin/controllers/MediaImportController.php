@@ -93,7 +93,8 @@ class MediaImportController extends Controller{
                 // 标签
                 $tags = ArrayHelper::getValue($post, 'Media.tags', '');
                 $media_tags = ArrayHelper::getValue($post, 'Media.media_tags');
-                $tags = Tags::saveTags($tags.','.$media_tags);
+                $model->tags = $tags.','.$media_tags;
+                $tags = Tags::saveTags($model->tags);
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;

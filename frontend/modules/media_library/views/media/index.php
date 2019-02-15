@@ -108,7 +108,8 @@ if ($pages == 'list') {
     $renderView = '____chart';
 }
 $details_dom = json_encode(str_replace(array("\r\n", "\r", "\n"), " ", 
-    $this->renderFile("@frontend/modules/media_library/views/media/$renderView.php")));
+$this->renderFile("@frontend/modules/media_library/views/media/$renderView.php")));
+
 $js = <<<JS
     //选中效果
     $(".mc-title .btngroup a[id=$pages]").addClass('active'); 

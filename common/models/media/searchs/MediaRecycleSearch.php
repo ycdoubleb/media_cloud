@@ -62,24 +62,20 @@ class MediaRecycleSearch extends MediaRecycle
      */
     public function search($params)
     {
-        $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
-        $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
-        
-        $query = self::find()->from(['Recycle' => MediaRecycle::tableName()]);
-
         $this->load($params);
         
-        // 关联用户表         
-        $query->leftJoin(['AdminUser' => AdminUser::tableName()], '(AdminUser.id = Recycle.handled_by or AdminUser.id =Recycle.created_by)');
-        // 复制查询
-        $queryCopy = clone $query;
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);  
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10);                           
+        //所有用户
+        $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
+        
+        // 查询回收站数据
+        $query = self::find()->from(['Recycle' => MediaRecycle::tableName()]);
 
         // 关联媒体表
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Recycle.media_id');
-        // 关联媒体标签关系表
-        $query->leftJoin(['TagRef' => MediaTagRef::tableName()], '(TagRef.object_id = Media.id and TagRef.is_del = 0)');
-        // 关联标签表
-        $query->leftJoin(['Tags' => Tags::tableName()], 'Tags.id = TagRef.tag_id');
         
         // 必要要条件
         $query->andFilterWhere([
@@ -93,14 +89,14 @@ class MediaRecycleSearch extends MediaRecycle
         // 模糊查询
         $query->andFilterWhere(['or', 
             ['like', 'Media.name', $this->keyword],
-            ['like', 'Tags.name', $this->keyword],
+            ['like', 'Media.tags', $this->keyword],
         ]);
         
-        // 按审批id分组
-        $query->groupBy(['Recycle.id']);
-        
-        // 计算总数
-        $totalCount = $query->count('*');
+        // 复制查询
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Recycle.id) AS totalCount'])
+            ->asArray()->one();
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
@@ -108,19 +104,12 @@ class MediaRecycleSearch extends MediaRecycle
         // 过滤重复
         $query->with('media', 'media.mediaType', 'handledBy', 'createdBy');
         
-        // 用户查询结果
-        $userResults = $queryCopy->select(['AdminUser.id', 'AdminUser.nickname'])
-            ->groupBy('AdminUser.id')->all();
-            
-        // 回收站查询结果
-        $recycleResults = $query->all();
-        
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'users' => $userResults,
-                'recycles' => $recycleResults
+                'recycles' => $query->all()
             ],
         ];
     }

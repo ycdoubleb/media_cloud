@@ -67,6 +67,27 @@ class MediaController extends GridViewChangeSelfController
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
     }
+    
+    /**
+     * 列出所有媒体数据。
+     * @return mixed
+     */
+    public function actionList()
+    {
+        $searchModel = new MediaSearch();
+        $results = $searchModel->search(Yii::$app->request->queryParams);
+        $medias = $results['data']['medias']; //所有媒体数据
+        $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');      
+        
+        return $this->renderAjax('____media_table_dom', [
+            'searchModel' => $searchModel,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $medias,
+                'key' => 'id',
+            ]),
+            'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
+        ]);
+    }
 
     /**
      * 显示单个媒体模型。

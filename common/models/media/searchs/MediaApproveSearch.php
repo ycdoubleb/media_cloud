@@ -94,7 +94,7 @@ class MediaApproveSearch extends MediaApprove
             ->asArray()->one();
         
         // 按审核id分组
-        $query->select(['Approve.*'])->groupBy(['Approve.id']);
+        $query->select(['Approve.*']);
         
         // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);

@@ -75,7 +75,7 @@ class MediaSearch extends Media
         $this->load($params);
         
         //分页
-        $page = ArrayHelper::getValue($params, 'page', 1);                             
+        $page = ArrayHelper::getValue($params, 'page', 1);               
         //显示数
         $limit = ArrayHelper::getValue($params, 'limit', 10);     
         //属性值
@@ -116,24 +116,30 @@ class MediaSearch extends Media
             ['like', 'Media.tags', $this->keyword],
         ]);
         
-        // 复制对象
-        $queryCopy = clone $query;
-        // 查询计算总数量
-        $totalResults = $queryCopy->select(['COUNT(Media.id) AS totalCount'])
-            ->asArray()->one();
+        if($page <= 1){
+            // 复制对象
+            $queryCopy = clone $query;
+            // 查询计算总数量
+            $totalResults = $queryCopy->select(['COUNT(Media.id) AS totalCount'])
+                ->asArray()->one();
+        }
+        
+        // 按媒体id分组
+        $query->select([
+            'Media.id', 'Media.cover_url', 'Media.name', 'Media.dir_id', 'Media.type_id',
+            'Media.duration', 'Media.size', 'Media.price', 'Media.mts_status', 'Media.status',
+            'Media.owner_id', 'Media.created_at', 'Media.tags'
+        ]);
         
         // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
-        
-        // 按媒体id分组
-        $query->select(['Media.*'])->groupBy('Media.id');
         
         // 过滤重复
         $query->with('dir', 'mediaType', 'mediaTagRefs', 'owner', 'createdBy');
         
         return [
             'filter' => $params,
-            'total' => $totalResults['totalCount'],
+            'total' => isset($totalResults['totalCount']) ? $totalResults['totalCount'] : 0,
             'data' => [
                 'users' => $userResults,
                 'medias' => $query->all()

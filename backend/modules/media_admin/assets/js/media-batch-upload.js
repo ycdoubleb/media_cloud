@@ -186,7 +186,6 @@
         $progress.css({width: parseInt(_self.completed_num / max_num * 100) + '%'}).html(parseInt(_self.completed_num / max_num * 100) + '%');
         $hint.find('span.max_num').html(max_num);
         $hint.find('span.completed_num').html(_self.completed_num);
-        $hint.find('span.lose_num').html(max_num - _self.completed_num);
         
         // 上传完成显示
         if(_self.completed_num == max_num){

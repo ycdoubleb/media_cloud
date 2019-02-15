@@ -1,27 +1,18 @@
 <?php
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
-use common\models\media\Media;
 use common\models\media\searchs\MediaSearch;
-use common\utils\DateUtil;
-use common\widgets\grid\GridViewChangeSelfColumn;
-use common\widgets\tagsinput\TagsInputAsset;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use yii\data\ActiveDataProvider;
-use yii\data\Pagination;
-use yii\grid\GridView;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\widgets\LinkPager;
 
 /* @var $this View */
 /* @var $searchModel MediaSearch */
 /* @var $dataProvider ActiveDataProvider */
 
 MediaModuleAsset::register($this);
-TagsInputAsset::register($this);
+
 
 $this->title = Yii::t('app', '{Media}{List}', [
     'Media' => Yii::t('app', 'Media'), 'List' => Yii::t('app', 'List')
@@ -57,325 +48,14 @@ $this->params['breadcrumbs'][] = $this->title;
             
         </div>
     
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'layout' => "{items}\n{summary}\n{pager}",  
-            'summaryOptions' => ['class' => 'hidden'],
-            'pager' => [
-                'options' => ['class' => 'hidden']
-            ],
-            'columns' => [
-                [
-                    'class' => 'yii\grid\CheckboxColumn',
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '20px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                
-                [
-                    'attribute' => 'id',
-                    'label' => Yii::t('app', '{Media}{Number}', [
-                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-                    ]),
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '66px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Thumb Image'),
-                    'format' => 'raw',
-                    'value' => function($model) use($iconMap){
-                        if($model->cover_url != null){
-                            $cover_url = $model->cover_url;
-                        }else if(isset($iconMap[$model->ext])){
-                            $cover_url = $iconMap[$model->ext];
-                        }else{
-                            $cover_url = '';
-                        }
-                        return Html::img($cover_url, ['width' => 87, 'height' => 74]);
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '96px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'name',
-                    'label' => Yii::t('app', 'Name'),
-                    'class' => GridViewChangeSelfColumn::class,
-                    'plugOptions' => [
-                        'type' => 'input',
-                        'url' => Url::to(['change-value'], true),
-                    ],
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '175px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', '{Storage}{Dir}', [
-                        'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-                    ]),
-                    'value' => function($model){
-                        return !empty($model->dir_id) ? $model->dir->getFullPath() : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '125px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Type'),
-                    'value' => function($model){
-                        return !empty($model->type_id) ? $model->mediaType->name : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '50px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'duration',
-                    'label' => Yii::t('app', 'Duration'),
-                    'value' => function($model){
-                        return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '65px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'size',
-                    'label' => Yii::t('app', 'Size'),
-                    'value' => function($model){
-                        return Yii::$app->formatter->asShortSize($model->size);
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '80px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'price',
-                    'label' => Yii::t('app', '{Media}{Price}', [
-                        'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
-                    ]),
-                    'value' => function($model){
-                        return Yii::$app->formatter->asCurrency($model->price);
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '80px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'mts_status',
-                    'label' => Yii::t('app', 'Mts Status'),
-                    'value' => function($model){
-                        return Media::$mtsStatusName[$model->mts_status];
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '65px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'status',
-                    'label' => Yii::t('app', 'Status'),
-                    'value' => function($model){
-                        return Media::$statusName[$model->status];
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '60px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Operator'),
-                    'value' => function($model){
-                        return !empty($model->owner_id) ? $model->owner->nickname : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '60px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', '{Upload}{Time}', [
-                        'Upload' => Yii::t('app', 'Upload'), 'Time' => Yii::t('app', 'Time')
-                    ]),
-                    'value' => function($model){
-                        return Date('Y-m-d H:i', $model->created_at);
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '76px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px',
-                            'font-size' => '13px'
-                        ],
-                    ]
-                ],
-                [
-                    'attribute' => 'tags',
-                    'label' => Yii::t('app', 'Tag'),
-                    'class' => GridViewChangeSelfColumn::class,
-                    'plugOptions' => [
-                        'type' => 'input',
-                        'url' => Url::to(['change-tags'], true),
-                    ],
-                    'inputOptions' => [
-                        'data-role' => 'tagsinput',
-                    ],
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '175px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'header' => '操作',
-                    'buttons' => [
-                        'view' => function($url, $model){
-                            return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], [
-                                'class' => 'btn btn-default', 'target' => '_blank'
-                            ]);
-                        },
-                    ],
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '65px',
-                            'padding' => '8px 4px'
-                        ],
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ],
-
-                    'template' => '{view}',
-                ],
-            ],
-        ]); ?>
+        <div id="media_list"></div>
         
-        <?php
-            $page = ArrayHelper::getValue($filters, 'page', 1);
-            $pageCount = ceil($totalCount / 10);
-            if($pageCount >= 2){
-                echo '<div class="summary">' . 
-                        '第 <b>' . (($page * 10 - 10) + 1) . '</b>-<b>' . ($page != $pageCount ? $page * 10 : $totalCount) .'</b> 条，总共 <b>' . $totalCount . '</b> 条数据。' .
-                    '</div>';
-                
-                echo LinkPager::widget([  
-                    'pagination' => new Pagination([
-                        'totalCount' => $totalCount,
-                        'pageSize' => 10
-                    ]),  
-                    'maxButtonCount' => 5
-                ]);
-            }
-        ?>
-    
+        <!--总结-->
+        <div class="summary">第 <b class="first"></b>-<b class="last"></b> 条，总共 <b class="totalCount"></b> 条数据。</div>
+
+        <!--分页-->
+        <div class="page"><ul class="pagination"></ul></div>
+        
     </div>
     
 </div>
@@ -384,7 +64,56 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+$params_js = json_encode($filters); //js参数
 $js = <<<JS
+    initPageNav();
+    /**
+     * 初始分页
+     * @private
+     */
+    function initPageNav(){
+        var options = {
+            currentPage: 1,
+            totalPages: 1,
+            bootstrapMajorVersion: 3,
+            onPageChanged: function(event, oldPage, newPage){
+                reflashPageNav(newPage);
+            }
+        };
+
+        $('.pagination').bootstrapPaginator(options);
+        reflashPageNav(1)
+    }    
+        
+    /**
+     * 刷新分页
+     * @private
+     */
+    function reflashPageNav(page){
+        var params = $params_js;  //传值
+        var totalCount = $totalCount;
+        var pageSize = 10;
+        var pageCount = Math.ceil(totalCount / pageSize);
+        var pagination = $('.pagination').data()['bootstrapPaginator'];
+        
+        pagination.setOptions({
+            totalPages: pageCount
+        });
+        
+        // 获取媒体数据 
+        $.get("/media_admin/media/list?page=" + page,  params, function(response){
+            $('#media_list').html(response);
+        });
+        
+        $('.summary').find('b.first').html(Number((page - 1) * pageSize + 1));
+        if(page == pageCount){
+            $('.summary').find('b.last').html(totalCount);
+            
+        }else{
+            $('.summary').find('b.last').html(page * pageSize);
+        }
+        $('.summary').find('b.totalCount').html(totalCount);
+    } 
         
     // 弹出媒体申请面板
     $('#btn-addApply, #btn-delApply').click(function(e){

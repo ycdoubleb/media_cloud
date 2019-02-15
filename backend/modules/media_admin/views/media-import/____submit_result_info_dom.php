@@ -22,7 +22,7 @@ use yii\helpers\Html;
                 
                 <!--结果提示-->
                 <p class="text-default result-hint" style="font-size: 13px; margin-top: 10px">
-                    共有 <span class="max_num">0</span> 个需要上传，其中 <span class="completed_num">0</span> 个成功 <span class="lose_num">0</span> 个失败！
+                    共有 <span class="max_num">0</span> 个需要上传，其中 <span class="completed_num">0</span> 个成功！
                 </p>
                 
                 <!--文本-->

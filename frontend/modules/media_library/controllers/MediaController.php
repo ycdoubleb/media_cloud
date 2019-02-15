@@ -66,7 +66,7 @@ class MediaController extends Controller
     public function actionIndex()
     {
         $searchModel = new MediaSearch();
-        $results = $searchModel->search(array_merge(Yii::$app->request->queryParams, ['limit' => 10]));
+        $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), true);
         
         return $this->render('index',[
             'searchModel' => $searchModel,      //搜索模型
@@ -83,7 +83,7 @@ class MediaController extends Controller
     public function actionMediaData()
     {
         $searchModel = new MediaSearch();
-        $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]));
+        $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), false);
         $medias = array_values($results['data']['media']);                  //媒体数据
         
         $icons = [

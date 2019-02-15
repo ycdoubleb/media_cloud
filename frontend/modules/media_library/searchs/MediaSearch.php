@@ -47,62 +47,20 @@ class MediaSearch extends Media
     }
     
     /**
-     * 查询媒体总数
-     * @param array $params
-     * @return array
-     */
-    public function search($params)
-    {
-        $this->load($params);
-        $att_value_ids = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  //需要查找的属性
-
-        $query = self::find()->select(['Media.id','Media.name'])->from(['Media' => Media::tableName()]);
-        
-        // 主要过滤条件
-        $query->andFilterWhere([
-            'Media.del_status' => 0,
-            'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
-            'Media.type_id' => $this->type_id
-        ]);        
-        // 属性值过滤条件
-        if (count($att_value_ids) > 0) {
-            // 关联媒体属性值关系表
-            $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id AND AttrValueRef.is_del = 0)');
-            foreach ($att_value_ids as $id){
-                $query->andFilterWhere(['AttrValueRef.attribute_value_id' => $id]);
-            }
-        }        
-        // 模糊查询
-        $query->andFilterWhere(['or',
-            ['like', 'Media.name', $this->keyword],
-            ['like', 'Media.tags', $this->keyword],
-        ]);
-        
-        //以媒体id为分组
-        $query->groupBy(['Media.id']);
-        
-        return [
-            'filter' => $params,
-            'total' => $query->count('id'), //查询总数
-        ];
-    }
-    
-    /**
-     * 查询媒体数据（ajax请求时调用）
-     * @param array $params
+     * 查询媒体数据
+     * @param array $params     参数
+     * @param boolean $isTrue   是否是查询总数
      * @return ActiveDataProvider
      */
-    public function searchMediaData($params)
+    public function searchMediaData($params, $isTrue)
     {
         $this->load($params);
         $page = ArrayHelper::getValue($params, 'page', 1);      //分页
         $limit = ArrayHelper::getValue($params, 'limit', 20);   //显示数
-        $att_value_ids = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  //需要查找的属性
+        $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  //需要查找的属性
         
         // 查询媒体数据
-        $query = self::find()->select(['Media.id', 'Media.id','cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
-                'MediaType.sign AS type_sign', 'price', 'duration', 'size', 'Media.tags AS tag_name'
-            ])->from(['Media' => Media::tableName()]);
+        $query = self::find()->from(['Media' => Media::tableName()]);
         
         // 主要过滤条件
         $query->andFilterWhere([
@@ -111,11 +69,11 @@ class MediaSearch extends Media
             'Media.type_id' => $this->type_id
         ]);        
         // 属性值过滤条件
-        if (count($att_value_ids) > 0) {
-            // 关联媒体属性值关系表
-            $query->leftJoin(['AttrValueRef' => MediaAttValueRef::tableName()], '(AttrValueRef.media_id = Media.id AND AttrValueRef.is_del = 0)');
-            foreach ($att_value_ids as $id){
-                $query->andFilterWhere(['AttrValueRef.attribute_value_id' => $id]);
+        if(count($attrValIds) > 0){
+            foreach ($attrValIds as $index => $id){
+                // 关联媒体属性值关系表
+                $query->leftJoin(["AttValRef_$index" => MediaAttValueRef::tableName()], "(AttValRef_$index.media_id = Media.id and AttValRef_$index.is_del = 0)");
+                $query->andFilterWhere(["AttValRef_$index.attribute_value_id" => $id]);
             }
         }
         // 模糊查询
@@ -124,18 +82,26 @@ class MediaSearch extends Media
             ['like', 'Media.tags', $this->keyword],
         ]);
         
-        // 关联查询媒体类型
-        $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
-        //以媒体id为分组
-        $query->groupBy(['Media.id']);
-        
-        // 显示数量
-        $query->offset(($page - 1) * $limit)->limit($limit);
-        // 查询媒体结果
-        $mediaResult = $query->asArray()->all();
+        $totalCount = 0; $mediaResult = [];
+        if($isTrue){
+            //查询总数
+            $totalCount = $query->addSelect(['COUNT(Media.id) AS totalCount'])->asArray()->one();
+        } else {
+            $query->addSelect(['Media.id', 'cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
+                'MediaType.sign AS type_sign', 'price', 'duration', 'size', 'Media.tags AS tag_name'
+            ]);
+            // 关联查询媒体类型
+            $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
+            
+            // 显示数量
+            $query->offset(($page - 1) * $limit)->limit($limit);
+            // 查询媒体结果
+            $mediaResult = $query->asArray()->all();
+        }
        
         return [
             'filter' => $params,
+            'total' => $totalCount['totalCount'],
             'data' => [
                 'media' => $mediaResult
             ],

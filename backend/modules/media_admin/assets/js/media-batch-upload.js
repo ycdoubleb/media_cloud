@@ -97,14 +97,14 @@
             // 媒体基本信息
             Media: {
                 file_id: this.file_id, 
-                name: this.name, 
-                cover_url: this.cover_url,
-                url: this.url, 
-                duration: this.duration, 
-                size: this.size, 
-                ext: this.ext,
-                oss_key: this.oss_key,
-                media_tags: this.media_tags
+                name: $.trim(this.name), 
+                cover_url: $.trim(this.cover_url),
+                url: $.trim(this.url), 
+                duration: $.trim(this.duration), 
+                size: $.trim(this.size), 
+                ext: $.trim(this.ext),
+                oss_key: $.trim(this.oss_key),
+                media_tags: $.trim(this.media_tags)
             }
         };
     };

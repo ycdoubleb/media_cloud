@@ -3,9 +3,17 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=yii2advanced',
-            'username' => 'root',
-            'password' => '',
+            //生产机
+            //'dsn' => 'mysql:host=172.16.146.156;dbname=mediacloud',
+            //'username' => 'mediacloud',
+            //'password' => 'eecn.cn',
+            //生产机
+            
+            //测试机
+            'dsn' => 'mysql:host=172.16.146.156;dbname=mediacloud',
+            'username' => 'mediacloud',
+            'password' => 'eecn.cn',
+            //测试机
             'charset' => 'utf8',
         ],
         'mailer' => [

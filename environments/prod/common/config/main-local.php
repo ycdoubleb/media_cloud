@@ -15,6 +15,8 @@ return [
             'password' => 'eecn.cn',
             //测试机
             'charset' => 'utf8',
+            'enableSchemaCache' => true,
+            'tablePrefix' => 'mc_'   //加入前缀名称fc_
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

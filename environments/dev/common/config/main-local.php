@@ -18,7 +18,7 @@ return [
             'class' => 'yii\redis\Connection',
             'hostname' => '172.16.163.111',
             'port' => 6379,
-            'database' => 0, //'unixSocket' => '/var/run/redis/redis.sock',			
+            'database' => 8, //'unixSocket' => '/var/run/redis/redis.sock',			
             'password' => 'eecn.cn',
         ],
         'mailer' => [

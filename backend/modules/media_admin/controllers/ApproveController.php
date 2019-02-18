@@ -95,10 +95,12 @@ class ApproveController extends Controller
                 }
 
                 $trans->commit();  //提交事务
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -146,10 +148,12 @@ class ApproveController extends Controller
                 }
 
                 $trans->commit();  //提交事务
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -224,10 +228,12 @@ class ApproveController extends Controller
                 }
                 
                 $trans->commit();  //提交事务
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -275,10 +281,12 @@ class ApproveController extends Controller
                 }
 
                 $trans->commit();  //提交事务
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }

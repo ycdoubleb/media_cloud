@@ -253,11 +253,13 @@ class MediaController extends GridViewChangeSelfController
                 
                 if($is_submit){
                     $trans->commit();  //提交事务
+                    Yii::$app->getSession()->setFlash('success','操作成功！');
                     return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 }
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }            
         }
@@ -311,9 +313,12 @@ class MediaController extends GridViewChangeSelfController
                     // 保存标签关联
                     MediaTagRef::saveMediaTagRef($model->id, $tags);
                 }
+                
+                Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
+                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }

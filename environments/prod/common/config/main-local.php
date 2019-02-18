@@ -25,8 +25,7 @@ return [
             'database' => 0, //'unixSocket' => '/var/run/redis/redis.sock',	
             //生产机		
             //'password' => 'eecn.cn',
-            //测试机
-            'password' => '',
+            //测试机 没密码
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

@@ -137,7 +137,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要申请的媒体");
+            alert("请选择需要重置的媒体");
         }
     }); 
         

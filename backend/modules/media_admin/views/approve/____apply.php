@@ -88,7 +88,7 @@ $js = <<<JS
                 $.post('/media_admin/approve/' + action + '?media_id=' + mediaId, $('#media-approve-form').serialize(), function(response){
                     if(response.code == "0" && index >= mediaIds.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        window.location.reload();
+                        window.location.replace(window.location.href);
                     }
                 });
             });

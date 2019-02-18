@@ -54,7 +54,7 @@ $js = <<<JS
             if(response.code == "0"){
                 complete_num = ++increment;
                 if(index >= max_num - 1){
-                    window.location.reload();
+                    window.location.replace(window.location.href);
                 }
             }
             progress.css({width: parseInt(complete_num / max_num * 100) + '%'}).html(parseInt(complete_num / max_num * 100) + '%');

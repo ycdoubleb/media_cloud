@@ -82,9 +82,7 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-attribute?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-//                        _self.show();
-//                        $('.loading-box .loading, .loading-box .no_more').hide();
-                        window.location.reload();
+                        window.location.replace(window.location.href);
                     }
                 });
             });

@@ -86,10 +86,9 @@ $js = <<<JS
    
     var ids = $ids;
     var isPageLoading = false;
-        
+    
     // 提交表单    
     $("#submitsave").click(function(){
-       
         var _self = $(this);
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...
@@ -97,9 +96,7 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-basic?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-//                        _self.show();
-//                        $('.loading-box .loading, .loading-box .no_more').hide();
-                        window.location.reload();
+                        window.location.replace(window.location.href);
                     }
                 });
             });

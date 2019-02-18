@@ -22,7 +22,7 @@ return [
             'class' => 'yii\redis\Connection',
             'hostname' => '127.0.0.1',
             'port' => 6379,
-            'database' => 0, //'unixSocket' => '/var/run/redis/redis.sock',	
+            'database' => 8, //'unixSocket' => '/var/run/redis/redis.sock',	
             //生产机		
             //'password' => 'eecn.cn',
             //测试机 没密码

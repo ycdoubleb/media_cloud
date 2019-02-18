@@ -73,7 +73,7 @@ class MediaSearch extends Media
     public function search($params)
     {        
         $this->load($params);
-        
+          
         //分页
         $page = ArrayHelper::getValue($params, 'page', 1);               
         //显示数

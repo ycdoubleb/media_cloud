@@ -11,6 +11,7 @@ use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
 use common\models\media\MediaTagRef;
+use common\models\media\MediaType;
 use common\models\media\MediaTypeDetail;
 use common\models\media\searchs\MediaSearch;
 use common\models\Tags;
@@ -49,7 +50,7 @@ class MediaController extends GridViewChangeSelfController
      */
     public function actionIndex()
     {
-        $searchModel = new MediaSearch();
+        $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType())]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
         $medias = $results['data']['medias']; //所有媒体数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');        

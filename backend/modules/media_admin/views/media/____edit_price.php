@@ -1,10 +1,13 @@
 <?php
 
+use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
 /* @var $this View */
+
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', '{Reset}{Media}{Price}', [
     'Reset' => Yii::t('app', 'Reset'), 'Media' => Yii::t('app', 'Media'),
@@ -96,7 +99,16 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-basic?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        window.location.replace(window.location.href);
+                        // 获取媒体数据 
+                        $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
+                            $('#media_list').html(response);
+                            $('.myModal').modal('hide');
+                        });
+                        $.notify({
+                            message: response['msg'],    //提示消息
+                        },{
+                            type: "success", //成功类型
+                        });
                     }
                 });
             });

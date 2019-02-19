@@ -6,6 +6,7 @@ use common\models\order\Order;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\utils\DateUtil;
 use common\utils\StringUtil;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -115,7 +116,7 @@ class ExportUtils
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(2)->setRowHeight(20);         //设置行高
         // 第3-4行
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '申报部门')->setCellValue('B3', $order_info['user_department'])
-                ->setCellValue('D3', '订单编号')->setCellValue('E3', $order_info['order_sn']);
+                ->setCellValue('D3', '订单编号')->setCellValueExplicit('E3', $order_info['order_sn'], DataType::TYPE_STRING);
         $spreadsheet->getActiveSheet()->mergeCells('B3:C3');    //合并单元格
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(3)->setRowHeight(40);     //设置行高
         $spreadsheet->getActiveSheet()->mergeCells('D3:D4'); 
@@ -276,7 +277,7 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true)->setName('Arial')->setSize(16);
         
         // 订单信息总览
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '订单编号')->setCellValue('B2', $order_info['order_sn']);
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '订单编号')->setCellValueExplicit('B2', $order_info['order_sn'], DataType::TYPE_STRING);
         $spreadsheet->getActiveSheet()->mergeCells('B2:G2');    //合并单元格
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '订单名称')->setCellValue('B3', $order_info['order_name']);
         $spreadsheet->getActiveSheet()->mergeCells('B3:G3');

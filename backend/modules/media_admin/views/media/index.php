@@ -48,7 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
             
         </div>
     
-        <div id="media_list"></div>
+        <div id="media_list">
+            <div class="loading-box" style="text-align: center; padding: 20px">
+                <span class="loading" style="display: none"></span>
+            </div>
+        </div>
         
         <!--总结-->
         <div class="summary">第 <b class="first"></b>-<b class="last"></b> 条，总共 <b class="totalCount"></b> 条数据。</div>
@@ -90,7 +94,9 @@ $js = <<<JS
      * @private
      */
     function reflashPageNav(page){
-        var params = $params_js;  //传值
+        window.page = page;
+        window.params = $params_js;  //传值
+        var isPageLoading = false;
         var totalCount = $totalCount;
         var pageSize = 10;
         var pageCount = Math.ceil(totalCount / pageSize);
@@ -101,9 +107,14 @@ $js = <<<JS
         });
         
         // 获取媒体数据 
-        $.get("/media_admin/media/list?page=" + page,  params, function(response){
-            $('#media_list').html(response);
-        });
+        if(!isPageLoading){
+            isPageLoading = true;   //设置已经提交当中...
+            $.get("/media_admin/media/list?page=" + page,  params, function(response){
+                isPageLoading = false;  //取消设置提交当中...
+                $('#media_list').html(response);
+            });
+            $('.loading-box .loading').show();
+        }
         
         $('.summary').find('b.first').html(Number((page - 1) * pageSize + 1));
         if(page == pageCount){

@@ -2,6 +2,7 @@
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
+use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -11,6 +12,7 @@ use yii\widgets\ActiveForm;
 /* @var $form ActiveForm */
 
 MediaModuleAsset::register($this);
+GrowlAsset::register($this);
 
 $this->title = Yii::t('app', '{Apply}{Reason}', [
     'Apply' => Yii::t('app', 'Apply'), 'Reason' => Yii::t('app', 'Reason')
@@ -88,7 +90,16 @@ $js = <<<JS
                 $.post('/media_admin/approve/' + action + '?media_id=' + mediaId, $('#media-approve-form').serialize(), function(response){
                     if(response.code == "0" && index >= mediaIds.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        window.location.replace(window.location.href);
+                        // 获取媒体数据 
+                        $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
+                            $('#media_list').html(response);
+                            $('.myModal').modal('hide');
+                        });
+                        $.notify({
+                            message: response['msg'],    //提示消息
+                        },{
+                            type: "success", //成功类型
+                        });
                     }
                 });
             });

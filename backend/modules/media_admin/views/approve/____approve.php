@@ -53,14 +53,12 @@ $action = Yii::$app->controller->action->id
                 
             </div>
             
-            <div class="modal-footer">
+            <div id="myModalFooter" class="modal-footer">
                 
                 <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
                          
-                <!--加载-->
-                <div class="loading-box" style="text-align: right">
-                    <span class="loading" style="display: none"></span>
-                    <span class="no_more" style="display: none">提交中...</span>
+                <div class="progress" style="display: none">
+                    <div class="progress-bar result-progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%; line-height: 18px">0%</div>
                 </div>
                 
             </div>
@@ -77,24 +75,26 @@ $js = <<<JS
    
     var ids = $ids;
     var action = "$action";
-    var isPageLoading = false;
+    var increment = 0,
+        complete_num = 0,
+        max_num = ids.length,
+        progress = $('#myModalFooter').find('div.result-progress');
         
     // 提交表单    
     $("#submitsave").click(function(){
-        var _self = $(this);
-        if(!isPageLoading){
-            isPageLoading = true;   //设置已经提交当中...
-            $.each(ids, function(index, id){
-                $.post('/media_admin/approve/' + action + '?id=' + id, $('#media-approve-form').serialize(), function(response){
-                    if(response.code == "0" && index >= ids.length - 1){
-                        isPageLoading = false;  //取消设置提交当中...
+        $(this).hide();
+        $('#myModalFooter').find('div.progress').show();
+        $.each(ids, function(index, id){
+            $.post('/media_admin/approve/' + action + '?id=' + id, $('#media-approve-form').serialize(), function(response){
+                if(response.code == "0"){
+                    complete_num = ++increment;
+                    if(index >= max_num - 1){
                         window.location.replace(window.location.href);
                     }
-                });
+                }
+                progress.css({width: parseInt(complete_num / max_num * 100) + '%'}).html(parseInt(complete_num / max_num * 100) + '%');
             });
-            _self.hide();
-            $('.loading-box .loading, .loading-box .no_more').show();
-        }
+        });
     });
 
 JS;

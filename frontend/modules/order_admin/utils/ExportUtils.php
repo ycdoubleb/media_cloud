@@ -175,6 +175,18 @@ class ExportUtils
             $spreadsheet->getActiveSheet()->getStyle("E$start")->applyFromArray($borderStyle);
         }        
         
+        //设置锁定
+        $spreadsheet->getActiveSheet()->getProtection()->setPassword('PhpSpreadsheet');
+        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        $spreadsheet->getActiveSheet()->getProtection()->setSort(true);
+        //$spreadsheet->getActiveSheet()->getProtection()->setInsertRows(false);
+        //$spreadsheet->getActiveSheet()->getProtection()->setFormatCells(false);
+        
+        //设置允许修改单元格
+        $spreadsheet->getActiveSheet()->getStyle('B4')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+        $spreadsheet->getActiveSheet()->getStyle('B7')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+        $spreadsheet->getActiveSheet()->getProtection()->setSelectUnlockedCells(false);
+        
         // Rename worksheet
         $spreadsheet->getActiveSheet()->setTitle("支付审批申请模板");
         
@@ -340,6 +352,11 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFill()->setFillType(Fill::FILL_SOLID);
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFill()->getStartColor()->setARGB('808080');
+        
+        //设置锁定
+        $spreadsheet->getActiveSheet()->getProtection()->setPassword('PhpSpreadsheet');
+        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        $spreadsheet->getActiveSheet()->getProtection()->setSort(true);
         
         // Rename worksheet
         $spreadsheet->getActiveSheet()->setTitle("订单媒体清单");

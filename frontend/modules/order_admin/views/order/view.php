@@ -64,13 +64,6 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         <img src="/imgs/site/seg_<?= ($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED 
                     || $model->order_status == Order::ORDER_STATUS_CONFIRMED) ? 'green' : 'default';?>.png">
         <!--确认开通后变绿-->
-        <div class="confirm-open progress-block <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'active' : '';?>">
-            确认开通<br>
-            <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? date('Y-m-d H:i', $model->confirm_at) : '';?>
-        </div>
-        <!--箭头 确认开通后变绿-->
-        <img src="/imgs/site/seg_<?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'green' : 'default';?>.png">
-        <!--确认开通后变绿-->
         <div class="complete progress-block <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? 'active' : '';?>">
             完成<br>
             <?= $model->order_status == Order::ORDER_STATUS_CONFIRMED ? date('Y-m-d H:i', $model->confirm_at) : '';?>
@@ -137,6 +130,7 @@ $js = <<<JS
             message: '复制成功',
         },{
             type: "success",
+            delay: 3000,
         });
     });
     clipboard.on('error', function(e) {
@@ -144,6 +138,7 @@ $js = <<<JS
             message: '复制失败',
         },{
             type: "danger",
+            delay: 3000,
         });
     });
 JS;

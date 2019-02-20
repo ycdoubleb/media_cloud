@@ -135,7 +135,6 @@ use common\widgets\Menu;
                 'items' => $menuItems,
             ]
         );
-        exit;
         ?>
 
     </section>

@@ -28,13 +28,13 @@ class Menu extends PMenu {
                 $route = ltrim(Yii::$app->controller->module->getUniqueId() . '/' . $route, '/');
             }
             $route = ltrim($route, '/');
-            //var_dump($this->route.':'.$route.'='.strpos($this->route, $route));
-            if (strpos($this->route, $route) != 'false' && $route !== $this->noDefaultRoute && $route !== $this->noDefaultAction) {
+            if (strpos($route, substr($this->route,0,strrpos($this->route,"/"))) != 'false' && $route !== $this->noDefaultRoute && $route !== $this->noDefaultAction) {
                 return false;
             }
             unset($item['url']['#']);
             if (count($item['url']) > 1) {
                 foreach (array_splice($item['url'], 1) as $name => $value) {
+                    var_dump($name, $value);
                     if ($value !== null && (!isset($this->params[$name]) || $this->params[$name] != $value)) {
                         return false;
                     }

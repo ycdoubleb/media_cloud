@@ -134,8 +134,7 @@ use common\widgets\Menu;
                 'options' => ['class' => 'sidebar-menu tree  sidebar-open sidebar-mini', 'data-widget'=> 'tree'],
                 'items' => $menuItems,
             ]
-        );
-        ?>
+        ); ?>
 
     </section>
 

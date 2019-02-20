@@ -16,7 +16,7 @@ use yii\web\NotFoundHttpException;
 /**
  * OrderApproveController implements the CRUD actions for PlayApprove model.
  */
-class OrderApproveController extends Controller
+class ApproveController extends Controller
 {
     /**
      * {@inheritdoc}

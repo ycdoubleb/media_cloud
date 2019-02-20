@@ -263,7 +263,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'header' => '操作',
                 'buttons' => [
                     'approve' => function($url, $model){
-                        return Html::a(Yii::t('app', 'Auditing'), ['order-approve/view', 'id' => $model->id], ['class' => 'btn btn-primary']);
+                        return Html::a(Yii::t('app', 'Auditing'), ['view', 'id' => $model->id], ['class' => 'btn btn-primary']);
                     },
                     'order' => function($url, $model){
                         return ' '. Html::a(Yii::t('app', 'Order'), ['order/view', 'id' => $model->order_id], ['class' => 'btn btn-default']);

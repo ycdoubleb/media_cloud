@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
             <div class="col-log-6 col-md-6" style="padding-left: 5px;">
                 <div class="col-log-10 col-md-10 search-name">
                     <?= $form->field($searchModel, 'keyword')->textInput([
-                        'placeholder' => '资源编号，资源名称', 'maxlength' => true,
+                        'placeholder' => '素材编号，素材名称', 'maxlength' => true,
                     ])->label('');?>
                 </div>
                 <div class="col-log-2 col-md-2 form-group">

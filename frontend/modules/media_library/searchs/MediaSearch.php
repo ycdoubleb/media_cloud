@@ -2,9 +2,11 @@
 
 namespace frontend\modules\media_library\searchs;
 
+use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaType;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -47,7 +49,7 @@ class MediaSearch extends Media
     }
     
     /**
-     * 查询媒体数据
+     * 查询素材数据
      * @param array $params     参数
      * @param boolean $isTrue   是否是查询总数
      * @return ActiveDataProvider
@@ -59,7 +61,7 @@ class MediaSearch extends Media
         $limit = ArrayHelper::getValue($params, 'limit', 20);   //显示数
         $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  //需要查找的属性
         
-        // 查询媒体数据
+        // 查询素材数据
         $query = self::find()->from(['Media' => Media::tableName()]);
         
         // 主要过滤条件
@@ -67,11 +69,16 @@ class MediaSearch extends Media
             'Media.del_status' => 0,
             'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
             'Media.type_id' => $this->type_id
-        ]);        
+        ]); 
+        // 目录过滤
+        if(!empty($this->dir_id)){
+            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, true);
+            $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
+        }
         // 属性值过滤条件
         if(count($attrValIds) > 0){
             foreach ($attrValIds as $index => $id){
-                // 关联媒体属性值关系表
+                // 关联素材属性值关系表
                 $query->leftJoin(["AttValRef_$index" => MediaAttValueRef::tableName()], "(AttValRef_$index.media_id = Media.id and AttValRef_$index.is_del = 0)");
                 $query->andFilterWhere(["AttValRef_$index.attribute_value_id" => $id]);
             }
@@ -90,12 +97,12 @@ class MediaSearch extends Media
             $query->addSelect(['Media.id', 'cover_url', 'Media.name', 'dir_id', 'MediaType.name AS type_name', 
                 'MediaType.sign AS type_sign', 'price', 'duration', 'size', 'Media.tags AS tag_name'
             ]);
-            // 关联查询媒体类型
+            // 关联查询素材类型
             $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
             
             // 显示数量
             $query->offset(($page - 1) * $limit)->limit($limit);
-            // 查询媒体结果
+            // 查询素材结果
             $mediaResult = $query->asArray()->all();
         }
        

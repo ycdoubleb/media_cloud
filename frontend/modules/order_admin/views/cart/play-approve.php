@@ -25,7 +25,7 @@ ModuleAssets::register($this);
             <div class="media-top">
                 <div class="pull-left">
                     <div class="cloud-name">
-                        <span class="cloud-title">资源在线</span>
+                        <span class="cloud-title">素材在线</span>
                         <span class="cloud-website">www.resonline.com</span>
                     </div>
                     <div class="cloud-cart">线下支付 <span class="glyphicon glyphicon-question-sign"></span></div>
@@ -44,7 +44,7 @@ ModuleAssets::register($this);
                 <p></p>
                 <p>流程：1、下载线下支付审批申请模板<?= Html::a('（下载）', ['download', 'id' => $model->order_id], 
                         ['class' => 'alert-link']) ?>，
-                    媒体清单<?= Html::a('（下载）', ['export-list', 'id' => $model->order_id], ['class' => 'alert-link'])?>
+                    素材清单<?= Html::a('（下载）', ['export-list', 'id' => $model->order_id], ['class' => 'alert-link'])?>
                 </p>
                 <p style="text-indent: 3em;">2、完成必要信息填写。</p>
                 <p style="text-indent: 3em;">3、回到本页面上传线下支付审批申请（支付凭证）。</p>
@@ -69,7 +69,7 @@ ModuleAssets::register($this);
                             ], 
                         ],
                     ]);?>
-                    <!--媒体ID-->
+                    <!--素材ID-->
                     <?= Html::activeHiddenInput($model, 'order_id') ?>
 
                     <?= $form->field($model, 'content')->textInput([

@@ -97,8 +97,8 @@ $this->title = Yii::t('app', 'Order');
                     ],
                     [
                         'attribute' => 'goods_num',
-                        'label' => Yii::t('app', '{Resources}{Total}', [
-                            'Resources' => Yii::t('app', 'Resources'), 'Total' => Yii::t('app', 'Total')
+                        'label' => Yii::t('app', '{Media}{Total}', [
+                            'Media' => Yii::t('app', 'Media'), 'Total' => Yii::t('app', 'Total')
                         ]),
                         'headerOptions' => [
                             'style' => 'width: 70px',

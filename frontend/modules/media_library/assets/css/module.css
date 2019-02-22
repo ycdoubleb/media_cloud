@@ -54,7 +54,7 @@ and open the template in the editor.
     cursor: pointer;
 }
 
-.media-form .search-panel .dep-dropdown {
+.media-form .search-panel .field-mediasearch-attribute_value_id .dep-dropdown {
     display: inline-block;
     width: 118px;
     margin-right: 5px;

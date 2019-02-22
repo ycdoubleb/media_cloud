@@ -22,13 +22,13 @@ class UseController extends Controller {
         //['id', 'url', 'media_id', 'user_id', 'visit_count']
         $acl = Acl::getAclInfoBySn($sn, ['url', 'media_id', 'order_id', 'user_id']);
         if (empty($acl)) {
-            throw new NotFoundHttpException('找不到对应的媒体！');
+            throw new NotFoundHttpException('找不到对应的素材！');
         }
         $url = $acl['url'] . "?" . http_build_query(Yii::$app->request->getQueryParams());
 
-        //增加媒体访问总量
+        //增加素材访问总量
         Acl::visitIncrby($sn);
-        //记录媒体月访问量
+        //记录素材月访问量
         MediaVisitLog::visitIncrby($acl['media_id']);
         //记录用户访问量
         UserVisitLog::visitIncrby($acl['order_id'], $acl['user_id']);
@@ -43,7 +43,7 @@ class UseController extends Controller {
     public function actionTempLink($sn) {
         $url = Acl::getTempUrlBySn($sn);
         if (empty($url)) {
-            throw new NotFoundHttpException('找不到对应的媒体！');
+            throw new NotFoundHttpException('找不到对应的素材！');
         }
         $url = $url . "?" . http_build_query(Yii::$app->request->getQueryParams());
         return $this->redirect($url);

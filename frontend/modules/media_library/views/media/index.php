@@ -34,7 +34,7 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
         <div class="media-index common">
             <!--按钮-->
             <div class="mc-title clear-margin">
-                <div class="result-num">结果列表（<span>共查询到 <?= $totalCount; ?> 个媒体</span>）</div>
+                <div class="result-num">结果列表（<span>共查询到 <?= $totalCount; ?> 个素材</span>）</div>
                 <div class="btngroup pull-right">
                     <?php
                         echo Html::a('加入购物车', 'javascript:;', ['id' => 'add-carts',
@@ -62,11 +62,11 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
                                 <tr>
                                     <th style="width: 30px"><input type="checkbox" class="select-on-check-all" name="selection_all" value="1"></th>
                                     <th style="width: 90px">预览</th>
-                                    <th style="width: 75px">媒体编号</th>
-                                    <th style="width: 160px">媒体名称</th>
+                                    <th style="width: 75px">素材编号</th>
+                                    <th style="width: 160px">素材名称</th>
                                     <th style="width: 160px">存储目录</th>
                                     <th style="width: 50px">类型</th>
-                                    <th style="width: 75px">媒体价格</th>
+                                    <th style="width: 75px">素材价格</th>
                                     <th style="width: 65px">时长</th>
                                     <th style="width: 75px">大小</th>
                                     <th>标签</th>

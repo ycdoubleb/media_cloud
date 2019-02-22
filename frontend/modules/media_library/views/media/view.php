@@ -20,7 +20,7 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
 ?>
 
 <div class="media_library mediacloud">
-    <!--头部展示媒体信息-->
+    <!--头部展示素材信息-->
     <div class="header">
         <div class="container">
             <div class="media-title">     
@@ -57,7 +57,7 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
         </div>
     </div>
 
-    <!--中部展示媒体详细信息-->
+    <!--中部展示素材详细信息-->
     <div class="container content">
         <div class="media-view common">
             <div class="mc-tabs">
@@ -92,7 +92,7 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                         </tbody>
                     </table>
                 </div>
-                <!--媒体预览-->
+                <!--素材预览-->
                 <div class="resource-show">
                     <?php
                         $mediaType = $model->mediaType->sign;

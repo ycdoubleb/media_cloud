@@ -58,7 +58,7 @@ class FavoritesController extends Controller
     }
     
     /**
-     * 把收藏的媒体加入购物车
+     * 把收藏的素材加入购物车
      * @return minxd
      */
     public function actionAddCart()

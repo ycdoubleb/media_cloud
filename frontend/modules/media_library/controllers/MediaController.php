@@ -50,7 +50,7 @@ class MediaController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['view'],   //媒体详情
+                        'actions' => ['view'],   //素材详情
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -77,14 +77,14 @@ class MediaController extends Controller
     }
     
     /**
-     * Index（媒体库）页媒体列表数据
+     * Index（素材库）页素材列表数据
      * @return ApiResponse
      */
     public function actionMediaData()
     {
         $searchModel = new MediaSearch();
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), false);
-        $medias = array_values($results['data']['media']);                  //媒体数据
+        $medias = array_values($results['data']['media']);                  //素材数据
         
         $icons = [
             'video' => 'glyphicon glyphicon-facetime-video',
@@ -93,7 +93,7 @@ class MediaController extends Controller
             'document' => 'glyphicon glyphicon-file',
         ];
         $row = 0;
-        //重设媒体数据里面的元素值
+        //重设素材数据里面的元素值
         foreach ($medias as &$item) {
             $item['row'] = $row++;
             $item['cover_img'] = Aliyun::absolutePath(!empty($item['cover_url']) ? $item['cover_url'] : 'static/imgs/notfound.png');
@@ -138,20 +138,20 @@ class MediaController extends Controller
             'is_del' => 0
         ]);
         
-        $attributeInfo = MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false); // 媒体属性
+        $attributeInfo = MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false); // 素材属性
         $tagsInfo = ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name');      // 标签信息
 
-        // 组装媒体属性
+        // 组装素材属性
         $attr = [];
         foreach ($attributeInfo as $value) {
             $attr[] = ['label' => $value['attr_name'], 'value' => $value['attr_value']];
         }
         
-        // 媒体基础数据
+        // 素材基础数据
         $datas = [
-            ['label' => '媒体编号', 'value' => $model->id],
-            ['label' => '媒体名称', 'value' => $model->name],
-            ['label' => '媒体类型', 'value' => $model->mediaType->name],
+            ['label' => '素材编号', 'value' => $model->id],
+            ['label' => '素材名称', 'value' => $model->name],
+            ['label' => '素材类型', 'value' => $model->mediaType->name],
             ['label' => '价格', 'value' => $model->price],
             ['label' => '时长', 'value' => DateUtil::intToTime($model->duration, ':', true)],
             ['label' => '大小', 'value' => Yii::$app->formatter->asShortSize($model->size)]
@@ -174,7 +174,7 @@ class MediaController extends Controller
     }
     
     /**
-     * 把媒体批量加入购物车
+     * 把素材批量加入购物车
      * @return minxd
      */
     public function actionAddCarts()
@@ -218,14 +218,14 @@ class MediaController extends Controller
         $medias = Media::findAll($media_ids);
 
         $total_price = 0;
-        // 计算选中媒体的总数和价格
+        // 计算选中素材的总数和价格
         foreach ($medias as $media){
             $total_price += $media->price;
         }
 
         $model = new Order();
         $model->order_sn = $order_sn;               //订单编号
-        $model->goods_num = count($media_ids);      //订单中媒体的数量
+        $model->goods_num = count($media_ids);      //订单中素材的数量
         $model->goods_amount = $total_price;        //价格
         $model->order_amount = $total_price;        //应付价格
         $model->created_by = Yii::$app->user->id;   //创建用户
@@ -236,7 +236,7 @@ class MediaController extends Controller
                 // 保存订单操作记录
                 OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
                 
-                // 保存订单媒体表
+                // 保存订单素材表
                 $data = [];
                 foreach ($medias as $value) {
                     $data[] = [
@@ -262,13 +262,13 @@ class MediaController extends Controller
                 'key' => 'id',
             ]),
             'sel_num' => count($media_ids),      // 选中数量
-            'total_price' => $total_price,  // 选中的媒体总价
+            'total_price' => $total_price,  // 选中的素材总价
         ]);
     }
     
     /**
-     * 收藏 or 取消收藏 媒体资源
-     * @param int $id   媒体ID
+     * 收藏 or 取消收藏 素材资源
+     * @param int $id   素材ID
      * @return ApiResponse
      */
     public function actionChangeFavorite($id)
@@ -300,7 +300,7 @@ class MediaController extends Controller
     
     /**
      * 打开反馈问题的模态框 / 添加反馈问题操作
-     * @param int $id   媒体ID
+     * @param int $id   素材ID
      * @return type
      */
     public function actionFeedback($id)
@@ -333,7 +333,7 @@ class MediaController extends Controller
 
     /**
      * 加入购物车
-     * @param int $id   媒体ID
+     * @param int $id   素材ID
      * @return mixed
      */
     public function actionAddCart($id)
@@ -354,13 +354,36 @@ class MediaController extends Controller
     }
 
     /**
+     * 获取 目录的子级
+     * @param string $id
+     * @param string $target_id
+     */
+    public function actionSearchChildren($id, $target_id = null){
+        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
+        $childrens = [];
+        foreach ($dirsChildren as $index => $item) {
+            if($target_id != null){
+                if($target_id == $item['id']){
+                    unset($item[$index]);
+                    break;
+                }
+            }
+            $childrens[] = $item;
+        }
+        
+        Yii::$app->getResponse()->format = 'json';
+        
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
+    }
+    
+    /**
      * 保存反馈问题
      * @param type $post
      * @return array
      */
     public function saveFeedback($post)
     {
-        $media_id = ArrayHelper::getValue($post, 'MediaIssue.media_id');    //媒体ID
+        $media_id = ArrayHelper::getValue($post, 'MediaIssue.media_id');    //素材ID
         $type = ArrayHelper::getValue($post, 'MediaIssue.type');            //问题类型
         $content = ArrayHelper::getValue($post, 'MediaIssue.content');      //问题描述
 

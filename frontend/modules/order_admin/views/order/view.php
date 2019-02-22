@@ -70,7 +70,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
         </div>
     </div>
     
-    <!--订单基本信息 / 审核状态 / 资源列表-->
+    <!--订单基本信息 / 审核状态 / 素材列表-->
     <div class="choice-panel">
         <div class="mc-panel clear-margin ">
             <div class="mc-tabs">
@@ -82,7 +82,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         <?= Html::a('支付审核', array_merge(['view'], array_merge($filter, ['tabs' => 'payment']))) ?>
                     </li>
                     <li id="resources">
-                        <?= Html::a('媒体列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
+                        <?= Html::a('素材列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
                     </li>
                 </ul>
             </div>

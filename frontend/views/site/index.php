@@ -6,7 +6,7 @@ use yii\web\View;
 
 /* @var $this View */
 
-$this->title = '媒体云服务平台';
+$this->title = '素材云服务平台';
 
 SiteAssets::register($this);
 ChartAsset::register($this);
@@ -56,14 +56,14 @@ ChartAsset::register($this);
     <!-- 内容 -->
     <div class="container">
         <div class="list">
-            <!--媒体总量-->
+            <!--素材总量-->
             <div class="total-media media-show">
                 <div class="top-info">
                     <div class="statistics-img media-img">
                         <img src="/imgs/site/data.png"/>
                     </div>
                     <div class="media-num">
-                        <p>媒体总数量</p>
+                        <p>素材总数量</p>
                         <span><?= $totals['totalNumber'];?></span>
                     </div>
                 </div>
@@ -71,14 +71,14 @@ ChartAsset::register($this);
                     
                 </div>
             </div>
-            <!--本月媒体增量-->
+            <!--本月素材增量-->
             <div class="total-media media-show">
                 <div class="top-info">
                     <div class="statistics-img amount-img">
                         <img src="/imgs/site/data.png"/>
                     </div>
                     <div class="media-num">
-                        <p>本月媒体增量</p>
+                        <p>本月素材增量</p>
                         <span><?= $month['totalNumber'];?></span>
                     </div>
                 </div>
@@ -86,14 +86,14 @@ ChartAsset::register($this);
                     
                 </div>
             </div>
-            <!--媒体总收入-->
+            <!--素材总收入-->
             <div class="total-media media-show">
                 <div class="top-info">
                     <div class="statistics-img visit-img">
                         <img src="/imgs/site/yuan.png"/>
                     </div>
                     <div class="media-num">
-                        <p>媒体总收入</p>
+                        <p>素材总收入</p>
                         <span><?= Yii::$app->formatter->asCurrency($amount['totalAmount']);?></span>
                     </div>
                 </div>
@@ -106,9 +106,9 @@ ChartAsset::register($this);
 </div>
 
 <?php
-$totals = json_encode($totals['statisticsByType']); //媒体总数
-$month = json_encode($month['statisticsByType']);   //本月媒体增加量
-$amount = json_encode($amount['statisticsByType']); //媒体总收入
+$totals = json_encode($totals['statisticsByType']); //素材总数
+$month = json_encode($month['statisticsByType']);   //本月素材增加量
+$amount = json_encode($amount['statisticsByType']); //素材总收入
 
 $js = <<<JS
         

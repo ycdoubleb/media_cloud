@@ -10,7 +10,7 @@ use yii\helpers\Url;
 
 /**
  * view 订单详情页的子页面
- * 媒体列表信息页
+ * 素材列表信息页
  */
 
 ?>
@@ -154,7 +154,7 @@ use yii\helpers\Url;
                                'target' => '_blank'
                            ];
                            $buttonHtml = [
-                               'name' => '查看资源',
+                               'name' => '查看素材',
                                'url' => ['/media_library/media/view', 'id' => $data['goods_id']],
                                'options' => $options,
                                'symbol' => '&nbsp;',

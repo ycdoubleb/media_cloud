@@ -46,7 +46,7 @@ return [
             ],
         ],
     ],
-    // 媒体云服务平台
+    // 素材云服务平台
     'modules' => [
         'media_library' => [
             'class' => 'frontend\modules\media_library\Module',

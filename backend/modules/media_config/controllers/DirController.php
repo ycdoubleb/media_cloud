@@ -4,16 +4,16 @@ namespace backend\modules\media_config\controllers;
 
 use common\models\api\ApiResponse;
 use common\models\media\Dir;
+use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * DirController implements the CRUD actions for Dir model.
  */
-class DirController extends Controller
+class DirController extends GridViewChangeSelfController
 {
     /**
      * {@inheritdoc}
@@ -213,6 +213,18 @@ class DirController extends Controller
         return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
     }
 
+    /**
+     * 更新表值
+     * @param integer $id
+     * @param string $fieldName
+     * @param integer $value
+     */
+    public function actionChangeValue($id, $fieldName, $value)
+    {
+        parent::actionChangeValue($id, $fieldName, $value);
+        Dir::invalidateCache();    //清除缓存
+    }
+    
     /**
      * 根据其主键值查找模型。
      * 如果找不到模型，就会抛出404 HTTP异常。

@@ -95,7 +95,7 @@ use common\widgets\Menu;
                         'url' => '#',
                         'items' => [
                             ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/operation_admin/order/index']],
-                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/order-approve/index']],
+                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/approve/index']],
                             ['label' => '媒体运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods/index']],
                             ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl/index']],
                         ],

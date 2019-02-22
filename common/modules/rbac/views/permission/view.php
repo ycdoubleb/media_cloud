@@ -24,7 +24,9 @@ $userGroups = ArrayHelper::map($users, 'user_id', 'nickname', 'item_name');
 ?>
 <div class="permission-view rbac">
 
-    <p><?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->name], ['class' => 'btn btn-primary']) ?></p>
+    <p><?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->name], [
+        'id' => 'btn-update', 'class' => 'btn btn-primary',
+    ]) ?></p>
 
     <?= DetailView::widget([
         'model' => $model,
@@ -124,7 +126,7 @@ $js =
     /**
      * 弹出路由添加面板
      */ 
-    $('#btn-assign').click(loadModel);
+    $('#btn-update, #btn-assign').click(loadModel);
     
     function loadModel(){
         $(".myModal").html("");

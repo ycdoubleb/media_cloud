@@ -12,7 +12,7 @@
         <img src="/imgs/data.png"/>
     </div>
     <div class="statistics-num">
-        <p>购买媒体数量</p>
+        <p>购买素材数量</p>
         <span><?= $purchaser['media_num'];?></span>
     </div>
 </div>

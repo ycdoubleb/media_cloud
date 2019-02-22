@@ -24,7 +24,9 @@ $group_permissions = ArrayHelper::map($childs, 'name', 'des', 'group_name');
 
 <div class="role-view rbac">
 
-    <p><?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->name], ['class' => 'btn btn-primary']) ?></p>
+    <p><?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->name], [
+        'id' => 'btn-update', 'class' => 'btn btn-primary',
+    ]) ?></p>
 
     <?=
     DetailView::widget([
@@ -145,8 +147,7 @@ $js = <<<JS
     /**
      * 弹出模块框面板
      */ 
-    $('#btn-add-permission').click(loadModel);
-    $('#btn-assignment-user').click(loadModel);
+    $('#btn-update, #btn-add-permission, #btn-assignment-user').click(loadModel);
     
     /**
      * 弹出模态框

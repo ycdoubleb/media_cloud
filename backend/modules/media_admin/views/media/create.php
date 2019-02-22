@@ -42,7 +42,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <li role="presentation" class="">
             <a href="#config" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">转码配置</a>
         </li>
-        <?= Html::a('上传外链媒体', ['media-import/index'], ['class' => 'pull-right', 'style' => 'display: block;margin-top: 10px;margin-right: 10px']) ?>
+        <?= Html::a('上传外链素材', ['media-import/index'], ['class' => 'pull-right', 'style' => 'display: block;margin-top: 10px;margin-right: 10px']) ?>
     </ul>
     
     <div class="tab-content">
@@ -128,11 +128,11 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
-    //媒体 tr dom
+    //素材 tr dom
     var php_media_data_tr_dom = '<?= $media_data_tr_dom ?>';
     //批量上传控制器
     var mediaBatchUpload;
-    //上传工具的媒体
+    //上传工具的素材
     var uploaderMedias = [];
     //是否已上传完成所有文件
     window.isUploadFinished = false;

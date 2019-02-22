@@ -15,13 +15,13 @@ use yii\helpers\ArrayHelper;
 class OrderGoodsSearch extends OrderGoods
 {
     /**
-     * 媒体名称
+     * 素材名称
      * @var array 
      */
     public $meida_name;
     
     /**
-     * 媒体编号
+     * 素材编号
      * @var int 
      */
     public $meida_sn;
@@ -76,7 +76,7 @@ class OrderGoodsSearch extends OrderGoods
         
         $this->load($params);  
         
-        // 关联媒体表
+        // 关联素材表
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id');
         // 关联用户表
         $query->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.created_by');

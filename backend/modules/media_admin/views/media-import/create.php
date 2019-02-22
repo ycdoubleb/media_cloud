@@ -32,7 +32,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     <!--警告框-->
     <?= $this->render('____media_warning_box_dom') ?>
     
-    <span class="title">媒体公共属性配置：</span>
+    <span class="title">素材公共属性配置：</span>
     
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -95,13 +95,13 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
-    //媒体 tr dom
+    //素材 tr dom
     var php_media_data_tr_dom = '<?= $media_data_tr_dom ?>';
-    // 所有上传的外链媒体
+    // 所有上传的外链素材
     var medias = <?= json_encode($medias) ?>;
     //批量上传控制器
     var mediaBatchUpload;
-    //上传工具的媒体
+    //上传工具的素材
     var uploaderMedias = [];
     
     /**

@@ -12,7 +12,7 @@
         <img src="/imgs/data.png"/>
     </div>
     <div class="statistics-num">
-        <p>媒体数量</p>
+        <p>素材数量</p>
         <span><?= $operator['media_num'];?></span>
     </div>
 </div>

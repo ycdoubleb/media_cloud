@@ -17,16 +17,18 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="permission-index rbac">
     <p>
-        <?= Html::a(Yii::t('app', 'Create').Yii::t('app/rbac', 'Permission'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Create').Yii::t('app/rbac', 'Permission'), ['create'], [
+            'class' => 'btn btn-success',
+            'onclick' => 'showModal($(this)); return false;'
+        ]) ?>
     </p>
-    <?php
-    //Pjax::begin(['enablePushState'=>false]);
-    
-    echo GridView::widget([
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'layout' => "{items}\n{summary}\n{pager}",  
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+
             [
                 'attribute' => 'group_id',  
                 'headerOptions' => ['style' => 'width: 240px;'],
@@ -49,6 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'name',
             'description:ntext',
+
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => [
@@ -57,33 +60,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         /* @var $model AuthItemSearch */
-                        $options = [
-                            'class' => 'btn btn-primary',
-                            'title' => Yii::t('yii', 'View'),
-                            'aria-label' => Yii::t('yii', 'View'),
-                            'data-pjax' => '0',
-                        ];
-                        return Html::a(Yii::t('app/rbac', 'Edit'), 
-                            ['view', 'id' => $model->name], $options);
+                        return ' ' . Html::a(Yii::t('app/rbac', 'Edit'), ['view', 'id' => $model->name], [
+                                'id' => 'btn-updateCate', 'class' => 'btn btn-primary',
+                            ]);
                     },
                     'delete' => function ($url, $model, $key) {
                         /* @var $model AuthItemSearch */
-                        $options = [
-                            'class' => 'btn btn-danger',
-                            'title' => Yii::t('yii', 'Delete'),
-                            'aria-label' => Yii::t('yii', 'Delete'),
-                            'data-pjax' => '0',
-                            'data-method' => 'POST',
-                        ];
-                        return Html::a(Yii::t('app/rbac', 'Remove'), 
-                            ['delete', 'id' => $model->name], $options);
+                        return ' ' . Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->name], [
+                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
+                            'data' => [
+                                'pjax' => 0, 
+                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】？", [
+                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete')
+                                ]),
+                                'method' => 'post',
+                            ],
+                        ]);
                     },
                 ],
                 'template' => '{view} {delete}',
             ],
         ],
-    ]); 
-    //Pjax::end();
-    ?>
+    ]); ?>
 
 </div>
+
+<!--加载模态框-->
+<?= $this->render('/layouts/modal'); ?>

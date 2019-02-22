@@ -34,9 +34,9 @@ class RankingStatisticsController extends Controller
         return $this->render('index', [
             'operator' => $this->getAmountByOperator($year, $month),   //运营人
             'purchaser' => $this->getAmountByPurchaser($year, $month), //购买人
-            'income' => $this->getAmountByMedia($year, $month),        //媒体收入
-            'click' => $this->getClickByMedia($year, $month),          //媒体点击量
-            'quote' => $this->getQuoteByMedia($year, $month),          //媒体引用量
+            'income' => $this->getAmountByMedia($year, $month),        //素材收入
+            'click' => $this->getClickByMedia($year, $month),          //素材点击量
+            'quote' => $this->getQuoteByMedia($year, $month),          //素材引用量
 
             'year' => $year,
             'month' => $month,
@@ -154,7 +154,7 @@ class RankingStatisticsController extends Controller
     }
     
     /**
-     * 根据媒体收入金额统计
+     * 根据素材收入金额统计
      * @param array $year   年份
      * @param array $month  月份
      * @return ArrayDataProvider
@@ -177,11 +177,11 @@ class RankingStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
-        // 媒体收入总金额
+        // 素材收入总金额
         $totalAmount = clone $query;
         $totalResults = $totalAmount->one();
         
-        // 媒体收入前20名的总金额
+        // 素材收入前20名的总金额
         $limitAmount = clone $query;
         $limitAmount->groupBy('Media.id');
         $limitAmount->limit(20);
@@ -190,13 +190,13 @@ class RankingStatisticsController extends Controller
             $limitResult += $value['value'];
         }
         
-        // 媒体收入饼图数据
+        // 素材收入饼图数据
         $chartsData = clone $query;
         $chartsData->addSelect(['Media.name']);
         $chartsData->groupBy('Media.id');
         $chartsResult = $chartsData->all();
         
-        // 媒体收入表格数据
+        // 素材收入表格数据
         $listsData = clone $query;
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');
@@ -217,7 +217,7 @@ class RankingStatisticsController extends Controller
     }
     
     /**
-     * 根据媒体点击量统计
+     * 根据素材点击量统计
      * @param array $year   年份
      * @param array $month  月份
      * @return ArrayDataProvider
@@ -228,7 +228,7 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['MediaVisitLog.visit_count AS value'])
                 ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
         
@@ -238,14 +238,14 @@ class RankingStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
         }
         
-        // 媒体总点击量
+        // 素材总点击量
         $totalClick = clone $query;
         $totalResults = 0;
         foreach ($totalClick->all() as $value) {
             $totalResults += $value['value'];
         }
         
-        // 媒体点击量前20名的总量
+        // 素材点击量前20名的总量
         $limitClick = clone $query;
         $limitClick->groupBy('Media.id');
         $limitClick->limit(20);
@@ -254,13 +254,13 @@ class RankingStatisticsController extends Controller
             $limitResult += $value['value'];
         }
         
-        // 媒体点击量饼图数据
+        // 素材点击量饼图数据
         $chartsData = clone $query;
         $chartsData->addSelect(['Media.name']);
         $chartsData->groupBy('Media.id');
         $chartsResult = $chartsData->all();
         
-        // 媒体点击量表格数据
+        // 素材点击量表格数据
         $listsData = clone $query;
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');
@@ -281,7 +281,7 @@ class RankingStatisticsController extends Controller
     }
     
     /**
-     * 根据媒体引用次数统计
+     * 根据素材引用次数统计
      * @param array $year   年份
      * @param array $month  月份
      * @return ArrayDataProvider
@@ -292,7 +292,7 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['COUNT(Order.id) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->andFilterWhere(['Order.order_status' => 
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
@@ -305,11 +305,11 @@ class RankingStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
-        // 媒体总引用次数
+        // 素材总引用次数
         $totalQuote = clone $query;
         $totalResults = $totalQuote->one();
         
-        // 媒体引用次数前20名的总量
+        // 素材引用次数前20名的总量
         $limitQuote = clone $query;
         $limitQuote->groupBy('Media.id');
         $limitQuote->limit(20);
@@ -318,13 +318,13 @@ class RankingStatisticsController extends Controller
             $limitResult += $value['value'];
         }
         
-        // 媒体点击量饼图数据
+        // 素材点击量饼图数据
         $chartsData = clone $query;
         $chartsData->addSelect(['Media.name']);
         $chartsData->groupBy('Media.id');
         $chartsResult = $chartsData->all();
         
-        // 媒体点击量表格数据
+        // 素材点击量表格数据
         $listsData = clone $query;
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');

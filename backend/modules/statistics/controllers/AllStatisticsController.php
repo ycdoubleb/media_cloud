@@ -30,7 +30,7 @@ class AllStatisticsController extends Controller
     }
     
     /**
-     * 获取媒体总数量
+     * 获取素材总数量
      * @return array
      */
     protected function getTotalMediaNumber()

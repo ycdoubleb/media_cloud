@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a('购买人', array_merge(['index'], ['tabs' => 'purchaser'])) ?>
                 </li>
                 <li id="media">
-                    <?= Html::a('媒体', array_merge(['index'], ['tabs' => 'media'])) ?>
+                    <?= Html::a('素材', array_merge(['index'], ['tabs' => 'media'])) ?>
                 </li>
             </ul>
         </div>
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ])?>
                             </div>
                         <?php else:?>
-                            <!--媒体编号搜索-->
+                            <!--素材编号搜索-->
                             <label class="control-label">编号:</label>
                             <div class="control-input" style="vertical-align: bottom">
                                 <?= Html::input('text', 'media_id', $mediaId, [

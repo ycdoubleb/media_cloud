@@ -37,7 +37,7 @@ class ApproveController extends Controller
     }
 
     /**
-     * 列出所有媒体申请数据。
+     * 列出所有素材申请数据。
      * @return mixed
      */
     public function actionIndex()
@@ -65,7 +65,7 @@ class ApproveController extends Controller
      */
     public function actionAddApply($media_id)
     {
-        // 所有媒体id
+        // 所有素材id
         $mediaIds = explode(',', $media_id);
         $post = Yii::$app->request->post();
 
@@ -116,7 +116,7 @@ class ApproveController extends Controller
      */
     public function actionDelApply($media_id)
     {
-        // 所有媒体id
+        // 所有素材id
         $mediaIds = explode(',', $media_id);
         $post = Yii::$app->request->post();
 
@@ -211,7 +211,7 @@ class ApproveController extends Controller
                                 $mediaModel->save(true, ['status']);
                                 break;
                             case MediaApprove::TYPE_DELETE_APPROVE:
-                                // 媒体申请删除状态
+                                // 素材申请删除状态
                                 $mediaModel->del_status = Media::DEL_STATUS_APPLY;
                                 if($mediaModel->save(true, ['del_status'])){
                                     // 创建回收站数据需要满足审核类型是【删除申请】

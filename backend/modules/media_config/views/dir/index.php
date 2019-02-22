@@ -136,12 +136,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
     
-    // 弹出添加媒体存储目录面板
+    // 弹出添加素材存储目录面板
     $('#btn-addDir').click(function(e){
         e.preventDefault();
         showModal($(this));
     });
-    // 弹出移动媒体存储目录结构面板
+    // 弹出移动素材存储目录结构面板
     $('#btn-moveDir').click(function(e){
         e.preventDefault();
         var vals = [];

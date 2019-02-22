@@ -79,7 +79,7 @@ class OrderController extends Controller
     }
    
     /**
-     * 查看 媒体操作
+     * 查看 素材操作
      * @param string $id
      * @return mixed
      */

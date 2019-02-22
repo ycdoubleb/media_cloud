@@ -48,8 +48,8 @@ class AuthGroupController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
+        return $this->renderAjax('view', [
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -62,10 +62,10 @@ class AuthGroupController extends Controller {
         $model = new AuthGroup();
         $model->loadDefaultValues();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
-            return $this->render('create', [
-                        'model' => $model,
+            return $this->renderAjax('create', [
+                'model' => $model,
             ]);
         }
     }
@@ -80,10 +80,10 @@ class AuthGroupController extends Controller {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
-            return $this->render('update', [
-                        'model' => $model,
+            return $this->renderAjax('update', [
+                'model' => $model,
             ]);
         }
     }

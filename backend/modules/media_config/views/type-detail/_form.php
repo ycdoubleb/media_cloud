@@ -41,7 +41,7 @@ use yii\widgets\ActiveForm;
             
             <div class="modal-body">
                 
-                <!--所属媒体类型-->
+                <!--所属素材类型-->
                 <?= $form->field($model, 'type_id')->widget(Select2::class, [
                     'data' => MediaType::getMediaByType(),
                     'hideSearch' => true,

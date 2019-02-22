@@ -1,5 +1,6 @@
 <?php
 
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -23,16 +24,21 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
             ]);
             ?>
             <div class="modal-body" id="rolelist">
-                <?php foreach ($available as $name => $description): ?>
-                <div>
-                    <input type="checkbox" name="roles[]" value="<?= $name ?>"/>
-                    <span class="priv"><?= $description ?></span>
-                </div>
-                <?php endforeach; ?>
+                <?= Select2::widget([
+                    'id' => 'users',
+                    'name' => 'roles[]',
+                    'value' => null, // initial value
+                    'data' => $available,
+                    'maintainOrder' => false,
+                    'options' => ['placeholder' =>  Yii::t('app', 'Select Placeholder'), 'multiple' => true],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ]) ?>
+               
             </div>
             <div class="modal-footer">
-                <?= Html::a(Yii::t('app/rbac', 'Select All'), 'javascript:;', ['onclick' => 'selectAll("rolelist",true);', 'style' => 'float: left; margin-right: 15px;']); ?>
-                <?= Html::a(Yii::t('app/rbac', 'Select None'), 'javascript:;', ['onclick' => 'selectAll("rolelist",false);', 'style' => 'float: left;']); ?>
+               
                 <button class="btn btn-danger" data-dismiss="modal" aria-label="Close"><?= Yii::t('app', 'Close') ?></button>
                 <?=
                 Html::a(Yii::t('app', 'Submit'), ['add-role', 'user_id' => $id], [
@@ -45,19 +51,3 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
         </div>
     </div> 
 </div>
-<script type="text/javascript">
-    /**
-     * 选择全部
-     **/
-    function selectAll(scope, checked) {
-        if (scope) {
-            $('#' + scope + ' input').each(function () {
-                $(this).prop("checked", checked)
-            });
-        } else {
-            $('input:checkbox').each(function () {
-                $(this).prop("checked", checked)
-            });
-        }
-    }
-</script>

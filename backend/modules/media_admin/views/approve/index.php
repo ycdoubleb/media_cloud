@@ -315,13 +315,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
         
-    // 弹出媒体编辑页面面板
+    // 弹出素材编辑页面面板
     $('#btn-passApprove, #btn-notApprove').click(function(e){
         e.preventDefault();
         var val = [],
             checkBoxs = $('input[name="selection[]"]'), 
             url = $(this).attr("href");
-        // 循环组装媒体id
+        // 循环组装素材id
         for(i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);

@@ -229,7 +229,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => '操作',
                     'buttons' => [
                         'media' => function($url, $model){
-                            return Html::a('查看媒体', ['/media_admin/media/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);
+                            return Html::a('查看素材', ['/media_admin/media/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);
                         },
                         'acl' => function($url, $model){
                             return ' '. Html::a('访问路径', ['acl/index', 
@@ -286,7 +286,7 @@ $js = <<<JS
         var val = [],
             checkBoxs = $('input[name="selection[]"]'), 
             url = $(this).attr("href");
-        // 循环组装媒体id
+        // 循环组装素材id
         for(i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);

@@ -54,7 +54,7 @@ use yii\web\View;
         
         if(total <= 0){
             $('div.field-media-file_id').addClass('has-error');
-            $('div.field-media-file_id').find('div.help-block').html('媒体文件列表不能为空。');
+            $('div.field-media-file_id').find('div.help-block').html('素材文件列表不能为空。');
             setTimeout(function(){
                 $('div.field-media-file_id').removeClass('has-error');
                 $('div.field-media-file_id').find('div.help-block').html('');

@@ -221,7 +221,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
     
-    // 弹出媒体属性面板
+    // 弹出素材属性面板
     $('#btn-addAttr, #btn-updateAttr').click(function(e){
         e.preventDefault();
         showModal($(this));

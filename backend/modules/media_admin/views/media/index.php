@@ -113,7 +113,7 @@ $js = <<<JS
             totalPages: pageCount
         });
         
-        // 获取媒体数据 
+        // 获取素材数据 
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...
             $.get("/media_admin/media/list?page=" + page,  params, function(response){
@@ -133,7 +133,7 @@ $js = <<<JS
         $('.summary').find('b.totalCount').html(totalCount);
     } 
         
-    // 弹出媒体申请面板
+    // 弹出素材申请面板
     $('#btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
@@ -142,11 +142,11 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?media_id=" + val);
         }else{
-            alert("请选择需要申请的媒体");
+            alert("请选择需要申请的素材");
         }
     });
        
-    // 出媒体编辑标签面板
+    // 出素材编辑标签面板
     $('#btn-editPrice, #btn-editAttribute').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
@@ -155,7 +155,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要重置的媒体");
+            alert("请选择需要重置的素材");
         }
     }); 
         
@@ -166,7 +166,7 @@ $js = <<<JS
     function getCheckBoxsValue(){
         var val = [],
             checkBoxs = $('input[name="selection[]"]');
-        // 循环组装媒体id
+        // 循环组装素材id
         for(i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);

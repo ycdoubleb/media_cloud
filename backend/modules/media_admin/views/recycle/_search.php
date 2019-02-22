@@ -34,10 +34,10 @@ use yii\widgets\ActiveForm;
         
         <!--关键字-->
         <?= $form->field($model, 'keyword')->textInput([
-            'placeholder' => '请输入媒体名称或者标签', 'onchange' => 'submitForm()'
+            'placeholder' => '请输入素材名称或者标签', 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
-        <!--媒体类型-->
+        <!--素材类型-->
         <?= $form->field($model, 'media_type')->checkboxList(MediaType::getMediaByType(), [
             'itemOptions'=>[
                 'onclick' => 'submitForm();',

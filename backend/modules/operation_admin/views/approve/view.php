@@ -142,7 +142,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
         
-    // 弹出媒体编辑页面面板
+    // 弹出素材编辑页面面板
     $('#btn-notApprove').click(function(e){
         e.preventDefault();
         showModal($(this));

@@ -31,7 +31,7 @@ class DirController extends GridViewChangeSelfController
     }
 
     /**
-     * 列出所有媒体存储目录配置.
+     * 列出所有素材存储目录配置.
      * @return mixed
      */
     public function actionIndex()
@@ -42,7 +42,7 @@ class DirController extends GridViewChangeSelfController
     }
 
     /**
-     * 创建 媒体存储目录配置
+     * 创建 素材存储目录配置
      * 如果创建成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -63,7 +63,7 @@ class DirController extends GridViewChangeSelfController
     }
 
     /**
-     * 更新 媒体存储目录配置
+     * 更新 素材存储目录配置
      * 如果更新成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -114,7 +114,7 @@ class DirController extends GridViewChangeSelfController
     }
 
     /**
-     * 删除 媒体存储目录配置
+     * 删除 素材存储目录配置
      * 如果删除成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -129,7 +129,7 @@ class DirController extends GridViewChangeSelfController
         if(count(Dir::getDirsChildren($id, \Yii::$app->user->id)) > 0){
             $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在子目录，不能删除。');
         }else if(count($model->medias) > 0) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在媒体素材，不能删除。');
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在素材素材，不能删除。');
         }else{
             $model->delete();
             Dir::invalidateCache();    //清除缓存

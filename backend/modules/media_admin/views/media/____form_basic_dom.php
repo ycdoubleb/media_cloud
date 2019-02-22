@@ -33,21 +33,21 @@ use yii\widgets\ActiveForm;
     'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
 ])) ?>
 
-<!--媒体名称-->
+<!--素材名称-->
 <?= $form->field($model, 'name')->textInput([
-    'placeholder' => '请输入媒体名称', 'maxlength' => true
+    'placeholder' => '请输入素材名称', 'maxlength' => true
 ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Name}：', [
     'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
 ])) ?>
 
-<!--媒体价格-->
+<!--素材价格-->
 <?= $form->field($model, 'price')->textInput([
-    'placeholder' => '请输入媒体价格', 'maxlength' => true, 'type' => 'number'
+    'placeholder' => '请输入素材价格', 'maxlength' => true, 'type' => 'number'
 ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Price}：', [
     'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
 ])) ?>
 
-<!--媒体内容-->
+<!--素材内容-->
 <div class="form-group field-media-content">
     <?= Html::label(Yii::t('app', '{Media}{Content}：', [
         'Media' => Yii::t('app', 'Media'), 'Content' => Yii::t('app', 'Content')
@@ -56,7 +56,7 @@ use yii\widgets\ActiveForm;
         <?= Html::textarea('Media[content]', !empty($model->detail) ? $model->detail->content : null, [
             'id' => 'MediaApprove-content', 
             'class' => 'form-control',
-            'placeholder' => '请输入媒体内容',
+            'placeholder' => '请输入素材内容',
             'maxlength' => true,
             'rows' => 10,
         ]) ?>

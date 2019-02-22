@@ -300,7 +300,7 @@ $js = <<<JS
         var val = [],
             checkBoxs = $('input[name="selection[]"]'), 
             url = $(this).attr("href");
-        // 循环组装媒体id
+        // 循环组装素材id
         for(i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);

@@ -71,11 +71,11 @@ return [
         'system_admin' => [
             'class' => 'backend\modules\system_admin\Module',
         ],
-        //媒体管理
+        //素材管理
         'media_admin' => [
             'class' => 'backend\modules\media_admin\Module',
         ],
-        //媒体配置
+        //素材配置
         'media_config' => [
             'class' => 'backend\modules\media_config\Module',
         ],

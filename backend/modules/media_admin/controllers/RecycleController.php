@@ -55,7 +55,7 @@ class RecycleController extends Controller
     }
 
     /**
-     * 还原 媒体数据
+     * 还原 素材数据
      * 如果还原成功，浏览器将被重定向到“当前”页面。
      * @param string $id
      * @return mixed
@@ -108,7 +108,7 @@ class RecycleController extends Controller
     }
 
     /**
-     * 删除 媒体数据
+     * 删除 素材数据
      * 如果还原成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed

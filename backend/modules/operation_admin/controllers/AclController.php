@@ -74,7 +74,7 @@ class AclController extends Controller
     }
     
     /**
-     * 预览媒体
+     * 预览素材
      * @param string $media_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -142,7 +142,7 @@ class AclController extends Controller
     }
     
     /**
-     * 查看 媒体操作
+     * 查看 素材操作
      * @param string $id
      * @return mixed
      */

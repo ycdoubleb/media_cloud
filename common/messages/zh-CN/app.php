@@ -278,7 +278,7 @@ return [
     'Range' => '范围',
     'Tag' => '标签',
     'Public' => '公用',
-    'Media' => '媒体',
+    'Media' => '素材',
     
     //后台-文件管理
     'File' => '文件',
@@ -315,7 +315,7 @@ return [
     'Total' => '总数',
     'Suffix' => '后缀',
     
-    //后台-媒体管理
+    //后台-素材管理
     'Operator' => '运营者',
     'Uploader' => '上传者',
     'Number' => '编码',
@@ -330,7 +330,7 @@ return [
     'Handle' => '处理',
     'Handler' => '处理人',
     
-    //后台-媒体配置
+    //后台-素材配置
     'Storage' => '存储',
     'Dir' => '目录',
     'Include' => '包含',
@@ -351,7 +351,7 @@ return [
     'Visit' => '访问',
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
-    'Media Operate' => '媒体运营',
+    'Media Operate' => '素材运营',
     
     //后台-定时任务
     'Crontab' => '定时任务',
@@ -480,7 +480,7 @@ return [
     'Online' => '在线',
     'Order' => '订单',
     'Order Sn' => '订单编号',
-    'Media Sn' => '媒体编号',
+    'Media Sn' => '素材编号',
     'Amount' => '金额',
     'Order Time' => '下单时间',
     'Company' => '公司',

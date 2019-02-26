@@ -90,7 +90,7 @@ $js = <<<JS
                 $.post('/media_admin/approve/' + action + '?media_id=' + mediaId, $('#media-approve-form').serialize(), function(response){
                     if(response.code == "0" && index >= mediaIds.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        // 获取媒体数据 
+                        // 获取素材数据 
                         $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
                             $('#media_list').html(response);
                             $('.myModal').modal('hide');

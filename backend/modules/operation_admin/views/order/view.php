@@ -318,7 +318,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
             
         </div>
         
-        <!--媒体列表-->
+        <!--素材列表-->
         <div role="tabpanel" class="tab-pane fade" id="goods" aria-labelledby="goods-tab">
             
             <?= GridView::widget([

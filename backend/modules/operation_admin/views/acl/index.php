@@ -237,7 +237,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
                         'media' => function($url, $model){
-                            return ' ' . Html::a('查看媒体', ['/media_admin/media/view', 'id' => $model->media_id], ['class' => 'btn btn-default']);
+                            return ' ' . Html::a('查看素材', ['/media_admin/media/view', 'id' => $model->media_id], ['class' => 'btn btn-default']);
                         },
                         'view' => function($url, $model){
                             return ' '. Html::a(Yii::t('app', 'Detail'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);

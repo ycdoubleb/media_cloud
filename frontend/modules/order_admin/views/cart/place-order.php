@@ -24,7 +24,7 @@ ModuleAssets::register($this);
             <div class="media-top">
                 <div class="pull-left">
                     <div class="cloud-name">
-                        <span class="cloud-title">资源在线</span>
+                        <span class="cloud-title">素材在线</span>
                         <span class="cloud-website">www.resonline.com</span>
                     </div>
                     <div class="cloud-cart">购物车</div>

@@ -15,6 +15,7 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model MediaSearch */
 /* @var $form ActiveForm */
+
 ?>
 
 <div class="media-search">
@@ -38,7 +39,7 @@ use yii\widgets\ActiveForm;
     
         <!--关键字-->
         <?= $form->field($model, 'keyword')->textInput([
-            'placeholder' => '请输入媒体名称或者标签', 'onchange' => 'submitForm()'
+            'placeholder' => '请输入素材名称或者标签', 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
         <!--存储目录-->
@@ -50,7 +51,7 @@ use yii\widgets\ActiveForm;
                 'max_level' => 10,
                 'onChangeEvent' => new JsExpression('function(){ submitForm()}')
             ],
-            'items' => Dir::getDirsBySameLevel(null, Yii::$app->user->id, true, true),
+            'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
             'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
             'itemOptions' => [
                 'style' => 'width: 175px; display: inline-block;',
@@ -59,7 +60,7 @@ use yii\widgets\ActiveForm;
             'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
         ])) ?>
         
-        <!--媒体类型-->
+        <!--素材类型-->
         <?= $form->field($model, 'type_id')->checkboxList(MediaType::getMediaByType(), [
             'itemOptions'=>[
                 'onclick' => 'submitForm();',

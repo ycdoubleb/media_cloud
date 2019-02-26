@@ -103,7 +103,7 @@ class ExportUtils
         ];
         
         // 首行标题
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '媒体资源内部结算审批表');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '素材资源内部结算审批表');
         $spreadsheet->getActiveSheet()->mergeCells('A1:E1');    //合并单元格
         $spreadsheet->getActiveSheet()->getStyle('A1:E1')->applyFromArray($allCenter);  //设置上下左右居中
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(1)->setRowHeight(80);     //设置行高
@@ -133,8 +133,8 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->mergeCells('B6:E6');
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(6)->setRowHeight(40);     //设置行高
         // 第7行
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体资源用途')
-            ->setCellValue('B7', "\n请填写媒体资源使用的用途（用在哪个项目、课程）");
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '素材资源用途')
+            ->setCellValue('B7', "\n请填写素材资源使用的用途（用在哪个项目、课程）");
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(7)->setRowHeight(320);     //设置行高
         $spreadsheet->getActiveSheet()->mergeCells('B7:E7');
         $spreadsheet->getActiveSheet()->getStyle('B7:E7')->getFont()->getColor()->setARGB('FF999999');
@@ -213,7 +213,7 @@ class ExportUtils
 
 
     /**
-     * 导出媒体清单
+     * 导出素材清单
      * @param integer $id 订单ID
      */
     public function exportMediaLists($id)
@@ -231,7 +231,7 @@ class ExportUtils
         // 商品清单
         $goodsSearch = new OrderGoodsSearch();
         $goodsDatas = $goodsSearch->searchMedia($id)->models;
-        //重设媒体数据里面的元素值
+        //重设素材数据里面的元素值
         foreach ($goodsDatas as &$item) {
             $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : null;
             $item['size'] = Yii::$app->formatter->asShortSize($item['size']);
@@ -241,7 +241,7 @@ class ExportUtils
     }
     
     /**
-     * 导出媒体清单
+     * 导出素材清单
      * @param array $order_info 订单信息
      * @param array $goodsDatas 商品清单
      */
@@ -282,7 +282,7 @@ class ExportUtils
         ];
        
         // 首行标题
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '订单媒体清单');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '订单素材清单');
         $spreadsheet->getActiveSheet()->mergeCells('A1:G1');    //合并单元格
         $spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($allCenter);  //设置上下左右居中
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(1)->setRowHeight(60);     //设置行高
@@ -297,9 +297,9 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->mergeCells('B4:G4'); 
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '下单时间')->setCellValue('B5', $order_info['created_at']);
         $spreadsheet->getActiveSheet()->mergeCells('B5:G5');
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '媒体总数')->setCellValue('B6', $order_info['goods_num'] . '个');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '素材总数')->setCellValue('B6', $order_info['goods_num'] . '个');
         $spreadsheet->getActiveSheet()->mergeCells('B6:G6');
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '媒体总价')->setCellValue('B7', $order_info['order_amount'] . '元');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '素材总价')->setCellValue('B7', $order_info['order_amount'] . '元');
         $spreadsheet->getActiveSheet()->mergeCells('B7:G7');
         $start = 2;
         for($start; $start <= 7; $start++){
@@ -311,9 +311,9 @@ class ExportUtils
         }
         
         // 订单商品列表头
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '媒体编号')->setCellValue('B8', '媒体名称')
-                ->setCellValue('C8', '媒体类型')->setCellValue('D8', '媒体价格')->setCellValue('E8', '媒体时长')
-                ->setCellValue('F8', '媒体大小')->setCellValue('G8', '媒体数量');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '素材编号')->setCellValue('B8', '素材名称')
+                ->setCellValue('C8', '素材类型')->setCellValue('D8', '素材价格')->setCellValue('E8', '素材时长')
+                ->setCellValue('F8', '素材大小')->setCellValue('G8', '素材数量');
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->applyFromArray($allCenter);
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(8)->setRowHeight(28);
         // 订单商品列表
@@ -359,14 +359,14 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getProtection()->setSort(true);
         
         // Rename worksheet
-        $spreadsheet->getActiveSheet()->setTitle("订单媒体清单");
+        $spreadsheet->getActiveSheet()->setTitle("订单素材清单");
         
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
 
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename=订单媒体清单.xlsx');
+        header('Content-Disposition: attachment;filename=订单素材清单.xlsx');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

@@ -30,13 +30,13 @@ class SingleStatisticsController extends Controller
         $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');
         $month = $request->getQueryParam('month') == null ? '' : $request->getQueryParam('month');
         $userId = $request->getQueryParam('nickname');      //购买人 or 运营人
-        $mediaId = $request->getQueryParam('media_id');     //媒体编号
+        $mediaId = $request->getQueryParam('media_id');     //素材编号
         $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'operator');    // 过滤条件tabs
         
         return $this->render('index', [
             'operator' => $this->getStatisticsByOperator($year, $month, $userId),   //运营人
             'purchaser' => $this->getStatisticsByPurchaser($year, $month, $userId), //购买人
-            'media' => $this->getStatisticsByMedia($year, $month, $mediaId),        //媒体
+            'media' => $this->getStatisticsByMedia($year, $month, $mediaId),        //素材
             
             'tabs' => $tabs,
             'year' => $year,
@@ -51,7 +51,7 @@ class SingleStatisticsController extends Controller
     }
     
     /**
-     * 统计运营人所拥有的媒体数量及其收入金额
+     * 统计运营人所拥有的素材数量及其收入金额
      * @param array $year   年份
      * @param array $month  月份
      * @param integer $userId   运营人ID
@@ -63,10 +63,10 @@ class SingleStatisticsController extends Controller
                 ->from(['Media' => Media::tableName()])
                 ->andFilterWhere(['Media.owner_id' => $userId]);
         
-        // 媒体数量
+        // 素材数量
         $mediaQuery = clone $query;
         $mediaQuery->addSelect(['COUNT(Media.id) AS media_num'])
-            ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);   //已发布的媒体
+            ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);   //已发布的素材
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%Y')" => $year]);
@@ -74,7 +74,7 @@ class SingleStatisticsController extends Controller
         }
         $mediaNum = $mediaQuery->one();
         
-        // 媒体总收入金额
+        // 素材总收入金额
         $orderQuery = clone $query;
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
@@ -92,7 +92,7 @@ class SingleStatisticsController extends Controller
     }
     
     /**
-     * 统计购买人所购买的媒体数量及其支出金额
+     * 统计购买人所购买的素材数量及其支出金额
      * @param array $year   年份
      * @param array $month  月份
      * @param integer $userId   购买人ID
@@ -112,7 +112,7 @@ class SingleStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
-        // 购买媒体数量
+        // 购买素材数量
         $mediaQuery = clone $query;
         $mediaQuery->addSelect(['COUNT(OrderGoods.id) AS media_num'])
             ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id');
@@ -127,10 +127,10 @@ class SingleStatisticsController extends Controller
     }
     
     /**
-     * 统计媒体的引用次数/总收入金额/总点击量
+     * 统计素材的引用次数/总收入金额/总点击量
      * @param array $year   年份
      * @param array $month  月份
-     * @param integer $mediaId  媒体ID
+     * @param integer $mediaId  素材ID
      * @return array
      */
     protected function getStatisticsByMedia($year, $month, $mediaId)
@@ -149,22 +149,22 @@ class SingleStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
         }
         
-        // 媒体引用次数
+        // 素材引用次数
         $quoteQuery = clone $query;
         $quoteQuery->addSelect(['COUNT(Order.id) AS quote_num'])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的素材
         $quoteNum = $quoteQuery->one();
         
-        // 媒体总收入金额
+        // 素材总收入金额
         $orderQuery = clone $query;
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount']);
         $orderAmount = $orderQuery->one();
          
-        // 媒体总点击量
+        // 素材总点击量
         $clickQuery = (new Query())->from(['MediaVisitLog' => MediaVisitLog::tableName()]);
         $clickQuery->addSelect(['MediaVisitLog.visit_count AS click_num'])
             ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
-            ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的媒体
+            ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的素材
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
             $clickQuery->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
@@ -189,7 +189,7 @@ class SingleStatisticsController extends Controller
             $operator = (new Query())
                 ->select(['AdminUser.id', 'AdminUser.nickname'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的媒体
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id')
                 ->all();
             

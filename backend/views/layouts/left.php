@@ -1,9 +1,7 @@
 <?php
 
 use common\models\AdminUserr;
-use common\models\media\MediaApprove;
-use common\models\media\MediaRecycle;
-use common\models\order\PlayApprove;
+use common\modules\rbac\components\Helper;
 use common\widgets\Menu;
 
 /* @var $user AdminUserr */
@@ -49,7 +47,6 @@ use common\widgets\Menu;
                         'url' => '#',
                         'items' => [
                             ['label' => '配置管理', 'icon' => 'circle-o', 'url' => ['/system_admin/config'],],
-//                            ['label' => '文件管理', 'icon' => 'circle-o', 'url' => ['/system_admin/uploadfile'],],
                             ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab'],],
                             ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup']],
                             ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner']],
@@ -60,36 +57,36 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '用户列表', 'icon' => 'circle-o', 'url' => ['/user_admin'],],
-                            ['label' => '用户角色', 'icon' => 'circle-o', 'url' => ['/rbac/user-role'],],
-                            ['label' => '角色列表', 'icon' => 'circle-o', 'url' => ['/rbac/role'],],
-                            ['label' => '权限列表', 'icon' => 'circle-o', 'url' => ['/rbac/permission'],],
-                            ['label' => '路由列表', 'icon' => 'circle-o', 'url' => ['/rbac/route'],],
-                            ['label' => '分组列表', 'icon' => 'circle-o', 'url' => ['/rbac/auth-group'],],
+                            ['label' => '用户列表', 'icon' => 'circle-o', 'url' => ['/user_admin/default/index'],],
+                            ['label' => '用户角色', 'icon' => 'circle-o', 'url' => ['/rbac/user-role/index'],],
+                            ['label' => '角色列表', 'icon' => 'circle-o', 'url' => ['/rbac/role/index'],],
+                            ['label' => '权限列表', 'icon' => 'circle-o', 'url' => ['/rbac/permission/index'],],
+                            ['label' => '路由列表', 'icon' => 'circle-o', 'url' => ['/rbac/route/index'],],
+                            ['label' => '分组列表', 'icon' => 'circle-o', 'url' => ['/rbac/auth-group/index'],],
                         ],
                     ],
                     [
-                        'label' => '媒体管理',
+                        'label' => '素材管理',
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '上传媒体', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
-                            ['label' => '媒体列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media']],
-                            ['label' => '媒体审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve']],
-                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle']],
+                            ['label' => '上传素材', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
+                            ['label' => '素材列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media/index']],
+                            ['label' => '素材审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve/index']],
+                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle/index']],
                         ],
                     ],
                     [
-                        'label' => '媒体配置',
+                        'label' => '素材配置',
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '媒体类目配置', 'icon' => 'circle-o', 'url' => ['/media_config/category']],
-                            ['label' => '媒体类型配置', 'icon' => 'circle-o', 'url' => ['/media_config/type/index']],
-                            ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => ['/media_config/dir']],
+                            ['label' => '素材类目配置', 'icon' => 'circle-o', 'url' => ['/media_config/category/index']],
+                            ['label' => '素材类型配置', 'icon' => 'circle-o', 'url' => ['/media_config/type/index']],
+                            ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => ['/media_config/dir/index']],
                             ['label' => '文件后缀配置', 'icon' => 'circle-o', 'url' => ['/media_config/type-detail/index']],
-                            ['label' => '媒体属性配置', 'icon' => 'circle-o', 'url' => ['/media_config/attribute']],
-                            ['label' => '媒体水印配置', 'icon' => 'circle-o', 'url' => ['/media_config/watermark']],
+                            ['label' => '素材属性配置', 'icon' => 'circle-o', 'url' => ['/media_config/attribute/index']],
+                            ['label' => '素材水印配置', 'icon' => 'circle-o', 'url' => ['/media_config/watermark/index']],
                         ],
                     ],
                     [
@@ -98,9 +95,9 @@ use common\widgets\Menu;
                         'url' => '#',
                         'items' => [
                             ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/operation_admin/order/index']],
-                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/order-approve/index']],
-                            ['label' => '媒体运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods']],
-                            ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl']],
+                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/approve/index']],
+                            ['label' => '素材运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods/index']],
+                            ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl/index']],
                         ],
                     ],
                     [
@@ -113,24 +110,31 @@ use common\widgets\Menu;
                             ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],
                         ]
                     ],
-//                    [
-//                        'label' => '帮助中心',
-//                        'icon' => 'bars',
-//                        'url' => '#',
-//                        'items' => [
-//                            ['label' => '文章分类列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/category']],
-//                            ['label' => '文章列表', 'icon' => 'circle-o', 'url' => ['/helpcenter_admin/post']],
-//                        ],
-//                    ],
                 ]);
+                
+                foreach($menuItems as &$menuItem){
+                    if(isset($menuItem['items'])){
+                        $visible = false;
+                        foreach($menuItem['items'] as &$item){
+                            $item['visible'] = Helper::checkRoute($item['url'][0]);
+                            if($item['visible']){
+                                $visible = true;
+                            }
+                        }
+                        unset($item);
+                        $menuItem['visible'] = $visible;
+                    }else if(isset($menuItem['url'])){
+                        $menuItem['visible'] = Helper::checkRoute($menuItem['url'][0]);;
+                    }
+                }
             }
         ?>
         <?= Menu::widget(
             [
-                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
+                'options' => ['class' => 'sidebar-menu tree  sidebar-open sidebar-mini', 'data-widget'=> 'tree'],
                 'items' => $menuItems,
             ]
-        ) ?>
+        ); ?>
 
     </section>
 

@@ -27,7 +27,7 @@ use yii\web\UploadedFile;
 
 
 /**
- * 上传外链媒体
+ * 上传外链素材
  * @author Administrator
  */
 class MediaImportController extends Controller{
@@ -82,7 +82,7 @@ class MediaImportController extends Controller{
                 if($typeDetail == null){
                     return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
                 }
-                // 保存媒体类型
+                // 保存素材类型
                 $model->type_id = $typeDetail->type_id;
                 // 大小
                 $model->size = StringUtil::StringSizeToBytes($model->size);
@@ -106,9 +106,9 @@ class MediaImportController extends Controller{
                     }
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
-                    // 保存媒体详情
+                    // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => 1]);
-                    // 保存媒体审核
+                    // 保存素材审核
                     MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
@@ -190,7 +190,7 @@ class MediaImportController extends Controller{
     
     
     /**
-     * 获取媒体类型拓展信息
+     * 获取素材类型拓展信息
      * 如果是转字符串，则默认返回类型拓展的mime_type
      * @param string $ext
      * @return array ArrayMap

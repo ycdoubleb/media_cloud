@@ -49,9 +49,9 @@ use yii\widgets\ActiveForm;
         </div>
         
         <div class="clo-lg-6 col-md-6 clear-padding">
-            <!--媒体编号-->
+            <!--素材编号-->
             <?= $form->field($model, 'media_id')->textInput([
-                'placeholder' => '请输入媒体编号', 'onchange' => 'submitForm()'
+                'placeholder' => '请输入素材编号', 'onchange' => 'submitForm()'
             ])->label(Yii::t('app', '{Media}{Number}：', [
                 'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
             ])) ?>

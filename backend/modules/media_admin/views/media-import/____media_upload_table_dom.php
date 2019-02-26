@@ -16,16 +16,16 @@ $media_upload_tr_dom = str_replace("\n", ' ', $this->render('____media_upload_tr
 
 <div class="media-upload-table">
   
-    <span class="title">媒体列表：</span>
+    <span class="title">素材列表：</span>
     
-    <!--导入的媒体列表-->
+    <!--导入的素材列表-->
     <table id="mediaUploadTable" class="table table-striped table-bordered">
         
         <thead>
             
             <tr>
                 <th style="width: 50px;">#</th>
-                <th style="width: 146px; padding: 8px 4px;">媒体名称</th>
+                <th style="width: 146px; padding: 8px 4px;">素材名称</th>
                 <th style="width: 96px; padding: 8px 4px;">缩略图</th>
                 <th style="width: 176px; padding: 8px 4px;">路径</th>
                 <th style="width: 76px; padding: 8px 4px;">时长</th>
@@ -72,7 +72,7 @@ $js = <<<JS
         }
     });
         
-    // 加载生成媒体列表
+    // 加载生成素材列表
     function loadUploadTable(page){
         $('#mediaUploadTable').find('tbody').html('');
         var i = page * 10;

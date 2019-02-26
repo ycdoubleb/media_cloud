@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
     
-    // 弹出媒体类目面板
+    // 弹出素材类目面板
     $('#btn-addCate, #btn-updateCate').click(function(e){
         e.preventDefault();
         showModal($(this));

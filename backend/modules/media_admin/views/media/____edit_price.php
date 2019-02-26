@@ -36,7 +36,7 @@ $this->title = Yii::t('app', '{Reset}{Media}{Price}', [
             
             <div class="modal-body">
     
-                <!--媒体价格-->
+                <!--素材价格-->
                 <div class="form-group field-media-price required">
                     <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Price}：', [
                         'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
@@ -47,7 +47,7 @@ $this->title = Yii::t('app', '{Reset}{Media}{Price}', [
                             
                             <?= Html::textInput('Media[price]', '0.00', [
                                 'id' => 'media-price', 'class' => 'form-control',
-                                'type' => 'number', 'placeholder' => '请输入媒体价格',
+                                'type' => 'number', 'placeholder' => '请输入素材价格',
                                 'aria-required' => true, 'aria-invalid' => false
                             ]) ?>
                             
@@ -99,7 +99,7 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-basic?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        // 获取媒体数据 
+                        // 获取素材数据 
                         $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
                             $('#media_list').html(response);
                             $('.myModal').modal('hide');

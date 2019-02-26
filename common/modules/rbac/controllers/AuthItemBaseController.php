@@ -84,7 +84,7 @@ class AuthItemBaseController extends Controller
         if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->name]);
         } else {
-            return $this->render('create', ['model' => $model,'authGroups' => $this->getAuthGroup()]);
+            return $this->renderAjax('create', ['model' => $model,'authGroups' => $this->getAuthGroup()]);
         }
     }
 
@@ -103,7 +103,7 @@ class AuthItemBaseController extends Controller
             $rbacManager->invalidateCache();
             return $this->redirect(['view', 'id' => $model->name]);
         }
-        return $this->render('update', ['model' => $model,'authGroups' => $this->getAuthGroup()]);
+        return $this->renderAjax('update', ['model' => $model,'authGroups' => $this->getAuthGroup()]);
     }
 
     /**

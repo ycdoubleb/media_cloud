@@ -2,6 +2,7 @@
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\searchs\MediaSearch;
+use common\modules\rbac\components\Helper;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -32,18 +33,24 @@ $this->params['breadcrumbs'][] = $this->title;
         
         <div class="title">
             <div class="pull-right">
-                <?= Html::a(Yii::t('app', '{Reset}{Price}', [
-                    'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
-                ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); ?>
-                <?= Html::a(Yii::t('app', '{Reset}{Tag}', [
-                    'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
-                ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
-                    'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
-                ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
-                    'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
-                ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']); ?>
+                
+                <?php 
+                    if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
+                        || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
+                        echo  Html::a(Yii::t('app', '{Reset}{Price}', [
+                            'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
+                        ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); 
+                        echo ' '.Html::a(Yii::t('app', '{Reset}{Tag}', [
+                            'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
+                        ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']);
+                        echo ' '.Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
+                            'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
+                        ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']);
+                        echo ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
+                            'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
+                        ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']);
+                    }
+                ?>
             </div>
             
         </div>
@@ -106,7 +113,7 @@ $js = <<<JS
             totalPages: pageCount
         });
         
-        // 获取媒体数据 
+        // 获取素材数据 
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...
             $.get("/media_admin/media/list?page=" + page,  params, function(response){
@@ -126,7 +133,7 @@ $js = <<<JS
         $('.summary').find('b.totalCount').html(totalCount);
     } 
         
-    // 弹出媒体申请面板
+    // 弹出素材申请面板
     $('#btn-addApply, #btn-delApply').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
@@ -135,11 +142,11 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?media_id=" + val);
         }else{
-            alert("请选择需要申请的媒体");
+            alert("请选择需要申请的素材");
         }
     });
        
-    // 出媒体编辑标签面板
+    // 出素材编辑标签面板
     $('#btn-editPrice, #btn-editAttribute').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
@@ -148,7 +155,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要重置的媒体");
+            alert("请选择需要重置的素材");
         }
     }); 
         
@@ -159,7 +166,7 @@ $js = <<<JS
     function getCheckBoxsValue(){
         var val = [],
             checkBoxs = $('input[name="selection[]"]');
-        // 循环组装媒体id
+        // 循环组装素材id
         for(i in checkBoxs){
             if(checkBoxs[i].checked){
                val.push(checkBoxs[i].value);

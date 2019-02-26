@@ -87,7 +87,7 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-attribute?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        // 获取媒体数据 
+                        // 获取素材数据 
                         $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
                             $('#media_list').html(response);
                             $('.myModal').modal('hide');

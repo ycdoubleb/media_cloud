@@ -412,8 +412,8 @@ class SiteController extends Controller {
     }
 
     /**
-     * 获取媒体数量
-     * 统计媒体类型饼图信息
+     * 获取素材数量
+     * 统计素材类型饼图信息
      * @param bool $month   是否需要过滤非本月数据
      * @return array
      */
@@ -430,11 +430,11 @@ class SiteController extends Controller {
             $query->andFilterWhere(['between', 'Media.created_at', $monthStart, $monthEnd]);
         }
         
-        // 媒体总数量
+        // 素材总数量
         $totalQuery = clone $query;
         $totalNumber = $totalQuery->addSelect(['COUNT(id) AS total_media_num'])->one();
         
-        // 媒体类型统计
+        // 素材类型统计
         $statisticsQuery = clone $query;
         $statisticsByType = $statisticsQuery
                 ->addSelect(['MediaType.name', 'COUNT(Media.id) AS value'])
@@ -452,7 +452,7 @@ class SiteController extends Controller {
     
     /**
      * 获取总收入金额
-     * 统计各个媒体类型的收入金额饼图信息
+     * 统计各个素材类型的收入金额饼图信息
      * @return array
      */
     protected function getTotalOrderAmount()
@@ -467,7 +467,7 @@ class SiteController extends Controller {
         $totalQuery = clone $query;
         $totalAmount = $totalQuery->addSelect(['SUM(order_amount) AS total_order_amount'])->one();
         
-        // 各个媒体类型的收入
+        // 各个素材类型的收入
         $statisticsQuery = clone $query;
         $statisticsByType = $statisticsQuery
                 ->addSelect(['MediaType.name', 'SUM(order_amount) AS value'])

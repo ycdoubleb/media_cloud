@@ -45,21 +45,21 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                             ],  
                         ], 
                     ]); ?>
-                    <!--媒体编号-->
+                    <!--素材编号-->
                     <div class="form-group field-mediaissue-content has-success">
-                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">媒体编号：</label>
+                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">素材编号：</label>
                         <div class="col-lg-10 col-md-10" style="padding-left: 0px;">
                             <div class=""><?= $model->media_id;?></div>
                         </div>
                     </div>
-                    <!--媒体名称-->
+                    <!--素材名称-->
                     <div class="form-group field-mediaissue-content has-success">
-                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">媒体名称：</label>
+                        <label class="col-lg-2 col-md-2" style="text-align: right;" for="mediaissue-content">素材名称：</label>
                         <div class="col-lg-10 col-md-10" style="padding-left: 0px;">
                             <div class=""><?= $model->media->name;?></div>
                         </div>
                     </div>
-                    <!--媒体ID-->
+                    <!--素材ID-->
                     <?= Html::activeHiddenInput($model, 'media_id') ?>
                     <!--问题类型-->
                     <?= $form->field($model, 'type')->radioList(MediaIssue::$issueName,[

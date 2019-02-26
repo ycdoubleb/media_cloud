@@ -45,7 +45,7 @@
         // 标签
         this.media_tags = data.tags
         
-        //媒体id
+        //素材id
         this.media_id = null;           
         //提交状态 0/1/2 未提交/提交中/已提交
         this.submit_status = 0;      
@@ -94,7 +94,7 @@
      */
     MediaData.prototype.getPostData = function(){
         return{
-            // 媒体基本信息
+            // 素材基本信息
             Media: {
                 file_id: this.file_id, 
                 name: $.trim(this.name), 
@@ -134,7 +134,7 @@
     //
     //================================================================================================
     /**
-     * 媒体批量导入控制器
+     * 素材批量导入控制器
      * @param {type} config
      * @returns {media-batch-uploadL#7.MediaBatchUpload}
      */

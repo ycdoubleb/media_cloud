@@ -18,8 +18,8 @@ NavBar::begin([
 ]);
 
 $menuItems = [
-    ['label' => '媒体库', 'url' => ['/media_library/media'], 'visible' => !Yii::$app->user->isGuest],
-    ['label' => '我的', 'url' => ['/order_admin/order'], 'visible' => !Yii::$app->user->isGuest],
+    ['label' => '素材库', 'url' => ['/media_library/media'], 'visible' => !Yii::$app->user->isGuest],
+    ['label' => '个人中心', 'url' => ['/order_admin/order'], 'visible' => !Yii::$app->user->isGuest],
 ];
 
 $moduleId = Yii::$app->controller->module->id;   //模块ID

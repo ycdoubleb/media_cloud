@@ -31,7 +31,7 @@ class AttributeValueController extends GridViewChangeSelfController
     }
 
     /**
-     * 列出所有媒体属性值配置.
+     * 列出所有素材属性值配置.
      * @return mixed
      */
     public function actionIndex()
@@ -52,7 +52,7 @@ class AttributeValueController extends GridViewChangeSelfController
     }
 
     /**
-     * 创建 媒体属性值配置
+     * 创建 素材属性值配置
      * 如果创建成功，浏览器将被重定向到“index”页面。
      * @param string $attribute_id
      * @return mixed
@@ -72,7 +72,7 @@ class AttributeValueController extends GridViewChangeSelfController
     }
 
     /**
-     * 更新 媒体属性值配置
+     * 更新 素材属性值配置
      * 如果更新成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -92,7 +92,7 @@ class AttributeValueController extends GridViewChangeSelfController
     }
 
     /**
-     * 删除 媒体属性值配置
+     * 删除 素材属性值配置
      * 如果删除成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @param string $attribute_id

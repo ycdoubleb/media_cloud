@@ -43,7 +43,7 @@ $tabs = ArrayHelper::getValue($filters, 'tabs', 'order_info');  //显示内容
                             <?= Html::a('订单信息', array_merge(['simple-view'], array_merge($filters, ['tabs' => 'order_info'])), ['title' => '订单信息']);?>
                         </li>
                         <li id="order_media">
-                            <?= Html::a('媒体列表', array_merge(['simple-view'], array_merge($filters, ['tabs' => 'order_media'])), ['title' => '媒体列表']);?>
+                            <?= Html::a('素材列表', array_merge(['simple-view'], array_merge($filters, ['tabs' => 'order_media'])), ['title' => '素材列表']);?>
                         </li>
                     </ul>
                 </div>

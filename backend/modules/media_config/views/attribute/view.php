@@ -111,7 +111,7 @@ YiiAsset::register($this);
 <?php
 $js = <<<JS
     
-    // 弹出媒体属性值面板
+    // 弹出素材属性值面板
     $('#btn-addValue').click(function(e){
         e.preventDefault();
         showModal($(this));

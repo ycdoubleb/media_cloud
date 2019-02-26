@@ -3,9 +3,11 @@
 use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
 use common\models\media\MediaType;
+use common\modules\rbac\components\Helper;
 use common\utils\DateUtil;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 use yii\web\YiiAsset;
 use yii\widgets\DetailView;
@@ -42,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <a href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">标签管理</a>
         </li>
         <li role="presentation" class="">
-            <a href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">媒体预览</a>
+            <a href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">素材预览</a>
         </li>
         <li role="presentation" class="">
             <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
@@ -56,8 +58,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div role="tabpanel" class="tab-pane fade active in" id="basics" aria-labelledby="basics-tab">
             
             <p>
-                <?= Html::a(Yii::t('app', 'Edit'), ['edit-basic', 'id' => $model->id], [
-                    'id' => 'btn-editBasic', 'class' => 'btn btn-primary']) ?>
+                <?php 
+                    if( Helper::checkRoute(Url::to(['edit-basic']))){
+                        echo Html::a(Yii::t('app', 'Edit'), ['edit-basic', 'id' => $model->id], [
+                            'id' => 'btn-editBasic', 'class' => 'btn btn-primary']);
+                    }
+                ?>
             </p>
             
             <?= DetailView::widget([
@@ -126,8 +132,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div role="tabpanel" class="tab-pane fade" id="tags" aria-labelledby="config-tab">
             
             <p>
-                <?= Html::a(Yii::t('app', 'Edit'), ['edit-attribute', 'id' => $model->id], [
-                    'id' => 'btn-editAttribute', 'class' => 'btn btn-primary']) ?>
+                <?php
+                    if( Helper::checkRoute(Url::to(['edit-attribute']))){
+                        echo Html::a(Yii::t('app', 'Edit'), ['edit-attribute', 'id' => $model->id], [
+                            'id' => 'btn-editAttribute', 'class' => 'btn btn-primary']);
+                    }
+                ?>
             </p>
             
             <table id="w1" class="table table-striped table-bordered detail-view">
@@ -153,18 +163,21 @@ $this->params['breadcrumbs'][] = $this->title;
             
         </div>
         
-       <!--媒体预览-->
+       <!--素材预览-->
         <div role="tabpanel" class="tab-pane fade" id="preview" aria-labelledby="preview-tab">
             
             <p>
-                <?= Html::a(Yii::t('app', '{Anew}{Upload}', [
-                    'Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
-                ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']) ?>
-                <?php 
-                    if($model->mediaType->sign == MediaType::SIGN_VIDEO){
-                        echo Html::a(Yii::t('app', '{Anew}{Transcoding}', [
-                            'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
-                        ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
+                <?php
+                    if(Helper::checkRoute(Url::to(['anew-upload'])) || Helper::checkRoute(Url::to(['anew-transcoding']))){
+                        echo Html::a(Yii::t('app', '{Anew}{Upload}', [
+                            'Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
+                        ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']);
+                        
+                        if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                            echo ' '. Html::a(Yii::t('app', '{Anew}{Transcoding}', [
+                                'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
+                            ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
+                        }
                     }
                 ?>
             </p>
@@ -242,7 +255,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]); 
             }
             
-            /* 根据媒体类型加载不同的预览内容 */
+            /* 根据素材类型加载不同的预览内容 */
             if(!empty($model->type_id)){
                 switch ($model->mediaType->sign){
                     case MediaType::SIGN_VIDEO :
@@ -360,7 +373,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
     
-    // 弹出媒体编辑页面面板
+    // 弹出素材编辑页面面板
     $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
         e.preventDefault();
         showModal($(this));

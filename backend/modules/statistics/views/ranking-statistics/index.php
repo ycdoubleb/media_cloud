@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="ranking-statistics-index">
     <div class="statistics-view">
-        <div class="mc-title"><i class="glyphicon glyphicon-stats"></i>媒体排行</div>
+        <div class="mc-title"><i class="glyphicon glyphicon-stats"></i>素材排行</div>
         <div class="statistics-form mc-form">
             <form id="order-form" class="form-horizontal">
                 <!--时间段搜索-->
@@ -59,13 +59,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a('购买人支出金额', array_merge(['index'], array_merge($filters, ['tabs' => 'purchaser']))) ?>
                 </li>
                 <li id="income">
-                    <?= Html::a('媒体收入金额', array_merge(['index'], array_merge($filters, ['tabs' => 'income']))) ?>
+                    <?= Html::a('素材收入金额', array_merge(['index'], array_merge($filters, ['tabs' => 'income']))) ?>
                 </li>
                 <li id="click">
-                    <?= Html::a('媒体点击次数', array_merge(['index'], array_merge($filters, ['tabs' => 'click']))) ?>
+                    <?= Html::a('素材点击次数', array_merge(['index'], array_merge($filters, ['tabs' => 'click']))) ?>
                 </li>
                 <li id="quote">
-                    <?= Html::a('媒体引用次数', array_merge(['index'], array_merge($filters, ['tabs' => 'quote']))) ?>
+                    <?= Html::a('素材引用次数', array_merge(['index'], array_merge($filters, ['tabs' => 'quote']))) ?>
                 </li>
             </ul>
         </div>

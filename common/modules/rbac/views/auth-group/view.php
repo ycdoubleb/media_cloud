@@ -12,26 +12,39 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="auth-group-view">
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'template' => '<tr><th class="detail-th">{label}</th><td class="detail-td">{value}</td></tr>',
-        'attributes' => [
-            'id',
-            'name',
-            'app',
-            'sort_order',
-        ],
-    ]) ?>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel"><?= Html::encode($this->title) ?></h4>
+            </div>
+            
+            <div class="modal-body">
+    
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'template' => '<tr><th class="detail-th">{label}</th><td class="detail-td">{value}</td></tr>',
+                    'attributes' => [
+                        'id',
+                        'name',
+                        'app',
+                        'sort_order',
+                    ],
+                ]) ?>
+                
+            </div>
+            
+            <div class="modal-footer">
+                
+                <?= Html::button(Yii::t('app', 'Close'), ['class' => 'btn btn-default btn-flat', 'data-dismiss' => 'modal', 'aria-label' => 'Close']) ?>
+                
+            </div>
+                
+       </div>
+    </div>
 
 </div>

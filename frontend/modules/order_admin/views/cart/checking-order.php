@@ -33,7 +33,7 @@ ModuleAssets::register($this);
             <div class="media-top">
                 <div class="pull-left">
                     <div class="cloud-name">
-                        <span class="cloud-title">资源在线</span>
+                        <span class="cloud-title">素材在线</span>
                         <span class="cloud-website">www.resonline.com</span>
                     </div>
                     <div class="cloud-cart">购物车</div>
@@ -48,7 +48,7 @@ ModuleAssets::register($this);
                 </div>
             </div>
             <div class="information">
-                <span>填写资源使用信息</span>
+                <span>填写素材使用信息</span>
                 <div class="use-purpose mc-form">
                     <?php $form = ActiveForm::begin([
                         'action' => ['checking-order'],
@@ -66,7 +66,7 @@ ModuleAssets::register($this);
                         ],
                     ]);?>
                     <?= $form->field($model, 'order_name')->textInput([
-                            'placeholder' => '填写资源用途或者课程名称', 'maxlength' => true,
+                            'placeholder' => '填写素材用途或者课程名称', 'maxlength' => true,
                         ])->label('使用目的：');?>
 
                     <?= $form->field($model, 'user_note')->textInput([
@@ -84,7 +84,7 @@ ModuleAssets::register($this);
             <div class="mc-tabs">
                 <ul class="list-unstyled">
                     <li class="active">
-                        <?= Html::a('资源列表', 'javascript:;', ['title' => '资源列表']);?>
+                        <?= Html::a('素材列表', 'javascript:;', ['title' => '素材列表']);?>
                     </li>
                 </ul>
             </div>
@@ -216,7 +216,7 @@ ModuleAssets::register($this);
             <div class="display-info">
                 <div class="pull-right">
                     <div class="meida-num">
-                        资源总数：
+                        素材总数：
                         <div class="mp-number"><?= $sel_num;?> 个</div>
                     </div>
                     <div class="payable-price">

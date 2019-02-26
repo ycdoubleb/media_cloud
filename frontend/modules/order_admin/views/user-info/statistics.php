@@ -49,7 +49,7 @@ ChartAsset::register($this);
                         ]);?>
                     </div>
                 </div>
-                <!--总支付金额 总购买资源数-->
+                <!--总支付金额 总购买素材数-->
                 <div class="all-datas">
                 <div class="pull-left">
                     <div class="statistics-img left-img">
@@ -65,7 +65,7 @@ ChartAsset::register($this);
                         <img src="/imgs/site/data.png"/>
                     </div>
                     <div class="statistics-num right-num">
-                        <p>总购买资源数</p>
+                        <p>总购买素材数</p>
                         <span><?= empty($totalPay['total_goods']) ? 0 : $totalPay['total_goods'];?></span>
                     </div>
                 </div>

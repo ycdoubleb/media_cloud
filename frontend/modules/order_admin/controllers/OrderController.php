@@ -81,13 +81,13 @@ class OrderController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),   // Order模型
             'auditingData' => $auditingData,    // 支付审核数据
-            'resourcesData' => $resourcesData,  // 资源列表数据
+            'resourcesData' => $resourcesData,  // 素材列表数据
             'filter' => Yii::$app->request->queryParams,
         ]);
     }
     
     /**
-     * 确认资源可用
+     * 确认素材可用
      * @param string $id
      * @return mixed
      */

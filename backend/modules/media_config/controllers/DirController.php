@@ -4,16 +4,16 @@ namespace backend\modules\media_config\controllers;
 
 use common\models\api\ApiResponse;
 use common\models\media\Dir;
+use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * DirController implements the CRUD actions for Dir model.
  */
-class DirController extends Controller
+class DirController extends GridViewChangeSelfController
 {
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class DirController extends Controller
     }
 
     /**
-     * 列出所有媒体存储目录配置.
+     * 列出所有素材存储目录配置.
      * @return mixed
      */
     public function actionIndex()
@@ -42,7 +42,7 @@ class DirController extends Controller
     }
 
     /**
-     * 创建 媒体存储目录配置
+     * 创建 素材存储目录配置
      * 如果创建成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -63,7 +63,7 @@ class DirController extends Controller
     }
 
     /**
-     * 更新 媒体存储目录配置
+     * 更新 素材存储目录配置
      * 如果更新成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -114,7 +114,7 @@ class DirController extends Controller
     }
 
     /**
-     * 删除 媒体存储目录配置
+     * 删除 素材存储目录配置
      * 如果删除成功，浏览器将被重定向到“index”页面。
      * @param string $id
      * @return mixed
@@ -129,7 +129,7 @@ class DirController extends Controller
         if(count(Dir::getDirsChildren($id, \Yii::$app->user->id)) > 0){
             $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在子目录，不能删除。');
         }else if(count($model->medias) > 0) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在媒体素材，不能删除。');
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在素材素材，不能删除。');
         }else{
             $model->delete();
             Dir::invalidateCache();    //清除缓存
@@ -213,6 +213,18 @@ class DirController extends Controller
         return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
     }
 
+    /**
+     * 更新表值
+     * @param integer $id
+     * @param string $fieldName
+     * @param integer $value
+     */
+    public function actionChangeValue($id, $fieldName, $value)
+    {
+        parent::actionChangeValue($id, $fieldName, $value);
+        Dir::invalidateCache();    //清除缓存
+    }
+    
     /**
      * 根据其主键值查找模型。
      * 如果找不到模型，就会抛出404 HTTP异常。

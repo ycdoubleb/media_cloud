@@ -57,7 +57,7 @@ class CartController extends Controller
         
         $sel_num = 0;
         $total_price = 0;
-        // 计算选中媒体的总数和价格
+        // 计算选中素材的总数和价格
         foreach ($dataProvider->models as $data){
             if($data['is_selected'] == 1){
                 $sel_num += $data['num'];
@@ -70,12 +70,12 @@ class CartController extends Controller
             'dataProvider' => $dataProvider,
             'totalCount' => count($dataProvider->models),   // 总数
             'sel_num' => $sel_num,      // 选中数量
-            'total_price' => $total_price,  // 选中的媒体总价
+            'total_price' => $total_price,  // 选中的素材总价
         ]);
     }
     
     /**
-     * 把选中的媒体移出购物车
+     * 把选中的素材移出购物车
      * @return mixed
      */
     public function actionDelMedia()
@@ -123,7 +123,7 @@ class CartController extends Controller
     }
     
     /**
-     * 修改单个媒体选中状态
+     * 修改单个素材选中状态
      * @return mixed
      */
     public function actionChangeOne()
@@ -139,9 +139,9 @@ class CartController extends Controller
         }
         
         if($model->save()){
-            //所有媒体
+            //所有素材
             $cats = Cart::findAll(['is_del' => 0, 'created_by' => Yii::$app->user->id]);
-            //选中的媒体
+            //选中的素材
             $cats_sels = Cart::findAll(['is_selected' => 1, 'is_del' => 0, 'created_by' => Yii::$app->user->id]);
 
             return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, count($cats) == count($cats_sels));
@@ -165,7 +165,7 @@ class CartController extends Controller
         }
         $sel_num = 0;
         $total_price = 0;
-        // 计算选中媒体的总数和价格
+        // 计算选中素材的总数和价格
         foreach ($dataProvider->models as $data){
             if($data['is_selected'] == 1){
                 $sel_num ++;
@@ -175,7 +175,7 @@ class CartController extends Controller
         
         $model = new Order();
         $model->order_sn = $order_sn;           //订单编号
-        $model->goods_num = $sel_num;           //订单中媒体的数量
+        $model->goods_num = $sel_num;           //订单中素材的数量
         $model->goods_amount = $total_price;    //价格
         $model->order_amount = $total_price;    //应付价格
         $model->created_by = Yii::$app->user->id; //创建用户
@@ -192,7 +192,7 @@ class CartController extends Controller
                 // 保存订单操作记录
                 $order = Order::findOne(['order_sn' => $order_sn]);
                 OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status, Yii::$app->user->id);
-                // 保存订单媒体表
+                // 保存订单素材表
                 $data = [];
                 foreach ($dataProvider->models as $value) {
                     $data[] = [
@@ -215,7 +215,7 @@ class CartController extends Controller
             'model' => $model,    // 订单模型
             'dataProvider' => $dataProvider,
             'sel_num' => $sel_num,      // 选中数量
-            'total_price' => $total_price,  // 选中的媒体总价
+            'total_price' => $total_price,  // 选中的素材总价
         ]);
     }
 
@@ -292,7 +292,7 @@ class CartController extends Controller
 
 
     /**
-     * 导出媒体清单
+     * 导出素材清单
      * @param integer $id 订单ID
      */
     public function actionExportList($id)

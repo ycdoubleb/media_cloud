@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $js = <<<JS
     
-    // 弹出媒体类型面板
+    // 弹出素材类型面板
     $('#btn-addType, #btn-updateType').click(function(e){
         e.preventDefault();
         showModal($(this));

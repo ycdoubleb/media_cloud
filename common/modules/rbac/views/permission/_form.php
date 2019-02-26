@@ -13,18 +13,50 @@ use yii\widgets\ActiveForm;
 
 <div class="permission-form">
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'group_id')->widget(Select2::classname(), [
-        'data' => $authGroups, 'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')]
-    ]) ?>
+    <?php $form = ActiveForm::begin([
+        'options'=>[
+            'id' => 'media-category-form',
+            'class' => 'form form-horizontal',
+        ],
+        'fieldConfig' => [  
+            'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>\n<div class=\"col-lg-10 col-md-10\">{error}</div>",  
+            'labelOptions' => [
+                'class' => 'col-lg-2 col-md-2 control-label form-label',
+            ],  
+        ], 
+    ]); ?>
     
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel"><?= Html::encode($this->title) ?></h4>
+            </div>
+            
+            <div class="modal-body">
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 2]) ?>
+                <?= $form->field($model, 'group_id')->widget(Select2::classname(), [
+                    'data' => $authGroups, 'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')]
+                ]) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+                <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+                <?= $form->field($model, 'description')->textarea(['rows' => 2]) ?>
+
+            </div>
+            
+            <div class="modal-footer">
+                
+                <?= Html::submitButton(Yii::t('app', 'Confirm'), [
+                    'class' => 'btn btn-flat ' . ($model->isNewRecord ? 'btn-success' : 'btn-primary')
+                ]) ?>
+                
+            </div>
+                
+       </div>
     </div>
 
     <?php ActiveForm::end(); ?>

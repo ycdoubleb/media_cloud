@@ -1,9 +1,13 @@
 <?php
 
+use common\models\media\Dir;
 use common\models\media\MediaType;
+use common\widgets\depdropdown\DepDropdown;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -29,7 +33,27 @@ use yii\widgets\ActiveForm;
         ]);?>
 
         <div class="col-lg-12 col-md-12 search-panel">
-            <!--媒体类型-->
+            <!--存储目录-->
+            <div class="col-lg-12 col-md-12">
+                <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-dir_id" 
+                       style="padding: 15px 14px 0 13px">存储目录：</label>
+                <?= $form->field($searchModel, 'dir_id', [
+                    'template' => "{label}\n<div class=\"col-lg-9 col-md-9\" style=\"padding-left:22px\">{input}</div>",
+                ])->widget(DepDropdown::class,[
+                    'pluginOptions' => [
+                        'url' => Url::to(['search-children']),
+                        'max_level' => 10,
+                        'onChangeEvent' => new JsExpression('function(){ submitForm()}')
+                    ],
+                    'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, true, true),
+                    'values' => $searchModel->dir_id == 0 ? [] : array_values(array_filter(explode(',', 
+                            Dir::getDirById($searchModel->dir_id)->path))),
+                    'itemOptions' => [
+                        'style' => 'width: 155px; padding: 8px 10px',
+                    ],
+                ])->label('') ?>
+            </div>
+            <!--素材类型-->
             <div class="col-lg-6 col-md-6" style="padding-left: 3px;">
                 <?= $form->field($searchModel, 'type_id')->checkboxList(MediaType::getMediaByType(), [
                     'value' => ArrayHelper::getValue($filters, 'MediaSearch.type_id', [1, 2, 3, 4]),
@@ -57,24 +81,23 @@ use yii\widgets\ActiveForm;
                             echo Html::input('text', 'MediaSearch[keyword]', $keyword, [
                                 'id' => 'mediasearch-keyword',
                                 'class' => 'form-control',
-                                'placeholder' => '请输入媒体名称或者标签',
+                                'placeholder' => '请输入素材名称或者标签',
                             ])
                         ?>
                         <div class="search-icon"><i class="glyphicon glyphicon-search"></i></div>
                     </div>
                 </div>
             </div>
+            
             <!--属性选项-->
             <div class="col-lg-12 col-md-12">
                 <div class="form-group field-mediasearch-attribute_value_id">
-                    <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id" style="padding-right: 0px;">
-                        属性选项：</label>
+                    <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id"
+                           style="padding-right: 0px;">属性选项：</label>
                     <div class="col-lg-10 col-md-10" style="padding-left: 35px;">
                         <?php foreach ($attrMap as $atts): ?>
-                
                             <?php if($atts['index_type'] > 0): ?>
                                 <div id="DepDropdown_<?= $atts['attr_id'] ?>" class="dep-dropdown">
-
                                     <?= Select2::widget([
                                         'id' => "attribute_value_{$atts['attr_id']}",
                                         'name' => 'MediaSearch[attribute_value_id][]',
@@ -85,10 +108,8 @@ use yii\widgets\ActiveForm;
                                         'pluginOptions' => ['allowClear' => true],
                                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
                                     ]) ?>
-
                                 </div>
                             <?php endif; ?>
-
                         <?php endforeach;?>
                     </div>
                 </div>

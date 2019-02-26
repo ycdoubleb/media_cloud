@@ -45,14 +45,14 @@ class MediaController extends GridViewChangeSelfController
     }
 
     /**
-     * 列出所有媒体数据。
+     * 列出所有素材数据。
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType())]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
-        $medias = $results['data']['medias']; //所有媒体数据
+        $medias = $results['data']['medias']; //所有素材数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');        
         
         return $this->render('index', [
@@ -70,14 +70,14 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 列出所有媒体数据。
+     * 列出所有素材数据。
      * @return mixed
      */
     public function actionList()
     {
         $searchModel = new MediaSearch();
         $results = $searchModel->search(Yii::$app->request->queryParams);
-        $medias = $results['data']['medias']; //所有媒体数据
+        $medias = $results['data']['medias']; //所有素材数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');      
         
         return $this->renderAjax('____media_table_dom', [
@@ -91,7 +91,7 @@ class MediaController extends GridViewChangeSelfController
     }
 
     /**
-     * 显示单个媒体模型。
+     * 显示单个素材模型。
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -116,7 +116,7 @@ class MediaController extends GridViewChangeSelfController
     }
 
     /**
-     * 创建 一个新的媒体模型。
+     * 创建 一个新的素材模型。
      * 如果创建成功，返回保存的json信息。
      * @return mixed
      */
@@ -145,7 +145,7 @@ class MediaController extends GridViewChangeSelfController
                 if($typeDetail == null){
                     return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
                 }
-                // 保存媒体类型
+                // 保存素材类型
                 $model->type_id = $typeDetail->type_id;
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
@@ -167,9 +167,9 @@ class MediaController extends GridViewChangeSelfController
                     }
                     // 保存操作记录
                     MediaAction::savaMediaAction($model->id, $model->name);
-                    // 保存媒体详情
+                    // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
-                    // 保存媒体审核
+                    // 保存素材审核
                     MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
@@ -197,19 +197,19 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 批量编辑 媒体价格
+     * 批量编辑 素材价格
      * @param string $id
      * @return mixed
      */
     public function actionBatchEditPrice()
     {
         return $this->renderAjax('____edit_price', [
-            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有媒体id
+            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
         ]);
     }
     
     /**
-     * 编辑 媒体基本信息
+     * 编辑 素材基本信息
      * 如果更新成功，浏览器将被重定向到“view”页面。
      * @param string $id
      * @return mixed
@@ -232,19 +232,19 @@ class MediaController extends GridViewChangeSelfController
                 $newAttributes = $model->getDirtyAttributes();
                 //获取所有旧属性值
                 $oldAttributes = $model->getOldAttributes();  
-                // 媒体内容
+                // 素材内容
                 $content = ArrayHelper::getValue($post, 'Media.content');
 
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
                     '存储目录' => isset($newAttributes['dir_id']) && $newAttributes['dir_id'] != $oldAttributes['dir_id'] ? $model->dir->getFullPath() : null,
-                    '媒体名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
+                    '素材名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
                     '价格' => isset($newAttributes['price']) && $newAttributes['price'] != $oldAttributes['price'] ? Yii::$app->formatter->asCurrency($model->price) : null,
                 ];
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
-                    // 保存媒体详情
+                    // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['content' => $content]);
                     // 保存操作记录
                     if(!empty(array_filter($dataProvider))){
@@ -270,21 +270,21 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 批量编辑 媒体属性标签
+     * 批量编辑 素材属性标签
      * @param string $id
      * @return mixed
      */
     public function actionBatchEditAttribute()
     {
         return $this->renderAjax('____edit_attribute', [
-            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有媒体id
+            'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
             'isTagRequired' => false,  // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
     }
     
     /**
-     * 编辑 媒体属性标签
+     * 编辑 素材属性标签
      * 如果更新成功，浏览器将被重定向到“当前页”页面。
      * @param string $id
      * @return mixed
@@ -330,7 +330,7 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 重新 上传媒体文件
+     * 重新 上传素材文件
      * 如果更新成功，浏览器将被重定向到“view”页面。
      * @param string $id
      * @return mixed
@@ -352,7 +352,7 @@ class MediaController extends GridViewChangeSelfController
 
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
-                    '媒体名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
+                    '素材名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
                 ];
                 
                 if($model->validate() && $model->save()){
@@ -399,7 +399,7 @@ class MediaController extends GridViewChangeSelfController
             {
                 // 水印id
                 $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids', []));
-                // 保存媒体详细
+                // 保存素材详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码
                 MediaAliyunAction::addVideoTranscode($model->id, true);   
@@ -450,7 +450,7 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 查看 媒体操作
+     * 查看 素材操作
      * @param string $id
      * @return mixed
      */
@@ -464,7 +464,7 @@ class MediaController extends GridViewChangeSelfController
     }
 
     /**
-     * 根据其主键值查找媒体模型。
+     * 根据其主键值查找素材模型。
      * 如果找不到模型，将引发404 HTTP异常。
      * @param string $id
      * @return Media the loaded model

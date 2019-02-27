@@ -45,6 +45,8 @@ class WebuploaderInput extends InputWidget{
             'extensions' => 'mp4,mp3,gif,jpg,jpeg,bmp,png,doc,docx,txt,xls,xlsx,ppt,pptx',
             'mimeTypes' => 'video/mp4,audio/mp3,image/*,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx',
         ],
+        //图片默认压缩
+        'compress' => false,
         // 文件接收服务端。
         'server' => '/webuploader/default/upload',
         //检查文件是否存在

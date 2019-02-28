@@ -82,7 +82,8 @@ ChartAsset::register($this);
                             <div class="media-type">
                                 <div class="mt-block block-<?= getMediaType($value['name']);?>"></div>
                                 <?= $value['name']?>（<?= $value['value']?> 个）
-                                    <?= Yii::$app->formatter->asPercent($value['value']/$totals['totalNumber'], 2)?>
+                                    <?= $totals['totalNumber'] == 0 ? 0 
+                                        : Yii::$app->formatter->asPercent($value['value']/$totals['totalNumber'], 2)?>
                             </div>
                         <?php endforeach;?>
                     </div>
@@ -105,7 +106,8 @@ ChartAsset::register($this);
                             <div class="media-type">
                                 <div class="mt-block block-<?= getMediaType($value['name']);?>"></div>
                                 <?= $value['name']?>（<?= $value['value']?> 个）
-                                    <?= Yii::$app->formatter->asPercent($value['value']/$month['totalNumber'], 2)?>
+                                    <?= $month['totalNumber'] == 0 ? 0 
+                                        :Yii::$app->formatter->asPercent($value['value']/$month['totalNumber'], 2)?>
                             </div>
                         <?php endforeach;?>
                     </div>
@@ -128,7 +130,8 @@ ChartAsset::register($this);
                             <div class="media-type">
                                 <div class="mt-block block-<?= getMediaType($value['name']);?>"></div>
                                 <?= $value['name']?>（<?= Yii::$app->formatter->asCurrency($value['value'])?>）
-                                    <?= Yii::$app->formatter->asPercent($value['value']/$amount['totalAmount'], 2)?>
+                                    <?= $amount['totalAmount'] == 0 ? 0 
+                                        : Yii::$app->formatter->asPercent($value['value']/$amount['totalAmount'], 2)?>
                             </div>
                         <?php endforeach;?>
                     </div>

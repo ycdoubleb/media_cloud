@@ -93,6 +93,8 @@ class MediaSearch extends Media
                 $query->leftJoin(["AttValRef_$index" => MediaAttValueRef::tableName()], "(AttValRef_$index.media_id = Media.id and AttValRef_$index.is_del = 0)");
                 $query->andFilterWhere(["AttValRef_$index.attribute_value_id" => $id]);
             }
+        }else{
+             $query->orderBy(['Media.created_at' => SORT_DESC]);
         }
         
         // 目录过滤

@@ -28,6 +28,7 @@ return [
     /* Webuploader 配置 */
     'webuploader' => [
         'savePath' => 'mediacloud/files/',
+        'thumbPath' => 'mediacloud/thumb/'
     ],
     /* 企业微信配置 */
     'notification.qywx' => [

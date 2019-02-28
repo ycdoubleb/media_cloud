@@ -92,9 +92,12 @@ class Uploadfile extends ActiveRecord {
      * @return array [success,msg]
      */
     public function uploadOSS($key = null) {
+        //生成文件名，当oss_key不为空时，将使用oss_key作为文件名
+        if(!isset(Yii::$app->params['webuploader'])){
+            throw new Exception('UploadOSS Failed! 缺少 Yii::$app->params[webuploader] 配置!');
+        }
+        $config = Yii::$app->params['webuploader'];
         if ($key == null) {
-            //生成文件名，当oss_key不为空时，将使用oss_key作为文件名
-            $config = isset(Yii::$app->params['webuploader']) ? Yii::$app->params['webuploader'] : ['savePath' => 'upload/webuploader/files'];
             $filename = $config['savePath'] . pathinfo($this->path, PATHINFO_BASENAME);
             //设置文件名
             $object_key = $this->oss_key == '' ? $filename : $this->oss_key;
@@ -102,7 +105,7 @@ class Uploadfile extends ActiveRecord {
             $object_key = $key;
         }
         $object_key_path_info = pathinfo($object_key);
-        $thumb_key = "{$object_key_path_info['dirname']}/{$object_key_path_info['filename']}_thumb.jpg";
+        $thumb_key = $config['thumbPath']. md5($this->md5)."_thumb.jpg";
 
         try {
             //上传文件

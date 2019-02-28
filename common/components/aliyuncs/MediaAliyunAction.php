@@ -82,7 +82,7 @@ class MediaAliyunAction {
              * 执行转码操作
              * 提交后等待转码完成回调 AliyunMtsController::actionTaskComplete()
              */
-            $file_md5 = pathinfo($source_file->oss_key,PATHINFO_FILENAME);
+            $file_md5 = md5(pathinfo($source_file->oss_key,PATHINFO_FILENAME));
             $transcode_save_path = Yii::$app->params['aliyun']['mts']['transcode_save_path'];
             $result = Aliyun::getMts()->addTranscode($source_file->oss_key, "{$transcode_save_path}{$file_md5}.mp4", $water_mark_options, $hasDoneLevels, $user_data);
             

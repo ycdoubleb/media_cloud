@@ -10,7 +10,7 @@ use yii\web\View;
 <?php
 
 NavBar::begin([
-    'brandLabel' => Yii::$app->name,
+    'brandImage' => '/imgs/site/logo.png?rand='. rand(1, 10),
     'brandUrl' => Yii::$app->homeUrl,
     'options' => [
         'class' => 'navbar-inverse navbar-fixed-top',

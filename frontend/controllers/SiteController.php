@@ -419,32 +419,37 @@ class SiteController extends Controller {
      */
     protected function getTotalMediaNumber($month = false)
     {
-        $query = (new Query())
+        // 符合条件的媒体
+        $mediaQuey = (new Query())
+                ->select(['Media.id', 'Media.type_id'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['status' => Media::STATUS_PUBLISHED, 'del_status' => 0]);
-        
+                ->andFilterWhere(['status' => Media::STATUS_PUBLISHED, 'Media.del_status' => 0]);
         /* 过滤非本月的数据 */
         if($month){
-            $monthStart = mktime(0,0,0,date('m'),1,date('Y')); 
-            $monthEnd = mktime(23,59,59,date('m'),date('t'),date('Y')); 
-            $query->andFilterWhere(['between', 'Media.created_at', $monthStart, $monthEnd]);
+            $monthStart = mktime(0, 0, 0, date('m'), 1, date('Y')); 
+            $monthEnd = mktime(23, 59, 59, date('m'), date('t'), date('Y')); 
+            $mediaQuey->andFilterWhere(['between', 'Media.created_at', $monthStart, $monthEnd]);
         }
         
-        // 素材总数量
-        $totalQuery = clone $query;
-        $totalNumber = $totalQuery->addSelect(['COUNT(id) AS total_media_num'])->one();
-        
         // 素材类型统计
-        $statisticsQuery = clone $query;
-        $statisticsByType = $statisticsQuery
-                ->addSelect(['MediaType.name', 'COUNT(Media.id) AS value'])
-                ->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id')
-                ->groupBy('MediaType.id')
+        $statisticsQuery = (new Query())
+                ->select(['MediaType.name', 'COUNT(Media.id) AS value'])
+                ->from(['MediaType' => MediaType::tableName()])
+                ->leftJoin(['Media' => $mediaQuey], 'Media.type_id = MediaType.id')
+                ->andFilterWhere(['MediaType.is_del' => 0])
+                ->groupBy(['MediaType.id'])
+                ->orderBy(['MediaType.id' => SORT_ASC])
                 ->all();
+
+        // 素材总数量
+        $totalNumber = 0;
+        foreach ($statisticsQuery as $value){
+            $totalNumber += $value['value'];
+        }
         
         $data = [
-            'totalNumber' => $totalNumber['total_media_num'],
-            'statisticsByType' => $statisticsByType,
+            'totalNumber' => $totalNumber,
+            'statisticsByType' => $statisticsQuery,
         ];
 
         return $data;
@@ -457,29 +462,34 @@ class SiteController extends Controller {
      */
     protected function getTotalOrderAmount()
     {
-        $query = (new Query())
+        // 符合条件的订单
+        $orderQuery = (new Query())
+                ->select(['Media.type_id', 'OrderGoods.amount'])
                 ->from(['Order' => Order::tableName()])
-                ->andFilterWhere(['order_status' =>
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]
-                );
+                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], '(OrderGoods.order_id = Order.id AND OrderGoods.is_del = 0)')
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id')
+                ->andFilterWhere([ 'Media.del_status' => 0, 'Media.status' => Media::STATUS_PUBLISHED, 'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);
+        
+        // 素材类型统计
+        $statisticsQuery = (new Query())
+                ->select(['MediaType.name', 'SUM(amount) AS value'])
+                ->from(['MediaType' => MediaType::tableName()])
+                ->andFilterWhere(['MediaType.is_del' => 0])
+                ->leftJoin(['Media' => $orderQuery], 'MediaType.id = Media.type_id')
+                ->groupBy('MediaType.id')
+                ->orderBy(['MediaType.id' => SORT_ASC])
+                ->all();
         
         // 总收入
-        $totalQuery = clone $query;
-        $totalAmount = $totalQuery->addSelect(['SUM(order_amount) AS total_order_amount'])->one();
-        
-        // 各个素材类型的收入
-        $statisticsQuery = clone $query;
-        $statisticsByType = $statisticsQuery
-                ->addSelect(['MediaType.name', 'SUM(order_amount) AS value'])
-                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id')
-                ->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id')
-                ->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id')
-                ->groupBy('MediaType.id')
-                ->all();
+        $totalAmount = 0;
+        foreach ($statisticsQuery as &$value) {
+            $value['value'] = (integer)$value['value']; 
+            $totalAmount += $value['value'];
+        }
 
         $data = [
-            'totalAmount' => $totalAmount['total_order_amount'],
-            'statisticsByType' => $statisticsByType,
+            'totalAmount' => $totalAmount,
+            'statisticsByType' => $statisticsQuery,
         ];
 
         return $data;

@@ -414,6 +414,7 @@
 })(window,jQuery);
 
 /* 
+ * 饼图（可以自定义颜色、可以定义是否显示线注释）
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -432,8 +433,11 @@
         this.config = $.extend({
             title: '标题',                      //大标题
             subTtile: '',                       //副标题
+            itemLabelShow: true,                //是否显示线注释
             itemLabelFormatter: '{b} ( {c} ) {d}%',             //bar 提示格式
             tooltipFormatter:'{a} <br/>{b} : {c} ({d}%)',       //鼠标移上去提示格式
+            // 默认颜色
+            optionColor: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3']
         },config);
         
         this.init(dom);
@@ -452,6 +456,7 @@
     p.chartOptions = null;
     
     p.init = function(dom){
+        var _this = this;
         this.canvas = dom;
         this.chart = echarts.init(dom);
         this.chartOptions = {
@@ -463,7 +468,8 @@
             tooltip : {
                 trigger: 'item',
                 formatter: this.config.tooltipFormatter,
-                position: ($(dom).width() >= 720 ? null : ['0%', '15%'])
+                // 注释位置
+                position: ($(dom).width() >= 720 ? null : (this.config.itemLabelShow ? ['0%', '15%'] : ['15%', '0%']))
             },
             legend: {
                 data: [],
@@ -473,20 +479,14 @@
                 {
                     name: '',
                     type: 'pie',
-                    radius : '55%',
+                    //饼图大小： 无线标注释：85%、有线标注释：55%
+                    radius : (this.config.itemLabelShow ? '55%' : '85%'),
+                    //饼图位置：有标题 ['50%', '60%']，无标题 ['50%', '50%']
                     center: (this.config.title==='' ? ['50%', '50%'] : ['50%', '60%']),
-                    data:[
-                        /*
-                        {value:335, name:'直接访问'},
-                        {value:310, name:'邮件营销'},
-                        {value:234, name:'联盟广告'},
-                        {value:135, name:'视频广告'},
-                        {value:1548, name:'搜索引擎'} 
-                         */
-                    ],
+                    data:[],
                     label:{
                         normal:{
-                            show:true,
+                            show:this.config.itemLabelShow,
                             formatter:this.config.itemLabelFormatter,
                             left:'left'
                         }
@@ -497,6 +497,12 @@
                             shadowBlur: 10,
                             shadowOffsetX: 0,
                             shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+                        //自定义颜色
+                        normal: {
+                            color: function(params){
+                                return _this.config.optionColor[params.dataIndex%_this.config.optionColor.length];
+                            }
                         }
                     }
                 }

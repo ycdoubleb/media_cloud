@@ -92,11 +92,10 @@ class Banner extends ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'sort_order', 'is_publish', 'created_at', 'updated_at'], 'integer'],
+            [['type', 'sort_order', 'is_publish', 'created_by', 'created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 50],
             [['path', 'link', 'des'], 'string', 'max' => 255],
             [['target'], 'string', 'max' => 10],
-            [['created_by'], 'string', 'max' => 32],
         ];
     }
 

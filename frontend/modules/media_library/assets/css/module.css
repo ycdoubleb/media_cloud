@@ -40,6 +40,10 @@ and open the template in the editor.
     padding: 35px 0px; 
 }
 
+.media-form .search-panel .search-dir .control-label{
+    padding-top: 10px;
+}
+
 .media-form .search-icon {
     width: 40px;
     height: 40px;

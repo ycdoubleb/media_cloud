@@ -33,25 +33,42 @@ use yii\widgets\ActiveForm;
         ]);?>
 
         <div class="col-lg-12 col-md-12 search-panel">
-            <!--存储目录-->
-            <div class="col-lg-12 col-md-12">
-                <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-dir_id" 
-                       style="padding: 15px 14px 0 13px">存储目录：</label>
-                <?= $form->field($searchModel, 'dir_id', [
-                    'template' => "{label}\n<div class=\"col-lg-9 col-md-9\" style=\"padding-left:22px\">{input}</div>",
-                ])->widget(DepDropdown::class,[
-                    'pluginOptions' => [
-                        'url' => Url::to(['search-children']),
-                        'max_level' => 10,
-                        'onChangeEvent' => new JsExpression('function(){ submitForm()}')
-                    ],
-                    'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, true, true),
-                    'values' => $searchModel->dir_id == 0 ? [] : array_values(array_filter(explode(',', 
-                            Dir::getDirById($searchModel->dir_id)->path))),
-                    'itemOptions' => [
-                        'style' => 'width: 155px; padding: 8px 10px',
-                    ],
-                ])->label('') ?>
+            <div class="col-lg-12 col-md-12" style="padding-left: 0px;">
+                <!--存储目录-->
+                <div class="col-lg-6 col-md-6 search-dir" style="padding-left: 3px;">
+                    <?= $form->field($searchModel, 'dir_id', [
+                        'template' => "{label}\n<div class=\"col-lg-9 col-md-9\" style=\"padding-left: 0px; margin-left: -3px\">{input}</div>",
+                    ])->widget(DepDropdown::class,[
+                        'pluginOptions' => [
+                            'url' => Url::to(['search-children']),
+                            'max_level' => 10,
+                            'onChangeEvent' => new JsExpression('function(){ submitForm()}')
+                        ],
+                        'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, true, true),
+                        'values' => $searchModel->dir_id == 0 ? [] : array_values(array_filter(explode(',', 
+                                Dir::getDirById($searchModel->dir_id)->path))),
+                        'itemOptions' => [
+                            'style' => 'width: 155px; padding: 8px 10px',
+                        ],
+                    ])->label('存储目录：') ?>
+                </div>
+                <!--关键字-->
+                <div class="col-lg-6 col-md-6">
+                    <div class="form-group field-mediasearch-keyword">
+                        <label class="col-lg-6 col-md-6 control-label form-label" for="mediasearch-keyword"></label>
+                        <div class="col-lg-6 col-md-6" style="padding-left: 0;">
+                            <?php
+                                $keyword = ArrayHelper::getValue($filters, 'MediaSearch.keyword');
+                                echo Html::input('text', 'MediaSearch[keyword]', $keyword, [
+                                    'id' => 'mediasearch-keyword',
+                                    'class' => 'form-control',
+                                    'placeholder' => '请输入素材名称或者标签',
+                                ])
+                            ?>
+                            <div class="search-icon"><i class="glyphicon glyphicon-search"></i></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!--素材类型-->
             <div class="col-lg-6 col-md-6" style="padding-left: 3px;">
@@ -70,23 +87,6 @@ use yii\widgets\ActiveForm;
                 ])->label(Yii::t('app', '{Media}{Type}：', [
                     'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
                 ])) ?>
-            </div>
-            <!--关键字-->
-            <div class="col-lg-6 col-md-6">
-                <div class="form-group field-mediasearch-keyword">
-                    <label class="col-lg-6 col-md-6 control-label form-label" for="mediasearch-keyword"></label>
-                    <div class="col-lg-6 col-md-6" style="padding-left: 0;">
-                        <?php
-                            $keyword = ArrayHelper::getValue($filters, 'MediaSearch.keyword');
-                            echo Html::input('text', 'MediaSearch[keyword]', $keyword, [
-                                'id' => 'mediasearch-keyword',
-                                'class' => 'form-control',
-                                'placeholder' => '请输入素材名称或者标签',
-                            ])
-                        ?>
-                        <div class="search-icon"><i class="glyphicon glyphicon-search"></i></div>
-                    </div>
-                </div>
             </div>
             
             <!--属性选项-->

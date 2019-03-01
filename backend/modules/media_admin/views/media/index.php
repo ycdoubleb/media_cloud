@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         
         <!--总结-->
-        <div class="summary">第 <b class="first"></b>-<b class="last"></b> 条，总共 <b class="totalCount"></b> 条数据。</div>
+        <div class="summary"></div>
 
         <!--分页-->
         <div class="page"><ul class="pagination"></ul></div>
@@ -123,14 +123,10 @@ $js = <<<JS
             $('.loading-box .loading').show();
         }
         
-        $('.summary').find('b.first').html(Number((page - 1) * pageSize + 1));
-        if(page == pageCount){
-            $('.summary').find('b.last').html(totalCount);
-            
-        }else{
-            $('.summary').find('b.last').html(page * pageSize);
+        // 如果页数大于等于2的显示
+        if(page >= 2){
+            $('.summary').html('第 <b>' + Number((page - 1) * pageSize + 1) + '</b>-<b>' + (page == pageCount ? totalCount : page * pageSize) + '</b> 条，总共 <b>' + totalCount + '</b> 条数据。');
         }
-        $('.summary').find('b.totalCount').html(totalCount);
     } 
         
     // 弹出素材申请面板

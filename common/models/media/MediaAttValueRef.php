@@ -62,7 +62,7 @@ class MediaAttValueRef extends ActiveRecord
         try {
             if(is_array($media_attrs)){
                 $mediaAttValue = [];
-                foreach ($media_attrs as $attr_id => $attr_value) {
+                foreach (array_filter($media_attrs) as $attr_id => $attr_value) {
                     // 判断提交上来的属性是单选还是多选
                     if(is_array($attr_value)){
                         foreach ($attr_value as $value) {

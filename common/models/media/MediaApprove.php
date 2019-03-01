@@ -43,6 +43,9 @@ class MediaApprove extends ActiveRecord
     /** 状态-已审核 */
     const STATUS_APPROVED = 1;
     
+    /** 状态-已取消 */
+    const STATUS_CANCELED = 99;
+    
     /** 结果-不通过 */
     const RESULT_PASS_NO = 0;
     
@@ -65,6 +68,7 @@ class MediaApprove extends ActiveRecord
     public static $statusMap = [
       self::STATUS_APPROVEING =>  '待审核',
       self::STATUS_APPROVED =>  '已审核',
+      self::STATUS_CANCELED =>  '已取消',
     ];
     
     /**

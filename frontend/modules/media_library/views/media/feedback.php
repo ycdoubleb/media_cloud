@@ -2,6 +2,7 @@
 
 use common\models\media\MediaIssue;
 use common\models\vk\CustomerAdmin;
+use common\widgets\ueditor\UEDitor;
 use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
 use yii\web\View;
@@ -77,8 +78,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                         'Problem' => Yii::t('app', 'Problem'), 'Type' => Yii::t('app', 'Type')
                     ])) ?>
                     <!--问题描述-->
-                    <?= $form->field($model, 'content')->textarea(['rows' => 6])
-                        ->label(Yii::t('app', '{Problem}{Des}：',[
+                    <?= $form->field($model, 'content')->widget(UEDitor::class)->label(Yii::t('app', '{Problem}{Des}：',[
                             'Problem' => Yii::t('app', 'Problem'),
                             'Des' => Yii::t('app', 'Des')
                         ])) ?>
@@ -99,6 +99,7 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
 
 <?php
 $js = <<<JS
+        
     //提交表单
     $("#submitsave").click(function(){
         $.post("../media/feedback?id={$model->media_id}", $('#form-admin').serialize(),function(data){

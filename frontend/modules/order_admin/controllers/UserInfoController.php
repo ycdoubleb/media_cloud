@@ -84,14 +84,17 @@ class UserInfoController extends Controller
     {
         /* @var $request Request */
         $request = Yii::$app->getRequest();
-        $dateRange = $request->getQueryParam('dateRange');
-        $year = $request->getQueryParam('year') == null ? date('Y',time()) : $request->getQueryParam('year');
-
+        $allYear = $request->getQueryParam('allYear') == null ? '' : $request->getQueryParam('allYear');  //总数统计
+        $allMonth = $request->getQueryParam('allMonth') == null ? '' : $request->getQueryParam('allMonth');   //总数统计
+        $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');         //年度月统计
+        
         return $this->render('statistics', [
-            'dateRange' => $dateRange,
+            'allYear' => $allYear,
+            'allMonth' => $allMonth,
             'year' => $year,
-            'years' => $this->getOrderYears(),
-            'totalPay' => $this->getTotalPay($dateRange),           //总支出和购买数量
+            'years' => $this->getYears(),
+            'months' => $this->getMonths(),
+            'totalPay' => $this->getTotalPay($allYear, $allMonth),           //总支出和购买数量
             'dateStatistics' => $this->getDateStatistics($year),    //年度月支出金额
         ]);
     }
@@ -135,10 +138,11 @@ class UserInfoController extends Controller
     
     /**
      * 时间段支出金额
-     * @param string $dateRange 时间段
+     * @param type $allYear     年份    
+     * @param type $allMonth    月份
      * @return array
      */
-    protected function getTotalPay($dateRange)
+    protected function getTotalPay($allYear, $allMonth)
     {
         $query = (new Query())
                 ->select(['SUM(order_amount) AS total_price', 'SUM(goods_num) AS total_goods'])
@@ -149,9 +153,9 @@ class UserInfoController extends Controller
                 ->from(['Order' => Order::tableName()]);
         
         // 当时间段参数不为空时
-        if($dateRange != null){
-            $dateRange_Arr = explode(" - ",$dateRange);
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($dateRange_Arr[0]), strtotime($dateRange_Arr[1])]);
+        if($allYear != null || $allMonth != null){
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $allYear]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $allMonth]);
         }
         
         return $query->one();
@@ -173,11 +177,11 @@ class UserInfoController extends Controller
                 ])
                 ->from(['Order' => Order::tableName()]);
         // 当年份参数不为空时
-        if($year != null){
+        if(!empty($year)){
             $startTime = $year.'-01-01 00:00:00';
             $endTime = $year.'-12-31 23:59:59';
+            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($startTime), strtotime($endTime)]);
         }
-        $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($startTime), strtotime($endTime)]);
         
         $query->groupBy('name');    // 按月份分组
         $results = $query->all();
@@ -206,22 +210,49 @@ class UserInfoController extends Controller
     }
     
     /**
-     * 获取订单确认年份
+     * 年份
      * @return array
      */
-    protected function getOrderYears()
+    protected function getYears()
     {
-        $query = (new Query())
-                ->select(['confirm_at', "FROM_UNIXTIME(confirm_at, '%Y') AS years"])
-                ->where([
-                    'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
-                    'created_by' => Yii::$app->user->id
-                ])
-                ->from(['Order' => Order::tableName()])
-                ->groupBy('years')
-                ->all();
-
-        return ArrayHelper::map($query, 'years', 'years');
+        $startYear = 2019;                  // 平台开始使用年份
+        $theYear = date('Y',time());        // 当前年份
+        $addYear = $theYear - $startYear;   // 平台已经使用了N年
+        
+        $years = ['' => '全部'];
+        for($i = 0; $i <= $addYear; $i++){
+            $years += [
+                $startYear + $i => $startYear + $i . '年'
+            ];
+        }
+        
+        return $years;
     }
+    
+    /**
+     * 月份
+     * @return array
+     */
+    protected function getMonths()
+    {
+        $month = [
+            '' => '全年',
+            '01' => '01月',
+            '02' => '02月',
+            '03' => '03月',
+            '04' => '04月',
+            '05' => '05月',
+            '06' => '06月',
+            '07' => '07月',
+            '08' => '08月',
+            '09' => '09月',
+            '10' => '10月',
+            '11' => '11月',
+            '12' => '12月',
+        ];
+        
+        return $month;
+    }
+    
 }
 

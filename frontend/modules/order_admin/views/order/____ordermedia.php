@@ -64,7 +64,7 @@ use yii\helpers\Html;
                         'style' => 'width: 80px',
                     ],
                     'value' => function($data) {
-                        return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
+                        return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : '';
                     },
                 ],
                 [

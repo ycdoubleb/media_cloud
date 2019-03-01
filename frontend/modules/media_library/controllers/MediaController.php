@@ -98,7 +98,7 @@ class MediaController extends Controller
             $item['row'] = $row++;
             $item['cover_img'] = Aliyun::absolutePath(!empty($item['cover_url']) ? $item['cover_url'] : 'static/imgs/notfound.png');
             $item['dir_id'] = Dir::getDirById($item['dir_id'])->getFullPath();
-            $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : null;
+            $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : '';
             $item['size'] = Yii::$app->formatter->asShortSize($item['size']);
             $item['tags'] = isset($item['tag_name']) ? $item['tag_name'] : 'null';
             $item['icon'] = isset($icons[$item['type_sign']]) ? $icons[$item['type_sign']] : '';
@@ -153,7 +153,7 @@ class MediaController extends Controller
             ['label' => '素材名称', 'value' => $model->name],
             ['label' => '素材类型', 'value' => $model->mediaType->name],
             ['label' => '价格', 'value' => $model->price],
-            ['label' => '时长', 'value' => DateUtil::intToTime($model->duration, ':', true)],
+            ['label' => '时长', 'value' => $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : ''],
             ['label' => '大小', 'value' => Yii::$app->formatter->asShortSize($model->size)]
         ];
         

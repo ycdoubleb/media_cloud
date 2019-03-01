@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="statistics-num">
                 <p>总收入金额</p>
-                <span><?= $total_order_amount['total_order_amount'];?></span>
+                <span><?= empty($total_order_amount['total_order_amount']) ? 0 : $total_order_amount['total_order_amount'];?></span>
             </div>
         </div>
         <div class="visit-num col-lg-4">

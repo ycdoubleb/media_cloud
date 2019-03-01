@@ -152,7 +152,7 @@ class MediaController extends Controller
             ['label' => '素材编号', 'value' => $model->id],
             ['label' => '素材名称', 'value' => $model->name],
             ['label' => '素材类型', 'value' => $model->mediaType->name],
-            ['label' => '价格', 'value' => $model->price],
+            ['label' => '价格', 'value' => \Yii::$app->formatter->asCurrency($model->price)],
             ['label' => '时长', 'value' => $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : ''],
             ['label' => '大小', 'value' => Yii::$app->formatter->asShortSize($model->size)]
         ];

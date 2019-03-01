@@ -150,8 +150,8 @@ class MediaController extends GridViewChangeSelfController
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
-                $media_tags = ArrayHelper::getValue($post, 'Media.tags');
-                $tags = Tags::saveTags($media_tags);
+                $model->tags = ArrayHelper::getValue($post, 'Media.tags');
+                $tags = Tags::saveTags($model->tags);
                 // 转码需求
                 $mts_need = ArrayHelper::getValue($post, 'Media.mts_need');
                 // 水印id

@@ -233,7 +233,7 @@ class ExportUtils
         $goodsDatas = $goodsSearch->searchMedia($id)->models;
         //重设素材数据里面的元素值
         foreach ($goodsDatas as &$item) {
-            $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : null;
+            $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : '';
             $item['size'] = Yii::$app->formatter->asShortSize($item['size']);
         }
 

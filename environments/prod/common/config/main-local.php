@@ -4,15 +4,15 @@ return [
         'db' => [
             'class' => 'yii\db\Connection',
             //生产机
-            //'dsn' => 'mysql:host=172.16.146.156;dbname=mediacloud',
-            //'username' => 'mediacloud',
-            //'password' => 'eecn.cn',
+            'dsn' => 'mysql:host=10.80.130.32;dbname=media_cloud',
+            'username' => 'media',
+            'password' => 'Edu789987',
             //生产机
             
             //测试机
-            'dsn' => 'mysql:host=172.16.146.156;dbname=mediacloud',
-            'username' => 'mediacloud',
-            'password' => 'eecn.cn',
+            //'dsn' => 'mysql:host=172.16.146.156;dbname=mediacloud',
+            //'username' => 'mediacloud',
+            //'password' => 'eecn.cn',
             //测试机
             'charset' => 'utf8',
             'enableSchemaCache' => true,

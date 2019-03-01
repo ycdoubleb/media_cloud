@@ -79,7 +79,7 @@ class ApproveController extends Controller
             {
                 //查找已经存在的
                 $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                    ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
+                    ->andWhere(['or', ['result' => 1, 'type' => MediaApprove::TYPE_INTODB_APPROVE], ['status' => 0]])->asArray()->all();
                 $result = ArrayHelper::index($result, 'media_id');
                 // 申请说明
                 $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
@@ -130,7 +130,7 @@ class ApproveController extends Controller
             {
                 //查找已经存在的
                 $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                    ->andWhere(['or', ['result' => 1], ['status' => 0]])->asArray()->all();
+                    ->andWhere(['or', ['result' => 1, 'type' => MediaApprove::TYPE_DELETE_APPROVE], ['status' => 0]])->asArray()->all();
                 $result = ArrayHelper::index($result, 'media_id');
                 // 申请说明
                 $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 

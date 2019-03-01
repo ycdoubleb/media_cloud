@@ -46,10 +46,10 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '配置管理', 'icon' => 'circle-o', 'url' => ['/system_admin/config'],],
-                            ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab'],],
-                            ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup']],
-                            ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner']],
+                            ['label' => '配置管理', 'icon' => 'circle-o', 'url' => ['/system_admin/config/index'],],
+                            ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab/index'],],
+                            ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup/index']],
+                            ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner/index']],
                         ],
                     ],
                     [

@@ -23,6 +23,6 @@
     </div>
     <div class="statistics-num">
         <p>总收入金额</p>
-        <span><?= Yii::$app->formatter->asCurrency($operator['order_amount']);?></span>
+        <span><?= Yii::$app->formatter->asCurrency(empty($operator['order_amount']) ? 0 : $operator['order_amount']);?></span>
     </div>
 </div>

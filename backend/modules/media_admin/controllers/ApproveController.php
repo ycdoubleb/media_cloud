@@ -77,24 +77,24 @@ class ApproveController extends Controller
             $trans = Yii::$app->db->beginTransaction();
             try
             {
-                //查找已经存在的
-                $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                    ->andWhere(['or', ['result' => 1, 'type' => MediaApprove::TYPE_INTODB_APPROVE], ['status' => 0]])->asArray()->all();
-                $result = ArrayHelper::index($result, 'media_id');
-                // 申请说明
-                $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
-                // 过滤已存在的
-                if(!in_array($media_id, array_keys($result))){
-                    MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_INTODB_APPROVE);
-                // 如果状态是【待审核】才更新
-                }else if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
-                    $model = MediaApprove::findOne($result[$media_id]['id']);
-                    $model->type = MediaApprove::TYPE_INTODB_APPROVE;
-                    $model->content = $content;
-                    $model->save();
+                $mediaModel = Media::findOne($media_id);
+                if($mediaModel->status == Media::STATUS_INSERTING_DB){
+                    // 申请入库前先删除已经存在未处理的申请
+                    MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $media_id, 'status' => 0]);
+                    //查找已经存在的
+                    $result = MediaApprove::find()->where(['media_id' => $mediaIds])->andWhere(['result' => 1])
+                        ->andWhere(['type' => MediaApprove::TYPE_INTODB_APPROVE])
+                        ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->asArray()->all();
+                    $result = ArrayHelper::index($result, 'media_id');
+                    // 申请说明
+                    $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
+                    // 过滤已存在的
+                    if(!in_array($media_id, array_keys($result))){
+                        MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_INTODB_APPROVE);
+                    }
+                    $trans->commit();  //提交事务
                 }
-
-                $trans->commit();  //提交事务
+                
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
                 
             } catch (Exception $ex) {
@@ -128,24 +128,24 @@ class ApproveController extends Controller
             $trans = Yii::$app->db->beginTransaction();
             try
             {
-                //查找已经存在的
-                $result = MediaApprove::find()->where(['media_id' => $mediaIds])
-                    ->andWhere(['or', ['result' => 1, 'type' => MediaApprove::TYPE_DELETE_APPROVE], ['status' => 0]])->asArray()->all();
-                $result = ArrayHelper::index($result, 'media_id');
-                // 申请说明
-                $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
-                // 过滤已存在的
-                if(!in_array($media_id, array_keys($result))){
-                    MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_DELETE_APPROVE);
-                // 如果状态是【待审核】才更新
-                }else if($result[$media_id]['status'] == MediaApprove::STATUS_APPROVEING){
-                    $model = MediaApprove::findOne($result[$media_id]['id']);
-                    $model->type = MediaApprove::TYPE_DELETE_APPROVE;
-                    $model->content = $content;
-                    $model->save();
-                }
+                $mediaModel = Media::findOne($media_id);
+                if($mediaModel->del_status == 0){
+                    // 申请删除前先删除已经存在未处理的申请
+                    MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $media_id, 'status' => 0]);
+                    //查找已经存在的
+                    $result = MediaApprove::find()->where(['media_id' => $mediaIds])->andWhere(['result' => 1])
+                        ->andWhere(['type' => MediaApprove::TYPE_DELETE_APPROVE])
+                        ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->asArray()->all();
+                    $result = ArrayHelper::index($result, 'media_id');
+                    // 申请说明
+                    $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
+                    // 过滤已存在的
+                    if(!in_array($media_id, array_keys($result))){
+                        MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_DELETE_APPROVE);
+                    }
 
-                $trans->commit();  //提交事务
+                    $trans->commit();  //提交事务
+                }
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
                 
             } catch (Exception $ex) {

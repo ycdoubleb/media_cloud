@@ -126,18 +126,23 @@ and open the template in the editor.
 /*******************************************************************************
  * 统计页面
  *******************************************************************************/
-/* 替换日期组件样式 */
-.user-statistics .kv-drp-dropdown .left-ind, .kv-drp-dropdown .right-ind {
-    top: 10px;
-}
-.user-statistics .statistics-form .kv-drp-dropdown .range-value {
-    padding-left: 34px;
-    padding-right: 34px;
-}
-
 .user-statistics .statistics-form {
     margin-bottom: 0px;
     border-bottom: transparent;
+}
+
+.user-statistics .statistics-form .all-time .control-label {
+    width: 63px;
+    color: #999999;
+    vertical-align: super;
+    text-align: center;
+}
+
+.user-statistics .statistics-form .all-time .control-input {
+    width: 100px;
+   
+    display: inline-block;
+    padding-left: 0px;
 }
 
 .user-statistics .statistics-form .all-datas {

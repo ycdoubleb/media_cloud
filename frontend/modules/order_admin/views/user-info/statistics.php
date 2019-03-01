@@ -32,20 +32,24 @@ ChartAsset::register($this);
         <div class="statistics-form mc-form">
             <form id="order-form" class="form-horizontal">
                 <!--时间段搜索-->
-                <div class="form-group field-order-confirm_at required">
-                    <label class="col-lg-2 col-md-2 control-label" style="color: #999999; padding-top: 10px; text-align: left;">时间段支出金额:</label>
-                    <div class="col-lg-4 col-md-4" style="padding-left: 0px;">
-                        <?= DateRangePicker::widget([
-                            'value' => $dateRange,
-                            'name' => 'dateRange',
-                            //'presetDropdown' => true,
-                            'hideInput' => true,
-                            'convertFormat' => true,
-                            'pluginOptions' => [
-                                'locale' => ['format' => 'Y-m-d'],
-                                'allowClear' => true,
-                            ],
-                            'pluginEvents' => ['change' => 'function() { submitForm(); }']
+                <div class="form-group field-order-confirm_at required all-time">
+                    <label class="control-label">时间:</label>
+                    <div class="control-input years-input">
+                        <?= Select2::widget([
+                            'name' => 'allYear',
+                            'value' => $allYear,
+                            'data' => $years,
+                            'hideSearch' => true,
+                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                        ]);?>
+                    </div>
+                    <div class="control-input months-input">
+                        <?= Select2::widget([
+                            'name' => 'allMonth',
+                            'value' => $allMonth,
+                            'data' => $months,
+                            'hideSearch' => true,
+                            'pluginEvents' => ['change' => 'function(){ submitForm()}']
                         ]);?>
                     </div>
                 </div>

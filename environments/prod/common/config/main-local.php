@@ -24,7 +24,7 @@ return [
             'port' => 6379,
             'database' => 8, //'unixSocket' => '/var/run/redis/redis.sock',	
             //生产机		
-            //'password' => 'eecn.cn',
+            'password' => 'eecn.cn',
             //测试机 没密码
         ],
         'mailer' => [

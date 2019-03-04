@@ -9,6 +9,7 @@ use common\models\order\OrderAction;
 use common\models\order\OrderGoods;
 use common\models\order\PlayApprove;
 use common\models\order\searchs\CartSearch;
+use common\models\UserProfile;
 use frontend\modules\order_admin\utils\ExportUtils;
 use Yii;
 use yii\filters\AccessControl;
@@ -180,35 +181,40 @@ class CartController extends Controller
         $model->order_amount = $total_price;    //应付价格
         $model->created_by = Yii::$app->user->id; //创建用户
         
-        // 保存订单
-        if($model->load(Yii::$app->request->post()) && $model->save()){
-            try {
-                // 下单成功后在购物车里删除它
-                $carts = Cart::findAll(['is_selected' => 1]);
-                foreach ($carts as $cart){
-                    $cart->is_del = 1;
-                    $cart->save();
+        $userProfile = UserProfile::findOne(['user_id' => Yii::$app->user->id]); // 当前用户附加属性
+        if($userProfile->is_certificate == 0){
+            // 保存订单
+            if($model->load(Yii::$app->request->post()) && $model->save()){
+                try {
+                    // 下单成功后在购物车里删除它
+                    $carts = Cart::findAll(['is_selected' => 1]);
+                    foreach ($carts as $cart){
+                        $cart->is_del = 1;
+                        $cart->save();
+                    }
+                    // 保存订单操作记录
+                    $order = Order::findOne(['order_sn' => $order_sn]);
+                    OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status, Yii::$app->user->id);
+                    // 保存订单素材表
+                    $data = [];
+                    foreach ($dataProvider->models as $value) {
+                        $data[] = [
+                            $order->id, $order_sn, $value['media_id'], $value['price'],
+                            $value['price'], Yii::$app->user->id, time(), time()
+                        ];
+                    }
+                    Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
+                        ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
+                    // 跳转到下单成功页
+                    return $this->redirect(['place-order',
+                        'id' => $order->id,
+                    ]);
+                } catch (Exception $ex) {
+                    Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
                 }
-                // 保存订单操作记录
-                $order = Order::findOne(['order_sn' => $order_sn]);
-                OrderAction::savaOrderAction($order->id, '提交订单', '提交订单', $order->order_status, $order->play_status, Yii::$app->user->id);
-                // 保存订单素材表
-                $data = [];
-                foreach ($dataProvider->models as $value) {
-                    $data[] = [
-                        $order->id, $order_sn, $value['media_id'], $value['price'],
-                        $value['price'], Yii::$app->user->id, time(), time()
-                    ];
-                }
-                Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
-                    ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
-                // 跳转到下单成功页
-                return $this->redirect(['place-order',
-                    'id' => $order->id,
-                ]);
-            } catch (Exception $ex) {
-                Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
             }
+        } else {
+            return $this->render('error');
         }
         
         return $this->render('checking-order', [

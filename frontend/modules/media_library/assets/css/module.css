@@ -149,7 +149,7 @@ and open the template in the editor.
 .mc-panel .chart-panel .tuip {
     display: inline-block;
     width: 100%;
-    height: 100%;
+    height: 17px;
     margin-top: 10px;
     font-size: 12px;
     color: #aaa;

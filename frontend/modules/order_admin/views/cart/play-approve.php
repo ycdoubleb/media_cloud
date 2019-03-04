@@ -40,7 +40,6 @@ ModuleAssets::register($this);
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <p class="alert-link">线下支付审批</p>
-                <p>说明：本审批xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx!</p>
                 <p></p>
                 <p>流程：1、下载线下支付审批申请模板<?= Html::a('（下载）', ['download', 'id' => $model->order_id], 
                         ['class' => 'alert-link']) ?>，

@@ -80,7 +80,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'status', [
                         'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
                     ])->widget(Select2::class, [
-                        'data' => MediaApprove::$statusMap,
+                        'data' => array_diff(MediaApprove::$statusMap, [MediaApprove::STATUS_CANCELED => '已取消']),
                         'hideSearch' => true,
                         'options' => ['placeholder' => Yii::t('app', '{Auditing}{Status}', [
                             'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')

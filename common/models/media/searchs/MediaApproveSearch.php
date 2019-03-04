@@ -86,6 +86,7 @@ class MediaApproveSearch extends MediaApprove
             'Approve.handled_by' => $this->handled_by,
             'Approve.created_by' => $this->created_by,
         ]);
+        $query->andFilterWhere(['!=', 'Approve.status', self::STATUS_CANCELED]);
        
         // 复制对象
         $queryCopy = clone $query;
@@ -93,7 +94,6 @@ class MediaApproveSearch extends MediaApprove
         $totalResults = $queryCopy->select(['COUNT(Approve.id) AS totalCount'])
             ->asArray()->one();
         
-        // 按审核id分组
         $query->select(['Approve.*']);
         
         // 显示数量

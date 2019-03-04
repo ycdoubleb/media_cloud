@@ -59,8 +59,11 @@ class FavoritesSearch extends Favorites
             'MediaType.name AS type_name', 'Media.price', 'Media.duration', 'Media.size', 'Favorites.created_at']);
         // add conditions that should always apply here
          
-        //过滤条件
-        $query->andFilterWhere(['Favorites.is_del' => 0, 'Favorites.created_by' => \Yii::$app->user->id]);
+        // 过滤条件
+        $query->andFilterWhere([
+            'Favorites.is_del' => 0, 'Favorites.created_by' => \Yii::$app->user->id,
+            'Media.del_status' => 0, 'Media.status' => Media::STATUS_PUBLISHED
+        ]);
         // 查询媒体
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Favorites.goods_id');
         // 查询媒体类型

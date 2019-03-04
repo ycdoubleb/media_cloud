@@ -468,7 +468,7 @@ class SiteController extends Controller {
                 ->from(['Order' => Order::tableName()])
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], '(OrderGoods.order_id = Order.id AND OrderGoods.is_del = 0)')
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id')
-                ->andFilterWhere([ 'Media.del_status' => 0, 'Media.status' => Media::STATUS_PUBLISHED, 'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);
+                ->andFilterWhere(['order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);
         
         // 素材类型统计
         $statisticsQuery = (new Query())

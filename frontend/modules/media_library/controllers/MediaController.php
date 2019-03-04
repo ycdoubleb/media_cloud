@@ -14,6 +14,7 @@ use common\models\order\Favorites;
 use common\models\order\Order;
 use common\models\order\OrderAction;
 use common\models\order\OrderGoods;
+use common\models\UserProfile;
 use common\utils\DateUtil;
 use frontend\modules\media_library\searchs\MediaSearch;
 use Yii;
@@ -230,31 +231,36 @@ class MediaController extends Controller
         $model->order_amount = $total_price;        //应付价格
         $model->created_by = Yii::$app->user->id;   //创建用户
 
-        // 保存订单
-        if($model->load(Yii::$app->request->post()) && $model->save()){
-            try {
-                // 保存订单操作记录
-                OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
-                
-                // 保存订单素材表
-                $data = [];
-                foreach ($medias as $value) {
-                    $data[] = [
-                        $model->id, $order_sn, $value->id, $value->price,
-                        $value->price, Yii::$app->user->id, time(), time()
-                    ];
-                }
-                Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
-                    ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
-                // 跳转到下单成功页
-                return $this->redirect(['/order_admin/cart/place-order',
-                    'id' => $model->id,
-                ]);
-            } catch (Exception $ex) {
-                Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
-            }
-        }
+        $userProfile = UserProfile::findOne(['user_id' => Yii::$app->user->id]); // 当前用户附加属性
+        if($userProfile->is_certificate == 0){
+            // 保存订单
+            if($model->load(Yii::$app->request->post()) && $model->save()){
+                try {
+                    // 保存订单操作记录
+                    OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
 
+                    // 保存订单素材表
+                    $data = [];
+                    foreach ($medias as $value) {
+                        $data[] = [
+                            $model->id, $order_sn, $value->id, $value->price,
+                            $value->price, Yii::$app->user->id, time(), time()
+                        ];
+                    }
+                    Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
+                        ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
+                    // 跳转到下单成功页
+                    return $this->redirect(['/order_admin/cart/place-order',
+                        'id' => $model->id,
+                    ]);
+                } catch (Exception $ex) {
+                    Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
+                }
+            }
+        } else {
+            return $this->render('error');
+        }
+        
         return $this->render('checking-order', [
             'model' => $model,    // 订单模型
             'dataProvider' =>  new ArrayDataProvider([

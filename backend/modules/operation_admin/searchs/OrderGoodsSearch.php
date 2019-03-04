@@ -4,6 +4,7 @@ namespace backend\modules\operation_admin\searchs;
 
 use common\models\AdminUser;
 use common\models\media\Media;
+use common\models\order\Order;
 use common\models\order\OrderGoods;
 use common\models\User;
 use yii\base\Model;
@@ -78,6 +79,7 @@ class OrderGoodsSearch extends OrderGoods
         
         // 关联素材表
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id');
+        $query->leftJoin(['Order' => Order::tableName()], 'Order.id = Goods.order_id');
         // 关联用户表
         $query->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.created_by');
         $query->leftJoin(['User' => User::tableName()], 'User.id = Goods.created_by');
@@ -91,6 +93,8 @@ class OrderGoodsSearch extends OrderGoods
             'Goods.created_by' => $this->created_by,
             'Goods.is_del' => 0,
         ]);
+        // 订单的状态要是大于【待确定】
+        $query->andFilterWhere(['>=', 'Order.order_status', Order::ORDER_STATUS_TO_BE_CONFIRMED,]);
         
         // 模糊查询
         $query->andFilterWhere(['like', 'Media.name', $this->meida_name]);

@@ -2,7 +2,7 @@
 return [
     'timeZone' => 'PRC',
     'language' => 'zh-CN',
-    'name' => '媒体云服务平台',
+    'name' => '媒体交易平台',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',

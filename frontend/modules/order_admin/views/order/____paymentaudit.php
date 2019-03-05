@@ -34,7 +34,7 @@ ModuleAssets::register($this);
                 'format' => 'raw',
                 'value' => function($data){
                     return '<img src="'.Aliyun::absolutePath(!empty($data['certificate_url']) ? 
-                                $data['certificate_url'] : 'static/imgs/notfound.png').'" style="height: 48px"/>';
+                                $data['certificate_url'] : 'static/imgs/notfound.png').'" style="width:100px; height: 48px"/>';
                 },
                 'headerOptions' => [
                     'style' => 'width: 110px',

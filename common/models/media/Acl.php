@@ -254,19 +254,21 @@ class Acl extends ActiveRecord {
             ->leftJoin(['VideoUrl' => VideoUrl::tableName()], '(Acl.media_id = VideoUrl.media_id AND Acl.level = VideoUrl.level AND VideoUrl.is_del = 0)')
             ->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id')
             ->where(['Media.id' => $media_id])
-            ->andFilterWhere(['level' => $level])
+            ->andFilterWhere(['VideoUrl.level' => $level])
             ->asArray()->all();
 
+        $acl_sn = [];
         foreach ($acls as &$value) {
             $acl_sn[] = $value['sn'];
             $value = [$value['id'], $value['url']];
         }
 
-        $sql = MysqlUtil::createBatchInsertDuplicateUpdateSQL(self::tableName(), ['id', 'url'], $acls, ['url']);
-        //执行更新
-        Yii::$app->db->createCommand($sql)->execute();
-        //清除访问列表缓存
         if (count($acl_sn) > 0) {
+            // 创建批量插入(数据重复时更新指定字段)
+            $sql = MysqlUtil::createBatchInsertDuplicateUpdateSQL(self::tableName(), ['id', 'url'], $acls, ['url']);
+            //执行更新
+            Yii::$app->db->createCommand($sql)->execute();
+            //清除访问列表缓存
             self::clearCache($acl_sn);
         }
     }

@@ -173,7 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
                         ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']);
                         
-                        if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                        if($model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED){
                             echo ' '. Html::a(Yii::t('app', '{Anew}{Transcoding}', [
                                 'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
                             ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
@@ -212,6 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'label' => Yii::t('app', 'Size'),
+                            'format' => 'raw',
                             'value' => function($model){
                                 return Yii::$app->formatter->asShortSize($model->size);
                             },

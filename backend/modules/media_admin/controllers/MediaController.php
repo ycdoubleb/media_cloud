@@ -4,6 +4,7 @@ namespace backend\modules\media_admin\controllers;
 
 use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
+use common\models\media\Acl;
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAction;
@@ -373,7 +374,7 @@ class MediaController extends GridViewChangeSelfController
                     // 设置素材类型是视频并且是自动转码时，才调用转码需求
                     if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                         // 如果视频转码需求是自动则转码
-                        if($model->detail->mts_need){
+                        if($model->detail->mts_need && $model->status == Media::STATUS_PUBLISHED){
                             MediaAliyunAction::addVideoTranscode($model->id, false, '/media/tran-complete');   // 转码
                         }
                     }
@@ -381,6 +382,8 @@ class MediaController extends GridViewChangeSelfController
                     if(!empty(array_filter($dataProvider))){
                         MediaAction::savaMediaAction($model->id, $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                     }
+                    // 更新Acl
+                    Acl::updateAcl($model->id, 0);
                 }
                 
                 if($is_submit){
@@ -398,7 +401,6 @@ class MediaController extends GridViewChangeSelfController
         
         return $this->renderAjax('____anew_upload', [
             'model' => $model,
-//            'mediaFiles' => $model->uploadfile->toArray(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id),
         ]);
     }
@@ -412,13 +414,12 @@ class MediaController extends GridViewChangeSelfController
     public function actionAnewTranscoding($id)
     {
         $model = $this->findModel($id);
-        $post = Yii::$app->request->post();
         
-        if (Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost && $model->status == Media::STATUS_PUBLISHED) {
             try
             {
                 // 水印id
-                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids', []));
+                $wate_ids = implode(',', ArrayHelper::getValue(Yii::$app->request->post(), 'Media.mts_watermark_ids', []));
                 // 保存素材详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码
@@ -455,11 +456,13 @@ class MediaController extends GridViewChangeSelfController
      */
     public function actionTranComplete(){
         $post = Yii::$app->getRequest()->post();
-        
+
         if($post['code'] == 0){
             $model = $this->findModel($post['data']['media_id']);
             $model->status = Media::STATUS_PUBLISHED;
-            $model->save(true, ['status']);
+            if($model->save(true, ['status'])){
+                Acl::updateAcl($model->id);  // 更新Acl
+            }
         }
     }
     

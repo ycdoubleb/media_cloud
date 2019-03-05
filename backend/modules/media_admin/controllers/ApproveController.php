@@ -237,7 +237,6 @@ class ApproveController extends Controller
                                     // 如果视频转码需求是自动则转码
                                     if($mediaModel->detail->mts_need){
                                         MediaAliyunAction::addVideoTranscode($mediaModel->id, false, '/media/tran-complete');   // 转码
-                                        
                                     }else{
                                         $mediaModel->status = Media::STATUS_PUBLISHED;
                                     }

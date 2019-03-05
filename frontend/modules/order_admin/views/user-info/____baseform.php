@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="user-form mc-form">
-
+    
     <?php $form = ActiveForm::begin([
         'options' => [
             'class' => 'form-horizontal',
@@ -26,9 +26,9 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
     
-    <?= $form->field($userModel, 'username')->textInput(['maxlength' => true, 'placeholder' => '手机号', 'disabled' => true]) ?>
+    <?= $form->field($userModel, 'username')->textInput(['maxlength' => true, 'placeholder' => '账号', 'disabled' => true]) ?>
     
-    <?= $form->field($userModel, 'nickname')->textInput(['maxlength' => true, 'placeholder' => '真实名称']) ?>
+    <?= $form->field($userModel, 'nickname')->textInput(['maxlength' => true, 'placeholder' => '真实名称', 'disabled' => true]) ?>
                 
     <?= $form->field($userModel, 'avatar')->widget(ImagePicker::class); ?>
     

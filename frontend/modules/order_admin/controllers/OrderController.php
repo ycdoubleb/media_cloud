@@ -116,11 +116,16 @@ class OrderController extends Controller
         // 使用主布局main的布局样式
         $this->layout = '@app/views/layouts/main';
         
+        $model = Order::findOne(['order_sn' => $order_sn]);
         $searchModel = new OrderGoodsSearch();
         $dataProvider = $searchModel->searchMedia(null, $order_sn);
         
+        if(empty($model)){
+            throw new NotFoundHttpException('未找到该订单，请确认订单编号是否正确！');
+        }
+        
         return $this->render('simple-view', [
-            'model' => Order::findOne(['order_sn' => $order_sn]),
+            'model' => $model,
             'dataProvider' => $dataProvider,
             'filters' => Yii::$app->request->queryParams,
         ]);

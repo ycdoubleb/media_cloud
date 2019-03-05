@@ -63,6 +63,7 @@ class UserInfoController extends Controller
         } else {
             // 附加数据
             if ($peofileModel->load(Yii::$app->request->post())) {
+                $peofileModel->is_certificate = 0;
                 $peofileModel->save();
             }
         }

@@ -33,11 +33,33 @@ class MysqlUtil {
         $table = Yii::$app->db->quoteSql($table);
         $insertColumns = implode(',', $insertColumns);
         //插入数据
+//        $values = [];
+//        foreach($rows as $row){
+//            $values []= "(".implode(',', $row).")";
+//        }
+//        $values = implode(',', $values);
+        
+        $schema = Yii::$app->db->getSchema();
         $values = [];
-        foreach($rows as $row){
-            $values []= "(".implode(',', $row).")";
+        foreach ($rows as $row) {
+            $vs = [];
+            foreach ($row as $i => $value) {
+                if (is_string($value)) {
+                    $value = $schema->quoteValue($value);
+                } elseif (is_float($value)) {
+                    // ensure type cast always has . as decimal separator in all locales
+                    $value = StringHelper::floatToString($value);
+                } elseif ($value === false) {
+                    $value = 0;
+                } elseif ($value === null) {
+                    $value = 'NULL';
+                }
+                $vs[] = $value;
+            }
+            $values[] = '(' . implode(', ', $vs) . ')';
         }
         $values = implode(',', $values);
+        
         
         //更新的字段
         $updateValues = [];

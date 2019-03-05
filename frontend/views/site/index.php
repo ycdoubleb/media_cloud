@@ -6,7 +6,7 @@ use yii\web\View;
 
 /* @var $this View */
 
-$this->title = '素材云服务平台';
+$this->title = Yii::$app->name;
 
 SiteAssets::register($this);
 ChartAsset::register($this);

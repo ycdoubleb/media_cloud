@@ -197,7 +197,7 @@ class Acl extends ActiveRecord {
 
     /**
      * 保存访问路径
-     * @param int $order_id
+     * @param int $order_id 订单ID
      * @throws Exception
      */
     public static function saveAcl($order_id) {
@@ -212,17 +212,13 @@ class Acl extends ActiveRecord {
                 $query->select([
                     'Goods.goods_id AS media_id', 'Media.name', 'Goods.order_id', 'Goods.order_sn',
                     'Goods.created_by as user_id', "IF(VideoUrl.level IS NUll, 0, VideoUrl.level) AS level",
-                    "IF(MediaType.sign = '" . MediaType::SIGN_VIDEO . "' and MediaDetail.mts_need = 1, VideoUrl.url, Media.url) as url",
+                    "IF(VideoUrl.url IS NULL or VideoUrl.level = 0, Media.url, VideoUrl.url) as url"
                 ]);
 
                 // 关联媒体表
                 $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id');
-                // 关联媒体详情表
-                $query->leftJoin(['MediaDetail' => MediaDetail::tableName()], 'MediaDetail.media_id = Media.id');
-                // 关联媒体类型表
-                $query->leftJoin(['MediaType' => MediaType::tableName()], 'MediaType.id = Media.type_id');
                 // 关联视频地址表
-                $query->leftJoin(['VideoUrl' => VideoUrl::tableName()], 'VideoUrl.media_id = Media.id');
+                $query->leftJoin(['VideoUrl' => VideoUrl::tableName()], '(VideoUrl.media_id = Media.id AND VideoUrl.is_del = 0)');
 
                 // 条件查询
                 $query->where(['Goods.order_id' => $order_id, 'Goods.is_del' => 0]);
@@ -243,6 +239,35 @@ class Acl extends ActiveRecord {
             }
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
+        }
+    }
+    
+    /**
+     * 更新访问列表路径
+     * @param type $media_id    媒体ID
+     * @param type $level       媒体等级
+     */
+    public static function updateAcl($media_id, $level = []) {
+        $acls = self::find()->select([
+                'Acl.id', 'Acl.sn', "IF(VideoUrl.url IS NULL or VideoUrl.level = 0, Media.url, VideoUrl.url) as url"
+            ])->from(['Acl' => Acl::tableName()])
+            ->leftJoin(['VideoUrl' => VideoUrl::tableName()], '(Acl.media_id = VideoUrl.media_id AND Acl.level = VideoUrl.level AND VideoUrl.is_del = 0)')
+            ->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id')
+            ->where(['Media.id' => $media_id])
+            ->andFilterWhere(['level' => $level])
+            ->asArray()->all();
+
+        foreach ($acls as &$value) {
+            $acl_sn[] = $value['sn'];
+            $value = [$value['id'], $value['url']];
+        }
+
+        $sql = MysqlUtil::createBatchInsertDuplicateUpdateSQL(self::tableName(), ['id', 'url'], $acls, ['url']);
+        //执行更新
+        Yii::$app->db->createCommand($sql)->execute();
+        //清除访问列表缓存
+        if (count($acl_sn) > 0) {
+            self::clearCache($acl_sn);
         }
     }
 

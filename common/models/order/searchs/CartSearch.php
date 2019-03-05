@@ -64,8 +64,11 @@ class CartSearch extends Cart
         if($is_selected){
             $query->andFilterWhere(['Cart.is_selected' => 1]);
         }
-        //过滤条件
-        $query->andFilterWhere(['Cart.is_del' => 0, 'Cart.created_by' => \Yii::$app->user->id]);
+        // 过滤条件
+        $query->andFilterWhere([
+            'Cart.is_del' => 0, 'Cart.created_by' => \Yii::$app->user->id,
+            'Media.del_status' => 0, 'Media.status' => Media::STATUS_PUBLISHED
+        ]);
         // 查询媒体
         $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Cart.goods_id');
         // 查询媒体类型

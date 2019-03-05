@@ -10,6 +10,7 @@ use common\models\media\VideoUrl;
 use common\models\Watermark;
 use common\modules\webuploader\models\Uploadfile;
 use common\utils\EefileUtils;
+use linslin\yii2\curl\Curl;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -37,9 +38,12 @@ class MediaAliyunAction {
      * 
      * @param string|Media $media       媒体资源(媒体ID或模型)
      * @param bool $force               是否强制添加（【正在转码中】和【已完成转码】的资源在没有设置force情况不再触发转码操作）
+     * @param string $complete_url      完成后调用联接
      * @author wskeee
      */
-    public static function addVideoTranscode($media, $force = false) {
+    public static function addVideoTranscode($media, $force = false , $complete_url = "") {
+        $complete_url = $complete_url=="" ? "" : Url::to($complete_url, true);
+        
         if (!($media instanceof Media)) {
             $media = Media::findOne(['id' => $media, 'del_status' => 0]);
         }
@@ -50,7 +54,7 @@ class MediaAliyunAction {
             return; //非视频其它素材暂不支付转码
         }
         if ($media->is_link) {
-            self::addLinkTrancode($media);
+            self::addLinkTrancode($media, $force, $complete_url);
             return; //外联视频无法转码
         }
  
@@ -68,6 +72,7 @@ class MediaAliyunAction {
                 'redirect_url'   => Url::to('/external/aliyun-mts/task-complete', true),        //重定向地址
                 'media_id'       => $media->id,
                 'created_by'     => $source_file->created_by,
+                'complete_url'   => $complete_url,
             ];
             
             //获取已完成转码文件等级
@@ -306,23 +311,41 @@ class MediaAliyunAction {
                     //插入 VideoUrl
                     Yii::$app->db->createCommand()->batchInsert(VideoUrl::tableName(), $mediaTranscodeRowKeys, $mediaTranscodeRows)->execute();
                     //更改 Media 转码状态 成功, Media 时长 ，【注意】并且改为发布状态
-                    Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_PUBLISHED, 'duration' => $format->Duration], ['id' => $media_id])->execute();
+                    Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'duration' => $format->Duration], ['id' => $media_id])->execute();
                     if ($force) {
                         //如果为强制，即删除所有服务记录（前面未删除）
                         AliyunMtsService::updateAll(['is_del' => 1], ['media_id' => $media_id]);
                     }
                     $tran->commit();
+                    //通过转码完成
+                    self::callCompleteURL($userData->complete_url, ['code' => '0', 'data' => $media_id, 'msg' => '转码服务已完成']);
                     return ['success' => true, 'msg' => '转码服务已完成'];
                 } catch (Exception $ex) {
                     $tran->rollBack();
                     //更改 Media 转码状态为 失败
                     Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_FAIL], ['id' => $media_id])->execute();
                     Yii::error($ex->getMessage(), __FUNCTION__);
+                    //通过转码完成
+                    self::callCompleteURL($userData->complete_url, ['code' => '10000', 'data' => $ex->getMessage(), 'msg' => '转码服务失败']);
+                    
                     return ['success' => false, 'msg' => '转码服务失败：' . $ex->getMessage()];
                 }
             }
         } else {
             return ['success' => true, 'msg' => '转码进行中...'];
+        }
+    }
+    
+    /**
+     * 调用完成回调
+     * @param string $url
+     * @param array $params
+     */
+    private static function callCompleteURL($url, $params) {
+        if (!empty($url)) {
+            $curl = new Curl();
+            $curl->setRawPostData($params);
+            $result = $curl->post($url, true);
         }
     }
 
@@ -333,8 +356,10 @@ class MediaAliyunAction {
      * 3、添加新的关联
      * 
      * @param string|Media $media
+     * @param bool $force               是否强制添加（【正在转码中】和【已完成转码】的资源在没有设置force情况不再触发转码操作）
+     * @param string $complete_url      完成后调用联接
      */
-    private static function addLinkTrancode($media) {
+    private static function addLinkTrancode($media, $force = false, $complete_url = "") {
         if (!($media instanceof Media)) {
             $media = Media::findOne(['id' => $media, 'del_status' => 0]);
         }
@@ -345,7 +370,7 @@ class MediaAliyunAction {
             return; //非外联视频请使用AddTrancode
         }
         
-        if($media->mts_status != Media::MTS_STATUS_YES){
+        if($force || $media->mts_status != Media::MTS_STATUS_YES){
             $tran = \Yii::$app->db->beginTransaction();
             //添加源视频格式
             self::addLinkMediaSource($media);
@@ -382,14 +407,18 @@ class MediaAliyunAction {
                 //插入新的VideoUrl关联
                 Yii::$app->db->createCommand()->batchInsert(VideoUrl::tableName(), $rowKeys, $rows)->execute();
                 //更改 Media 转码状态
-                Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES, 'status' => Media::STATUS_PUBLISHED], ['id' => $media->id])->execute();
+                Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES,], ['id' => $media->id])->execute();
                 $tran->commit();
+                //通过转码完成
+                self::callCompleteURL($complete_url, ['code' => '0', 'data' => $media->id, 'msg' => '转码服务已完成']);
             } catch (\Exception $ex) {
                 $tran->rollBack();
                 //更改 Media 转码状态
                 Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_FAIL], ['id' => $media->id])->execute();
                 Yii::error("外链转码失败：{$ex->getMessage()}", __FUNCTION__);
                 Yii::$app->session->setFlash('error',"外链转码失败：{$ex->getMessage()}");
+                //通过转码完成
+                self::callCompleteURL($complete_url, ['code' => '10000', 'data' => $ex->getMessage(), 'msg' => '转码服务失败']);
             }
         }
     }

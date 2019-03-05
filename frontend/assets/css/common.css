@@ -147,7 +147,7 @@ a.desc:after {
 .navbar-brand {
     position: relative;
     height: 60px;
-    margin-right: 30px;
+    /*margin-right: 30px;*/
     padding-top: 8px;
 }
 

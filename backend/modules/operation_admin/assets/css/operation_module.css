@@ -29,7 +29,8 @@ and open the template in the editor.
 .order-search .panel,
 .play-approve-search .panel,
 .order-goods-search .panel,
-.acl-search .panel {
+.acl-search .panel,
+.user-search .panel {
     padding: 15px 0px; 
     margin-bottom: 30px; 
     border: 1px solid #e4e4e4; 

@@ -68,13 +68,23 @@ $this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
 </div>
 
 <?php
+$isTagRequired = isset($isTagRequired) && $isTagRequired ? 1 : 0;
 $js = <<<JS
    
     var ids = $ids;
     var isPageLoading = false;
+    var isTagRequired = $isTagRequired;
     
+    // 初始化标签组件
     $("input[data-role=tagsinput]").tagsinput();
     
+    // 禁用回车提交表单
+    $("#media-form").keypress(function(e) {
+        if (e.which == 13) {
+          return false;
+        }
+    });
+        
     // 提交表单    
     $("#submitsave").click(function(){
         submitValidate();
@@ -87,11 +97,15 @@ $js = <<<JS
                 $.post('/media_admin/media/edit-attribute?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-                        // 获取素材数据 
-                        $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
-                            $('#media_list').html(response);
-                            $('.myModal').modal('hide');
-                        });
+                        $('.myModal').modal('hide');
+                        if(!isTagRequired){
+                            // 获取素材数据 
+                            $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
+                                $('#media_list').html(response);
+                            });
+                        }else{
+                            window.location.reload();
+                        }
                         $.notify({
                             message: response['msg'],    //提示消息
                         },{

@@ -4,9 +4,9 @@ namespace backend\modules\media_admin\controllers;
 
 use common\components\aliyuncs\MediaAliyunAction;
 use common\models\api\ApiResponse;
+use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAction;
-use common\models\media\MediaApprove;
 use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
@@ -170,7 +170,7 @@ class MediaController extends GridViewChangeSelfController
                     // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
                     // 保存素材审核
-                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
+//                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }
@@ -237,9 +237,9 @@ class MediaController extends GridViewChangeSelfController
 
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
-                    '存储目录' => isset($newAttributes['dir_id']) && $newAttributes['dir_id'] != $oldAttributes['dir_id'] ? $model->dir->getFullPath() : null,
-                    '素材名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
-                    '价格' => isset($newAttributes['price']) && $newAttributes['price'] != $oldAttributes['price'] ? Yii::$app->formatter->asCurrency($model->price) : null,
+                    '存储目录' => isset($newAttributes['dir_id']) ? Dir::getDirById($oldAttributes['dir_id'])->getFullPath() : null,
+                    '素材名称' => isset($newAttributes['name']) ? $oldAttributes['name']: null,
+                    '价格' => isset($newAttributes['price']) ? Yii::$app->formatter->asCurrency($oldAttributes['price']) : null,
                 ];
                 
                 if($model->validate() && $model->save()){
@@ -305,12 +305,25 @@ class MediaController extends GridViewChangeSelfController
                 $model->tags = ArrayHelper::getValue($post, 'Media.tags');
                 // 保存标签
                 $tags = Tags::saveTags($model->tags);
+                //获取所有新属性值
+                $newAttributes = $model->getDirtyAttributes();
+                //获取所有旧属性值
+                $oldAttributes = $model->getOldAttributes();  
+                
+                // 若发生修改则返回修改后的属性
+                $dataProvider = [
+                    '素材标签' => isset($newAttributes['tags']) ? $oldAttributes['tags'] : null,
+                ];
                 
                 if($model->save()){
                     // 保存属性关联
                     MediaAttValueRef::saveMediaAttValueRef($model->id, $media_attrs);
                     // 保存标签关联
                     MediaTagRef::saveMediaTagRef($model->id, $tags);
+                    // 保存操作记录
+                    if(!empty(array_filter($dataProvider))){
+                        MediaAction::savaMediaAction($model->id,  $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
+                    }
                 }
                 
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
@@ -352,11 +365,18 @@ class MediaController extends GridViewChangeSelfController
 
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
-                    '素材名称' => isset($newAttributes['name']) && $newAttributes['name'] != $oldAttributes['name'] ? $model->name : null,
+                    '素材名称' => isset($newAttributes['name']) ? $oldAttributes['name'] : null,
                 ];
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
+                    // 设置素材类型是视频并且是自动转码时，才调用转码需求
+                    if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                        // 如果视频转码需求是自动则转码
+                        if($model->detail->mts_need){
+                            MediaAliyunAction::addVideoTranscode($model->id, false, '/media/tran-complete');   // 转码
+                        }
+                    }
                     // 保存操作记录
                     if(!empty(array_filter($dataProvider))){
                         MediaAction::savaMediaAction($model->id, $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
@@ -402,7 +422,7 @@ class MediaController extends GridViewChangeSelfController
                 // 保存素材详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码
-                MediaAliyunAction::addVideoTranscode($model->id, true);   
+                MediaAliyunAction::addVideoTranscode($model->id, true, '/media/tran-complete');   
                 // 保存操作记录
                 MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 
@@ -420,6 +440,27 @@ class MediaController extends GridViewChangeSelfController
             'wateFiles' => Watermark::getEnabledWatermarks(),
             'wateSelected' => explode(',', $model->detail->mts_watermark_ids)
         ]);
+    }
+    
+    public $enableCsrfValidation = false;
+    
+    /**
+     * 转码完成
+     * @param type $id
+     * @return $post [
+        * code : 0 成功，其它失败
+        * data : 成功时为media_id，失败时为失败详情
+        * msg  : 提示信息
+     * ]
+     */
+    public function actionTranComplete(){
+        $post = Yii::$app->getRequest()->post();
+        
+        if($post['code'] == 0){
+            $model = $this->findModel($post['data']['media_id']);
+            $model->status = Media::STATUS_PUBLISHED;
+            $model->save(true, ['status']);
+        }
     }
     
     /**

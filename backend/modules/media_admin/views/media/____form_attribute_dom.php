@@ -74,15 +74,28 @@ TagsInputAsset::register($this);
 
 <!--标签-->
 <div class="form-group field-media-tag_ids <?= isset($isTagRequired) && $isTagRequired ? 'required' : '' ?>">
-    <?= Html::label(
-        (isset($isTagRequired) && $isTagRequired ? '<span class="form-must text-danger">*</span>' : null) . Yii::t('app', 'Tag') . '：', 
-        'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    <?php 
+        $for = 'field-media-tag_id';
+        $options = ['class' => 'col-lg-1 col-md-1 control-label form-label'];
+        
+        if(isset($isTagRequired) && $isTagRequired){
+            echo Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Tag}：', [
+                'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
+            ]), $for, $options);
+        }else{
+            echo Html::label(Yii::t('app', '{Public}{Tag}：', [
+                'Public' => Yii::t('app', 'Public'), 'Tag' => Yii::t('app', 'Tag')
+            ]), $for, $options);
+        }
+        
+    ?>
     
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? $tagsSelected : null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
-                'onchange' => 'validateTags($(this))'
+                'onchange' => 'validateTags($(this))', 
+                'placeholder' => isset($isTagRequired) && $isTagRequired ? null : '素材公共标签（可以不填）'
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>

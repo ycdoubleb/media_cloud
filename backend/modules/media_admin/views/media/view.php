@@ -178,6 +178,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
                             ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
                         }
+                        echo '<span class="text-default">（注意：上传时如果没有选择“自动转码”，重新上传文件后必须手动选择“重新转码”）</span>';
                     }
                 ?>
             </p>

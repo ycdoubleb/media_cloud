@@ -136,7 +136,7 @@ $js = <<<JS
             url = $(this).attr("href");
         if(val.length > 0){
             $(".myModal").html("");
-            $('.myModal').modal("show").load(url + "?media_id=" + val);
+            $('.myModal').modal("show").load(url + "?media_ids=" + val);
         }else{
             alert("请选择需要申请的素材");
         }

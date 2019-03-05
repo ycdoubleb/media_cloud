@@ -12,6 +12,7 @@ use common\models\media\searchs\MediaApproveSearch;
 use Yii;
 use yii\base\Exception;
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -63,48 +64,69 @@ class ApproveController extends Controller
      * @param string $media_id
      * @return mixed
      */
-    public function actionAddApply($media_id)
+    public function actionAddApply($media_ids)
     {
-        // 所有素材id
-        $mediaIds = explode(',', $media_id);
-        $post = Yii::$app->request->post();
-
         if (Yii::$app->request->isPost) {
             // 返回json格式
             \Yii::$app->response->format = 'json';
             
-            /** 开启事务 */
-            $trans = Yii::$app->db->beginTransaction();
             try
             {
-                $mediaModel = Media::findOne($media_id);
-                if($mediaModel->status == Media::STATUS_INSERTING_DB){
-                    // 申请入库前先删除已经存在未处理的申请
-                    MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $media_id, 'status' => 0]);
-                    //查找已经存在的
-                    $result = MediaApprove::find()->where(['media_id' => $mediaIds])->andWhere(['result' => 1])
-                        ->andWhere(['type' => MediaApprove::TYPE_INTODB_APPROVE])
-                        ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->asArray()->all();
-                    $result = ArrayHelper::index($result, 'media_id');
-                    // 申请说明
-                    $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
-                    // 过滤已存在的
-                    if(!in_array($media_id, array_keys($result))){
-                        MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_INTODB_APPROVE);
+                // 所有素材id
+                $mediaIds = explode(',', $media_ids);
+                // 申请说明
+                $content = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.content'); 
+                // 申请入库前先设置已经存在未处理的申请为作废
+                MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $mediaIds, 'status' => 0]);
+                // 查询所有提交上来的素材
+                $meidaResults = (new Query())->select(['id', 'name', 'status', 'tags'])
+                    ->from(['Media' => Media::tableName()])->where(['id' => $mediaIds])->all();
+                // 以素材id为索引
+                $meidaResults = ArrayHelper::index($meidaResults, 'id');
+                // 查找已经通过过的入库申请
+                $approveResults = (new Query())->from(['MediaApprove' => MediaApprove::tableName()])
+                    ->where(['media_id' => $mediaIds,'result' => 1,'type' => MediaApprove::TYPE_INTODB_APPROVE])
+                    ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->all();
+                // 获取已经通过过的入库申请的素材id
+                $approveResults = ArrayHelper::getColumn($approveResults, 'media_id');
+                // 返回数据      
+                $dataResults = [];
+                foreach ($mediaIds as $id) {
+                    if(isset($meidaResults[$id])){
+                        // 【标签】数量至少是5个才可以创建入库申请
+                        if(substr_count($meidaResults[$id]['tags'], ',') < 4){
+                            $dataResults[] = [
+                                'id' => $meidaResults[$id]['id'],
+                                'name' => $meidaResults[$id]['name'],
+                                'reason' => '标签数量不能少于5个'
+                            ];
+                            continue;
+                        }
+                        // 只有素材状态是为【待入库】才可以创建入库申请
+                        if($meidaResults[$id]['status'] == Media::STATUS_INSERTING_DB){
+                            // 过滤已存在的
+                            if(!in_array($id, $approveResults)){
+                                MediaApprove::savaMediaApprove($id, $content, MediaApprove::TYPE_INTODB_APPROVE);
+                            }
+                        }else{
+                            $dataResults[] = [
+                                'id' => $meidaResults[$id]['id'],
+                                'name' => $meidaResults[$id]['name'],
+                                'reason' => '素材已发布，无需重复申请入库'
+                            ];
+                        }
                     }
-                    $trans->commit();  //提交事务
                 }
                 
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $dataResults);
                 
             } catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
             
         return $this->renderAjax('____apply', [
-            'mediaIds' => json_encode($mediaIds)
+            'media_ids' => $media_ids
         ]);
     }
     
@@ -114,39 +136,52 @@ class ApproveController extends Controller
      * @param string $media_id
      * @return mixed
      */
-    public function actionDelApply($media_id)
+    public function actionDelApply($media_ids)
     {
-        // 所有素材id
-        $mediaIds = explode(',', $media_id);
-        $post = Yii::$app->request->post();
-
         if (Yii::$app->request->isPost) {
             // 返回json格式
             \Yii::$app->response->format = 'json';
             
-            /** 开启事务 */
-            $trans = Yii::$app->db->beginTransaction();
             try
             {
-                $mediaModel = Media::findOne($media_id);
-                if($mediaModel->del_status == 0){
-                    // 申请删除前先删除已经存在未处理的申请
-                    MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $media_id, 'status' => 0]);
-                    //查找已经存在的
-                    $result = MediaApprove::find()->where(['media_id' => $mediaIds])->andWhere(['result' => 1])
-                        ->andWhere(['type' => MediaApprove::TYPE_DELETE_APPROVE])
-                        ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->asArray()->all();
-                    $result = ArrayHelper::index($result, 'media_id');
-                    // 申请说明
-                    $content = ArrayHelper::getValue($post, 'MediaApprove.content'); 
-                    // 过滤已存在的
-                    if(!in_array($media_id, array_keys($result))){
-                        MediaApprove::savaMediaApprove($media_id, $content, MediaApprove::TYPE_DELETE_APPROVE);
+                // 所有素材id
+                $mediaIds = explode(',', $media_ids);
+                // 申请说明
+                $content = ArrayHelper::getValue(Yii::$app->request->post(), 'MediaApprove.content'); 
+                // 申请删除前先设置已经存在未处理的申请为作废
+                MediaApprove::updateAll(['status' => MediaApprove::STATUS_CANCELED], ['media_id' => $mediaIds, 'status' => 0]);
+                // 查询所有提交上来的素材
+                $meidaResults = (new Query())->select(['id', 'name', 'del_status'])
+                    ->from(['Media' => Media::tableName()])->where(['id' => $mediaIds])->all();
+                // 以素材id为索引
+                $meidaResults = ArrayHelper::index($meidaResults, 'id');
+                // 查找已经通过过的删除申请
+                $approveResults = (new Query())->from(['MediaApprove' => MediaApprove::tableName()])
+                    ->where(['media_id' => $mediaIds,'result' => 1,'type' => MediaApprove::TYPE_DELETE_APPROVE])
+                    ->andWhere(['!=', 'status', MediaApprove::STATUS_CANCELED])->all();
+                // 获取已经通过过的入库申请的素材id
+                $approveResults = ArrayHelper::getColumn($approveResults, 'media_id');
+                // 返回数据      
+                $dataResults = [];
+                foreach ($mediaIds as $id) {
+                    if(isset($meidaResults[$id])){
+                        // 只有素材删除状态是为【正常】才可以创建删除申请
+                        if($meidaResults[$id]['del_status'] == 0){
+                            // 过滤已存在的
+                            if(!in_array($id, $approveResults)){
+                                MediaApprove::savaMediaApprove($id, $content, MediaApprove::TYPE_DELETE_APPROVE);
+                            }
+                        }else{
+                            $dataResults[] = [
+                                'id' => $meidaResults[$id]['id'],
+                                'name' => $meidaResults[$id]['name'],
+                                'reason' => '素材已删除，无需重复申请删除'
+                            ];
+                        }
                     }
-
-                    $trans->commit();  //提交事务
                 }
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
+              
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $dataResults);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
@@ -155,7 +190,7 @@ class ApproveController extends Controller
         }
             
         return $this->renderAjax('____apply', [
-            'mediaIds' => json_encode($mediaIds)
+            'media_ids' => $media_ids
         ]);
     }
 
@@ -201,7 +236,8 @@ class ApproveController extends Controller
                                 if($mediaModel->mediaType->sign == MediaType::SIGN_VIDEO){
                                     // 如果视频转码需求是自动则转码
                                     if($mediaModel->detail->mts_need){
-                                        MediaAliyunAction::addVideoTranscode($mediaModel->id);   // 转码
+                                        MediaAliyunAction::addVideoTranscode($mediaModel->id, false, '/media/tran-complete');   // 转码
+                                        
                                     }else{
                                         $mediaModel->status = Media::STATUS_PUBLISHED;
                                     }

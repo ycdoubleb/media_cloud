@@ -73,8 +73,9 @@ TagsInputAsset::register($this);
 
 <!--标签-->
 <div class="form-group field-media-tag_ids">
-    <?= Html::label(Yii::t('app', 'Tag') . '：', 
-        'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    <?= Html::label(Yii::t('app', '{Public}{Tag}：', [
+        'Public' => Yii::t('app', 'Public'), 'Tag' => Yii::t('app', 'Tag')
+    ]), 'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
     
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">

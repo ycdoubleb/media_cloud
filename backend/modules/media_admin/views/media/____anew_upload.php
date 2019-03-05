@@ -134,6 +134,13 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
 $js = <<<JS
         
     window.onload();
+        
+    // 禁用回车提交表单
+    $("#media-form").keypress(function(e) {
+        if (e.which == 13) {
+          return false;
+        }
+    });
 
 JS;
     $this->registerJs($js,  View::POS_READY);

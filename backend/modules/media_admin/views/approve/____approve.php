@@ -80,6 +80,13 @@ $js = <<<JS
         max_num = ids.length,
         progress = $('#myModalFooter').find('div.result-progress');
         
+    // 禁用回车提交表单
+    $("#media-approve-form").keypress(function(e) {
+        if (e.which == 13) {
+          return false;
+        }
+    });        
+    
     // 提交表单    
     $("#submitsave").click(function(){
         $(this).hide();

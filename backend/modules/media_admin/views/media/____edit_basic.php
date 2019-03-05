@@ -74,9 +74,15 @@ $js = <<<JS
     var ids = $ids;
     var isPageLoading = false;
         
+    // 禁用回车提交表单
+    $("#media-form").keypress(function(e) {
+        if (e.which == 13) {
+          return false;
+        }
+    });    
+        
     // 提交表单    
     $("#submitsave").click(function(){
-       
         var _self = $(this);
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...

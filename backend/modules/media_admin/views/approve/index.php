@@ -2,14 +2,16 @@
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\MediaApprove;
-use common\models\media\searchs\MediaApproveSearh;
+use common\modules\rbac\components\Helper;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\LinkPager;
+
 
 MediaModuleAsset::register($this);
 
@@ -33,11 +35,17 @@ $this->params['breadcrumbs'][] = $this->title;
     
         <div class="title">
             <div class="btngroup pull-right">
-                <?= Html::a(Yii::t('app', 'Pass'), ['pass-approve'], [
-                    'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat']); ?>
-                <?= ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
-                    'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
-                ]), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']); ?>
+                <?php 
+                    if( Helper::checkRoute(Url::to(['pass-approve']))){
+                        echo Html::a(Yii::t('app', 'Pass'), ['pass-approve'], [
+                            'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat']);
+                    }
+                    if( Helper::checkRoute(Url::to(['not-approve']))){
+                        echo ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
+                            'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
+                        ]), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']);
+                    }
+                ?>
             </div>
             
         </div>
@@ -182,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]),
                     'headerOptions' => [
                         'style' => [
-                            'width' => '210px',
+                            'width' => '160px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -274,7 +282,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]),
                     'headerOptions' => [
                         'style' => [
-                            'width' => '210px',
+                            'width' => '160px',
                             'padding' => '8px 4px'
                         ]
                     ],
@@ -283,6 +291,33 @@ $this->params['breadcrumbs'][] = $this->title;
                             'padding' => '8px 4px'
                         ],
                     ]
+                ],
+                
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'header' => '操作',
+                    'buttons' => [
+                        'view' => function($url, $model){
+                            return Html::a(Yii::t('app', '{View}{Media}', [
+                                'View' => Yii::t('app', 'View'), 'Media' => Yii::t('app', 'Media')
+                            ]), ['media/view', 'id' => $model->media_id], [
+                                'class' => 'btn btn-default', 'target' => '_blank'
+                            ]);
+                        },
+                    ],
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '100px',
+                            'padding' => '8px 4px'
+                        ],
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ],
+
+                    'template' => '{view}',
                 ],
             ],
         ]); ?>

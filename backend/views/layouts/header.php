@@ -31,16 +31,16 @@ use yii\web\View;
 
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+<!--                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-envelope-o"></i>
                         <span class="label label-success">4</span>
-                    </a>
+                    </a>-->
                     <ul class="dropdown-menu">
                         <li class="header">You have 4 messages</li>
                         <li>
-                            <!-- inner menu: contains the actual data -->
+                             inner menu: contains the actual data 
                             <ul class="menu">
-                                <li><!-- start message -->
+                                <li> start message 
                                     <a href="#">
                                         <div class="pull-left">
                                             <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
@@ -53,7 +53,7 @@ use yii\web\View;
                                         <p>Why not buy a new awesome theme?</p>
                                     </a>
                                 </li>
-                                <!-- end message -->
+                                 end message 
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
@@ -112,10 +112,10 @@ use yii\web\View;
                     </ul>
                 </li>
                 <li class="dropdown notifications-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+<!--                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
                         <span class="label label-warning">10</span>
-                    </a>
+                    </a>-->
                     <ul class="dropdown-menu">
                         <li class="header">You have 10 notifications</li>
                         <li>
@@ -155,10 +155,10 @@ use yii\web\View;
                 </li>
                 <!-- Tasks: style can be found in dropdown.less -->
                 <li class="dropdown tasks-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+<!--                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-flag-o"></i>
                         <span class="label label-danger">9</span>
-                    </a>
+                    </a>-->
                     <ul class="dropdown-menu">
                         <li class="header">You have 9 tasks</li>
                         <li>

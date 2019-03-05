@@ -98,6 +98,7 @@ use common\widgets\Menu;
                             ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/approve/index']],
                             ['label' => '素材运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods/index']],
                             ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl/index']],
+                            ['label' => '前台用户', 'icon' => 'circle-o', 'url' => ['/operation_admin/user/index']],
                         ],
                     ],
                     [

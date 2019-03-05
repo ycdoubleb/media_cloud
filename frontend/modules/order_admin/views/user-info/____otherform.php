@@ -13,6 +13,15 @@ use yii\widgets\ActiveForm;
 
 <div class="user-form mc-form">
 
+    <!--警告框-->
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <p class="alert-link">修改警告：</p>
+        <p>该信息修改后将需要等待后台管理员认证后方可购买素材！</p>
+    </div>
+    
     <?php $form = ActiveForm::begin([
         'options' => [
             'class' => 'form-horizontal',

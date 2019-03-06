@@ -370,6 +370,7 @@ class MediaController extends GridViewChangeSelfController
             $trans = Yii::$app->db->beginTransaction();
             try
             {
+                $need_tran = false;
                 $is_submit = false;
                 $model->is_link = 0;    // 都设置为非外链
                 //获取所有新属性值
@@ -388,7 +389,7 @@ class MediaController extends GridViewChangeSelfController
                     if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                         // 如果视频转码需求是自动则转码
                         if($model->detail->mts_need && $model->status == Media::STATUS_PUBLISHED){
-                            MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
+                            $need_tran = true;
                         }
                     }
                     // 保存操作记录
@@ -401,6 +402,7 @@ class MediaController extends GridViewChangeSelfController
                 
                 if($is_submit){
                     $trans->commit();  //提交事务
+                    MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
                     Yii::$app->getSession()->setFlash('success','操作成功！');
                 }
                 

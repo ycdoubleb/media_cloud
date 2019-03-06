@@ -66,7 +66,7 @@ $menuItems = [
     [
         'label' => !Yii::$app->user->isGuest ? Html::img(Yii::$app->user->identity->avatar, 
                 ['width' => 33, 'height' => 33, 'class' => 'img-circle']) : null,
-        'url' => ['/user/default/index'],
+        'url' => "#",
         'options' => ['class' => 'logout'],
         'linkOptions' => ['class' => 'logout'],
         'items' => [
@@ -75,7 +75,7 @@ $menuItems = [
                 'encode' => false,
             ],
             [
-                'label' => '<i class="fa fa-sign-out"></i>' . Yii::t('app', 'Logout'),
+                'label' => '<i class="fa fa-sign-out"></i>' . Yii::t('app', 'Login Out'),
                 'url' => ['/site/logout'],
                 'linkOptions' => ['data-method' => 'post', 'class' => 'logout'],
                 'encode' => false,

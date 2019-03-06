@@ -220,6 +220,7 @@ return [
     'The above error occurred while the Web server was processing your request.' => 'web服务器正在处理您的请求时发生上述错误。',
     'Please contact us if you think this is a server error. Thank you.' => '如果您认为这是服务器错误，请与我们联系。谢谢您.',
     'Incorrect username or password' => '账号或密码错误.',
+    'User no longer exists or has been deactivated' => '用户不存或已停用',
     'You have no permissions to perform this operation.' => '您没有执行此操作的权限。',
     'Are you sure ' => '你确定要',
     'The course is not published,' => '课程未发布,',

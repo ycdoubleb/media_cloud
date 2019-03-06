@@ -501,7 +501,7 @@ class SiteController extends Controller {
      * @return type
      * @throws NotAcceptableHttpException
      */
-    public function signup($post) {
+    protected function signup($post) {
         $user = new User();
         
         $phone = ArrayHelper::getValue($post, 'User.phone');        //联系方式
@@ -527,6 +527,7 @@ class SiteController extends Controller {
             $userProfile->user_id = $user->id;
             $userProfile->company = $company;
             $userProfile->department = $department;
+            $userProfile->is_certificate = 0;
             $userProfile->save();
         }
 

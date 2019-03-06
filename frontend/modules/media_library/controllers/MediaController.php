@@ -232,7 +232,7 @@ class MediaController extends Controller
         $model->created_by = Yii::$app->user->id;   //创建用户
 
         $userProfile = UserProfile::findOne(['user_id' => Yii::$app->user->id]); // 当前用户附加属性
-        if($userProfile->is_certificate == 0){
+        if($userProfile->is_certificate == 1){
             // 保存订单
             if($model->load(Yii::$app->request->post()) && $model->save()){
                 try {

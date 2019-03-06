@@ -270,6 +270,8 @@ class Acl extends ActiveRecord {
             Yii::$app->db->createCommand($sql)->execute();
             //清除访问列表缓存
             self::clearCache($acl_sn);
+            //清除媒体临时访问缓存
+            self::clearMediaTempSNCacheByMid($media_id);
         }
     }
 
@@ -284,6 +286,18 @@ class Acl extends ActiveRecord {
             $acl_sn = self::REDIS_DATA_KEY . $acl_sn;
         }
         RedisService::getRedis()->del(...(array) $acl_sns);
+    }
+    
+    /**
+     * 清除一个或者多个临时访问缓存
+     * @param string|array $media_id
+     */
+    private static function clearMediaTempSNCacheByMid($media_id) {
+        $media_ids = is_array($media_id) ? $media_id : [$media_id];
+        foreach ($media_ids as &$media_ids) {
+            $media_ids = self::REDIS_TEMP_SN_KEY . $media_ids;
+        }
+        RedisService::getRedis()->del(...(array) $media_ids);
     }
 
     /**

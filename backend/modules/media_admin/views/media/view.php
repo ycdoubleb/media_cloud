@@ -178,7 +178,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
                             ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
                         }
-                        echo '<span class="text-default">（注意：上传时如果没有选择“自动转码”，重新上传文件后必须手动选择“重新转码”）</span>';
+                        if(!$model->detail->mts_need){
+                            echo '<span style="color:#ff0000">（注意：该素材设置了“手动转码”，重新上传文件后如需“转码”，必须手动选择“重新转码”）</span>';
+                        }else{
+                            echo '<span class="text-default">（注意：该素材设置了“自动转码”，重新上传文件后会自动转码，请勿多次转码！）</span>';
+                        }
                     }
                 ?>
             </p>

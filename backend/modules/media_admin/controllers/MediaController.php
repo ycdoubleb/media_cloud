@@ -388,7 +388,7 @@ class MediaController extends GridViewChangeSelfController
                     if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                         // 如果视频转码需求是自动则转码
                         if($model->detail->mts_need && $model->status == Media::STATUS_PUBLISHED){
-                            MediaAliyunAction::addVideoTranscode($model->id, false, '/media_admin/media/tran-complete');   // 转码
+                            MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
                         }
                     }
                     // 保存操作记录

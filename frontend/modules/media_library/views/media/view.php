@@ -96,10 +96,11 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                 <div class="resource-show">
                     <?php
                         $mediaType = $model->mediaType->sign;
-                        $mediaUrl = Url::to(['/media/use/temp-link', 'sn' => Acl::getTempSnByMid($model->id)]);
+                        $mediaUrl = Url::to(['/media/use/temp-link', 'sn' => Acl::getTempSnByMid($model->id)]); //临时访问路径（有效期1天）
+                        $cover_url = $model->cover_url;     //封面路径
                         switch ($mediaType){
                             case 'video' : 
-                                echo '<video src="'.$mediaUrl.'" id="disabled" controls="controls" controlslist="nodownload" width="100%"></video>';
+                                echo '<video src="'.$mediaUrl.'" poster="'.$cover_url.'" id="disabled" controls="controls" controlslist="nodownload" width="100%"></video>';
                                 break;
                             case 'audio' : 
                                 echo '<audio src="'.$mediaUrl.'" id="disabled" controls="controls" controlslist="nodownload" style="width:100%"></audio>';

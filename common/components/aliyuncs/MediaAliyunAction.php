@@ -3,6 +3,7 @@
 namespace common\components\aliyuncs;
 
 use common\components\aliyuncs\Aliyun;
+use common\models\api\ApiResponse;
 use common\models\media\Media;
 use common\models\media\MediaDetail;
 use common\models\media\MediaType;
@@ -318,7 +319,7 @@ class MediaAliyunAction {
                     }
                     $tran->commit();
                     //通过转码完成
-                    self::callCompleteURL($userData->complete_url, ['code' => '0', 'data' => $media_id, 'msg' => '转码服务已完成']);
+                    self::callCompleteURL($userData->complete_url, (new ApiResponse(ApiResponse::CODE_COMMON_OK, null, ['media_id' => $media_id]))->toArray());
                     return ['success' => true, 'msg' => '转码服务已完成'];
                 } catch (Exception $ex) {
                     $tran->rollBack();
@@ -326,7 +327,7 @@ class MediaAliyunAction {
                     Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_FAIL], ['id' => $media_id])->execute();
                     Yii::error($ex->getMessage(), __FUNCTION__);
                     //通过转码完成
-                    self::callCompleteURL($userData->complete_url, ['code' => '10000', 'data' => $ex->getMessage(), 'msg' => '转码服务失败']);
+                    self::callCompleteURL($userData->complete_url, (new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, null, ['error' => $ex->getMessage()]))->toArray());
                     
                     return ['success' => false, 'msg' => '转码服务失败：' . $ex->getMessage()];
                 }
@@ -344,7 +345,7 @@ class MediaAliyunAction {
     private static function callCompleteURL($url, $params) {
         if (!empty($url)) {
             $curl = new Curl();
-            $curl->setRawPostData($params);
+            $curl->setRawPostData(json_encode($params));
             $result = $curl->post($url, true);
         }
     }
@@ -410,7 +411,7 @@ class MediaAliyunAction {
                 Yii::$app->db->createCommand()->update(Media::tableName(), ['mts_status' => Media::MTS_STATUS_YES,], ['id' => $media->id])->execute();
                 $tran->commit();
                 //通过转码完成
-                self::callCompleteURL($complete_url, ['code' => '0', 'data' => $media->id, 'msg' => '转码服务已完成']);
+                self::callCompleteURL($complete_url, (new ApiResponse(ApiResponse::CODE_COMMON_OK, null, ['media_id' => $media->id]))->toArray());
             } catch (\Exception $ex) {
                 $tran->rollBack();
                 //更改 Media 转码状态
@@ -418,7 +419,7 @@ class MediaAliyunAction {
                 Yii::error("外链转码失败：{$ex->getMessage()}", __FUNCTION__);
                 Yii::$app->session->setFlash('error',"外链转码失败：{$ex->getMessage()}");
                 //通过转码完成
-                self::callCompleteURL($complete_url, ['code' => '10000', 'data' => $ex->getMessage(), 'msg' => '转码服务失败']);
+                self::callCompleteURL($complete_url, (new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, null, ['error' => $ex->getMessage()]))->toArray());
             }
         }
     }

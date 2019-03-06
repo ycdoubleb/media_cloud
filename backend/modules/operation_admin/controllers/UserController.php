@@ -6,6 +6,8 @@ use common\models\searchs\UserSearch;
 use common\models\User;
 use common\models\UserProfile;
 use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 
@@ -40,7 +42,10 @@ class UserController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $dataProvider,
+                'key' => 'id',
+            ]),
         ]);
     }
 

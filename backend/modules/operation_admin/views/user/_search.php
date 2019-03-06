@@ -80,7 +80,7 @@ use yii\widgets\ActiveForm;
                 <!--状态-->
                 <div id="DepDropdown_purchaser" class="dep-dropdowns">
                    <?= $form->field($model, 'status',[
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => User::$statusIs,
                         'hideSearch' => true,
@@ -93,7 +93,7 @@ use yii\widgets\ActiveForm;
                 <!--认证-->
                 <div id="DepDropdown-handled_by" class="dep-dropdowns">
                     <?= $form->field($model, 'is_certificate',[
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => ['否', '是'],
                         'hideSearch' => true,

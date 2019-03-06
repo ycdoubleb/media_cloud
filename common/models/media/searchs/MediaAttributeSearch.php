@@ -2,9 +2,10 @@
 
 namespace common\models\media\searchs;
 
+use common\models\media\MediaAttribute;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\media\MediaAttribute;
+use yii\helpers\ArrayHelper;
 
 /**
  * MediaAttributeSearch represents the model behind the search form of `common\models\media\MediaAttribute`.
@@ -40,11 +41,17 @@ class MediaAttributeSearch extends MediaAttribute
      */
     public function search($params)
     {
+        $this->load($params);
+        
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);               
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        
+        // 查询属性
         $query = MediaAttribute::find();
 
-        $this->load($params);
-
-        // grid filtering conditions
+        // 必要条件
         $query->andFilterWhere([
             'id' => $this->id,
             'category_id' => $this->category_id,
@@ -55,7 +62,14 @@ class MediaAttributeSearch extends MediaAttribute
             'value_length' => $this->value_length,
         ]);
 
+        // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name]);
+        
+        // 显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
+        // 过滤重复
+        $query->with('category');
 
         return $query->all();
     }

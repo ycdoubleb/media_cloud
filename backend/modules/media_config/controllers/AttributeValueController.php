@@ -38,15 +38,12 @@ class AttributeValueController extends GridViewChangeSelfController
     {
         $searchModel = new MediaAttributeValueSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $dataProvider,
                 'key' => 'id',
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
             ]),
         ]);
     }

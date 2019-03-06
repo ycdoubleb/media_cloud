@@ -8,6 +8,7 @@ use kartik\widgets\Select2;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 /* @var $this View */
@@ -48,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]),
                 'headerOptions' => [
                     'style' => [
-                        'width' => '215px',
+                        'width' => '200px',
                     ],
                 ],
             ],
@@ -174,6 +175,26 @@ $this->params['breadcrumbs'][] = $this->title;
                         'width' => '86px',
                     ],
                 ],
+            ],
+            [
+                'attribute' => 'sort_order',
+                'filter' => '',
+                'label' => Yii::t('app', 'Sort Order'),
+                'class' => GridViewChangeSelfColumn::class,
+                'plugOptions' => [
+                    'type' => 'input',
+                ],
+                'headerOptions' => [
+                    'style' => [
+                        'width' => '60px',
+                        'padding' => '8px 4px'
+                    ]
+                ],
+                'contentOptions' => [
+                    'style' => [
+                        'padding' => '8px 4px'
+                    ],
+                ]
             ],
 
             [

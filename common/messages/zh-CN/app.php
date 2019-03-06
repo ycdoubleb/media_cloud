@@ -20,6 +20,7 @@ return [
     'Into' => '入',
     'Pass' => '通过',
     'Is Del' => '是否删除',
+    'Automatic Login' => '自动登录',
     
     //公共- 用户
     'User' => '用户',

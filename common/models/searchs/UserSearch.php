@@ -6,6 +6,7 @@ use common\models\User;
 use common\models\UserProfile;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 
 /**
  * UserSearch represents the model behind the search form of `common\models\User`.
@@ -60,22 +61,15 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = self::find()->from(['User' => User::tableName()]);
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'key' => 'id',
-        ]);
-
         $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+        
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);               
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        
+        // 查询前端用户
+        $query = self::find()->from(['User' => User::tableName()]);
 
         // 关联用户配置
         $query->leftJoin(['UserProfile' => UserProfile::tableName()], 'UserProfile.user_id = User.id');
@@ -87,13 +81,18 @@ class UserSearch extends User
             'UserProfile.is_certificate' => $this->is_certificate
         ]);
 
+        // 模糊查询
         $query->andFilterWhere(['like', 'User.nickname', $this->nickname])
             ->andFilterWhere(['like', 'UserProfile.company', $this->company])
             ->andFilterWhere(['like', 'UserProfile.department', $this->department]);
 
+        // 显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
+        
         // 过滤重复
         $query->with('profile');
         
+        return $query->all();
         return $dataProvider;
     }
 }

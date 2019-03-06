@@ -19,8 +19,8 @@ use common\models\Tags;
 use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
-use yii\base\Exception;
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -146,7 +146,7 @@ class MediaController extends GridViewChangeSelfController
         
         if ($model->load($post)) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
@@ -236,7 +236,7 @@ class MediaController extends GridViewChangeSelfController
         
         if ($model->load($post)) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
             try
@@ -310,7 +310,7 @@ class MediaController extends GridViewChangeSelfController
 
         if (Yii::$app->request->isPost) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             try
             {
                 // 属性值

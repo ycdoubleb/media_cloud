@@ -5,7 +5,7 @@ namespace common\models\searchs;
 use common\models\Watermark;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 
 /**
  * WatermarkSearch represents the model behind the search form of `common\models\media\Watermark`.
@@ -42,9 +42,15 @@ class WatermarkSearch extends Watermark
      */
     public function search($params)
     {
-        $query = Watermark::find();
-
         $this->load($params);
+        
+        //分页
+        $page = ArrayHelper::getValue($params, 'page', 1);               
+        //显示数
+        $limit = ArrayHelper::getValue($params, 'limit', 10); 
+        
+        // 查询水印
+        $query = Watermark::find();
 
         // 必要条件
         $query->andFilterWhere([
@@ -65,6 +71,9 @@ class WatermarkSearch extends Watermark
             ->andFilterWhere(['like', 'url', $this->url])
             ->andFilterWhere(['like', 'oss_key', $this->oss_key])
             ->andFilterWhere(['like', 'refer_pos', $this->refer_pos]);
+        
+        // 显示数量
+        $query->offset(($page - 1) * $limit)->limit($limit);
 
         return $query->all();
     }

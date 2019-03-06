@@ -95,7 +95,7 @@ TagsInputAsset::register($this);
             <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? $tagsSelected : null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
                 'onchange' => 'validateTags($(this))', 
-                'placeholder' => isset($isTagRequired) && $isTagRequired ? null : '素材公共标签（可以不填）'
+                'placeholder' => isset($isTagRequired) && $isTagRequired ? null : '素材公用标签（可以不填）'
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>

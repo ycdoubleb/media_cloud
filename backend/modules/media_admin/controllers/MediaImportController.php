@@ -93,9 +93,8 @@ class MediaImportController extends Controller{
                 // 标签
                 $tags = ArrayHelper::getValue($post, 'Media.tags', '');
                 $media_tags = ArrayHelper::getValue($post, 'Media.media_tags');
-                $model->tags = $tags.','.$media_tags;
+                $model->tags = str_replace(['，','、'], ',', $tags.','.$media_tags);
                 $tags = Tags::saveTags($model->tags);
-                
                 if($model->validate() && $model->save()){
                     $is_submit = true;
                     // 保存关联的属性值
@@ -108,8 +107,6 @@ class MediaImportController extends Controller{
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => 1]);
-                    // 保存素材审核
-                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }
@@ -178,6 +175,9 @@ class MediaImportController extends Controller{
                         break;
                     case MediaType::SIGN_DOCUMENT:
                         $data['thumb_url'] = $iconMap[$data['ext']]['icon_url']."?rand={$rand}";
+                        break;
+                    default:
+                        $data['thumb_url'] = Aliyun::absolutePath('static/imgs/notfound.png')."?rand={$rand}";
                         break;
                 }
             } else {

@@ -184,8 +184,6 @@ class MediaController extends GridViewChangeSelfController
                     MediaAction::savaMediaAction($model->id, $model->name);
                     // 保存素材详情
                     MediaDetail::savaMediaDetail($model->id, ['mts_need' => $mts_need, 'mts_watermark_ids' => $wate_ids]);
-                    // 保存素材审核
-//                    MediaApprove::savaMediaApprove($model->id, '系统自动创建入库申请', MediaApprove::TYPE_INTODB_APPROVE);
                 }else{
                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, null, $model->getErrorSummary(true));
                 }
@@ -373,6 +371,7 @@ class MediaController extends GridViewChangeSelfController
             try
             {
                 $is_submit = false;
+                $model->is_link = 0;    // 都设置为非外链
                 //获取所有新属性值
                 $newAttributes = $model->getDirtyAttributes();
                 //获取所有旧属性值

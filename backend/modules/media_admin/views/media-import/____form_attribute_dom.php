@@ -81,7 +81,7 @@ TagsInputAsset::register($this);
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Html::textInput('Media[tags]', null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tags', 'data-role' => 'tagsinput',
-                'placeholder' => '素材公共标签（可以不填）'
+                'placeholder' => '素材公用标签（可以不填）'
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>

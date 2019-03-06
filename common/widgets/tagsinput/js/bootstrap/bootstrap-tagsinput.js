@@ -34,7 +34,7 @@
    */
   function TagsInput(element, options) {
     this.itemsArray = [];
-
+    
     this.$element = $(element);
     this.$element.hide();
 
@@ -42,7 +42,7 @@
     this.multiple = (this.isSelect && element.hasAttribute('multiple'));
     this.objectItems = options && options.itemValue;
     this.placeholderText = element.hasAttribute('placeholder') ? this.$element.attr('placeholder') : '';
-    this.inputSize = Math.max(1, this.placeholderText.length);
+//    this.inputSize = Math.max(1, this.placeholderText.length);
 
     this.$container = $('<div class="bootstrap-tagsinput"></div>');
     this.$input = $('<input type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
@@ -104,7 +104,7 @@
           itemText = self.options.itemText(item),
           tagClass = self.options.tagClass(item),
           itemTitle = self.options.itemTitle(item);
-
+          
       // Ignore items allready added
       var existing = $.grep(self.itemsArray, function(item) { return self.options.itemValue(item) === itemValue; } )[0];
       if (existing && !self.options.allowDuplicates) {
@@ -133,6 +133,7 @@
 
       var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
       $tag.data('item', item);
+      
       self.findInputWrapper().before($tag);
       $tag.after(' ');
 
@@ -291,7 +292,7 @@
             this.map = {};
             var map = this.map,
                 data = typeahead.source(query);
-
+                
             if ($.isFunction(data.success)) {
               // support for Angular callbacks
               data.success(processItems);
@@ -351,6 +352,7 @@
         self.$input.focus();
       }, self));
 
+      
         if (self.options.addOnBlur && self.options.freeInput) {
           self.$input.on('focusout', $.proxy(function(event) {
               // HACK: only process on focusout when no typeahead opened, to
@@ -419,7 +421,7 @@
         var textLength = $input.val().length,
             wordSpace = Math.ceil(textLength / 5),
             size = textLength + wordSpace + 1;
-        $input.attr('size', Math.max(this.inputSize, $input.val().length));
+//        $input.attr('size', Math.max(this.inputSize, $input.val().length));
       }, self));
 
       self.$container.on('keypress', 'input', $.proxy(function(event) {
@@ -449,7 +451,7 @@
          var textLength = $input.val().length,
             wordSpace = Math.ceil(textLength / 5),
             size = textLength + wordSpace + 1;
-         $input.attr('size', Math.max(this.inputSize, $input.val().length));
+//         $input.attr('size', Math.max(this.inputSize, $input.val().length));
       }, self));
 
       // Remove icon clicked

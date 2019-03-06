@@ -40,46 +40,75 @@ $media_upload_tr_dom = str_replace("\n", ' ', $this->render('____media_upload_tr
     </table>
     
     <!--总结-->
-    <div class="summary">第<b class="first"></b>-<b class="last"></b>条，总共<b class="totalCount"></b>条数据。</div>
-    
+    <div class="summary"></div>
+
     <!--分页-->
-    <div id="pagination">
-        <div class="first"><<</div><div class="prev"><</div>
-        <ul class="list"></ul>
-        <div class="next disable">></div><div class="last disable">>></div>
-    </div>
-    
+    <div class="page"><ul class="pagination"></ul></div>
+   
 </div>
 
 <?php
 $js = <<<JS
+    initPageNav();
+    /**
+     * 初始分页
+     * @private
+     */
+    function initPageNav(){
+        var options = {
+            currentPage: 1,
+            totalPages: 1,
+            bootstrapMajorVersion: 3,
+            onPageChanged: function(event, oldPage, newPage){
+                reflashPageNav(newPage);
+            }
+        };
+
+        $('.pagination').bootstrapPaginator(options);
+        reflashPageNav(1)
+    }    
         
-    var media_upload_tr_dom = '$media_upload_tr_dom';  //加载模板
-    var data = $dataProvider;   // 数据提供者
-    var totalCount = $totalCount;
-    var pageCount = Math.ceil(totalCount / 10);
-                
-    // 分页
-    $('#pagination').paging({
-        nowPage: 1,
-        allPages: pageCount,
-        displayPage: 5,
-        callBack: function (now) {
-            loadUploadTable(now - 1);
-            $('.summary').find('b.first').html(Number((now - 1) * 10 + 1));
-            $('.summary').find('b.last').html(now * 10);
-            $('.summary').find('b.totalCount').html(totalCount);
+    /**
+     * 刷新分页
+     * @private
+     */
+    function reflashPageNav(page){
+        // 数据提供者
+        var data = $dataProvider;   
+        //加载模板 
+        var media_upload_tr_dom = '$media_upload_tr_dom';    
+        // 总数
+        var totalCount = $totalCount;
+        var pageSize = 10;
+        var pageCount = Math.ceil(totalCount / pageSize);
+        var pagination = $('.pagination').data()['bootstrapPaginator'];
+        
+        pagination.setOptions({totalPages: pageCount});
+        
+        loadUploadTable(data, page, media_upload_tr_dom);
+        // 如果页数大于等于2的显示
+        if(pageCount >= 2){
+            $('.summary').html('第 <b>' + Number((page - 1) * pageSize + 1) + '</b>-<b>' + (page == pageCount ? totalCount : page * pageSize) + '</b> 条，总共 <b>' + totalCount + '</b> 条数据。');
         }
-    });
-        
-    // 加载生成素材列表
-    function loadUploadTable(page){
+    } 
+    
+    /**
+     * 加载生成素材列表
+     * @param {array} data
+     * @param {int} page
+     * @param {json} media_upload_tr_dom
+     * @returns {undefined}
+     */
+    function loadUploadTable(data, page, media_upload_tr_dom){
         $('#mediaUploadTable').find('tbody').html('');
-        var i = page * 10;
+        var i = (page - 1) * 10;        
         do {
+            if(!data[i]){
+                break;
+            }
             $(Wskeee.StringUtil.renderDOM(media_upload_tr_dom, $.extend({id: Number(i + 1)}, data[i]))).appendTo($('#mediaUploadTable').find('tbody'));
             i++;
-        } while (i <= Number((page + 1) * 10 - 1));
+        } while (i < page * 10);
     }
     
 JS;

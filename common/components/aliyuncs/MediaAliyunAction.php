@@ -162,6 +162,8 @@ class MediaAliyunAction {
             'is_original' => 1,
             'is_del' => 0,
             'created_by' => $media->created_by,
+            'created_at' => time(),
+            'updated_at' => time(),
         ]);
         if ($source_video_url->validate() && $source_video_url->save()) {
             return $source_video_url;
@@ -199,6 +201,8 @@ class MediaAliyunAction {
             'is_original' => 1,
             'is_del' => 0,
             'created_by' => $media->created_by,
+            'created_at' => time(),
+            'updated_at' => time(),
         ]);
         if ($source_video_url->validate() && $source_video_url->save()) {
             return $source_video_url;

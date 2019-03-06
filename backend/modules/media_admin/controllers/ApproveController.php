@@ -205,6 +205,7 @@ class ApproveController extends Controller
         // 所有id
         $ids = explode(',', $id);
         $post = Yii::$app->request->post();
+        $needTranscode = false; //需要转码
         
         if(\Yii::$app->request->isPost){
             // 返回json格式
@@ -236,7 +237,7 @@ class ApproveController extends Controller
                                 if($mediaModel->mediaType->sign == MediaType::SIGN_VIDEO){
                                     // 如果视频转码需求是自动则转码
                                     if($mediaModel->detail->mts_need){
-                                        MediaAliyunAction::addVideoTranscode($mediaModel->id, false, '/media/tran-complete');   // 转码
+                                        $needTranscode = true;
                                     }else{
                                         $mediaModel->status = Media::STATUS_PUBLISHED;
                                     }
@@ -259,6 +260,9 @@ class ApproveController extends Controller
                 }
                 
                 $trans->commit();  //提交事务
+                if($needTranscode){
+                    MediaAliyunAction::addVideoTranscode($mediaModel->id, false, '/media_admin/media/tran-complete');   // 转码
+                }
                 Yii::$app->getSession()->setFlash('success','操作成功！');
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 

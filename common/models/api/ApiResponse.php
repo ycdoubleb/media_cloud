@@ -123,4 +123,12 @@ class ApiResponse {
             self::CODE_COMMON_UNKNOWN => '未知错误！',
         ];
     }
+    
+    public function toArray(){
+        return [
+            'code' => $this->code,
+            'data' => $this->data,
+            'msg' => $this->msg
+        ];
+    }
 }

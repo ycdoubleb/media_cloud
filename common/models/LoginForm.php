@@ -74,7 +74,9 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!$user || !$user->validatePassword($this->password)) {
+            if(!$user){
+                $this->addError($attribute, Yii::t('app', 'User no longer exists or has been deactivated'));
+            } elseif (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, Yii::t('app', 'Incorrect username or password'));
             }
         }

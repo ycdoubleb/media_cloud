@@ -30,12 +30,25 @@ use yii\web\NotFoundHttpException;
  */
 class MediaController extends GridViewChangeSelfController
 {
+    public $enableCsrfValidation = false;
+    
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['tran-complete'],
+                'rules' => [
+                    [
+                        'actions' => ['tran-complete'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -442,8 +455,6 @@ class MediaController extends GridViewChangeSelfController
             'wateSelected' => explode(',', $model->detail->mts_watermark_ids)
         ]);
     }
-    
-    public $enableCsrfValidation = false;
     
     /**
      * 转码完成

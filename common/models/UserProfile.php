@@ -27,6 +27,21 @@ use yii\db\ActiveRecord;
  */
 class UserProfile extends ActiveRecord
 {
+    /** 认证-No */
+    const CERTIFICATE_NO = 0;
+    /** 认证-Yes */
+    const CERTIFICATE_YES = 1;
+    
+    /**
+     * 认证
+     * @var array 
+     */
+    public static $certificateIs = [
+      self::CERTIFICATE_NO => '否',  
+      self::CERTIFICATE_YES => '是',  
+    ];
+
+
     /**
      * {@inheritdoc}
      */

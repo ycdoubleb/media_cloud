@@ -109,9 +109,7 @@ $js = <<<JS
         var pageCount = Math.ceil(totalCount / pageSize);
         var pagination = $('.pagination').data()['bootstrapPaginator'];
         
-        pagination.setOptions({
-            totalPages: pageCount
-        });
+        pagination.setOptions({totalPages: pageCount});
         
         // 获取素材数据 
         if(!isPageLoading){
@@ -124,7 +122,7 @@ $js = <<<JS
         }
         
         // 如果页数大于等于2的显示
-        if(page >= 2){
+        if(pageCount >= 2){
             $('.summary').html('第 <b>' + Number((page - 1) * pageSize + 1) + '</b>-<b>' + (page == pageCount ? totalCount : page * pageSize) + '</b> 条，总共 <b>' + totalCount + '</b> 条数据。');
         }
     } 

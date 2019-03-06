@@ -18,7 +18,7 @@ TagsInputAsset::register($this);
         <?= Html::label(($atts['is_required'] ? '<span class="form-must text-danger">*</span>' : null) . $atts['name'] . '：', 
             'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
         
-        <div class="col-lg-7 col-md-7">
+        <div class="col-lg-8 col-md-8">
             
             <div class="col-lg-12 col-md-12 clean-padding">
                 <?php switch ($atts['input_type']){
@@ -80,7 +80,8 @@ TagsInputAsset::register($this);
     <div class="col-lg-7 col-md-7">
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Html::textInput('Media[tags]', null, [
-                'id' => 'media-tag_ids', 'class' => 'form-control media-tags', 'data-role' => 'tagsinput'
+                'id' => 'media-tag_ids', 'class' => 'form-control media-tags', 'data-role' => 'tagsinput',
+                'placeholder' => '素材公共标签（可以不填）'
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>

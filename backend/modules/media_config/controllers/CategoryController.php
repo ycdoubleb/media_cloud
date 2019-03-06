@@ -44,9 +44,6 @@ class CategoryController extends Controller
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $dataProvider,
                 'key' => 'id',
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
             ]),
         ]);
     }

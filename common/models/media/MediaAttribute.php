@@ -96,8 +96,11 @@ class MediaAttribute extends ActiveRecord
     // 保存前
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
-            $attrModel = self::find()->orderBy(['sort_order' => SORT_DESC])->one();
-            $this->sort_order = $attrModel == null ? 1 : $attrModel->sort_order + 1;
+            if($this->isNewRecord){
+                $attrModel = self::find()->where(['category_id' => $this->category])
+                    ->orderBy(['sort_order' => SORT_DESC])->one();
+                $this->sort_order = $attrModel == null ? 1 : $attrModel->sort_order + 1;
+            }
             return true;
         }
         return false;

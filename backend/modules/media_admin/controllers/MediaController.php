@@ -19,8 +19,8 @@ use common\models\Tags;
 use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
-use yii\base\Exception;
 use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -30,16 +30,30 @@ use yii\web\NotFoundHttpException;
  */
 class MediaController extends GridViewChangeSelfController
 {
+    public $enableCsrfValidation = false;
+    
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['tran-complete'],
+                'rules' => [
+                    [
+                        'actions' => ['tran-complete'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'tran-complete' => ['POST'],
                 ],
             ],
         ];
@@ -133,7 +147,7 @@ class MediaController extends GridViewChangeSelfController
         
         if ($model->load($post)) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
@@ -223,7 +237,7 @@ class MediaController extends GridViewChangeSelfController
         
         if ($model->load($post)) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
             try
@@ -297,7 +311,7 @@ class MediaController extends GridViewChangeSelfController
 
         if (Yii::$app->request->isPost) {
             // 返回json格式
-            \Yii::$app->response->format = 'json';
+            Yii::$app->response->format = 'json';
             try
             {
                 // 属性值
@@ -375,7 +389,7 @@ class MediaController extends GridViewChangeSelfController
                     if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                         // 如果视频转码需求是自动则转码
                         if($model->detail->mts_need && $model->status == Media::STATUS_PUBLISHED){
-                            MediaAliyunAction::addVideoTranscode($model->id, false, '/media/tran-complete');   // 转码
+                            MediaAliyunAction::addVideoTranscode($model->id, false, '/media_admin/media/tran-complete');   // 转码
                         }
                     }
                     // 保存操作记录
@@ -423,7 +437,7 @@ class MediaController extends GridViewChangeSelfController
                 // 保存素材详细
                 MediaDetail::savaMediaDetail($model->id, ['mts_watermark_ids' => $wate_ids]);
                 // 转码
-                MediaAliyunAction::addVideoTranscode($model->id, true, '/media/tran-complete');   
+                MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   
                 // 保存操作记录
                 MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 
@@ -443,27 +457,26 @@ class MediaController extends GridViewChangeSelfController
         ]);
     }
     
-    public $enableCsrfValidation = false;
-    
     /**
      * 转码完成
      * @param type $id
      * @return $post [
         * code : 0 成功，其它失败
-        * data : 成功时为media_id，失败时为失败详情
+        * data : 成功时为{media_id:xx}，失败时为失败详情{error:xxx}
         * msg  : 提示信息
      * ]
      */
     public function actionTranComplete(){
-        $post = Yii::$app->getRequest()->post();
-
-        if($post['code'] == 0){
+        $post = array_merge([],Yii::$app->getRequest()->post(), json_decode(Yii::$app->getRequest()->getRawBody(),true));
+        
+        if(isset($post['code']) && $post['code'] == 0){
             $model = $this->findModel($post['data']['media_id']);
             $model->status = Media::STATUS_PUBLISHED;
             if($model->save(true, ['status'])){
                 Acl::updateAcl($model->id);  // 更新Acl
             }
         }
+        exit;
     }
     
     /**

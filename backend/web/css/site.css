@@ -427,7 +427,13 @@ a.desc:after {
  * 自定义form的样式
  *
 ********************************************************************************/
+.form .form-group {
+    margin-right: 0;
+    margin-left: 0;
+}
+
 .form .form-group .form-label {
+    width: 125px;
     padding: 10px 0px;
     color: #999999;
     font-weight: bold;
@@ -447,7 +453,7 @@ a.desc:after {
 
 .form .dep-dropdowns {
     display: inline-block;
-    width: 134px;
+    width: 145px;
     margin-right: 5px;
 }
 

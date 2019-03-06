@@ -81,7 +81,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         ]) ?>
         
         <div class="form-group">
-            <div class="col-lg-11 col-md-11">
+            <div class="col-lg-1 col-md-1 clean-padding">
                 <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 'class' => 'btn btn-success btn-flat']) ?>
             </div> 
         </div>

@@ -20,6 +20,7 @@ return [
     'Into' => '入',
     'Pass' => '通过',
     'Is Del' => '是否删除',
+    'Automatic Login' => '自动登录',
     
     //公共- 用户
     'User' => '用户',
@@ -352,6 +353,7 @@ return [
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
     'Media Operate' => '素材运营',
+    'Tegistration Time' => '注册时间',
     
     //后台-定时任务
     'Crontab' => '定时任务',
@@ -425,6 +427,7 @@ return [
     'Brand From' => '授权方',
     'Brand To' => '被授权方',
     'Cooperation' => '合作',
+    'Certificate' => '认证',
     
     
     //前台-公共

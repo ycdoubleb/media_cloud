@@ -46,9 +46,6 @@ class TypeDetailController extends GridViewChangeSelfController
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $dataProvider,
                 'key' => 'id',
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
             ]),
         ]);
     }

@@ -78,7 +78,7 @@ use yii\widgets\ActiveForm;
                 <!--审核状态-->
                 <div id="DepDropdown_purchaser" class="dep-dropdowns">
                     <?= $form->field($model, 'status', [
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => array_diff(MediaApprove::$statusMap, [MediaApprove::STATUS_CANCELED => '已取消']),
                         'hideSearch' => true,
@@ -93,7 +93,7 @@ use yii\widgets\ActiveForm;
                 <!--审核结果-->
                 <div id="DepDropdown_purchaser" class="dep-dropdowns">
                     <?= $form->field($model, 'result', [
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => MediaApprove::$resultMap,
                         'hideSearch' => true,
@@ -108,7 +108,7 @@ use yii\widgets\ActiveForm;
                 <!--申请人-->
                 <div id="DepDropdown_purchaser" class="dep-dropdowns">
                    <?= $form->field($model, 'created_by',[
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,
@@ -121,7 +121,7 @@ use yii\widgets\ActiveForm;
                 <!--审核人-->
                 <div id="DepDropdown-handled_by" class="dep-dropdowns">
                     <?= $form->field($model, 'handled_by',[
-                        'template' => "<div class=\"col-lg-12 col-md-12\">{input}</div>",  
+                        'template' => "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>",  
                     ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,

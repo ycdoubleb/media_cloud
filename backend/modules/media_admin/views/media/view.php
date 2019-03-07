@@ -188,14 +188,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             </p>
             
-            <!--素材类型是视频并且是发布状态才显示【转码中】-->
-            <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED): ?>
-                <!--加载中-->
-                <div class="loading-box">
-                    <span class="loading" style="display: none"></span>
-                    <span class="no-more" style="display: none">转码中...</span>
-                </div>
-            <?php endif; ?>
+            <!--加载中-->
+            <div class="loading-box">
+                <span class="loading" style="display: none"></span>
+                <span class="no-more" style="display: none"><?= Media::$mtsStatusName[$model->mts_status] ?></span>
+            </div>
             
             <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                 echo GridView::widget([
@@ -388,7 +385,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 // 素材类型是视频并且是发布状态才显示【转码中】
-$isLoading = $model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED ? 1 : 0;
+$isLoading = ($model->mts_status == Media::MTS_STATUS_DOING || $model->mts_status == Media::MTS_STATUS_FAIL) ? 1 : 0;
 $js = <<<JS
     var ref = "";
     var isPageLoading = $isLoading;
@@ -412,8 +409,7 @@ $js = <<<JS
     } 
     
     // 设置定时查看视频输出的转码情况
-    if(!!isPageLoading){
-        isPageLoading = true;   //设置已经提交当中...
+    if(isPageLoading){
         ref = setInterval(function(){
             $.get("/media_admin/media/check-transcode?id={$model->id}", function(response){
                 isPageLoading = false;  //取消设置提交当中...

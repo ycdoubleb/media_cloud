@@ -74,7 +74,8 @@ $action = Yii::$app->controller->action->id
                 
             </div>
             
-            <div class="modal-footer">
+            <div id="myModalFooter" class="modal-footer">
+                <span class="text-default hidden" style="font-size: 13px;">操作完成</span>
                 
                 <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
                          
@@ -108,6 +109,7 @@ $js = <<<JS
         $('#myModalLabel').html('申请结果');
         $('#myModalBody').find('div.field-mediaapprove-content').addClass('hidden');
         $('#myModalBody').find('div.result-table').removeClass('hidden');
+        $('#myModalFooter').find('span.text-default').removeClass('hidden');
         $.post('/media_admin/approve/' + action + '?media_ids=' + media_ids, $('#media-approve-form').serialize(), function(response){
             $('#myModalBody').find('div.result-table p.result-hint span.max_num').html(mediaIdArray.length);
             $('#myModalBody').find('div.result-table p.result-hint span.completed_num').html(mediaIdArray.length - response.data.length);

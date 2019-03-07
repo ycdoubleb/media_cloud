@@ -385,10 +385,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 // 素材类型是转码中
-$isLoading = $model->mts_status == Media::MTS_STATUS_DOING ? 1 : 0;
+$isTranscoding = $model->mts_status == Media::MTS_STATUS_DOING ? 1 : 0;
 $js = <<<JS
     var ref = "";
-    var isPageLoading = $isLoading;
+    var isTranscoding = $isTranscoding;
         
     // 弹出素材编辑页面面板
     $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
@@ -409,7 +409,7 @@ $js = <<<JS
     } 
     
     // 设置定时查看视频输出的转码情况
-    if(isPageLoading){
+    if(isTranscoding){
         ref = setInterval(function(){
             $.get("/media_admin/media/check-transcode?id={$model->id}", function(response){
                 if(response.code == "0"){

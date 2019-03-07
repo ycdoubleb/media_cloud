@@ -333,7 +333,7 @@ class MediaController extends GridViewChangeSelfController
                 // 把素材属性转换成字符串
                 foreach ($oldMediaAttVals as $att_name => $att_values){
                     $att_value = implode('、', $att_values);
-                    $oldAttValues .= "{$att_name}：{$att_value}；";
+                    $oldAttValues .= "{$att_name}:{$att_value}；";
                 }
                 
                 // 若发生修改则返回修改后的属性
@@ -547,8 +547,10 @@ class MediaController extends GridViewChangeSelfController
         try
         {
             $model = $this->findModel($id);
-            if($model->mediaType->sign == MediaType::SIGN_VIDEO){
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $model->toArray());
+            if($model->mts_status == Media::MTS_STATUS_YES){
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '转码成功', $model->toArray());
+            }else if($model->mts_status == Media::MTS_STATUS_FAIL){
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '转码失败', $model->toArray());
             }
         } catch (Exception $ex) {
             return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, $ex->getMessage(), $ex->getTraceAsString());

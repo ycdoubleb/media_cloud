@@ -188,14 +188,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             </p>
             
-            <!--素材类型是视频并且是发布状态才显示【转码中】-->
-            <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED): ?>
-                <!--加载中-->
-                <div class="loading-box">
-                    <span class="loading" style="display: none"></span>
-                    <span class="no-more" style="display: none">转码中...</span>
-                </div>
-            <?php endif; ?>
+            <!--加载中-->
+            <div class="loading-box">
+                <span class="loading" style="display: none"></span>
+                <span class="no-more" style="display: none">转码中...</span>
+            </div>
             
             <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                 echo GridView::widget([
@@ -387,11 +384,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
-// 素材类型是视频并且是发布状态才显示【转码中】
-$isLoading = $model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED ? 1 : 0;
+// 素材类型是转码中
+$isTranscoding = $model->mts_status == Media::MTS_STATUS_DOING ? 1 : 0;
 $js = <<<JS
     var ref = "";
-    var isPageLoading = $isLoading;
+    var isTranscoding = $isTranscoding;
         
     // 弹出素材编辑页面面板
     $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
@@ -412,15 +409,18 @@ $js = <<<JS
     } 
     
     // 设置定时查看视频输出的转码情况
-    if(!!isPageLoading){
-        isPageLoading = true;   //设置已经提交当中...
+    if(isTranscoding){
         ref = setInterval(function(){
             $.get("/media_admin/media/check-transcode?id={$model->id}", function(response){
-                isPageLoading = false;  //取消设置提交当中...
-                if(response.code == "0" && response.data.mts_status == 3){
-                    $('.loading-box .loading, .loading-box .no-more').hide();
-                    // 阻止定时刷新
-                    clearInterval(ref)
+                if(response.code == "0"){
+                    if(response.data.mts_status == 3){
+                        $('.loading-box .no-more').text(response.msg);
+                        $('.loading-box .loading, .loading-box .no-more').hide();
+                        // 阻止定时
+                        clearInterval(ref)
+                    }else if(response.data.mts_status == 4){
+                        $('.loading-box .no-more').text(response.msg);
+                    }
                 }
             });
         }, 5000);    

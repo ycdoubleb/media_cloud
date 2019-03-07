@@ -228,6 +228,31 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
+                            
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'header' => '操作',
+                    'buttons' => [
+                        'update' => function($url, $model){
+                            return Html::a(Yii::t('app', 'Edit'), ['update', 'id' => $model->id], [
+                                'class' => 'btn btn-primary'
+                            ]);
+                        },
+                    ],
+                    'headerOptions' => [
+                        'style' => [
+                            'width' => '65px',
+                            'padding' => '8px 4px'
+                        ],
+                    ],
+                    'contentOptions' => [
+                        'style' => [
+                            'padding' => '8px 4px'
+                        ],
+                    ],
+
+                    'template' => '{update}',
+                ],
             ],
         ]); ?>
         

@@ -155,8 +155,8 @@ class UserInfoController extends Controller
         
         // 当时间段参数不为空时
         if($allYear != null || $allMonth != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $allYear]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $allMonth]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $allYear]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $allMonth]);
         }
         
         return $query->one();
@@ -170,7 +170,7 @@ class UserInfoController extends Controller
     protected function getDateStatistics($year)
     {
         $query = (new Query())
-                ->select(["CONCAT(FROM_UNIXTIME(confirm_at, '%c'), '月') AS name",
+                ->select(["CONCAT(FROM_UNIXTIME(created_at, '%c'), '月') AS name",
                     'SUM(order_amount) AS value'])
                 ->where([
                     'order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
@@ -181,7 +181,7 @@ class UserInfoController extends Controller
         if(!empty($year)){
             $startTime = $year.'-01-01 00:00:00';
             $endTime = $year.'-12-31 23:59:59';
-            $query->andFilterWhere(['between', 'Order.confirm_at', strtotime($startTime), strtotime($endTime)]);
+            $query->andFilterWhere(['between', 'Order.created_at', strtotime($startTime), strtotime($endTime)]);
         }
         
         $query->groupBy('name');    // 按月份分组

@@ -61,10 +61,12 @@ class OrderSearch extends Order
         
         $query = (new Query())->from(['Order' => Order::tableName()]);
 
-        //过滤条件
-        $query->andFilterWhere([
+        // 必要过滤条件
+        $query->andWhere([
             'Order.created_by' => Yii::$app->user->id
         ]);
+        // 过滤已作废的订单
+        $query->andWhere(['<>', 'Order.order_status', Order::ORDER_STATUS_INVALID]);
         
         // add conditions that should always apply here
 
@@ -118,7 +120,7 @@ class OrderSearch extends Order
         // add conditions that should always apply here
 
         // 必要过滤条件
-        $query->andFilterWhere([
+        $query->andWhere([
             'Order.order_status' => [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED],
             'Order.play_status' => 1, 
             'Order.created_by' => Yii::$app->user->id

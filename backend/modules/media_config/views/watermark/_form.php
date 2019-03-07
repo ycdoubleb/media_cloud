@@ -172,6 +172,7 @@ $path = !$model->isNewRecord ? $model->url : '';
     </div>
             
     <div class="form-group">
+        <label class="col-lg-1 col-md-1 control-label form-label"></label>
         <div class="col-lg-1 col-md-1">
             <?= Html::button(Yii::t('app', 'Submit'), ['id' => 'submitsave', 
                 'class' => 'btn btn-success btn-flat', 'onclick' => 'submitForm()']) ?>

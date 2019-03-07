@@ -120,18 +120,75 @@ class MediaController extends GridViewChangeSelfController
         return $this->render('view', [
             'model' => $model,
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($model->type_id, false), 'name', 'icon_url'),
+        ]);
+    }
+    
+    /**
+     * 显示属性标签。
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionTagsadmin($id)
+    {
+        $model = $this->findModel($id);
+        
+        return $this->renderAjax('____tags_admin', [
+            'model' => $model,
             'attrDataProvider' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false),
-            'tagsDataProvider' => ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name'),
+        ]);
+    }
+    
+    /**
+     * 显示属性标签。
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionPreview($id)
+    {
+        $model = $this->findModel($id);
+        
+        return $this->renderAjax('____media_ preview', [
+            'model' => $model,
             'videoDataProvider' => new ArrayDataProvider([
                 'allModels' => $model->videoUrls,
             ]),
+        ]);
+    }
+    
+    /**
+     * 显示操作记录。
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionOperatelogList($id)
+    {
+        $model = $this->findModel($id);
+        
+        return $this->renderAjax('____list_operate_log', [
+            'model' => $model,
             'actionDataProvider' => new ArrayDataProvider([
                 'allModels' => $model->mediaAction,
             ]),
-            
         ]);
     }
-
+    
+    /**
+     * 查看 素材操作
+     * @param string $id
+     * @return mixed
+     */
+    public function actionOperatelogView($id)
+    {
+       $model = MediaAction::findOne($id);        
+        
+        return $this->renderAjax('____view_operate_log', [
+            'model' => $model,
+        ]);
+    }
+    
     /**
      * 创建 一个新的素材模型。
      * 如果创建成功，返回保存的json信息。
@@ -557,20 +614,6 @@ class MediaController extends GridViewChangeSelfController
         }
     }
     
-    /**
-     * 查看 素材操作
-     * @param string $id
-     * @return mixed
-     */
-    public function actionViewAction($id)
-    {
-       $model = $this->findModel($id);        
-        
-        return $this->renderAjax('____view_action', [
-            'model' => $model,
-        ]);
-    }
-
     /**
      * 根据其主键值查找素材模型。
      * 如果找不到模型，将引发404 HTTP异常。

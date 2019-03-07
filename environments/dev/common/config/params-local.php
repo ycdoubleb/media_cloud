@@ -31,10 +31,10 @@ return [
             'pipeline_id' => 'd51a05c98fca4984923e7fb6f5536a45',        //管道ID
             'pipeline_name' => 'new-pipeline',                          //管道名称
             'oss_location' => 'oss-cn-shenzhen',                        //作业输入，华南1
-            'template_id_ld' => 'ccc005515a26e19823ff91fd55fe16a6',     //流畅模板ID
-            'template_id_sd' => '4e6fda4f21c6b2b4e9affa91e8030c6e',     //标清模板ID
-            'template_id_hd' => 'ebf8396f0260c5e8d3563c58b2c4b2cb',     //高清模板ID
-            'template_id_fd' => 'ec4ec87b7382c154f6c61b0973bf67ef',     //超畅模板ID
+            'template_id_ld' => '318df02dd6f64ab7bc9fb5f2d518e75c',     //流畅模板ID
+            'template_id_sd' => 'c3d3535de33d47e7b7fa7f0dfad6058b',     //标清模板ID
+            'template_id_hd' => '7a4da48e63b545eea6bf4299aecaf247',     //高清模板ID
+            'template_id_fd' => '9cd7b352feb3426aa1f8f9fc0dcd6baa',     //超畅模板ID
             'water_mark_template_id' => '15b2d6094e8448c493cd113a90e330e3',     //水印模板ID 默认右上
             'topic_name' => 'studying8-transcode',                      //消息通道名
             'transcode_save_path' => 'mediacloud/transcode/',           //转码后保存路径

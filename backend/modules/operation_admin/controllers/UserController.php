@@ -99,4 +99,25 @@ class UserController extends Controller
         
         return $this->redirect(['index']);
     }
+    
+    /**
+     * 编辑用户
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id) {
+        
+        $model = User::findOne($id);
+        $model->scenario = User::SCENARIO_UPDATE;
+
+        if ($model->load(Yii::$app->getRequest()->post())) {
+            if ($model->save())
+                return $this->redirect(['index']);
+            else
+                Yii::error($model->errors);
+        }else {
+            $model->password_hash = '';
+            return $this->render('update', ['model' => $model]);
+        }
+    }
 }

@@ -16,7 +16,6 @@ use yii\web\NotFoundHttpException;
 
 class DefaultController extends Controller {
 
-    /*
     public function behaviors() {
         return [
             //验证delete时为post传值
@@ -37,7 +36,7 @@ class DefaultController extends Controller {
                 ],
             ],
         ];
-    }*/
+    }
 
     public function actionIndex() {
         $searchModel = new AdminUserSearch();

@@ -394,7 +394,7 @@ class MediaAliyunAction {
                     if(!$file)continue;
                     $rows []= [
                         $media->id,
-                        VideoUrl::$videoLevelName[$index],
+                        VideoUrl::$videoLevelName[$index+1],
                         $file['oss_key'],
                         $metadata['level'],
                         $file['size'],

@@ -78,8 +78,8 @@ class SingleStatisticsController extends Controller
         $orderQuery = clone $query;
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $orderQuery->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount'])
                 ->andFilterWhere(['Order.order_status' => 
@@ -108,8 +108,8 @@ class SingleStatisticsController extends Controller
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 购买素材数量
@@ -145,8 +145,8 @@ class SingleStatisticsController extends Controller
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 素材引用次数

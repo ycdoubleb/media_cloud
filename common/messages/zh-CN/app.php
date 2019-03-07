@@ -350,6 +350,7 @@ return [
     'User Note' => '用户留言',
     'Income' => '收入',
     'Visit' => '访问',
+    'Invalid' => '作废',
     'Visit Count' => '访问次数',
     'Refresh Cache' => '刷新缓存',
     'Media Operate' => '素材运营',

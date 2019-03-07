@@ -35,24 +35,24 @@ use yii\redis\ActiveQuery;
  */
 class Order extends ActiveRecord
 {
-    //待付款
+    /**待付款*/
     const ORDER_STATUS_READING_PAYING = 0;
-    //待审核
+    /**待审核*/
     const ORDER_STATUS_TO_BE_AUDITED = 5;
-    //审核失败
+    /**审核失败*/
     const ORDER_STATUS_AUDIT_FAILURE = 6;
-    //待确认
+    /**待确认*/
     const ORDER_STATUS_TO_BE_CONFIRMED = 10;
-    //已确认
+    /**已确认*/
     const ORDER_STATUS_CONFIRMED = 11;
-    //已取消
+    /**已取消*/
     const ORDER_STATUS_CANCELLED = 15;
-    //已作废
+    /**已作废*/
     const ORDER_STATUS_INVALID = 99;
     
-    //未付款
+    /**未付款*/
     const PLAY_STATUS_UNPAID = 0;
-    //已付款
+    /**已付款*/
     const PLAY_STATUS_PAID = 1;
 
     /**

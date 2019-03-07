@@ -79,6 +79,21 @@ class OrderController extends Controller
     }
    
     /**
+     * 作废 订单操作
+     * @param string $id
+     * @return mixed
+     */
+    public function actionInvalid($ids)
+    {
+        // 所有id
+        $ids = explode(',', $ids);
+        // 设置选中的订单为作废
+        Order::updateAll(['order_status' => Order::ORDER_STATUS_INVALID], ['id' => $ids]);
+        
+        return $this->redirect(['index']);
+    }
+    
+    /**
      * 查看 素材操作
      * @param string $id
      * @return mixed

@@ -32,6 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="title">
             
             <div class="pull-right">
+                <?= Html::a(Yii::t('app', '{Invalid}{Order}', [
+                    'Invalid' => Yii::t('app', 'Invalid'), 'Order' => Yii::t('app', 'Order')
+                ]), ['invalid'], ['id' => 'btn-invalid', 'class' => 'btn btn-danger btn-flat']) ?>
                 <?= Html::a(Yii::t('app', 'Export'), ['export'], [
                     'id' => 'btn-export', 'class' => 'btn btn-primary btn-flat'
                 ]) ?>
@@ -297,22 +300,50 @@ $js = <<<JS
     // 导出
     $('#btn-export').click(function(e){
         e.preventDefault();
-        var val = [],
-            checkBoxs = $('input[name="selection[]"]'), 
+        
+        var val = getCheckBoxsValue(), 
             url = $(this).attr("href");
-        // 循环组装素材id
-        for(i in checkBoxs){
-            if(checkBoxs[i].checked){
-               val.push(checkBoxs[i].value);
-            }
-        }
+        
         if(val.length > 0){
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
             alert("请选择需要导出的订单");
         }
-    });    
+    });
+        
+    // 作废订单
+    $('#btn-invalid').click(function(e){
+        e.preventDefault();
+        
+        var val = getCheckBoxsValue(), 
+            url = $(this).attr("href");
+        
+        if(val.length > 0){
+            if(confirm("确定要作废所选的订单？") == true){
+                window.location.href = url + "?ids=" + val;
+            }
+        }else{
+            alert("请选择需要作废的订单");
+        }
+    });
+        
+    /**
+     * 获取 getCheckBoxsValue
+     * @returns {Array|getcheckBoxsValue.val}
+     */
+    function getCheckBoxsValue(){
+        var val = [],
+            checkBoxs = $('input[name="selection[]"]');
+        // 循环组装素材id
+        for(i in checkBoxs){
+            if(checkBoxs[i].checked){
+               val.push(checkBoxs[i].value);
+            }
+        }
+        
+        return val
+    }
     
 JS;
     $this->registerJs($js,  View::POS_READY);

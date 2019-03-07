@@ -45,7 +45,7 @@ use yii\widgets\ActiveForm;
         ])->label(Yii::t('app', 'Order Sn') . '：') ?>
                 
         <!--订单状态-->
-        <?= $form->field($model, 'order_status')->checkboxList(Order::$orderStatusName, [
+        <?= $form->field($model, 'order_status')->checkboxList(array_diff(Order::$orderStatusName, [Order::ORDER_STATUS_INVALID => '已作废']), [
             'style' => 'margin-right: -60px;',
             'itemOptions'=>[
                 'onclick' => 'submitForm();',

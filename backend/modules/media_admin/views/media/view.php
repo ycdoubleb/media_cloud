@@ -416,10 +416,10 @@ $js = <<<JS
                     if(response.data.mts_status == 3){
                         $('.loading-box .no-more').text(response.msg);
                         $('.loading-box .loading, .loading-box .no-more').hide();
-                        // 阻止定时
-                        clearInterval(ref)
+                        clearInterval(ref);  // 阻止定时
                     }else if(response.data.mts_status == 4){
                         $('.loading-box .no-more').text(response.msg);
+                        clearInterval(ref);  // 阻止定时
                     }
                 }
             });

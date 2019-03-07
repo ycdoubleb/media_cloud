@@ -84,6 +84,9 @@ class PlayApproveSearch extends PlayApprove
             'Approve.handled_by' => $this->handled_by,
             'Approve.created_by' => $this->created_by,
         ]);
+        
+        // 过滤已作废的订单
+        $query->andFilterWhere(['!=', 'Order.order_status', Order::ORDER_STATUS_INVALID]);
 
         // 模糊查询
         $query->andFilterWhere(['like', 'Order.order_name', $this->order_name]);

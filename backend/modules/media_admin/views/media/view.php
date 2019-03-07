@@ -185,7 +185,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     }
                 ?>
+                
             </p>
+            
+            <!--素材类型是视频并且是发布状态才显示【转码中】-->
+            <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED): ?>
+                <!--加载中-->
+                <div class="loading-box">
+                    <span class="loading" style="display: none"></span>
+                    <span class="no-more" style="display: none">转码中...</span>
+                </div>
+            <?php endif; ?>
             
             <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO){
                 echo GridView::widget([
@@ -377,8 +387,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+// 素材类型是视频并且是发布状态才显示【转码中】
+$isLoading = $model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED ? 1 : 0;
 $js = <<<JS
-    
+    var ref = "";
+    var isPageLoading = $isLoading;
+        
     // 弹出素材编辑页面面板
     $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
         e.preventDefault();
@@ -396,7 +410,22 @@ $js = <<<JS
         myVideo.attr('src', url);
         myVideo[0].play();
     } 
-        
+    
+    // 设置定时查看视频输出的转码情况
+    if(!!isPageLoading){
+        isPageLoading = true;   //设置已经提交当中...
+        ref = setInterval(function(){
+            $.get("/media_admin/media/check-transcode?id={$model->id}", function(response){
+                isPageLoading = false;  //取消设置提交当中...
+                if(response.code == "0" && response.data.mts_status == 3){
+                    $('.loading-box .loading, .loading-box .no-more').hide();
+                    // 阻止定时刷新
+                    clearInterval(ref)
+                }
+            });
+        }, 5000);    
+        $('.loading-box .loading, .loading-box .no-more').show();
+    }
 JS;
     $this->registerJs($js, View::POS_READY);
 ?>

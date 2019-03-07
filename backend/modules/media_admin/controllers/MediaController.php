@@ -9,6 +9,7 @@ use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAction;
 use common\models\media\MediaAttribute;
+use common\models\media\MediaAttributeValue;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
 use common\models\media\MediaTagRef;
@@ -20,6 +21,7 @@ use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -312,6 +314,8 @@ class MediaController extends GridViewChangeSelfController
             Yii::$app->response->format = 'json';
             try
             {
+                // 旧属性值
+                $oldAttValues = '';
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
@@ -323,8 +327,18 @@ class MediaController extends GridViewChangeSelfController
                 //获取所有旧属性值
                 $oldAttributes = $model->getOldAttributes();  
                 
+                // 获取旧属性值
+                $oldMediaAttVals = $this->getOldMediaAttributeValue($model->id, array_keys($media_attrs));
+                
+                // 把素材属性转换成字符串
+                foreach ($oldMediaAttVals as $att_name => $att_values){
+                    $att_value = implode('、', $att_values);
+                    $oldAttValues .= "{$att_name}：{$att_value}；";
+                }
+                
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
+                    '素材属性' => !empty($oldAttValues) ? $oldAttValues : null,
                     '素材标签' => isset($newAttributes['tags']) ? $oldAttributes['tags'] : null,
                 ];
                 
@@ -492,12 +506,26 @@ class MediaController extends GridViewChangeSelfController
         {
             $model = $this->findModel($id);
             $model[$fieldName] = $value;
+            //获取所有新属性值
+            $newAttributes = $model->getDirtyAttributes();
+            //获取所有旧属性值
+            $oldAttributes = $model->getOldAttributes();  
+
+            // 若发生修改则返回修改后的属性
+            $dataProvider = [
+                '素材标签' => isset($newAttributes['tags']) ? $oldAttributes['tags'] : null,
+            ];
+            
             if($model->validate(false) && $model->save()){
                 // 标签
                 $tags = Tags::saveTags($value);
                 // 保存关联的标签
                 if(!empty($tags)){
                     MediaTagRef::saveMediaTagRef($id, $tags);
+                }
+                // 保存操作记录
+                if(!empty(array_filter($dataProvider))){
+                    MediaAction::savaMediaAction($model->id,  $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                 }
             }
         } catch (Exception $ex) {
@@ -508,13 +536,33 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
+     * 检查素材转码情况
+     * @param string $id
+     * @return mixed
+     */
+    public function actionCheckTranscode($id)
+    {
+        Yii::$app->getResponse()->format = 'json';
+        
+        try
+        {
+            $model = $this->findModel($id);
+            if($model->mediaType->sign == MediaType::SIGN_VIDEO){
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $model->toArray());
+            }
+        } catch (Exception $ex) {
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, $ex->getMessage(), $ex->getTraceAsString());
+        }
+    }
+    
+    /**
      * 查看 素材操作
      * @param string $id
      * @return mixed
      */
     public function actionViewAction($id)
     {
-       $model = MediaAction::findOne($id);        
+       $model = $this->findModel($id);        
         
         return $this->renderAjax('____view_action', [
             'model' => $model,
@@ -535,5 +583,26 @@ class MediaController extends GridViewChangeSelfController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+    
+    /**
+     * 获取素材属性旧值
+     * @param int $media_id
+     * @param int $att_ids
+     * @return array
+     */
+    protected function getOldMediaAttributeValue($media_id, $att_ids)
+    {
+        $query = (new Query())->select(['Attribute.name', 'AttributeValue.value'])
+            ->from(['AttValueRef' => MediaAttValueRef::tableName()]);
+        $query->leftJoin(['Attribute' => MediaAttribute::tableName()], 'Attribute.id = AttValueRef.attribute_id');
+        $query->leftJoin(['AttributeValue' => MediaAttributeValue::tableName()], 'AttributeValue.id = AttValueRef.attribute_value_id');
+        $query->where(['AttValueRef.media_id' => $media_id, 'AttValueRef.attribute_id' => $att_ids, 'AttValueRef.is_del' => 0]);
+        $results = '';
+        foreach ($query->all() as $item){
+            $results[$item['name']][] = $item['value'];
+        }
+        
+        return $results;
     }
 }

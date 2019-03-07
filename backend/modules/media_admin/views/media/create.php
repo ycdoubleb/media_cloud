@@ -53,7 +53,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             <!--存储目录-->
             <?= $form->field($model, 'dir_id', [
                 'template' => "{label}\n"
-                . "<div class=\"col-lg-7 col-md-7\">"
+                . "<div class=\"col-lg-8 col-md-8\">"
                     . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}"
                         . "<div class=\"col-lg-1 col-md-1 clean-padding\">"
                             . "<a href=\"/media_config/dir/create\" class=\"btn btn-default\" onclick=\"showModal($(this)); return false;\">新建目录</a>"
@@ -105,6 +105,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         </div>
     
         <div class="form-group">
+            <label class="col-lg-1 col-md-1 control-label form-label"></label>
             <div class="col-lg-1 col-md-1">
                 <?= Html::button(Yii::t('app', 'Submit'), [
                     'id' => 'submitsave', 

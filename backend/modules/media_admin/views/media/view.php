@@ -41,13 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
         </li>
         <li role="presentation" class="">
-            <a href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">标签管理</a>
+            <a id="tags-admin" href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">标签管理</a>
         </li>
         <li role="presentation" class="">
-            <a href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">素材预览</a>
+            <a id="media-preview" href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">素材预览</a>
         </li>
         <li role="presentation" class="">
-            <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
+            <a id="action-log" href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
         </li>
     </ul>
 
@@ -131,248 +131,30 @@ $this->params['breadcrumbs'][] = $this->title;
         <!--标签管理-->
         <div role="tabpanel" class="tab-pane fade" id="tags" aria-labelledby="config-tab">
             
-            <p>
-                <?php
-                    if( Helper::checkRoute(Url::to(['edit-attribute']))){
-                        echo Html::a(Yii::t('app', 'Edit'), ['edit-attribute', 'id' => $model->id], [
-                            'id' => 'btn-editAttribute', 'class' => 'btn btn-primary']);
-                    }
-                ?>
-            </p>
-            
-            <table id="w1" class="table table-striped table-bordered detail-view">
-                
-                <tbody>
-                    <?php foreach ($attrDataProvider as $data): ?>
-                    <tr>
-                        <th class="detail-th"><?= $data['attr_name'] ?></th>
-                        <td class="detail-td"><?= $data['attr_value'] ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                    <tr>
-                        <th class="detail-th">
-                            <?= Yii::t('app', '{Media}{Tag}', [
-                                'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
-                            ]) ?>
-                        </th>
-                        <td class="detail-td"><?= $model->tags ?></td>
-                    </tr>
-                </tbody>
-                
-            </table>
+            <!--加载中-->
+            <div class="loading-box">
+                <span class="loading"></span>
+            </div>
             
         </div>
         
        <!--素材预览-->
         <div role="tabpanel" class="tab-pane fade" id="preview" aria-labelledby="preview-tab">
             
-            <p>
-                <?php
-                    if(Helper::checkRoute(Url::to(['anew-upload'])) || Helper::checkRoute(Url::to(['anew-transcoding']))){
-                        echo Html::a(Yii::t('app', '{Anew}{Upload}', [
-                            'Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
-                        ]), ['anew-upload', 'id' => $model->id], ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary']);
-                        
-                        if($model->mediaType->sign == MediaType::SIGN_VIDEO && $model->status == Media::STATUS_PUBLISHED){
-                            echo ' '. Html::a(Yii::t('app', '{Anew}{Transcoding}', [
-                                'Anew' => Yii::t('app', 'Anew'), 'Transcoding' => Yii::t('app', 'Transcoding')
-                            ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
-                        }
-                        if(!$model->detail->mts_need){
-                            echo '<span style="color:#ff0000">（注意：该素材设置了“手动转码”，重新上传文件后如需“转码”，必须手动选择“重新转码”）</span>';
-                        }else{
-                            echo '<span class="text-default">（注意：该素材设置了“自动转码”，重新上传文件后会自动转码，请勿多次转码！）</span>';
-                        }
-                    }
-                ?>
-                
-            </p>
-            
             <!--加载中-->
             <div class="loading-box">
-                <span class="loading" style="display: none"></span>
-                <span class="no-more" style="display: none">转码中...</span>
+                <span class="loading"></span>
             </div>
-            
-            <?php if($model->mediaType->sign == MediaType::SIGN_VIDEO){
-                echo GridView::widget([
-                    'dataProvider' => $videoDataProvider,
-                    'layout' => "{items}\n{summary}\n{pager}",  
-                    'columns' => [
-                        [
-                            'label' => Yii::t('app', 'Name'),
-                            'value' => function($model){
-                                return $model->name;
-                            },
-                            'headerOptions' => [
-                                'style' => [
-                                    'width' => '185px',
-                                ]
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('app', 'Bitrate'),
-                            'value' => function($model){
-                                return $model->bitrate;
-                            },
-                            'headerOptions' => [
-                                'style' => [
-                                    'width' => '250px',
-                                ]
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('app', 'Size'),
-                            'format' => 'raw',
-                            'value' => function($model){
-                                return Yii::$app->formatter->asShortSize($model->size);
-                            },
-                            'headerOptions' => [
-                                'style' => [
-                                    'width' => '330px',
-                                ]
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('app', 'Format'),
-                            'value' => function($model){
-                                return !empty($model->media_id) ? $model->media->ext : null;
-                            },
-                            'headerOptions' => [
-                                'style' => [
-                                    'width' => '330px',
-                                ]
-                            ],
-                        ],
-                        [
-                            'class' => 'yii\grid\ActionColumn',
-                            'header' => '操作',
-                            'buttons' => [
-                                'view' => function($url, $model){
-                                    return Html::a(Yii::t('app', 'Preview'), null, [
-                                        'class' => 'btn btn-default',
-                                        'data-url' => $model->url,
-                                        'onclick' => 'videoPreview($(this));'
-                                    ]);
-                                },
-                            ],
-                            'headerOptions' => [
-                                'style' => [
-                                    'width' => '120px',
-                                ],
-                            ],
-
-                            'template' => '{view}',
-                        ],
-                    ],
-                ]); 
-            }
-            
-            /* 根据素材类型加载不同的预览内容 */
-            if(!empty($model->type_id)){
-                switch ($model->mediaType->sign){
-                    case MediaType::SIGN_VIDEO :
-                        echo "<video id=\"myVideo\" src=\"{$model->url}\"  poster=\"{$model->cover_url}\" width=\"100%\" controls=\"controls\"></video>";
-                        break;
-                    case MediaType::SIGN_AUDIO :
-                        echo "<audio src=\"{$model->url}\" style=\"width: 100%\" controls=\"controls\"></audio>";
-                        break;
-                    case MediaType::SIGN_IMAGE :
-                        echo "<img src=\"{$model->url}\" width=\"100%\" />";
-                        break;
-                    case MediaType::SIGN_DOCUMENT :
-                        echo "<iframe src=\"http://eezxyl.gzedu.com/?furl={$model->url}\" width=\"100%\" height=\"700\" style=\"border: none\"></iframe>";
-                        break;
-                }
-            }
-            ?>
             
         </div>
         
         <!--操作记录-->
         <div role="tabpanel" class="tab-pane fade" id="action" aria-labelledby="action-tab">
           
-            <?= GridView::widget([
-                'dataProvider' => $actionDataProvider,
-                'layout' => "{items}\n{summary}\n{pager}",  
-                'columns' => [
-                    [
-                        'class' => 'yii\grid\SerialColumn',
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '30px',
-                            ],
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', '{Operate}{Type}', [
-                            'Operate' => Yii::t('app', 'Operate'), 'Type' => Yii::t('app', 'Type')
-                        ]),
-                        'value' => function($model){
-                            return $model->title;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '120px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', 'Created By'),
-                        'value' => function($model){
-                            return !empty($model->created_by) ? $model->createdBy->nickname : null;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '120px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', 'Content'),
-                        'format' => 'raw',
-                        'value' => function($model){
-                            return $model->content;
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '750px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'label' => Yii::t('app', '{Operate}{Time}', [
-                            'Operate' => Yii::t('app', 'Operate'), 'Time' => Yii::t('app', 'Time')
-                        ]),
-                        'value' => function($model){
-                            return date('Y-m-d H:i', $model->created_at);
-                        },
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '120px',
-                            ]
-                        ],
-                    ],
-                    [
-                        'class' => 'yii\grid\ActionColumn',
-                        'header' => '操作',
-                        'buttons' => [
-                            'view' => function($url, $model){
-                                return Html::a(Yii::t('app', 'View'), ['view-action', 'id' => $model->id], [
-                                    'id' => 'btn-viewAction', 'class' => 'btn btn-default', 'onclick' => 'showModal($(this)); return false;'
-                                ]);
-                            },
-                        ],
-                        'headerOptions' => [
-                            'style' => [
-                                'width' => '80px',
-                            ],
-                        ],
-
-                        'template' => '{view}',
-                    ],
-                ],
-            ]); ?>
+            <!--加载中-->
+            <div class="loading-box">
+                <span class="loading"></span>
+            </div>
             
         </div>
         
@@ -384,48 +166,29 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
-// 素材类型是转码中
-$isTranscoding = $model->mts_status == Media::MTS_STATUS_DOING ? 1 : 0;
 $js = <<<JS
-    var ref = "";
-    var isTranscoding = $isTranscoding;
+    
+    // 显示标签管理
+    $('#tags-admin').click(function(){
+        $('#tags').load("/media_admin/media/tagsadmin?id={$model->id}");
+    });    
+        
+    // 显示素材预览
+    $('#media-preview').click(function(){
+        $('#preview').load("/media_admin/media/preview?id={$model->id}");
+    });   
+        
+    // 显示素材操作
+    $('#action-log').click(function(){
+        $('#action').load("/media_admin/media/operatelog-list?id={$model->id}");
+    });    
         
     // 弹出素材编辑页面面板
-    $('#btn-editBasic, #btn-editAttribute, #btn-anewUpload, #btn-anewTranscoding').click(function(e){
+    $('#btn-editBasic').click(function(e){
         e.preventDefault();
         showModal($(this));
     });
         
-    /**
-     * 视频预览
-     * @param {object} _this
-     * @returns {undefined}
-     */
-    window.videoPreview = function(_this){
-        var url = _this.attr('data-url');
-        var myVideo = $('#myVideo');
-        myVideo.attr('src', url);
-        myVideo[0].play();
-    } 
-    
-    // 设置定时查看视频输出的转码情况
-    if(isTranscoding){
-        ref = setInterval(function(){
-            $.get("/media_admin/media/check-transcode?id={$model->id}", function(response){
-                if(response.code == "0"){
-                    if(response.data.mts_status == 3){
-                        $('.loading-box .no-more').text(response.msg);
-                        $('.loading-box .loading, .loading-box .no-more').hide();
-                        clearInterval(ref);  // 阻止定时
-                    }else if(response.data.mts_status == 4){
-                        $('.loading-box .no-more').text(response.msg);
-                        clearInterval(ref);  // 阻止定时
-                    }
-                }
-            });
-        }, 5000);    
-        $('.loading-box .loading, .loading-box .no-more').show();
-    }
 JS;
     $this->registerJs($js, View::POS_READY);
 ?>

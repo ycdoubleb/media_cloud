@@ -67,8 +67,8 @@ class RankingStatisticsController extends Controller
 
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 运营人总收入金额
@@ -119,8 +119,8 @@ class RankingStatisticsController extends Controller
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 购买人总支出金额
@@ -173,8 +173,8 @@ class RankingStatisticsController extends Controller
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 素材收入总金额
@@ -301,8 +301,8 @@ class RankingStatisticsController extends Controller
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.confirm_at, '%m')" => $month]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         }
         
         // 素材总引用次数

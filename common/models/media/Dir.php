@@ -102,7 +102,8 @@ class Dir extends ActiveRecord
      */
     public function getMedias()
     {
-        return $this->hasMany(Media::class, ['dir_id' => 'id']);
+        return $this->hasMany(Media::class, ['dir_id' => 'id'])
+            ->where(['<=', 'del_status', Media::DEL_STATUS_APPLY]);
     }
     
     

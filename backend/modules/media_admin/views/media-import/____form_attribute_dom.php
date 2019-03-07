@@ -77,7 +77,7 @@ TagsInputAsset::register($this);
         'Public' => Yii::t('app', 'Public'), 'Tag' => Yii::t('app', 'Tag')
     ]), 'field-media-tag_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
     
-    <div class="col-lg-7 col-md-7">
+    <div class="col-lg-8 col-md-8">
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Html::textInput('Media[tags]', null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tags', 'data-role' => 'tagsinput',

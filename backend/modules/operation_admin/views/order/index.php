@@ -3,11 +3,13 @@
 use backend\modules\operation_admin\assets\OperationModuleAsset;
 use backend\modules\operation_admin\searchs\OrderSearch;
 use common\models\order\Order;
+use common\modules\rbac\components\Helper;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\LinkPager;
 
@@ -32,9 +34,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="title">
             
             <div class="pull-right">
-                <?= Html::a(Yii::t('app', '{Invalid}{Order}', [
-                    'Invalid' => Yii::t('app', 'Invalid'), 'Order' => Yii::t('app', 'Order')
-                ]), ['invalid'], ['id' => 'btn-invalid', 'class' => 'btn btn-danger btn-flat']) ?>
+                <?php if(Helper::checkRoute(Url::to(['invalid']))){
+                    echo Html::a(Yii::t('app', '{Invalid}{Order}', [
+                        'Invalid' => Yii::t('app', 'Invalid'), 'Order' => Yii::t('app', 'Order')
+                    ]), ['invalid'], ['id' => 'btn-invalid', 'class' => 'btn btn-danger btn-flat']);
+                }?>
                 <?= Html::a(Yii::t('app', 'Export'), ['export'], [
                     'id' => 'btn-export', 'class' => 'btn btn-primary btn-flat'
                 ]) ?>

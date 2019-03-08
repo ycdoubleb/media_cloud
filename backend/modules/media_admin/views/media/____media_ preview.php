@@ -163,8 +163,9 @@ $js = <<<JS
                 if(response.code == "0"){
                     if(response.data.mts_status == 3){
                         $('.loading-box .no-more').text(response.msg);
-                        $('.loading-box .loading, .loading-box .no-more').hide();
-                        $('#preview').load("/media_admin/media/preview?id={$model->id}");
+                        setTimeout(function(){
+                            $('#preview').load("/media_admin/media/preview?id={$model->id}");
+                         },1000);
                         clearInterval(ref);  // 阻止定时
                     }else if(response.data.mts_status == 4){
                         $('.loading-box .no-more').text(response.msg);

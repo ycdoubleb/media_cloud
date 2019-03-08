@@ -130,7 +130,7 @@ class ExportUtils
                 ->setCellValue('C5', $order_info['order_amount'] . '元')->setCellValue('D5', '(大写)：')->setCellValue('E5', $order_info['upcase_order_amount']);
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(5)->setRowHeight(40);     //设置行高
         // 第6行
-        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '收入部门')->setCellValue('B6', '内容中心');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '收入部门')->setCellValue('B6', '资源中心');
         $spreadsheet->getActiveSheet()->mergeCells('B6:E6');
         $spreadsheet->setActiveSheetIndex(0)->getRowDimension(6)->setRowHeight(40);     //设置行高
         // 第7行
@@ -184,8 +184,8 @@ class ExportUtils
         //$spreadsheet->getActiveSheet()->getProtection()->setFormatCells(false);
         
         //设置允许修改单元格
-        $spreadsheet->getActiveSheet()->getStyle('B4')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-        $spreadsheet->getActiveSheet()->getStyle('B7')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+        $spreadsheet->getActiveSheet()->getStyle('B3:B4')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+        $spreadsheet->getActiveSheet()->getStyle('B6:B7')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
         $spreadsheet->getActiveSheet()->getProtection()->setSelectUnlockedCells(false);
         
         // Rename worksheet
@@ -355,7 +355,7 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFill()->getStartColor()->setARGB('808080');
         
         //设置锁定
-        $spreadsheet->getActiveSheet()->getProtection()->setPassword('PhpSpreadsheet');
+        $spreadsheet->getActiveSheet()->getProtection()->setPassword('eematerial999');
         $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         $spreadsheet->getActiveSheet()->getProtection()->setSort(true);
         

@@ -32,7 +32,7 @@
         <img src="/imgs/play.png"/>
     </div>
     <div class="statistics-num">
-        <p>总点击量</p>
+        <p>总学习量</p>
         <span><?= empty($media['click_num']) ? 0 : $media['click_num'];?></span>
     </div>
 </div>

@@ -127,7 +127,7 @@ class SingleStatisticsController extends Controller
     }
     
     /**
-     * 统计素材的引用次数/总收入金额/总点击量
+     * 统计素材的引用次数/总收入金额/总学习量
      * @param array $year   年份
      * @param array $month  月份
      * @param integer $mediaId  素材ID
@@ -160,7 +160,7 @@ class SingleStatisticsController extends Controller
         $orderQuery->addSelect(['SUM(OrderGoods.amount) AS order_amount']);
         $orderAmount = $orderQuery->one();
          
-        // 素材总点击量
+        // 素材总学习量
         $clickQuery = (new Query())->from(['MediaVisitLog' => MediaVisitLog::tableName()]);
         $clickQuery->addSelect(['MediaVisitLog.visit_count AS click_num'])
             ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')

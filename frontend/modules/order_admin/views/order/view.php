@@ -85,6 +85,13 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         <?= Html::a('素材列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
                     </li>
                 </ul>
+                <div class="btngroup pull-right">
+                    <?php 
+                        if($tabs == 'resources' && $model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED || $model->order_status == Order::ORDER_STATUS_CONFIRMED){
+                            echo Html::a('导出', ['export-list', 'id' => $model->id], ['class' => 'btn btn-success btn-flat-sm']);     
+                        }
+                    ?>
+                </div>
             </div>
             <div class="panel-content">
                 <?php

@@ -2,6 +2,7 @@
 
 namespace frontend\modules\order_admin\utils;
 
+use common\models\media\Acl;
 use common\models\order\Order;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\utils\DateUtil;
@@ -216,8 +217,9 @@ class ExportUtils
     /**
      * 导出素材清单
      * @param integer $id 订单ID
+     * @param bool $show_route 是否需要导出素材路径
      */
-    public function exportMediaLists($id)
+    public function exportMediaLists($id, $show_route = false)
     {
         $model = Order::findOne($id);   // Order模型
         // 订单信息
@@ -236,17 +238,20 @@ class ExportUtils
         foreach ($goodsDatas as &$item) {
             $item['duration'] = $item['duration'] > 0 ? DateUtil::intToTime($item['duration'], ':', true) : '';
             $item['size'] = Yii::$app->formatter->asShortSize($item['size']);
+            $item['price'] = Yii::$app->formatter->asCurrency($item['price']);
         }
 
-        $this->saveMediaLists($order_info, $goodsDatas);
+        $this->saveMediaLists($order_info, $goodsDatas, $show_route);
+        
     }
     
     /**
-     * 导出素材清单
+     * 保存素材清单
      * @param array $order_info 订单信息
      * @param array $goodsDatas 商品清单
+     * @param bool $show_route  是否需要导出素材路径
      */
-    private function saveMediaLists($order_info, $goodsDatas)
+    private function saveMediaLists($order_info, $goodsDatas, $show_route)
     {
         // Create new Spreadsheet object
         $spreadsheet = new Spreadsheet();
@@ -282,6 +287,149 @@ class ExportUtils
             ],
         ];
        
+        // 是否需要保存素材路径
+        if($show_route) {
+            $this->hasPath($spreadsheet, $allCenter, $verticalCenter, $order_info, $goodsDatas);
+        } else {
+            $this->notPath($spreadsheet, $allCenter, $verticalCenter, $borderStyle, $order_info, $goodsDatas);
+        }
+        
+        //设置列宽
+        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(10);
+        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
+        
+        // Rename worksheet
+        $spreadsheet->getActiveSheet()->setTitle("订单素材清单");
+        
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename=订单素材清单.xlsx');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
+    }
+    
+    /**
+     * 有素材路径的素材清单
+     * @param object $spreadsheet
+     * @param array $allCenter      全居中
+     * @param array $verticalCenter 上下居中
+     * @param array $order_info     订单信息
+     * @param array $goodsDatas     素材信息
+     * @return object
+     */
+    protected function hasPath ($spreadsheet, $allCenter, $verticalCenter, $order_info, $goodsDatas)
+    {
+        // 首行标题
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '订单素材清单');
+        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');    //合并单元格
+        $spreadsheet->getActiveSheet()->getStyle('A1:H1')->applyFromArray($allCenter);  //设置上下左右居中
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(1)->setRowHeight(60);     //设置行高
+        $spreadsheet->getActiveSheet()->getStyle('A1:H1')->getFont()->setBold(true)->setName('Arial')->setSize(16);
+        
+        // 订单信息总览
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A2', '订单编号')->setCellValueExplicit('B2', $order_info['order_sn'], DataType::TYPE_STRING);
+        $spreadsheet->getActiveSheet()->mergeCells('B2:H2');    //合并单元格
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A3', '订单名称')->setCellValue('B3', $order_info['order_name']);
+        $spreadsheet->getActiveSheet()->mergeCells('B3:H3');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A4', '购买人')->setCellValue('B4', $order_info['created_by']);
+        $spreadsheet->getActiveSheet()->mergeCells('B4:H4'); 
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A5', '下单时间')->setCellValue('B5', $order_info['created_at']);
+        $spreadsheet->getActiveSheet()->mergeCells('B5:H5');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A6', '素材总数')->setCellValue('B6', $order_info['goods_num'] . '个');
+        $spreadsheet->getActiveSheet()->mergeCells('B6:H6');
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A7', '素材总价')->setCellValue('B7', $order_info['order_amount'] . '元');
+        $spreadsheet->getActiveSheet()->mergeCells('B7:H7');
+        $start = 2;
+        for($start; $start <= 7; $start++){
+            $spreadsheet->getActiveSheet()->getStyle("A$start")->getFont()->setBold(true);      //设置字体加粗
+            $spreadsheet->getActiveSheet()->getStyle("A$start:H$start")->applyFromArray($verticalCenter);  //设置上下居中
+            $spreadsheet->setActiveSheetIndex(0)->getRowDimension($start)->setRowHeight(20);    //设置行高
+        }
+        
+        // 素材列表头
+        $spreadsheet->setActiveSheetIndex(0)->setCellValue('A8', '素材编号')->setCellValue('B8', '素材名称')
+                ->setCellValue('C8', '素材类型')->setCellValue('D8', '素材时长')->setCellValue('E8', '素材大小')
+                ->setCellValue('F8', '素材价格')->setCellValue('G8', '素材路径');
+        $spreadsheet->getActiveSheet()->mergeCells('G8:H8');    //合并单元格
+        $spreadsheet->getActiveSheet()->getStyle('A8:H8')->applyFromArray($allCenter);
+        $spreadsheet->setActiveSheetIndex(0)->getRowDimension(8)->setRowHeight(28);
+        // 素材列表
+        $startRow = 9;
+        foreach ($goodsDatas as $key => $goodsData) {
+            $columnIndex = 1;
+            $abcstartRow = $startRow + $key;
+            $rowspan = count($goodsData['acl']);    //需要合并的行数
+            $endRow = $abcstartRow + $rowspan - 1;
+            if($rowspan > 1){
+                $spreadsheet->getActiveSheet()->mergeCells("A$abcstartRow:A$endRow");
+                $spreadsheet->getActiveSheet()->mergeCells("B$abcstartRow:B$endRow");
+                $spreadsheet->getActiveSheet()->mergeCells("C$abcstartRow:C$endRow");
+                $spreadsheet->getActiveSheet()->mergeCells("D$abcstartRow:D$endRow");
+                $spreadsheet->getActiveSheet()->mergeCells("E$abcstartRow:E$endRow");
+                $spreadsheet->getActiveSheet()->mergeCells("F$abcstartRow:F$endRow");
+            }
+            $keyRow = $key+$startRow;
+            $spreadsheet->getActiveSheet()->getStyle("A$keyRow:F$keyRow")->applyFromArray($allCenter);//设置上下左右居中
+            
+            $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValueByColumnAndRow($columnIndex, $key+$startRow, $goodsData['goods_id'])
+                    ->setCellValueByColumnAndRow(++$columnIndex, $key+$startRow, $goodsData['media_name'])
+                    ->setCellValueByColumnAndRow(++$columnIndex, $key+$startRow, $goodsData['type_name'])
+                    ->setCellValueByColumnAndRow(++$columnIndex, $key+$startRow, $goodsData['duration'])
+                    ->setCellValueByColumnAndRow(++$columnIndex, $key+$startRow, $goodsData['size'])
+                    ->setCellValueByColumnAndRow(++$columnIndex, $key+$startRow, $goodsData['price']);
+            
+            foreach ($goodsData['acl'] as $index => $acl) {
+                $indexRow = $index+$key+$startRow;
+                $spreadsheet->getActiveSheet()->getStyle("G$indexRow:H$indexRow")->applyFromArray($allCenter);//设置上下左右居中
+                $spreadsheet->setActiveSheetIndex(0)
+                        ->setCellValueByColumnAndRow(++$columnIndex, $index+$key+$startRow, Acl::$levelMap[$index])
+                        ->setCellValueByColumnAndRow(++$columnIndex, $index+$key+$startRow, Url::to(["/media/use/link?sn=$acl"], true));
+                $columnIndex = --$columnIndex - 1;  //重设列数
+            }
+            $startRow = $startRow + $rowspan - 1;   //重设行数
+        }
+        
+        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(38);
+        $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(75);
+        //设置字体/边框/背景颜色
+        $spreadsheet->getActiveSheet()->getStyle('A8:H8')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
+        $spreadsheet->getActiveSheet()->getStyle('A8:H8')->getFill()->setFillType(Fill::FILL_SOLID);
+        $spreadsheet->getActiveSheet()->getStyle('A8:H8')->getFill()->getStartColor()->setARGB('808080');
+        
+        return $spreadsheet;
+    }
+
+    /**
+     * 没有素材路径的素材清单
+     * @param object $spreadsheet   
+     * @param array $allCenter      全居中
+     * @param array $verticalCenter 上下居中
+     * @param array $borderStyle    边框
+     * @param array $order_info     订单信息
+     * @param array $goodsDatas     清单信息
+     * @return object
+     */
+    protected function notPath($spreadsheet, $allCenter, $verticalCenter, $borderStyle, $order_info, $goodsDatas)
+    {
         // 首行标题
         $spreadsheet->setActiveSheetIndex(0)->setCellValue('A1', '订单素材清单');
         $spreadsheet->getActiveSheet()->mergeCells('A1:G1');    //合并单元格
@@ -341,14 +489,7 @@ class ExportUtils
                     ->setCellValueByColumnAndRow(++$columnIndex, $row, '1');
         }
         
-        //设置列宽
-        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(12);
         $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(58);
-        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
-        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
-        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
-        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
         //设置字体/边框/背景颜色
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFont()->getColor()->setARGB(Color::COLOR_WHITE);
         $spreadsheet->getActiveSheet()->getStyle('A8:G8')->getFill()->setFillType(Fill::FILL_SOLID);
@@ -359,27 +500,7 @@ class ExportUtils
         $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         $spreadsheet->getActiveSheet()->getProtection()->setSort(true);
         
-        // Rename worksheet
-        $spreadsheet->getActiveSheet()->setTitle("订单素材清单");
-        
-        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $spreadsheet->setActiveSheetIndex(0);
-
-        // Redirect output to a client’s web browser (Xlsx)
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename=订单素材清单.xlsx');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-
-        // If you're serving to IE over SSL, then the following may be needed
-        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header('Pragma: public'); // HTTP/1.0
-
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $writer->save('php://output');
-        exit;
+        return $spreadsheet;
     }
+    
 }

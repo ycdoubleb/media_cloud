@@ -32,7 +32,7 @@ use yii\web\View;
                 'pluginEvents' => [
                     'uploadComplete' => 'function(evt, data){ uploadComplete(data) }',
                     'fileDequeued' => 'function(evt, file){ fileDequeued(file) }',
-                    "uploadFinished" => 'function(evt,file){ uploadFinished(file) }',
+                    "uploadFinished" => 'function(evt,file){uploadFinished()}',
                 ],
             ]);
             ?>

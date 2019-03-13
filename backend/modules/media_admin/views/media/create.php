@@ -135,7 +135,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     //上传工具的素材
     var uploaderMedias = [];
     //是否已上传完成所有文件
-    window.isUploadFinished = false;
+    window.isUploadFinished = true;
     
     /**
      * html 加载完成后初始化所有组件
@@ -193,8 +193,14 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @param {object} data
      * @returns {undefined}
      */
-    function uploadFinished(data){      
-        window.isUploadFinished = true;
+    function uploadFinished(){      
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
     }
 
     /************************************************************************************

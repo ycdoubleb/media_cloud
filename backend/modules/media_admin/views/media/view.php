@@ -123,6 +123,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'created_at:datetime',
                     'updated_at:datetime',
+                    [
+                        'label' => Yii::t('app', '{Media}{Content}', [
+                            'Media' => Yii::t('app', 'Media'), 'Content' => Yii::t('app', 'Content')
+                        ]),
+                        'value' => !empty($model->detail) ? $model->detail->content : null,
+                    ],
                 ],
             ]) ?>
             

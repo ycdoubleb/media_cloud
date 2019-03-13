@@ -41,12 +41,14 @@ class AttributeController extends GridViewChangeSelfController
     public function actionIndex()
     {
         $searchModel = new MediaAttributeSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $results = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'filters' => $results['filter'],     //查询过滤
+            'totalCount' => $results['total'],     //计算总数量
             'dataProvider' => new ArrayDataProvider([
-                'allModels' => $dataProvider,
+                'allModels' => $results['data']['attribute'],
                 'key' => 'id',
             ]),
         ]);
@@ -60,9 +62,17 @@ class AttributeController extends GridViewChangeSelfController
      */
     public function actionView($id)
     {
+        $searchModel = new MediaAttributeValueSearch(['attribute_id' => $id]);
+        $results = $searchModel->search(Yii::$app->request->queryParams);
+        
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'searchModel' => new MediaAttributeValueSearch()
+            'filters' => $results['filter'],     //查询过滤
+            'totalCount' => $results['total'],     //计算总数量
+            'dataProvider' => new ArrayDataProvider([
+                'allModels' => $results['data']['attVal'],
+                'key' => 'id',
+            ]),
         ]);
     }
 

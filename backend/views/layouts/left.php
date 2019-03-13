@@ -82,7 +82,7 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '素材类目配置', 'icon' => 'circle-o', 'url' => ['/media_config/category/index']],
+                            ['label' => '素材分类配置', 'icon' => 'circle-o', 'url' => ['/media_config/category/index']],
                             ['label' => '素材类型配置', 'icon' => 'circle-o', 'url' => ['/media_config/type/index']],
                             ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => ['/media_config/dir/index']],
                             ['label' => '文件后缀配置', 'icon' => 'circle-o', 'url' => ['/media_config/type-detail/index']],

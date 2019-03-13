@@ -46,7 +46,7 @@ use yii\helpers\Html;
             
             <div class="modal-footer">
                 <span class="text-default hidden" style="font-size: 13px;">提交完成</span>
-                <?= Html::button(Yii::t('app', '{Anew}{Upload}', ['Anew' => Yii::t('app', 'Anew'), 'Upload' => Yii::t('app', 'Upload')
+                <?= Html::button(Yii::t('app', '{Anew}{Submit}', ['Anew' => Yii::t('app', 'Anew'), 'Submit' => Yii::t('app', 'Submit')
                     ]), ['id' => 'btn-anewUpload', 'class' => 'btn btn-primary hidden']) 
                 ?>
                 <?= Html::button(Yii::t('app', 'Close'), ['id' => 'btn-close', 'class' => 'btn btn-default', 'data-dismiss' => 'modal']) ?>

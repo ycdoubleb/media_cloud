@@ -72,9 +72,21 @@ class WatermarkSearch extends Watermark
             ->andFilterWhere(['like', 'oss_key', $this->oss_key])
             ->andFilterWhere(['like', 'refer_pos', $this->refer_pos]);
         
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(id) AS totalCount'])
+            ->asArray()->one();
+        
         // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
 
-        return $query->all();
+        return [
+            'filter' => $params,
+            'total' => $totalResults['totalCount'],
+            'data' => [
+                'watermark' => $query->all()
+            ],
+        ];
     }
 }

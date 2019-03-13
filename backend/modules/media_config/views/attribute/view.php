@@ -79,9 +79,14 @@ YiiAsset::register($this);
     <div class="panel pull-left">
         
         <div class="title">
-            <?= Yii::t('app', '{Attribute}{Value}',[
-                'Attribute' => Yii::t('app', 'Attribute'), 'Value' => Yii::t('app', 'Value'),
-            ]) ?>
+            
+            <div class="pull-left">
+                
+                <?= Yii::t('app', '{Attribute}{Value}',[
+                    'Attribute' => Yii::t('app', 'Attribute'), 'Value' => Yii::t('app', 'Value'),
+                ]) ?>
+                
+            </div>
             
             <div class="btngroup pull-right">
                 <?= Html::a(Yii::t('app', 'Add'), ['attribute-value/create', 'attribute_id' => $model->id], 
@@ -91,14 +96,9 @@ YiiAsset::register($this);
         </div>
         
         <?= $this->render('/attribute-value/index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => new ArrayDataProvider([
-                'allModels' => $searchModel->search(['attribute_id' => $model->id]),
-                'key' => 'id',
-                'pagination' => [
-                    'defaultPageSize' => 10
-                ]
-            ]),
+            'filters' => $filters,
+            'totalCount' => $totalCount,
+            'dataProvider' => $dataProvider,
         ]) ?>
         
     </div>    

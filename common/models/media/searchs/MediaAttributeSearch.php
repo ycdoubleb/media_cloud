@@ -65,12 +65,24 @@ class MediaAttributeSearch extends MediaAttribute
         // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name]);
         
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(id) AS totalCount'])
+            ->asArray()->one();
+        
         // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
         
         // 过滤重复
         $query->with('category');
 
-        return $query->all();
+        return [
+            'filter' => $params,
+            'total' => $totalResults['totalCount'],
+            'data' => [
+                'attribute' => $query->all()
+            ],
+        ];
     }
 }

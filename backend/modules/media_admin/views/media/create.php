@@ -135,7 +135,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     //上传工具的素材
     var uploaderMedias = [];
     //是否已上传完成所有文件
-    window.isUploadFinished = false;
+    window.isUploadFinished = true;
     
     /**
      * html 加载完成后初始化所有组件
@@ -171,7 +171,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
-        mediaBatchUpload.addMediaData(data);
+        if(!!data){
+            mediaBatchUpload.addMediaData(data);
+        }
     }
     
     /**
@@ -180,8 +182,10 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {undefined}
      */
     function fileDequeued(data){
-        mediaBatchUpload.completed_num -= 1;
-        mediaBatchUpload.delMediaData(data.dbFile);
+        if(!!data.dbFile){
+            mediaBatchUpload.completed_num -= 1;
+            mediaBatchUpload.delMediaData(data.dbFile);
+        }
     }
     
     /**
@@ -189,8 +193,14 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @param {object} data
      * @returns {undefined}
      */
-    function uploadFinished(data){        
-        window.isUploadFinished = true;
+    function uploadFinished(){      
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
     }
 
     /************************************************************************************
@@ -203,8 +213,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         $("#submitsave").click(function(){
             validateDirDepDropdownValue($('.dep-dropdown').children('select'));
             submitValidate();
-            validateWebuploaderValue(mediaBatchUpload.medias.length);
-            if($('div.has-error').length > 0 || !window.isUploadFinished) return;
+            validateWebuploaderValue($('#euploader-list tbody').find('tr').length, window.isUploadFinished);
+            // 如果必选项有错误提示或素材列表存在非上传完成，则返回
+            if($('div.has-error').length > 0) return;
             $('#myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);

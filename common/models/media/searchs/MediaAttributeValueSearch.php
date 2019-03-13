@@ -43,8 +43,6 @@ class MediaAttributeValueSearch extends MediaAttributeValue
     {
         $this->load($params);
         
-        //属性id
-        $this->attribute_id = ArrayHelper::getValue($params, 'attribute_id'); 
         //分页
         $page = ArrayHelper::getValue($params, 'page', 1);               
         //显示数
@@ -55,7 +53,6 @@ class MediaAttributeValueSearch extends MediaAttributeValue
         
         // 必要条件
         $query->andFilterWhere([
-            'id' => $this->id,
             'attribute_id' => $this->attribute_id,
             'is_del' => $this->is_del,
         ]);
@@ -63,9 +60,21 @@ class MediaAttributeValueSearch extends MediaAttributeValue
         // 模糊查询
         $query->andFilterWhere(['like', 'value', $this->value]);
         
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(id) AS totalCount'])
+            ->asArray()->one();
+        
         // 显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
 
-        return $query->all();
+        return [
+            'filter' => $params,
+            'total' => $totalResults['totalCount'],
+            'data' => [
+                'attVal' => $query->all()
+            ],
+        ];
     }
 }

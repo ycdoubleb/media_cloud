@@ -89,6 +89,9 @@ $this->title = Yii::t('app', '{Media}{Detail}', [
                             <tr>
                                 <th class="detail-th">标签</th><td class="detail-td" colspan="3"><?= $tagsInfo;?></td>
                             </tr>
+                            <tr>
+                                <th class="detail-th">简介</th><td class="detail-td" colspan="3"><?= $model->detail->content;?></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

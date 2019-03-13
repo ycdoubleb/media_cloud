@@ -35,7 +35,7 @@ class RankingStatisticsController extends Controller
             'operator' => $this->getAmountByOperator($year, $month),   //运营人
             'purchaser' => $this->getAmountByPurchaser($year, $month), //购买人
             'income' => $this->getAmountByMedia($year, $month),        //素材收入
-            'click' => $this->getClickByMedia($year, $month),          //素材点击量
+            'click' => $this->getClickByMedia($year, $month),          //素材学习量
             'quote' => $this->getQuoteByMedia($year, $month),          //素材引用量
 
             'year' => $year,
@@ -217,7 +217,7 @@ class RankingStatisticsController extends Controller
     }
     
     /**
-     * 根据素材点击量统计
+     * 根据素材学习量统计
      * @param array $year   年份
      * @param array $month  月份
      * @return ArrayDataProvider
@@ -226,7 +226,7 @@ class RankingStatisticsController extends Controller
     {
         /* @var $query Query */
         $query = (new Query())
-                ->select(['MediaVisitLog.visit_count AS value'])
+                ->select(['Media.id','MediaVisitLog.visit_count AS value'])
                 ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
@@ -238,14 +238,14 @@ class RankingStatisticsController extends Controller
             $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
         }
         
-        // 素材总点击量
+        // 素材总学习量
         $totalClick = clone $query;
         $totalResults = 0;
-        foreach ($totalClick->all() as $value) {
+        foreach ($totalClick->groupBy('Media.id')->all() as $value) {
             $totalResults += $value['value'];
         }
         
-        // 素材点击量前20名的总量
+        // 素材学习量前20名的总量
         $limitClick = clone $query;
         $limitClick->groupBy('Media.id');
         $limitClick->limit(20);
@@ -254,13 +254,13 @@ class RankingStatisticsController extends Controller
             $limitResult += $value['value'];
         }
         
-        // 素材点击量饼图数据
+        // 素材学习量饼图数据
         $chartsData = clone $query;
         $chartsData->addSelect(['Media.name']);
         $chartsData->groupBy('Media.id');
         $chartsResult = $chartsData->all();
         
-        // 素材点击量表格数据
+        // 素材学习量表格数据
         $listsData = clone $query;
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');
@@ -318,13 +318,13 @@ class RankingStatisticsController extends Controller
             $limitResult += $value['value'];
         }
         
-        // 素材点击量饼图数据
+        // 素材引用次数饼图数据
         $chartsData = clone $query;
         $chartsData->addSelect(['Media.name']);
         $chartsData->groupBy('Media.id');
         $chartsResult = $chartsData->all();
         
-        // 素材点击量表格数据
+        // 素材引用次数表格数据
         $listsData = clone $query;
         $listsData->addSelect(['Media.id', 'Media.name', 'AdminUser.nickname']);
         $listsData->groupBy('Media.id');

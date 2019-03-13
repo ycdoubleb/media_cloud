@@ -473,7 +473,9 @@ class MediaController extends GridViewChangeSelfController
                 
                 if($is_submit){
                     $trans->commit();  //提交事务
-                    MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
+                    if($need_tran){
+                        MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
+                    }
                     Yii::$app->getSession()->setFlash('success','操作成功！');
                 }
                 

@@ -8,6 +8,7 @@ use common\models\order\OrderAction;
 use common\models\order\searchs\OrderGoodsSearch;
 use common\models\order\searchs\OrderSearch;
 use common\models\order\searchs\PlayApproveSearch;
+use frontend\modules\order_admin\utils\ExportUtils;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -131,6 +132,15 @@ class OrderController extends Controller
         ]);
     }
 
+    /**
+     * 导出订单素材路径信息
+     * @param integer $id 订单ID
+     */
+    public function actionExportList($id)
+    {
+        ExportUtils::getInstance()->exportMediaLists($id, true);
+    }
+    
     /**
      * Creates a new Order model.
      * If creation is successful, the browser will be redirected to the 'view' page.

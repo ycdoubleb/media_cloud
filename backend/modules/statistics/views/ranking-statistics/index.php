@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a('素材收入金额', array_merge(['index'], array_merge($filters, ['tabs' => 'income']))) ?>
                 </li>
                 <li id="click">
-                    <?= Html::a('素材点击次数', array_merge(['index'], array_merge($filters, ['tabs' => 'click']))) ?>
+                    <?= Html::a('素材学习次数', array_merge(['index'], array_merge($filters, ['tabs' => 'click']))) ?>
                 </li>
                 <li id="quote">
                     <?= Html::a('素材引用次数', array_merge(['index'], array_merge($filters, ['tabs' => 'quote']))) ?>

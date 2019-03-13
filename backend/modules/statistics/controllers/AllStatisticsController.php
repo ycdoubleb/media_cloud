@@ -62,7 +62,7 @@ class AllStatisticsController extends Controller
     }
     
     /**
-     * 获取总点击量
+     * 获取总学习量
      * @return array
      */
     protected function getTotalVisitNumber()

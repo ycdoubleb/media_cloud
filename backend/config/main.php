@@ -89,8 +89,12 @@ return [
             'class' => 'backend\modules\statistics\Module',
         ],
         //帮助中心管理
-        'helpcenter_admin' => [
-            'class' => 'backend\modules\helpcenter_admin\Module',
+//        'helpcenter_admin' => [
+//            'class' => 'backend\modules\helpcenter_admin\Module',
+//        ],
+        //reids缓存管理
+        'rediscache_admin' => [
+            'class' => 'backend\modules\rediscache_admin\Module',
         ],
     ],
     'params' => $params,

@@ -28,12 +28,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
 //        'filterModel' => $searchModel,
         'layout' => "{items}\n{summary}\n{pager}",
+        'summaryOptions' => ['class' => 'hidden'],
+        'pager' => [
+            'options' => ['class' => 'hidden']
+        ],
         'columns' => [
             [
                 'class' => 'yii\grid\SerialColumn',
                 'headerOptions' => [
                     'style' => [
-                        'width' => '30px',
+                        'width' => '50px',
                     ],
                 ],
             ],
@@ -99,6 +103,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+    
+    <?php
+        $page = ArrayHelper::getValue($filters, 'page', 1);
+        $pageCount = ceil($totalCount / 10);
+        if($pageCount >= 2){
+            echo '<div class="summary">' . 
+                    '第 <b>' . (($page * 10 - 10) + 1) . '</b>-<b>' . ($page != $pageCount ? $page * 10 : $totalCount) .'</b> 条，总共 <b>' . $totalCount . '</b> 条数据。' .
+                '</div>';
+
+            echo LinkPager::widget([  
+                'pagination' => new Pagination([
+                    'totalCount' => $totalCount,
+                    'pageSize' => 10
+                ]),  
+                'maxButtonCount' => 5
+            ]);
+        }
+    ?>
+    
 </div>
 
 <!--加载模态框-->

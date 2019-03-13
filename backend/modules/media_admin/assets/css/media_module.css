@@ -35,6 +35,15 @@ and open the template in the editor.
     background: #f9f9f9;
 }
 
+.media-index .panel .title {
+    height: auto;
+    float: right;
+    padding-bottom: 10px;
+    display: inline-block;
+    line-height: 0px;
+    border-bottom: none;
+}
+
 /*******************************************************************************
  *
  * media-form

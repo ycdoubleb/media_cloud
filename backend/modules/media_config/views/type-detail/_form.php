@@ -61,12 +61,15 @@ use yii\widgets\ActiveForm;
                 ])) ?>
                 
                 <!--MIME-->
-                <?php
-//                    echo $form->field($model, 'mime_type')->textInput([
-//                        'placeholder' => 'image/jpg', 'maxlength' => true
-//                    ])->label(Yii::t('app', 'MIME{Type}', [
-//                        'Type' => Yii::t('app', 'Type')
-//                    ]));
+                <?= $form->field($model, 'mime_type', [
+                    'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n"
+                    . "<div class=\"col-lg-7 col-md-7\">{error}</div>"
+                    . "<a href=\"http://www.w3school.com.cn/media/media_mimeref.asp\" target=\"_blank\" style=\"display:block;margin-top:8px\">MIME类型—参考手册</a>",  
+                ])->textInput([
+                        'placeholder' => '输入格式：video/mp4', 'maxlength' => true
+                    ])->label(Yii::t('app', 'MIME{Type}', [
+                        'Type' => Yii::t('app', 'Type')
+                    ]));
                 ?>
 
                 <!--图标-->

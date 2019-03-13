@@ -128,7 +128,7 @@ class WebuploaderInput extends InputWidget{
                 //添加事件
                 $pluginEvents;
                 //添加已经存在文件
-                uploader.addCompleteFiles(datas);
+//                uploader.addCompleteFiles(datas);
                 //调用ready初始化完成
                 ready(uploader);
             });

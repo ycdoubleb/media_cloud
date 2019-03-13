@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'userMap' => $userMap,
         'attrMap' => $attrMap
     ]) ?>
-    
+        
     <div class="panel pull-left">
         
         <div class="title">
@@ -59,6 +59,30 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="loading-box" style="text-align: center; padding: 20px">
                 <span class="loading" style="display: none"></span>
             </div>
+        </div>
+        
+        <div class="title">
+            <div class="pull-right">
+                
+                <?php 
+                    if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
+                        || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
+                        echo  Html::a(Yii::t('app', '{Reset}{Price}', [
+                            'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
+                        ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); 
+                        echo ' '.Html::a(Yii::t('app', '{Reset}{Tag}', [
+                            'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
+                        ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']);
+                        echo ' '.Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
+                            'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
+                        ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']);
+                        echo ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
+                            'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
+                        ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']);
+                    }
+                ?>
+            </div>
+            
         </div>
         
         <!--总结-->

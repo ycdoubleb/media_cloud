@@ -74,8 +74,8 @@ class MediaController extends GridViewChangeSelfController
         
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'filters' => $results['filter'],     //查询过滤的属性
-            'totalCount' => $results['total'],     //查询过滤的属性
+            'filters' => $results['filter'],     //查询过滤
+            'totalCount' => $results['total'],     //计算总数量
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',

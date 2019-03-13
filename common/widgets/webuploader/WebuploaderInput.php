@@ -114,21 +114,21 @@ class WebuploaderInput extends InputWidget{
             }
         }
         /* 准备已存在数据 */
-        $datas = json_encode($this->convertDbfiles());
+        //$datas = json_encode($this->convertDbfiles());
         
         $js = <<< JS
             Wskeee.require(['euploader'],function(){
                 var config = $config;
                 var uploader = new euploader.Uploader(config,euploader[config['type']]);
                 var ready = {$this->pluginEvents['ready']};
-                var datas = $datas;
+                //var datas = $datas;
                 
                 //保存loader与div关系
                 $("#$this->id").data('uploader',uploader);
                 //添加事件
                 $pluginEvents;
                 //添加已经存在文件
-//                uploader.addCompleteFiles(datas);
+                //uploader.addCompleteFiles(datas);
                 //调用ready初始化完成
                 ready(uploader);
             });

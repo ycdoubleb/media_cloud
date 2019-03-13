@@ -57,6 +57,10 @@ and open the template in the editor.
  * Banner管理
  *
 ********************************************************************************/
+.banner-search .form .form-group .form-label {
+    width: 16.66666667%
+}
+
 .banner-search .panel {
     padding: 15px 0px; 
     margin-bottom: 30px; 

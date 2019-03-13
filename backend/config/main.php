@@ -89,8 +89,12 @@ return [
             'class' => 'backend\modules\statistics\Module',
         ],
         //帮助中心管理
-        'helpcenter_admin' => [
-            'class' => 'backend\modules\helpcenter_admin\Module',
+//        'helpcenter_admin' => [
+//            'class' => 'backend\modules\helpcenter_admin\Module',
+//        ],
+        //reids缓存管理
+        'rediscache_admin' => [
+            'class' => 'backend\modules\rediscache_admin\Module',
         ],
     ],
     'params' => $params,
@@ -105,7 +109,7 @@ return [
             'debug/*',
             'media_admin/media/tran-complete',
             'media_admin/media/check-transcode',
-            'media_admin/default/index',
+            'rediscache_admin/*',
         // The actions listed here will be allowed to everyone including guests.
         // So, 'admin/*' should not appear here in the production, of course.
         // But in the earlier stages of your development, you may probably want to

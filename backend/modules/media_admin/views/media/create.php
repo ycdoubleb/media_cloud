@@ -171,7 +171,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
-        mediaBatchUpload.addMediaData(data);
+        if(!!data){
+            mediaBatchUpload.addMediaData(data);
+        }
     }
     
     /**
@@ -180,8 +182,10 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {undefined}
      */
     function fileDequeued(data){
-        mediaBatchUpload.completed_num -= 1;
-        mediaBatchUpload.delMediaData(data.dbFile);
+        if(!!data.dbFile){
+            mediaBatchUpload.completed_num -= 1;
+            mediaBatchUpload.delMediaData(data.dbFile);
+        }
     }
     
     /**
@@ -189,7 +193,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @param {object} data
      * @returns {undefined}
      */
-    function uploadFinished(data){        
+    function uploadFinished(data){      
         window.isUploadFinished = true;
     }
 
@@ -203,8 +207,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         $("#submitsave").click(function(){
             validateDirDepDropdownValue($('.dep-dropdown').children('select'));
             submitValidate();
-            validateWebuploaderValue(mediaBatchUpload.medias.length);
-            if($('div.has-error').length > 0 || !window.isUploadFinished) return;
+            validateWebuploaderValue($('#euploader-list tbody').find('tr').length, window.isUploadFinished);
+            // 如果必选项有错误提示或素材列表存在非上传完成，则返回
+            if($('div.has-error').length > 0) return;
             $('#myModal').modal("show");
             var formdata = $('#media-form').serialize();
             mediaBatchUpload.submit(formdata);

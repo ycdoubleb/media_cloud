@@ -46,15 +46,23 @@ use yii\web\View;
     /**
      * 验证上传文件是否有选择值
      * @param {number} total
+     * @param {bool} isUploadFinished
      * @returns {undefined}
      */
-    function validateWebuploaderValue(total)
+    function validateWebuploaderValue(total, isUploadFinished)
     {
         if(!$('div.field-media-file_id').hasClass('required')) return;
         
         if(total <= 0){
             $('div.field-media-file_id').addClass('has-error');
             $('div.field-media-file_id').find('div.help-block').html('素材文件列表不能为空。');
+            setTimeout(function(){
+                $('div.field-media-file_id').removeClass('has-error');
+                $('div.field-media-file_id').find('div.help-block').html('');
+            }, 3000);
+        }else if(!isUploadFinished){
+            $('div.field-media-file_id').addClass('has-error');
+            $('div.field-media-file_id').find('div.help-block').html('素材文件列表尚有文件未上传。');
             setTimeout(function(){
                 $('div.field-media-file_id').removeClass('has-error');
                 $('div.field-media-file_id').find('div.help-block').html('');

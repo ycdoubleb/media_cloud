@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <img src="/imgs/play.png"/>
             </div>
             <div class="statistics-num">
-                <p>总点击量</p>
+                <p>总学习量</p>
                 <span><?= $total_visit_num;?></span>
             </div>
         </div>

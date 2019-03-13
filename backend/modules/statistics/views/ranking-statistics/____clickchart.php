@@ -3,7 +3,7 @@
 use yii\web\View;
 
 /**
- * 素材点击量子页面
+ * 素材学习量子页面
  * 右侧饼图部分
  */
 
@@ -13,7 +13,7 @@ use yii\web\View;
         <img src="/imgs/play.png"/>
     </div>
     <div class="statistics-num">
-        <p>总点击量</p>
+        <p>总学习量</p>
         <span><?= $click['totalClick'];?></span>
     </div>
 </div>
@@ -23,7 +23,7 @@ use yii\web\View;
         <img src="/imgs/play.png"/>
     </div>
     <div class="statistics-num">
-        <p>前20名点击量</p>
+        <p>前20名学习量</p>
         <span><?= $click['limitClick'];?></span>
     </div>
 </div>

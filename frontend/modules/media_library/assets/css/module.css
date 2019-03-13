@@ -40,6 +40,14 @@ and open the template in the editor.
     padding: 35px 0px; 
 }
 
+/*替换下拉框的样式*/
+.mediacloud .media-form .select2-container--krajee .select2-selection--single .select2-selection__rendered {
+    padding-right: 15px;
+}
+.mediacloud .media-form .select2-container--krajee .select2-selection--single .select2-selection__clear {
+    right: 2rem;
+}
+
 .media-form .search-panel .search-dir .control-label{
     padding-top: 10px;
 }

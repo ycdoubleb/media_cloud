@@ -34,11 +34,11 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         'class' => 'btn btn-highlight btn-flat-lg', 
                         'onclick' => 'showModal($(this).attr("href"));return false;'
                     ]).' ';
-                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat-lg', 'target' => '_blank']);     
+                    echo Html::a('取消订单', ['delete', 'id' => $model->id], ['class' => 'btn btn-highlight btn-flat-lg', 'target' => '_blank', 'style' => 'margin-right:0px;']);     
                 }
                 // 审核通过
                 if($model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED){
-                    echo Html::a('确认开通', 'javascript:;', ['id' => 'submit', 'class' => 'btn btn-primary btn-flat-lg']); 
+                    echo Html::a('确认开通', 'javascript:;', ['id' => 'submit', 'class' => 'btn btn-primary btn-flat-lg', 'style' => 'margin-right:0px;']); 
                 }
             ?>
         </div>
@@ -85,6 +85,13 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
                         <?= Html::a('素材列表', array_merge(['view'], array_merge($filter, ['tabs' => 'resources']))) ?>
                     </li>
                 </ul>
+                <div class="btngroup pull-right">
+                    <?php 
+                        if($tabs == 'resources' && $model->order_status == Order::ORDER_STATUS_TO_BE_CONFIRMED || $model->order_status == Order::ORDER_STATUS_CONFIRMED){
+                            echo Html::a('导出', ['export-list', 'id' => $model->id], ['class' => 'btn btn-success btn-flat-sm']);     
+                        }
+                    ?>
+                </div>
             </div>
             <div class="panel-content">
                 <?php

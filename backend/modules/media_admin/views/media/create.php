@@ -171,6 +171,14 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数、上传中数量、等待上传数量大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0 || fileSummary.progress > 0 || fileSummary.queue > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
+        
         if(!!data){
             mediaBatchUpload.addMediaData(data);
         }
@@ -185,21 +193,6 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         if(!!data.dbFile){
             mediaBatchUpload.completed_num -= 1;
             mediaBatchUpload.delMediaData(data.dbFile);
-        }
-    }
-    
-    /**
-     * 完成上传列表中的所有文件
-     * @param {object} data
-     * @returns {undefined}
-     */
-    function uploadFinished(){      
-        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
-        // 如果失败数大于0则表示素材文件列表存在未完成上传文件，显示提示
-        if(fileSummary.failed > 0){
-            window.isUploadFinished = false;
-        }else{
-            window.isUploadFinished = true;
         }
     }
 

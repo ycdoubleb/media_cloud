@@ -105,15 +105,6 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
         mediaBatchUpload.delMediaData(data.dbFile);
     }
     
-    /**
-     * 完成上传列表中的所有文件
-     * @param {object} data
-     * @returns {undefined}
-     */
-    function uploadFinished(data){        
-        window.isUploadFinished = true;
-    }
-    
     /************************************************************************************
      *
      * 初始化提交

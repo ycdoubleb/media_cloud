@@ -46,6 +46,8 @@ class MergeChunksAction extends BaseAction {
         $fileMd5 = isset($params["fileMd5"]) ? $params["fileMd5"] : '';
         //文件大小
         $fileSize = isset($params["size"]) ? (integer) $params["size"] : 0;
+        //分片数
+        $chunks = isset($params["chunks"]) ? (integer) $params["chunks"] : 1;
         //文件路径
         $uploadPath = $uploadDir . '/' . $fileMd5 . strrchr($name, '.');
 
@@ -59,14 +61,22 @@ class MergeChunksAction extends BaseAction {
             } else {
                 /* @var $fileChunk UploadfileChunk  */
                 $unFoundChunks = [];
-                foreach ($fileChunks as $fileChunk) {
+                foreach ($fileChunks as $index => $fileChunk) {
                     if (!file_exists($fileChunk->chunk_path)) {
-                        $unFoundChunks [] = $fileChunk->chunk_path;
-                        return new UploadResponse(UploadResponse::CODE_CHUNK_NOT_FOUND, null, null, ['chunkPath' => $fileChunk->chunk_path]);
+                        unset($fileChunks[$index]);
+                        $unFoundChunks [] = $fileChunk->chunk_id;
+                        //return new UploadResponse(UploadResponse::CODE_CHUNK_NOT_FOUND, null, null, ['chunkPath' => $fileChunk->chunk_path]);
                     }
                 }
                 //删除无用分片数据
-                UploadfileChunk::updateAll(['is_del' => 1], ['chunk_path' => $unFoundChunks]);
+                if(count($unFoundChunks)>0){
+                    UploadfileChunk::updateAll(['is_del' => 1], ['chunk_id' => $unFoundChunks]);
+                }
+                
+                //检查分片数量是否确
+                if(count($fileChunks) != $chunks){
+                    return new UploadResponse(UploadResponse::CODE_CHUNK_NUM_WRONG,"fc=$fileChunks,chunks=$chunks");
+                }
 
                 if (!$out = @fopen($uploadPath, "wb")) {
                     return new UploadResponse(UploadResponse::CODE_OPEN_OUPUT_STEAM_FAIL);

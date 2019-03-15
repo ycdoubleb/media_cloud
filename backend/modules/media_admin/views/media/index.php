@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_search', [
         'model' => $searchModel,
         'filters' => $filters,
+        'dirDataProvider' => $dirDataProvider,
         'userMap' => $userMap,
         'attrMap' => $attrMap
     ]) ?>

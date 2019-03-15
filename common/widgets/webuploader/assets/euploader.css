@@ -141,6 +141,14 @@
     float: left;
     font-size: 12px;
  }
+ /* 自动重传 */
+.table-list .auto-retry-box{
+    line-height: 34px;
+ }
+.table-list .auto-retry-box .count-down-box{
+    display: inline-block;
+    color: #cccccc;
+ }
 /* 状态图标 */
 .filelist-status {
     width: 30px;

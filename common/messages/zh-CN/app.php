@@ -315,6 +315,8 @@ return [
     'Surplus' => '剩余',
     'Total' => '总数',
     'Suffix' => '后缀',
+    'Chunk Id' => '分片ID',
+    'Chunk Index' => '分片索引',
     
     //后台-素材管理
     'Operator' => '运营者',

@@ -4,9 +4,9 @@ namespace backend\modules\media_admin\controllers;
 
 use common\components\aliyuncs\Aliyun;
 use common\models\api\ApiResponse;
+use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAction;
-use common\models\media\MediaApprove;
 use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaDetail;
@@ -124,6 +124,7 @@ class MediaImportController extends Controller{
         
         return $this->render('create', [
             'model' => $model,
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
             'medias' => $this->getSpreadsheet('importfile'),     //excel表的素材信息
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
@@ -218,5 +219,23 @@ class MediaImportController extends Controller{
         }
         
         return $results;
+    }
+    
+    /**
+     * 重组存储目录同级的所有目录
+     * @return array
+     */
+    protected function getAgainInstallDirsBySameLevel()
+    {
+        $dirDataProvider = [];
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, true);
+        foreach ($dirBySameLevels as $dirLists) {
+            foreach ($dirLists as $dir) {
+                $dir['isParent'] = true;
+                $dirDataProvider[] = $dir;
+            }    
+        }
+        
+        return $dirDataProvider;
     }
 }

@@ -2,36 +2,37 @@
 
 namespace common\modules\webuploader\models\searchs;
 
-use common\models\AdminUser;
-use common\modules\webuploader\models\Uploadfile;
+use common\modules\webuploader\models\UploadfileChunk;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 
 /**
- * UploadfileSearch represents the model behind the search form of `common\modules\webuploader\models\Uploadfile`.
+ * UploadfileChunkSearch represents the model behind the search form of `common\modules\webuploader\models\UploadfileChunk`.
  */
-class UploadfileSearch extends Uploadfile {
-
+class UploadfileChunkSearch extends UploadfileChunk
+{
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-            [['id', 'size', 'oss_upload_status', 'is_del', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'md5', 'path', 'thumb_url', 'ext', 'metadata', 'oss_key', 'created_by'], 'safe'],
+            [['chunk_id', 'file_md5', 'chunk_path'], 'safe'],
+            [['chunk_index', 'is_del', 'created_at', 'updated_at'], 'integer'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios() {
+    public function scenarios()
+    {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
-     /**
+    /**
      * Creates data provider instance with search query applied
      *
      * @param array $params
@@ -41,10 +42,14 @@ class UploadfileSearch extends Uploadfile {
     public function search($params)
     {
         $query = (new Query())
-                ->select(['Uploadfile.id', 'Uploadfile.name', 'Uploadfile.path', 'Uploadfile.size', 'Uploadfile.oss_upload_status',
-                    'AdminUser.nickname AS created_by', 'Uploadfile.created_at'])
-                ->from(['Uploadfile' => Uploadfile::tableName()]);
+            ->select(['chunk_id', 'file_md5', 'chunk_path', 'chunk_index', 'created_at'])
+            ->from(['UploadfileChunk' => UploadfileChunk::tableName()]);
 
+        $query->orderBy([
+            'file_md5' => SORT_ASC,
+            'chunk_index' => SORT_ASC,
+        ]);
+        
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -58,13 +63,10 @@ class UploadfileSearch extends Uploadfile {
             // $query->where('0=1');
             return $dataProvider;
         }
-        //关联查询创建者
-        $query->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Uploadfile.created_by');
 
         // grid filtering conditions
         $query->andWhere(['is_del' => 0]);
 
         return $dataProvider;
     }
-    
 }

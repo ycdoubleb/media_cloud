@@ -1,12 +1,9 @@
 <?php
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
-use common\models\media\Dir;
 use common\models\media\Media;
-use common\widgets\depdropdown\DepDropdown;
+use common\widgets\zTree\zTreeAsset;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -14,6 +11,7 @@ use yii\widgets\ActiveForm;
 /* @var $model Media */
 
 MediaModuleAsset::register($this);
+zTreeAsset::register($this);
 
 $this->title = Yii::t('app', '{Create}{Media}', [
     'Create' => Yii::t('app', 'Create'), 'Media' => Yii::t('app', 'Media')
@@ -51,34 +49,38 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <div role="tabpanel" class="tab-pane fade active in" id="basics" aria-labelledby="basics-tab">
             
             <!--存储目录-->
-            <?= $form->field($model, 'dir_id', [
-                'template' => "{label}\n"
-                . "<div class=\"col-lg-8 col-md-8\">"
-                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}"
-                        . "<div class=\"col-lg-1 col-md-1 clean-padding\">"
-                            . "<a href=\"/media_config/dir/create\" class=\"btn btn-default\" onclick=\"showModal($(this)); return false;\">新建目录</a>"
-                        . "</div>"
-                    . "</div>\n"
-                    . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
-                . "</div>", 
-                'labelOptions' => [
-                    'class' => 'col-lg-1 col-md-1 control-label form-label',
-                ],  
-            ])->widget(DepDropdown::class,[
-                'pluginOptions' => [
-                    'url' => Url::to(['/media_config/dir/search-children']),
-                    'max_level' => 10,
-                    'onChangeEvent' => new JsExpression("function(){ validateDirDepDropdownValue($('.dep-dropdown').children('select')) }")
-                ],
+            <div class="form-group field-media-dir_id required">
                 
-                'items' => Dir::getDirsBySameLevel(null, Yii::$app->user->id, true, true),
-                'itemOptions' => [
-                    'style' => 'width: 175px; display: inline-block;',
-                ],
-            ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Storage}{Dir}：', [
-                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-            ])) ?>
+                <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Storage}{Dir}：', [
+                    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
+                ]), 'media-dir_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+                
+                <div class="col-lg-8 col-md-8">
+                    
+                    <div class="col-lg-12 col-md-12 clean-padding">
+                        
+                        <div class="zTree-dropdown-container zTree-dropdown-container--krajee">
+                            <!-- 模拟select点击框 以及option的text值显示-->
+                            <span id="zTree-dropdown-name" class="zTree-dropdown-selection zTree-dropdown-selection--single" onclick="showTree();" >
+                                <span class="zTree-dropdown-selection__placeholder">全部</span>
+                            </span> 
+                            <!-- 模拟select右侧倒三角 -->
+                            <i class="zTree-dropdown-selection__arrow"></i>
+                            <!-- 存储 模拟select的value值 -->
+                            <input id="zTree-dropdown-value" type="hidden" name="Media[dir_id]" />
+                            <!-- zTree树状图 相对定位在其下方 -->
+                            <div class="zTree-dropdown-options ztree"  style="display:none;"><ul id="zTree-dropdown"></ul></div>  
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>
+                    
+                </div>
+                
+            </div>
             
+            <!--属性选择-->
             <?= $this->render('____form_attribute_dom', [
                 'attrMap' => $attrMap,
                 'isTagRequired' => $isTagRequired,
@@ -86,6 +88,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
                 'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
             ]) ?>
 
+            <!--素材上传-->
             <?= $this->render('____form_upload_dom', [
                 'model' => $model,
                 'mimeTypes' => $mimeTypes
@@ -134,6 +137,8 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     var mediaBatchUpload;
     //上传工具的素材
     var uploaderMedias = [];
+    //树状图展示
+    var treeDataList = <?= json_encode($dirDataProvider) ?>;
     //是否已上传完成所有文件
     window.isUploadFinished = true;
     
@@ -145,6 +150,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         initBatchUpload();        //初始批量上传
         initWatermark();          //初始水印
         initSubmit();             //初始提交
+        initzTreeDropdown();      //初始树状下拉
     }
         
     /************************************************************************************
@@ -171,6 +177,14 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数、上传中数量、等待上传数量大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0 || fileSummary.progress > 0 || fileSummary.queue > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
+        
         if(!!data){
             mediaBatchUpload.addMediaData(data);
         }
@@ -187,21 +201,6 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             mediaBatchUpload.delMediaData(data.dbFile);
         }
     }
-    
-    /**
-     * 完成上传列表中的所有文件
-     * @param {object} data
-     * @returns {undefined}
-     */
-    function uploadFinished(){      
-        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
-        // 如果失败数大于0则表示素材文件列表存在未完成上传文件，显示提示
-        if(fileSummary.failed > 0){
-            window.isUploadFinished = false;
-        }else{
-            window.isUploadFinished = true;
-        }
-    }
 
     /************************************************************************************
      *
@@ -211,8 +210,8 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     function initSubmit(){
         // 弹出提交结果
         $("#submitsave").click(function(){
-            validateDirDepDropdownValue($('.dep-dropdown').children('select'));
             submitValidate();
+            validateDirDepDropdownValue($('#zTree-dropdown-value'));
             validateWebuploaderValue($('#euploader-list tbody').find('tr').length, window.isUploadFinished);
             // 如果必选项有错误提示或素材列表存在非上传完成，则返回
             if($('div.has-error').length > 0) return;
@@ -233,11 +232,31 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     
     /**
      * 验证存储目录下拉框是否有选择值
-     * @param {DepDropdown} _this
+     * @param {zTreeDropdown} _this
      * @returns {undefined}
      */
     function validateDirDepDropdownValue(_this){
-        validateDepDropdownValue(_this);
+        if(!_this.parents('div.form-group').hasClass('required')) return;
+
+        if(_this.val() == ''){
+            var label = _this.parents('div.form-group').find('label.form-label').text();
+            var relabel = label.replace('*', "");
+            _this.parents('div.form-group').addClass('has-error');
+            _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+            setTimeout(function(){
+                _this.parents('div.form-group').removeClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html('');
+            }, 3000);
+        }
+    }
+    
+    /************************************************************************************
+     *
+     * 初始化树状下拉
+     *
+     ************************************************************************************/ 
+    function initzTreeDropdown(){
+        zTreeDropdown('zTree-dropdown', 'zTree-dropdown-name', 'zTree-dropdown-value', {}, treeDataList)
     }
     
 </script>

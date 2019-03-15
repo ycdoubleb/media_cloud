@@ -51,6 +51,7 @@ use common\widgets\Menu;
                             ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup/index']],
                             ['label' => 'redis缓存管理', 'icon' => 'circle-o', 'url' => ['/rediscache_admin/acl/index']],
                             ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner/index']],
+                            ['label' => '上传文件管理', 'icon' => 'circle-o', 'url' => ['/system_admin/uploadfile/index']]
                         ],
                     ],
                     [

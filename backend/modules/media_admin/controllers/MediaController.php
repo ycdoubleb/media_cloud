@@ -70,7 +70,7 @@ class MediaController extends GridViewChangeSelfController
         $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType())]);
         $results = $searchModel->search(Yii::$app->request->queryParams);
         $medias = $results['data']['medias']; //所有素材数据
-        $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');        
+        $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');     
         
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -80,6 +80,7 @@ class MediaController extends GridViewChangeSelfController
                 'allModels' => $medias,
                 'key' => 'id',
             ]),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
@@ -264,6 +265,7 @@ class MediaController extends GridViewChangeSelfController
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
             'wateFiles' => Watermark::getEnabledWatermarks(),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
             'wateSelected' => [],
         ]);
     }
@@ -651,5 +653,23 @@ class MediaController extends GridViewChangeSelfController
         }
         
         return $results;
+    }
+    
+    /**
+     * 重组存储目录同级的所有目录
+     * @return array
+     */
+    protected function getAgainInstallDirsBySameLevel()
+    {
+        $dirDataProvider = [];
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, true);
+        foreach ($dirBySameLevels as $dirLists) {
+            foreach ($dirLists as $index => $dir) {
+                $dir['isParent'] = true;
+                $dirDataProvider[] = $dir;
+            }    
+        }
+        
+        return $dirDataProvider;
     }
 }

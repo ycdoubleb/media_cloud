@@ -35,6 +35,15 @@ class Uploadfile extends ActiveRecord {
     const OSS_UPLOAD_STATUS_YES = 1;
 
     /**
+     * 上传状态：0未上传，1上传中，2已上传
+     * @var array 
+     */
+    public static $ossUploadStatus = [
+        self::OSS_UPLOAD_STATUS_NO => '未上传',
+        self::OSS_UPLOAD_STATUS_YES => '已上传',
+    ];
+    
+    /**
      * @inheritdoc
      */
     public static function tableName() {

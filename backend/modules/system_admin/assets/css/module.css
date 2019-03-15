@@ -7,50 +7,6 @@ and open the template in the editor.
     Created on : 2018-3-7, 13:50:08
     Author     : Vito
 */
-/********* uploadfile-index样式 ***********/
-/** table表格th样式 */
-.uploadfile-index .viewdetail-th {
-    color: #666666;
-    width: 23%;
-    font-weight: normal;
-    text-align: right;
-    min-width: 73px;
-    vertical-align: middle;
-}
-
-/** table表格th-head样式 */
-.uploadfile-index .viewdetail-th-head {
-    color: #000000;
-    float: left;
-    font-weight: bold;
-}
-
-.uploadfile-index .frame {
-    width: 100%;
-    padding-left: 0;
-    padding-right: 0;
-    display: inline-block;
-}
-
-.uploadfile-index .frame-left {
-    width: 40%;
-    margin-bottom: 30px;
-}
-
-.uploadfile-index .frame
-.frame-title {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    color: #ffffff;
-    line-height: 20px;
-    background-color: rgba(153, 153, 153, 1);
-}
-
-.uploadfile-index .frame
-.frame-title>span {
-    display: block;
-    float: left;
-}
 
 /*******************************************************************************
  *
@@ -90,4 +46,57 @@ and open the template in the editor.
     padding: 15px; 
     border: 1px solid #ddd;
     border-top: none;
+}
+
+/*******************************************************************************
+ *
+ * 上传文件管理
+ *
+********************************************************************************/
+.uploadfile-index .mc-tabs {
+    display: inline-block;
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background-color: #f2f2f2;
+}
+
+.uploadfile-index .mc-tabs > ul > li {
+    float: left;
+    margin-top: -2px;
+}
+
+.uploadfile-index .mc-tabs > ul > li > a {
+    display: inline-block;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #999999;
+    line-height: 48px;
+    font-size: 14px;
+}
+
+.uploadfile-index .mc-tabs > ul > li.active > a {
+    border-bottom: 2px solid #FC583D;
+}
+
+.uploadfile-index .mc-tabs > ul > li.active > a, .mc-title > ul > li:hover > a {
+    color: #fc583d;
+}
+
+.uploadfile-index .mc-panel .pull-right {
+    margin-bottom: 10px;
+}
+
+.uploadfile-index .table-bordered>thead>tr>th,
+.uploadfile-index .table-bordered>tbody>tr>th,
+.uploadfile-index .table-bordered>tfoot>tr>th,
+.uploadfile-index .table-bordered>thead>tr>td,
+.uploadfile-index .table-bordered>tbody>tr>td,
+.uploadfile-index .table-bordered>tfoot>tr>td {
+    padding: 8px 4px !important;
+}
+
+.uploadfile-index .table-bordered>tbody {
+    font-size: 12px;
 }

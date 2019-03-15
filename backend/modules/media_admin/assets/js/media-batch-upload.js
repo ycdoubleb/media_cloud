@@ -233,27 +233,37 @@
                 var submit_common_params = this.config['submit_common_params'];
                 postData = $.extend(postData, submit_common_params);
                 md.setSubmitResult(1);  //设置提交中
-                $.post(this.config['media_url'], postData, function (response) {
-                    try {
-                        //code 不为0即为失败
-                        if(response.code == "0"){
-                            md.setSubmitResult(2, true, response.msg, response.data);
-                        }else if(response.code == "10002"){
-                            md.setSubmitResult(2, false, '上传失败，请重新上传');
-                        }else{
-                            md.setSubmitResult(2, false, response.msg);
+                $.ajax({
+                    type: 'post',
+                    url: this.config['media_url'],
+                    data: postData,
+                    success: function(response){
+                        try {
+                            //code 不为0即为失败
+                            if(response.code == "0"){
+                                md.setSubmitResult(2, true, response.msg, response.data);
+                            }else if(response.code == "10002"){
+                                md.setSubmitResult(2, false, '提交失败，请重新提交');
+                            }else{
+                                md.setSubmitResult(2, false, response.msg);
+                            }
+
+                        } catch (e) {
+                            if (console) {
+                                console.error(e);
+                            }
+                            md.setSubmitResult(2, false, '未知错误，请重新提交');
                         }
-                        
-                    } catch (e) {
-                        if (console) {
-                            console.error(e);
-                        }
-                        md.setSubmitResult(2, false, '未知错误');
+
+                        $(_self).trigger('submitCompleted', md);         //发送单个素材上传完成
+                        _self.__createResultInfo(md);
+                        _self.__submitNext();
+                    },
+                    error: function(response){
+                        md.setSubmitResult(2, false, '网络异常，请重新提交');
+                        _self.__createResultInfo(md);
+                        _self.__submitNext();
                     }
-                    
-                    $(_self).trigger('submitCompleted', md);         //发送单个素材上传完成
-                    _self.__createResultInfo(md);
-                    _self.__submitNext();
                 });
             } else {
                 this.__submitNext();

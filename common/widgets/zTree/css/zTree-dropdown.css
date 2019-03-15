@@ -68,4 +68,6 @@ and open the template in the editor.
     position: absolute;
     width: 100%;
     z-index: 1051;
+    max-height: 200px;
+    overflow-y: auto;
 }

@@ -198,19 +198,95 @@ class DirController extends GridViewChangeSelfController
     public function actionSearchChildren($target_id = null, $id){
         $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
         $childrens = [];
-        foreach ($dirsChildren as $index => $item) {
-            if($target_id != null){
-                if($target_id == $item['id']){
-                    unset($item[$index]);
-                    break;
+        if(count($dirsChildren) > 0){
+            foreach ($dirsChildren as $index => $item) {
+                if($target_id != null){
+                    if($target_id == $item['id']){
+                        unset($item[$index]);
+                        break;
+                    }
                 }
+                $item['isParent'] = true;
+                $childrens[] = $item;
             }
-            $childrens[] = $item;
         }
         
         Yii::$app->getResponse()->format = 'json';
         
         return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
+    }
+    
+    /**
+     * 动态添加存储目录
+     * @return json
+     */
+    public function actionAddDynamic()
+    {
+        $post = Yii::$app->request->post();
+        
+        if(Yii::$app->request->isPost){
+            Yii::$app->getResponse()->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
+                $name = ArrayHelper::getValue($post, 'name');   // 名称
+                
+                $model = new Dir(['parent_id' => $parent_id, 'created_by' => \Yii::$app->user->id]);
+                $model->level = Dir::getDirById($parent_id)->level + 1;
+                $model->name = $name;
+
+                if($model->save()){
+                    $model->updateParentPath(); //修改路径
+                    Dir::invalidateCache();    //清除缓存
+
+                    $trans->commit();  //提交事务
+                    return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $model->toArray());
+                }
+                
+            }catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            } 
+        }
+    }
+    
+    /**
+     * 动态编辑存储目录
+     * @return json
+     */
+    public function actionEditDynamic()
+    {
+        $post = Yii::$app->request->post();
+        
+        if(Yii::$app->request->isPost){
+            Yii::$app->getResponse()->format = 'json';
+            
+            /** 开启事务 */
+            $trans = Yii::$app->db->beginTransaction();
+            try
+            {
+                $id = ArrayHelper::getValue($post, 'id');     // 父级id
+                $name = ArrayHelper::getValue($post, 'name');   // 名称
+                
+                $model = Dir::findOne($id);
+                $model->name = $name;
+
+                if($model->save()){
+                    $model->updateParentPath(); //修改路径
+                    Dir::invalidateCache();    //清除缓存
+
+                    $trans->commit();  //提交事务
+                    return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $model->toArray());
+                }
+                
+            }catch (Exception $ex) {
+                $trans ->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            } 
+        }
     }
 
     /**

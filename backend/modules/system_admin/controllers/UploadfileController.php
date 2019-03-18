@@ -65,28 +65,9 @@ class UploadfileController extends Controller
     {
         $id = Yii::$app->request->post('ids');
         $file_ids = explode(',', $id);
-        $models = Uploadfile::findAll(['id' => $file_ids]);
 
-        
-        
-        foreach($models as $model){
-            $filePath = '';
-            if($model->path){
-                $filePath = Yii::getAlias('@frontend/web/' . $model->path); //文件路径
-            }
-            //检测文件是否存在
-            if(file_exists($filePath)){
-                //删除实体文件
-                if(@unlink($filePath)){
-                    $model->is_del = 1;
-                    $model->save();
-                } else {
-                    Yii::$app->session->setFlash('error', '删除失败！');
-                }
-            } else {
-                $model->is_del = 1;
-                $model->save();
-            }
+        if(count($file_ids) != 0){
+            Uploadfile::updateAll(['is_del' => 1, 'updated_at' => time()], ['id' => $file_ids]);
         }
     }
     
@@ -97,11 +78,9 @@ class UploadfileController extends Controller
     {
         $id = Yii::$app->request->post('ids');
         $chunk_ids = explode(',', $id);
-        $models = UploadfileChunk::findAll(['chunk_id' => $chunk_ids]);
 
-        foreach($models as $model){
-            $model->is_del = 1;
-            $model->save();
+        if(count($chunk_ids) != 0){
+            UploadfileChunk::updateAll(['is_del' => 1, 'updated_at' => time()], ['chunk_id' => $chunk_ids]);
         }
     }
     

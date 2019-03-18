@@ -67,6 +67,12 @@ class ApiResponse {
     const CODE_COMMON_VERIFY_SIGN_FAIL = '10007';
     
     /**
+     * 数据重复/重复提交
+     * eg:检验数据唯一性，不允许重复数据提交
+     */
+    const CODE_COMMON_DATA_REPEAT = '10008';
+    
+    /**
      * 未知错误
      */
     const CODE_COMMON_UNKNOWN = '10099';
@@ -120,6 +126,7 @@ class ApiResponse {
             self::CODE_COMMON_FORBIDDEN => '禁止访问',
             self::CODE_COMMON_TIMEOUT => '访问超时',
             self::CODE_COMMON_VERIFY_SIGN_FAIL => '签名验证失败',
+            self::CODE_COMMON_DATA_REPEAT => '｛param｝已存在！',
             self::CODE_COMMON_UNKNOWN => '未知错误！',
         ];
     }

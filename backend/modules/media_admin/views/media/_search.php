@@ -38,6 +38,13 @@ zTreeAsset::register($this);
 
     <div class="col-lg-12 col-md-12 panel">
     
+        <!--素材编码-->
+        <?= $form->field($model, 'id')->textInput([
+            'placeholder' => '请输入素材编码', 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', '{Media}{Number}：', [
+            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+        ])) ?>
+        
         <!--关键字-->
         <?= $form->field($model, 'keyword')->textInput([
             'placeholder' => '请输入素材名称或者标签', 'onchange' => 'submitForm()'

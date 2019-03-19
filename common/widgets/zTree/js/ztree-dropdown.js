@@ -6,6 +6,7 @@
 var treeId;    // 插件id
 var treeName;  // 下拉选中显示的名
 var treeValue; // 下拉选中显示的值
+var newCount = 1;
 
 function zTreeDropdown(zTree, zTreeName, zTreeValue, treeConfig, treeDataList){
 	treeId = zTree;
@@ -55,15 +56,30 @@ function addHoverDom(treeId, treeNode) {
     var btn = $("#addBtn_" + treeNode.tId);
     if (btn){
         btn.bind("click", function () {
-            $.post('/media_config/dir/add-dynamic',{parent_id: treeNode.id, name: '新建目录'}, function(response){
-                if(response.code == "0"){
-                    var zTree = $.fn.zTree.getZTreeObj(treeId);
-                    var data = $.extend({isParent: true}, response.data);
-                    zTree.addNodes(treeNode, data);
-                    $('#'+treeName).html(response.data.name);
-                    $('#'+treeValue).val(response.data.id)
-                }
-            });
+            var zTree = $.fn.zTree.getZTreeObj(treeId);
+            var parentZNode = zTree.getNodeByParam("id", treeNode.id, null);//获取指定父节点
+            var childNodes = zTree.transformToArray(treeNode);//获取子节点集合
+            //childNodes.length 小于等于1，就加载(第一次加载)
+            if(childNodes.length <= 1){
+                $.get('/media_config/dir/search-children?id=' + treeNode.id, function(response){
+                    if(response.data.length > 0){
+                        zTree.addNodes(parentZNode, response.data, false);     //添加节点     
+                    }
+                });
+            }
+            // 设置定时执行
+            setTimeout(function(){
+                // 添加新目录
+                $.post('/media_config/dir/add-dynamic',{parent_id: treeNode.id, name: '新建目录' + (newCount++)}, function(response){
+                    if(response.code == "0"){
+                        var data = $.extend({isParent: true}, response.data);
+                        zTree.addNodes(treeNode, data);
+                        $('#'+treeName).html(response.data.name);
+                        $('#'+treeValue).val(response.data.id);
+                    }
+                });
+            }, 300);
+            
             
             return false;
         });
@@ -142,7 +158,14 @@ function zTreeBeforeRemove(treeId, treeNode) {
             alert(response.msg);
         }else{
             var treeObj = $.fn.zTree.getZTreeObj(treeId);
+            var parentNode = treeNode.getParentNode();
             treeObj.removeNode(treeNode);
+            if(parentNode.children.length == 0) { 
+                parentNode.isParent = true;
+                treeObj.updateNode(parentNode); 
+            }
+            $('#'+treeName).html('<span class="zTree-dropdown-selection__placeholder">全部</span>');
+            $('#'+treeValue).val('');
         }
     });      
 

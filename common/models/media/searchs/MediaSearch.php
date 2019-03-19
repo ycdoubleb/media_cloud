@@ -105,6 +105,7 @@ class MediaSearch extends Media
         
         // 必要条件
         $query->andFilterWhere([
+            'Media.id' => $this->id,
             'Media.type_id' => $this->type_id,
             'Media.owner_id' => $this->owner_id,
             'Media.status' => $this->status,

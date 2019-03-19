@@ -233,7 +233,7 @@ class DirController extends GridViewChangeSelfController
             try
             {
                 $num = 1;
-                $dirName = '新建目录';
+                $newDirName = '新建目录';
                 $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
                 // 获取已经存在的【新建目录】or【新建目录（number）】格式的目录名称
                 $query = (new Query())->from([Dir::tableName()])->where(['parent_id' => $parent_id])
@@ -241,13 +241,13 @@ class DirController extends GridViewChangeSelfController
                     ->orderBy(['name' => SORT_ASC]);
                 $dirNameExisted = ArrayHelper::getColumn($query->all(), 'name');
     
-                // 循环组装目录名称
+                // 循环组装新目录的名称
                 do{
                     $num++;
-                    if(!in_array('新建目录', $dirNameExisted)){
+                    if(!in_array($newDirName, $dirNameExisted)){
                         break;
-                    }else if(!in_array("新建目录（{$num}）", $dirNameExisted)){
-                        $dirName = $dirName."（{$num}）";
+                    }else if(!in_array($newDirName."（{$num}）", $dirNameExisted)){
+                        $newDirName = $newDirName."（{$num}）";
                         break;
                     }else{
                         continue;
@@ -256,7 +256,7 @@ class DirController extends GridViewChangeSelfController
                 
                 $model = new Dir(['parent_id' => $parent_id, 'created_by' => \Yii::$app->user->id]);
                 $model->level = Dir::getDirById($parent_id)->level + 1;
-                $model->name = $dirName;
+                $model->name = $newDirName;
 
                 if($model->save()){
                     $model->updateParentPath(); //修改路径

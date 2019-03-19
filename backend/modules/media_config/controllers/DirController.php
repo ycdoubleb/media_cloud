@@ -232,7 +232,7 @@ class DirController extends GridViewChangeSelfController
             $trans = Yii::$app->db->beginTransaction();
             try
             {
-                $num = 0;
+                $num = 1;
                 $dirName = '';
                 $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
                 // 获取已经存在的【新建目录】or【新建目录（number）】格式的目录名称

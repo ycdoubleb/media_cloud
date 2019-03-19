@@ -131,7 +131,7 @@ class MediaSearch extends Media
         $query->select([
             'Media.id', 'Media.cover_url', 'Media.name', 'Media.dir_id', 'Media.type_id',
             'Media.duration', 'Media.size', 'Media.price', 'Media.mts_status', 'Media.status',
-            'Media.owner_id', 'Media.created_at', 'Media.tags'
+            'Media.owner_id', 'Media.created_at', 'Media.tags', 'Media.ext'
         ]);
         
         // 显示数量

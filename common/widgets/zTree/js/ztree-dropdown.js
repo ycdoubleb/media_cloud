@@ -6,7 +6,6 @@
 var treeId;    // 插件id
 var treeName;  // 下拉选中显示的名
 var treeValue; // 下拉选中显示的值
-var newCount = 1;
 
 function zTreeDropdown(zTree, zTreeName, zTreeValue, treeConfig, treeDataList){
 	treeId = zTree;
@@ -70,7 +69,7 @@ function addHoverDom(treeId, treeNode) {
             // 设置定时执行
             setTimeout(function(){
                 // 添加新目录
-                $.post('/media_config/dir/add-dynamic',{parent_id: treeNode.id, name: '新建目录' + (newCount++)}, function(response){
+                $.post('/media_config/dir/add-dynamic',{parent_id: treeNode.id}, function(response){
                     if(response.code == "0"){
                         var data = $.extend({isParent: true}, response.data);
                         zTree.addNodes(treeNode, data);

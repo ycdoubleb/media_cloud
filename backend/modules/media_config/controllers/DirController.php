@@ -6,6 +6,7 @@ use common\models\api\ApiResponse;
 use common\models\media\Dir;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
+use yii\db\Query;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -231,12 +232,32 @@ class DirController extends GridViewChangeSelfController
             $trans = Yii::$app->db->beginTransaction();
             try
             {
+                $num = 0;
+                $dirName = '';
                 $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
-                $name = ArrayHelper::getValue($post, 'name');   // 名称
+                // 获取已经存在的【新建目录】or【新建目录（number）】格式的目录名称
+                $query = (new Query())->from([Dir::tableName()])->where(['parent_id' => $parent_id])
+                    ->andWhere(['OR', ['name' => '新建目录'], ['REGEXP', 'name',"^新建目录（[0-9]+）"]])
+                    ->orderBy(['name' => SORT_ASC]);
+                $dirNameExisted = ArrayHelper::getColumn($query->all(), 'name');
+    
+                // 循环组装目录名称
+                do{
+                    $num++;
+                    if(!in_array('新建目录', $dirNameExisted)){
+                        $dirName = '新建目录';
+                        break;
+                    }else if(!in_array("新建目录（{$num}）", $dirNameExisted)){
+                        $dirName = "新建目录（{$num}）";
+                        break;
+                    }else{
+                        continue;
+                    }
+                }while ($num < 1000);
                 
                 $model = new Dir(['parent_id' => $parent_id, 'created_by' => \Yii::$app->user->id]);
                 $model->level = Dir::getDirById($parent_id)->level + 1;
-                $model->name = $name;
+                $model->name = $dirName;
 
                 if($model->save()){
                     $model->updateParentPath(); //修改路径

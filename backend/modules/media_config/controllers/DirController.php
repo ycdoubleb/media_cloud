@@ -233,7 +233,7 @@ class DirController extends GridViewChangeSelfController
             try
             {
                 $num = 1;
-                $dirName = '';
+                $dirName = '新建目录';
                 $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
                 // 获取已经存在的【新建目录】or【新建目录（number）】格式的目录名称
                 $query = (new Query())->from([Dir::tableName()])->where(['parent_id' => $parent_id])
@@ -245,10 +245,9 @@ class DirController extends GridViewChangeSelfController
                 do{
                     $num++;
                     if(!in_array('新建目录', $dirNameExisted)){
-                        $dirName = '新建目录';
                         break;
                     }else if(!in_array("新建目录（{$num}）", $dirNameExisted)){
-                        $dirName = "新建目录（{$num}）";
+                        $dirName = $dirName."（{$num}）";
                         break;
                     }else{
                         continue;

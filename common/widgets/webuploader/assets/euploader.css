@@ -141,26 +141,42 @@
     float: left;
     font-size: 12px;
  }
+/* 替换已存在 */
+.table-list .replace-exist-box{
+    line-height: 34px;
+    margin-right: 10px;
+ }
+ /* 自动重传 */
+.table-list .auto-retry-box{
+    line-height: 34px;
+ }
+.table-list .auto-retry-box .count-down-box{
+    display: inline-block;
+    color: #cccccc;
+ }
 /* 状态图标 */
-.filelist-status {
+.table-list .filelist-status {
     width: 30px;
 }
 /* 文件名 */
-.filelist-filename {
+.table-list .filelist-filename {
     color: #333;
 }
 /* 状态 */
-.filelist-state {
+.table-list .filelist-state {
     width: 300px;
 }
 /* 文件大小 */
-.filelist-size {
+.table-list .filelist-size {
     width: 95px;
     color: #ccc;
 }
 /* 按钮 */
-.filelist-btns {
+.table-list .filelist-btns {
     width: 50px;
+}
+.table-list .filelist-btns .euploader-rep-btn{
+    margin-right: 5px;
 }
 
 /* 分页样式 */
@@ -238,7 +254,6 @@
 .tile .euploader-item .euploader-item-play-icon {
     line-height: 128px;
     text-align: center;
-    display: none;
 }
 .tile .euploader-item .euploader-item-play-icon img{
     cursor: pointer;
@@ -248,6 +263,7 @@
     -o-transition: all 0.2s linear;
     -moz-transition: all 0.2s linear;
     transition: all 0.2s linear;
+    background: url("../imgs/play_icon.png") no-repeat center center;
 }
 .tile .euploader-item .euploader-item-play-icon img:hover{
     transform: translate3d(0, -2px, 0);

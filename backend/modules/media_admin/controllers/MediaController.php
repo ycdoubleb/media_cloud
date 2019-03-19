@@ -25,6 +25,8 @@ use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -215,6 +217,13 @@ class MediaController extends GridViewChangeSelfController
             {   
                 $is_submit = false;
                 
+                //检查素材是否存，检查file_id是否被引用
+                $exit_media = Media::findOne(['file_id' => $model->file_id, 'del_status' => 0]);
+                if ($exit_media) {
+                    $a = Html::a('查看', Url::to(['/media_admin/media/view', 'id' => $exit_media->id], true), ['target' => '_blank']);
+                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_REPEAT, "素材已存在！【编号：{$exit_media->id}， 名称：{$exit_media->name}】$a", $exit_media->toArray());
+                }
+
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
                 if($typeDetail == null){

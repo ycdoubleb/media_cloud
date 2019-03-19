@@ -39,6 +39,7 @@ class WebuploaderInput extends InputWidget{
         'formData' => [],                                                       //在上传过程中一并带到服务器的参数
         //自动上传
         'auto' =>  true,                                                        //默认自动上传，设置为false 需要手动调用 upload()、retry() 等方法上传
+        'chunkRetry' => 5,                                                      //如果某个分片由于网络问题出错，允许自动重传多少次？
         //指定接受哪些类型的文件
         'accept' => [
             'title' => 'Material',
@@ -113,17 +114,22 @@ class WebuploaderInput extends InputWidget{
                 $pluginEvents .= "$(uploader).on('$key',$value)\n";
             }
         }
+        /* 准备已存在数据 */
+        $datas = json_encode($this->convertDbfiles());
         
         $js = <<< JS
             Wskeee.require(['euploader'],function(){
                 var config = $config;
                 var uploader = new euploader.Uploader(config,euploader[config['type']]);
                 var ready = {$this->pluginEvents['ready']};
+                var datas = $datas;
                 
                 //保存loader与div关系
                 $("#$this->id").data('uploader',uploader);
                 //添加事件
                 $pluginEvents;
+                //添加已经存在文件
+                uploader.addCompleteFiles(datas);
                 //调用ready初始化完成
                 ready(uploader);
             });

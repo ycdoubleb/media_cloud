@@ -76,6 +76,11 @@ class UploadResponse extends ApiResponse {
      * 合并文件时，查找分片不存在
      */
     const CODE_CHUNK_NOT_FOUND = '20102';
+    
+    /**
+     * 数量不对应
+     */
+    const CODE_CHUNK_NUM_WRONG = '20103';
     //--------------------------------------------------------------------------
     // 目录
     //--------------------------------------------------------------------------
@@ -117,6 +122,7 @@ class UploadResponse extends ApiResponse {
             //分片
             self::CODE_CHUNK_EXIT => '分片已存在！',
             self::CODE_CHUNK_NOT_FOUND => '分片不存在：{chunkPath}',
+            self::CODE_CHUNK_NUM_WRONG => '分片数量不正确！',
             //目录
             self::CODE_DIR_NOT_FOUND => '目录不存在：{path}',
             //上传路径

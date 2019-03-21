@@ -93,7 +93,17 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
-        mediaBatchUpload.addMediaData(data);
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数、上传中数量、等待上传数量大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0 || fileSummary.progress > 0 || fileSummary.queue > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
+        
+        if(!!data){
+            mediaBatchUpload.addMediaData(data);
+        }
     }
     
     /**
@@ -102,7 +112,20 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
      * @returns {undefined}
      */
     function fileDequeued(data){
-        mediaBatchUpload.delMediaData(data.dbFile);
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数、上传中数量、等待上传数量大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0 || fileSummary.progress > 0 || fileSummary.queue > 0){
+            window.isUploadFinished = false;
+        }else{
+            window.isUploadFinished = true;
+        }
+        
+        if(!!data.dbFile){
+            if(mediaBatchUpload.completed_num > 0){
+                mediaBatchUpload.completed_num -= 1;
+            }
+            mediaBatchUpload.delMediaData(data.dbFile);
+        }
     }
     
     /************************************************************************************
@@ -113,8 +136,8 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     function initSubmit(){
         // 提交上传
         $("#submitsave").click(function(){
-            validateWebuploaderValue(mediaBatchUpload.medias.length);
-            if($('div.has-error').length > 0 || !window.isUploadFinished) return;
+            validateWebuploaderValue($('#euploader-list tbody').find('tr').length, window.isUploadFinished);
+            if($('div.has-error').length > 0) return;
             mediaBatchUpload.submit();
         });
     }

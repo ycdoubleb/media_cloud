@@ -61,7 +61,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->redirect(['statistics/all-statistics/index']);
+        return $this->redirect(['statistics/all-statistics/index', 'category_id' => 1]);
     }
 
     /**
@@ -78,7 +78,7 @@ class SiteController extends Controller
         $model = new LoginAdminForm(['userClass' => AdminUser::class]);
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
 //            return $this->goBack();
-            return $this->redirect(['statistics/all-statistics/index']);
+            return $this->redirect(['statistics/all-statistics/index', 'category_id' => 1]);
         } else {
             $model->password = '';
 

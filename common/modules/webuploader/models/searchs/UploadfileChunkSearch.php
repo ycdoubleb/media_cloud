@@ -54,6 +54,7 @@ class UploadfileChunkSearch extends UploadfileChunk
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'key' => 'chunk_id'
         ]);
 
         $this->load($params);

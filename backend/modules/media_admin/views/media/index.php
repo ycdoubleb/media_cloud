@@ -15,8 +15,8 @@ use yii\web\View;
 MediaModuleAsset::register($this);
 
 
-$this->title = Yii::t('app', '{Media}{List}', [
-    'Media' => Yii::t('app', 'Media'), 'List' => Yii::t('app', 'List')
+$this->title = Yii::t('app', '{Medias}{List}', [
+    'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
 ]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -38,18 +38,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php 
                     if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
                         || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
-                        echo  Html::a(Yii::t('app', '{Reset}{Price}', [
-                            'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
-                        ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); 
-                        echo ' '.Html::a(Yii::t('app', '{Reset}{Tag}', [
-                            'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
-                        ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']);
-                        echo ' '.Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
-                            'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
-                        ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']);
-                        echo ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
-                            'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
-                        ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']);
+                        echo  Html::a(Yii::t('app', 'Reset Price'), ['batch-edit-price'], [
+                            'id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat'
+                        ]); 
+                        echo ' '.Html::a(Yii::t('app', 'Reset Tags'), ['batch-edit-attribute'], [
+                            'id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat'
+                        ]);
+                        echo ' '.Html::a(Yii::t('app', 'Apply For Be Put In Storage'), ['approve/add-apply'], [
+                            'id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat'
+                        ]);
+                        echo ' ' . Html::a(Yii::t('app', 'Apply For Delete'), ['approve/del-apply'], [
+                            'id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat'
+                        ]);
                     }
                 ?>
             </div>
@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         
-        <div class="title">
+<!--        <div class="title">
             <div class="pull-right">
                 
                 <?php 
@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
             
-        </div>
+        </div>-->
         
         <!--总结-->
         <div class="summary"></div>
@@ -100,6 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
 $params_js = json_encode($filters); //js参数
 $js = <<<JS
     initPageNav();
@@ -141,6 +142,7 @@ $js = <<<JS
             isPageLoading = true;   //设置已经提交当中...
             $.get("/media_admin/media/list?page=" + page,  params, function(response){
                 isPageLoading = false;  //取消设置提交当中...
+                console.log(response);
                 $('#media_list').html(response);
             });
             $('.loading-box .loading').show();
@@ -161,7 +163,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?media_ids=" + val);
         }else{
-            alert("请选择需要申请的素材");
+            alert("{$msg}");
         }
     });
        
@@ -174,7 +176,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要重置的素材");
+            alert("{$msg}");
         }
     }); 
         

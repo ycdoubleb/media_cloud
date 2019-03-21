@@ -55,7 +55,7 @@ $wateSelected = json_encode($wateSelected);
             <!--加载-->
             <div class="loading-box">
                 <span class="loading"></span>
-                <span class="text-danger">未配置水印</span>
+                <span class="text-danger"><?= Yii::t('app', 'Watermark not config') ?></span>
             </div>
         </div>
         <br/>

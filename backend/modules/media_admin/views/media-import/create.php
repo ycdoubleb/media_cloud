@@ -4,6 +4,7 @@ use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\Media;
 use common\widgets\zTree\zTreeAsset;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -13,10 +14,8 @@ use yii\widgets\ActiveForm;
 MediaModuleAsset::register($this);
 zTreeAsset::register($this);
 
-$this->title = Yii::t('app', '{Submit}{Media}', [
-    'Submit' => Yii::t('app', 'Submit'), 'Media' => Yii::t('app', 'Media')
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Media'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Submit upload external chain material');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Upload external chain material'), 'url' => array_merge(['index'], ['category_id' => $category_id])];
 $this->params['breadcrumbs'][] = $this->title;
 
 //加载 WATERMARK_DOM 模板
@@ -28,7 +27,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     <!--警告框-->
     <?= $this->render('____media_warning_box_dom') ?>
     
-    <span class="title">素材公共属性配置：</span>
+    <span class="title">
+        <?= Yii::t('app', 'Material common attribute configuration:') ?>
+    </span>
     
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -40,9 +41,9 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <!--存储目录-->
         <div class="form-group field-media-dir_id required">
 
-            <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Storage}{Dir}：', [
-                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-            ]), 'media-dir_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+            <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Storage Dir') . '：', 'media-dir_id', [
+                'class' => 'col-lg-1 col-md-1 control-label form-label'
+            ]) ?>
 
             <div class="col-lg-8 col-md-8">
 
@@ -94,6 +95,8 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
 <?= $this->render('____submit_result_info_dom') ?>
 
 <script type="text/javascript">
+    // 素材链接
+    var url = '<?= Url::to(['create', 'category_id' => $category_id]) ?>';
     //素材 tr dom
     var php_media_data_tr_dom = '<?= $media_data_tr_dom ?>';
     // 所有上传的外链素材
@@ -123,6 +126,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     function initBatchUpload(){
         
         mediaBatchUpload = new mediaupload.MediaBatchUpload({
+            media_url: url,
             media_data_tr_dom : php_media_data_tr_dom,
         });
         

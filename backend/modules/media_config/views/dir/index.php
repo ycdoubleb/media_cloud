@@ -14,10 +14,12 @@ use yii\web\View;
 
 TabSelfColumnAssets::register($this);
 
-$this->title = Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
+$this->title = Yii::t('app', 'Storage Dir');
+
+$this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
+    'Dir' => Yii::t('app', 'Dir'), 'List' => Yii::t('app', 'List')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="dir-index">
    
@@ -108,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <thead>
               <tr>
                   <th><?= Yii::t('app', 'Name') ?></th>
-                  <th><?= Yii::t('app', '{Is}{Show}',['Is' => Yii::t('app', 'Is'), 'Show' => Yii::t('app', 'Show')]) ?></th>
+                  <th><?= Yii::t('app', 'Is Del') ?></th>
                   <th></th>
                 </tr>
             </thead>

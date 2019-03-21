@@ -26,7 +26,7 @@ zTreeAsset::register($this);
             'id' => 'media-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], ['category_id' => ArrayHelper::getValue($filters, 'category_id')]),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -40,22 +40,20 @@ zTreeAsset::register($this);
     
         <!--素材编码-->
         <?= $form->field($model, 'id')->textInput([
-            'placeholder' => '请输入素材编码', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{Media}{Number}：', [
-            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-        ])) ?>
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'Media Number') . '：') ?>
         
         <!--关键字-->
         <?= $form->field($model, 'keyword')->textInput([
-            'placeholder' => '请输入素材名称或者标签', 'onchange' => 'submitForm()'
+            'placeholder' => Yii::t('app', 'Please enter a name or label'), 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
         <!--存储目录-->
         <div class="form-group field-mediasearch-dir_id">
 
-            <?= Html::label(Yii::t('app', '{Storage}{Dir}：', [
-                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-            ]), 'mediasearch-dir_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+            <?= Html::label(Yii::t('app', 'Storage Dir') . '：', 'mediasearch-dir_id', [
+                'class' => 'col-lg-1 col-md-1 control-label form-label'
+            ]) ?>
 
             <div class="col-lg-6 col-md-6">
 
@@ -70,7 +68,7 @@ zTreeAsset::register($this);
                                 if(!empty($dirModel->name)){
                                     echo $dirModel->name;
                                 }else{
-                                    echo '<span class="zTree-dropdown-selection__placeholder">全部</span>';
+                                    echo '<span class="zTree-dropdown-selection__placeholder">'.Yii::t('app', 'Select Placeholder').'</span>';
                                 }
                             ?>
                         </span> 
@@ -100,13 +98,15 @@ zTreeAsset::register($this);
                     ]
                 ]
             ],
-        ])->label(Yii::t('app', '{Media}{Type}：', [
-            'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+        ])->label(Yii::t('app', '{Medias}{Type}：', [
+            'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
         ])) ?>
 
         <!--属性选项-->
         <div class="form-group field-mediasearch-attribute_value_id">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id">属性选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id">
+                <?= Yii::t('app', 'Attribute Option') . '：' ?>
+            </label>
             <div class="col-lg-10 col-md-10">
                 
                 <?php foreach ($attrMap as $atts): ?>
@@ -135,7 +135,9 @@ zTreeAsset::register($this);
         
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') . '：' ?>
+            </label>
             <div class="col-lg-6 col-md-6">
                 
                 <!--运营者-->

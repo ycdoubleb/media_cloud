@@ -1,10 +1,10 @@
 <?php
 
-use common\models\media\MediaApprove;
 use common\models\media\MediaRecycle;
 use common\models\media\MediaType;
 use common\models\media\searchs\MediaRecycleSearh;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
             'id' => 'approve-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], ['category_id' => ArrayHelper::getValue($filters, 'category_id')]),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
         
         <!--关键字-->
         <?= $form->field($model, 'keyword')->textInput([
-            'placeholder' => '请输入素材名称或者标签', 'onchange' => 'submitForm()'
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
         ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
         <!--素材类型-->
@@ -49,13 +49,15 @@ use yii\widgets\ActiveForm;
                     ]
                 ]
             ],
-        ])->label(Yii::t('app', '{Media}{Type}：', [
-            'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+        ])->label(Yii::t('app', '{Medias}{Type}：', [
+            'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
         ])) ?>
         
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') ?>
+            </label>
             <div class="col-lg-10 col-md-10">
                 
                 <!--处理状态-->

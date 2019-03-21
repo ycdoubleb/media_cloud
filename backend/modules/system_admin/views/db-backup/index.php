@@ -11,21 +11,17 @@ use yii\web\View;
 /* @var $searchModel DbbackupSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t(null, '{Backup}{Administration}', [
-            'Backup' => Yii::t('app', 'Backup'),
-            'Administration' => Yii::t('app', 'Administration'),
-        ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Database Backups');
+$this->params['breadcrumbs'][] = Yii::t('app', '{Backups}{List}', [
+    'Backups' => Yii::t('app', 'Backups'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="db-backup-index">
 
     <p>
-        <?=
-        Html::a(Yii::t(null, '{Create}{Backup}', [
-                    'Create' => Yii::t('app', 'Create'),
-                    'Backup' => Yii::t('app', 'Backup'),
-                ]), ['create'], ['class' => 'btn btn-success'])
-        ?>
+        <?= Html::a(Yii::t(null, '{Create}{Backups}', [
+            'Create' => Yii::t('app', 'Create'), 'Backups' => Yii::t('app', 'Backups')
+        ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?=
     GridView::widget([

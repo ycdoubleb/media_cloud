@@ -11,10 +11,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('app', '{Create}{Dir}', [
     'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="dir-create">
 
@@ -31,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ], 
     ]); ?>
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">

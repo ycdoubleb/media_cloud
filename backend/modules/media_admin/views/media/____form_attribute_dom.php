@@ -27,7 +27,7 @@ TagsInputAsset::register($this);
                             'id' => "media-attribute_value-{$atts['attr_id']}",
                             'name' => "Media[attribute_value][{$atts['attr_id']}]",
                             'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
-                            'value' => !empty($attrSelected) ? $attrSelected[$atts['attr_id']] : null, 
+                            'value' => !empty($attrSelected) && isset($attrSelected[$atts['attr_id']])? $attrSelected[$atts['attr_id']] : null, 
                             'hideSearch' => true,
                             'options' => [
                                 'class' => 'media-attribute_value',
@@ -79,13 +79,11 @@ TagsInputAsset::register($this);
         $options = ['class' => 'col-lg-1 col-md-1 control-label form-label'];
         
         if(isset($isTagRequired) && $isTagRequired){
-            echo Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Tag}：', [
-                'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
+            echo Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Medias}{Tags}：', [
+                'Medias' => Yii::t('app', 'Medias'), 'Tags' => Yii::t('app', 'Tags')
             ]), $for, $options);
         }else{
-            echo Html::label(Yii::t('app', '{Public}{Tag}：', [
-                'Public' => Yii::t('app', 'Public'), 'Tag' => Yii::t('app', 'Tag')
-            ]), $for, $options);
+            echo Html::label(Yii::t('app', 'General Purpose Label') . '：', $for, $options);
         }
         
     ?>
@@ -95,7 +93,7 @@ TagsInputAsset::register($this);
             <?= Html::textInput('Media[tags]', !empty($tagsSelected) ? $tagsSelected : null, [
                 'id' => 'media-tag_ids', 'class' => 'form-control media-tag_id', 'data-role' => 'tagsinput', 
                 'onchange' => 'validateTags($(this))', 
-                'placeholder' => isset($isTagRequired) && $isTagRequired ? null : '素材公用标签（可以不填）'
+                'placeholder' => isset($isTagRequired) && $isTagRequired ? null : Yii::t('app', 'Material Common label (Can be ignored)')
             ]) ?>
         </div>
         <div class="col-lg-12 col-md-12 clean-padding"><div class="help-block"></div></div>
@@ -211,7 +209,7 @@ TagsInputAsset::register($this);
      */
     function submitValidate()
     {
-        $('div.form-group').find('.media-attribute_value, .media-tags').each(function(){
+        $('div.form-group').find('.media-attribute_value, .media-tag_id').each(function(){
             validateDepDropdownValue($(this));
             validateCheckboxList($(this).find('input'));
             validateTags($(this));

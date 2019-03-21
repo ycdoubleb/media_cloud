@@ -49,13 +49,11 @@ use yii\widgets\ActiveForm;
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
-                ])->label(Yii::t('app', '{The}{Media}{Type}', [
-                    'The' => Yii::t('app', 'The'), 'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
-                ])) ?>
+                ])->label(Yii::t('app', 'Type For Belong')) ?>
             
                 <!--后缀名-->
                 <?= $form->field($model, 'name')->textInput([
-                    'placeholder' => '请输入文件后缀名', 'maxlength' => true
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true
                 ])->label(Yii::t('app', '{Suffix}{Name}', [
                     'Suffix' => Yii::t('app', 'Suffix'), 'Name' => Yii::t('app', 'Name')
                 ])) ?>
@@ -66,7 +64,7 @@ use yii\widgets\ActiveForm;
                     . "<div class=\"col-lg-7 col-md-7\">{error}</div>"
                     . "<a href=\"http://www.w3school.com.cn/media/media_mimeref.asp\" target=\"_blank\" style=\"display:block;margin-top:8px\">MIME类型—参考手册</a>",  
                 ])->textInput([
-                        'placeholder' => '输入格式：video/mp4', 'maxlength' => true
+                        'placeholder' => Yii::t('app', 'Import format: video/mp4'), 'maxlength' => true
                     ])->label(Yii::t('app', 'MIME{Type}', [
                         'Type' => Yii::t('app', 'Type')
                     ]));
@@ -87,7 +85,9 @@ use yii\widgets\ActiveForm;
                 ])->label(Yii::t('app', 'Icon'));?>
                 
                 <!--是否启用-->
-                <?= $form->field($model, 'is_del')->checkbox(['value' => 0, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) ?>
+                <?php 
+//                    echo $form->field($model, 'is_del')->checkbox(['value' => 0, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) 
+                ?>
 
             </div>
             

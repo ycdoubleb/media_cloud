@@ -360,22 +360,24 @@
     MediaBatchUpload.prototype.__reflashPageNav = function(page){
         var _self = this;
     
-        var $pagination = _self.resultinfo.find('.pagination').data()['bootstrapPaginator']
-        var $trs = _self.resultinfo.find('table.result-table tbody tr');
-        var $summary = _self.resultinfo.find('.summary');
-        var pageSize = 10;
+        if(_self.resultinfo.find('.pagination').length > 0){
+            var $pagination = _self.resultinfo.find('.pagination').data()['bootstrapPaginator']
+            var $trs = _self.resultinfo.find('table.result-table tbody tr');
+            var $summary = _self.resultinfo.find('.summary');
+            var pageSize = 10;
 
-        $pagination.setOptions({
-            totalPages: Math.ceil($trs.length / pageSize)
-        });
+            $pagination.setOptions({
+                totalPages: Math.ceil($trs.length / pageSize)
+            });
 
-        var start = (page-1)*pageSize;
-        var end = (page*pageSize > $trs.length ? $trs.length : page*pageSize);
+            var start = (page-1)*pageSize;
+            var end = (page*pageSize > $trs.length ? $trs.length : page*pageSize);
 
-        $trs.hide();
-        $trs.slice(start,end).show();
+            $trs.hide();
+            $trs.slice(start,end).show();
 
-        $summary.html("第"+(start >= end ? end : start + 1)+"-"+end+"条，共"+$trs.length+"条数据");
+            $summary.html("第"+(start >= end ? end : start + 1)+"-"+end+"条，共"+$trs.length+"条数据");
+        }
     };
     
     

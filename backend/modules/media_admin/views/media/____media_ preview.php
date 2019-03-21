@@ -22,9 +22,9 @@ use yii\web\View;
                     ]), ['anew-transcoding', 'id' => $model->id], ['id' => 'btn-anewTranscoding', 'class' => 'btn btn-primary']);
         }
         if (!$model->detail->mts_need) {
-            echo '<span style="color:#ff0000">（注意：该素材设置了“手动转码”，重新上传文件后如需“转码”，必须手动选择“重新转码”）</span>';
+            echo '<span style="color:#ff0000">（'. Yii::t('app', 'Note: This material is set with the "manually select transcoding", If "Transcoding" is required after re-uploading the file, you must manually select "re-Transcoding".') .'）</span>';
         } else {
-            echo '<span class="text-default">（注意：该素材设置了“自动转码”，重新上传文件后会自动转码，请勿多次转码！）</span>';
+            echo '<span class="text-default">（'. Yii::t('app', "Note: This material is set with the 'automatic transcoding'. After the file is re-uploaded, it will be automatically transcoded, Please don't transcode multiple times!") .'）</span>';
         }
     }
     ?>
@@ -34,7 +34,7 @@ use yii\web\View;
 <!--加载中-->
 <div class="loading-box">
     <span class="loading" style="display: none"></span>
-    <span class="no-more" style="display: none">转码中...</span>
+    <span class="no-more" style="display: none"><?= Yii::t('app', 'In transcoding') ?></span>
 </div>
 
 <?php

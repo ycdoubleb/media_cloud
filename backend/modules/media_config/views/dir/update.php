@@ -10,14 +10,10 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Dir */
 
-$this->title = Yii::t('app', "{Update}{Dir}：{$model->name}", [
+$this->title = Yii::t('app', "{Update}{Dir}", [
     'Update' => Yii::t('app', 'Update'), 'Dir' => Yii::t('app', 'Dir')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+
 ?>
 <div class="dir-update">
 
@@ -34,7 +30,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         ], 
     ]); ?>
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">
@@ -48,7 +44,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 
                 <!--名称-->
                 <?= $form->field($model, 'name')->textInput([
-                    'placeholder' => '请输入...', 'maxlength' => true
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true
                 ]) ?>
 
                 <!--所属父级-->
@@ -87,25 +83,29 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             $values = array_merge($values, [$dir->id]);
                         }
                         
-                        echo $form->field($model, 'parent_id', [
-                            'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>\n<div class=\"col-lg-10 col-md-10\">{error}</div>",
-                        ])->widget(DepDropdown::class,[
-                            'pluginOptions' => [
-                                'url' => Url::to(['search-children', 'target_id' => $model->id]),
-                                'max_level' => $max_level,
-                            ],
-                            'items' => $items,
-                            'values' => $values,
-                            'itemOptions' => [
-                                'style' => 'width: 175px; display: inline-block;',
-                                'disabled' => $model->isNewRecord || $id == null ? true : false,
-                            ],
-                        ]);
+                        if($dir->parent_id > 0){
+                            echo $form->field($model, 'parent_id', [
+                                'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>\n<div class=\"col-lg-10 col-md-10\">{error}</div>",
+                            ])->widget(DepDropdown::class,[
+                                'pluginOptions' => [
+                                    'url' => Url::to(['search-children', 'target_id' => $model->id]),
+                                    'max_level' => $max_level,
+                                ],
+                                'items' => $items,
+                                'values' => $values,
+                                'itemOptions' => [
+                                    'style' => 'width: 175px; display: inline-block;',
+                                    'disabled' => $model->isNewRecord || $id == null ? true : false,
+                                ],
+                            ]);
+                        }
                     }
                 ?>
                 
                 <!--是否启用-->
-                <?= $form->field($model, 'is_del')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) ?>
+                <?php
+//                    echo $form->field($model, 'is_del')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) 
+                ?>
                 
             </div>
             

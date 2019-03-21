@@ -18,12 +18,15 @@ use yii\widgets\LinkPager;
 MediaModuleAsset::register($this);
 
 $this->title = Yii::t('app', 'Recycle Bin');
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Recycles}{List}', [
+    'Recycles' => Yii::t('app', 'Recycles'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-recycle-index">
 
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
         'userMap' => $userMap
     ]) ?>
 
@@ -63,8 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'media_id',
-                    'label' => Yii::t('app', '{Media}{Number}', [
-                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                    'label' => Yii::t('app', '{Medias}{Number}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
                     ]),
                     'headerOptions' => [
                         'style' => [
@@ -79,8 +82,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Name}', [
-                        'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                    'label' => Yii::t('app', '{Medias}{Name}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
                     ]),
                     'value' => function($model){
                         return !empty($model->media_id) ? $model->media->name : null;
@@ -98,8 +101,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Type}', [
-                        'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+                    'label' => Yii::t('app', '{Medias}{Type}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
                     ]),
                     'value' => function($model){
                         return !empty($model->media_id) ? $model->media->mediaType->name : null;
@@ -133,23 +136,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
-                [
-                    'label' => Yii::t('app', 'Operator'),
-                    'value' => function($model){
-                        return !empty($model->media_id) ? $model->media->owner->nickname : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '66px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
+//                [
+//                    'label' => Yii::t('app', 'Operator'),
+//                    'value' => function($model){
+//                        return !empty($model->media_id) ? $model->media->owner->nickname : null;
+//                    },
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '66px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
                 [
                     'label' => Yii::t('app', 'Applicant'),
                     'value' => function($model){
@@ -291,6 +294,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
 $js = <<<JS
         
     // 还原 & 删除
@@ -311,7 +315,7 @@ $js = <<<JS
                 $('.myModal').modal("show").load(url + "?id=" + val);
             }
         }else{
-            alert("请选择需要的id");
+            alert("{$msg}");
         }
     });    
                 

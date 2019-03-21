@@ -67,7 +67,9 @@ class MediaRecycleSearch extends MediaRecycle
         //分页
         $page = ArrayHelper::getValue($params, 'page', 1);  
         //显示数
-        $limit = ArrayHelper::getValue($params, 'limit', 10);                           
+        $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        // 分库id
+        $category_id = ArrayHelper::getValue($params, 'category_id');
         //所有用户
         $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
         
@@ -79,6 +81,7 @@ class MediaRecycleSearch extends MediaRecycle
         
         // 必要要条件
         $query->andFilterWhere([
+            'Media.category_id' => $category_id,
             'Media.type_id' => $this->media_type,
             'Recycle.result' => $this->result,
             'Recycle.status' => $this->status,

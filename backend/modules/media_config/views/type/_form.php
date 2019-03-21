@@ -16,7 +16,6 @@ use yii\widgets\ActiveForm;
         'options'=>[
             'id' => 'media-type-form',
             'class' => 'form form-horizontal',
-//            'enctype' => 'multipart/form-data',
         ],
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
@@ -39,7 +38,7 @@ use yii\widgets\ActiveForm;
             <div class="modal-body">
 
                 <!--类型名称-->
-                <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'name')->textInput(['placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true]) ?>
 
             </div>
             

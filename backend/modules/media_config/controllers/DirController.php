@@ -96,14 +96,14 @@ class DirController extends GridViewChangeSelfController
                         $childrenModel->update(true, ['level']);
                     }
                 }else{
-                    Yii::$app->getSession()->setFlash('success','保存失败::' . implode('；', $model->getErrorSummary(true)));
+                    Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Save Failed:') . implode('；', $model->getErrorSummary(true)));
                 }
                 
                 if($is_submit) $trans->commit();  //提交事务
                 
             }catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
             }
             
             return $this->redirect(['index']);
@@ -128,9 +128,11 @@ class DirController extends GridViewChangeSelfController
         Yii::$app->getResponse()->format = 'json';
        
         if(count(Dir::getDirsChildren($id, \Yii::$app->user->id)) > 0){
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在子目录，不能删除。');
+            $msg = Yii::t('app', 'Subdirectories exist under this directory and cannot be deleted.');
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $msg);
         }else if(count($model->medias) > 0) {
-            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, '该目录下存在素材素材，不能删除。');
+            $msg = Yii::t('app', 'There is material in this directory and cannot be deleted.');
+            $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $msg);
         }else{
             $model->delete();
             Dir::invalidateCache();    //清除缓存
@@ -179,7 +181,7 @@ class DirController extends GridViewChangeSelfController
                 
             }catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
             }
             
             return $this->redirect(['index']);

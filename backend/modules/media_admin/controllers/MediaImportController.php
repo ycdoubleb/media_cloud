@@ -51,7 +51,9 @@ class MediaImportController extends Controller{
      * 进入批量导入界面
      */
     public function actionIndex(){
-        return $this->render('index');
+        return $this->render('index', [
+            'category_id' => ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id'),   // 分库id
+        ]);
     }
     
     /**
@@ -66,21 +68,22 @@ class MediaImportController extends Controller{
         ]);
         $model->loadDefaultValues();
         $model->scenario = Media::SCENARIO_CREATE;
-        $post = Yii::$app->request->post();
+        $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
         
-        if($model->load($post)){
-//            var_dump($post);exit;
+        if($model->load($bodyParams)){
             Yii::$app->response->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
             try
             {   
                 $is_submit = false;
+                // 分库id
+                $model->category_id = ArrayHelper::getValue($bodyParams, 'category_id'); 
                 
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
                 if($typeDetail == null){
-                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
+                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, Yii::t('app', 'Uploaded file suffix does not exist.'));
                 }
                 // 保存素材类型
                 $model->type_id = $typeDetail->type_id;
@@ -89,10 +92,10 @@ class MediaImportController extends Controller{
                 // 时长
                 $model->duration = DateUtil::timeToInt($model->duration);
                 // 属性值
-                $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
+                $media_attrs = ArrayHelper::getValue($bodyParams, 'Media.attribute_value');
                 // 标签
-                $tags = ArrayHelper::getValue($post, 'Media.tags', '');
-                $media_tags = ArrayHelper::getValue($post, 'Media.media_tags');
+                $tags = ArrayHelper::getValue($bodyParams, 'Media.tags', '');
+                $media_tags = ArrayHelper::getValue($bodyParams, 'Media.media_tags');
                 $model->tags = str_replace(['，','、'], ',', $tags.','.$media_tags);
                 $tags = Tags::saveTags($model->tags);
                 if($model->validate() && $model->save()){
@@ -124,6 +127,7 @@ class MediaImportController extends Controller{
         
         return $this->render('create', [
             'model' => $model,
+            'category_id' => ArrayHelper::getValue($bodyParams, 'category_id'),
             'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
             'medias' => $this->getSpreadsheet('importfile'),     //excel表的素材信息
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),

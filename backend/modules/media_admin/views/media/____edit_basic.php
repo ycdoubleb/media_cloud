@@ -8,9 +8,8 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Media */
 
-$this->title = Yii::t('app', '{Edit}{Media}{Basic}{Info}', [
-    'Edit' => Yii::t('app', 'Edit'), 'Media' => Yii::t('app', 'Media'),
-    'Basic' => Yii::t('app', 'Basic'), 'Info' => Yii::t('app', 'Info')
+$this->title = Yii::t('app', '{Edit}{Basic Info}', [
+    'Edit' => Yii::t('app', 'Edit'), 'Basic Info' => Yii::t('app', 'Basic Info'),
 ]);
 
 ?>

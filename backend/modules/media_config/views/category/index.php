@@ -13,16 +13,18 @@ use yii\widgets\LinkPager;
 /* @var $searchModel MediaCategorySearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Category}', [
-    'Media' => Yii::t('app', 'Media'), 'Category' => Yii::t('app', 'Category')
+$this->title = Yii::t('app', '{Medias}{Categorys}', [
+    'Medias' => Yii::t('app', 'Medias'), 'Categorys' => Yii::t('app', 'Categorys')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Categorys}{List}', [
+    'Categorys' => Yii::t('app', 'Categorys'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-category-index">
   
     <p>
-        <?= Html::a(Yii::t('app', '{Create}{Category}', [
-            'Create' => Yii::t('app', 'Create'), 'Category' => Yii::t('app', 'Category')
+        <?= Html::a(Yii::t('app', '{Create}{Categorys}', [
+            'Create' => Yii::t('app', 'Create'), 'Categorys' => Yii::t('app', 'Categorys')
         ]), ['create'], ['id' => 'btn-addCate', 'class' => 'btn btn-success']) ?>
     </p>
 
@@ -46,8 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'attribute' => 'name',
-                'label' => Yii::t('app', '{Media}{Category}{Name}', [
-                    'Media' => Yii::t('app', 'Media'), 'Category' => Yii::t('app', 'Category'), 'Name' => Yii::t('app', 'Name')
+                'label' => Yii::t('app', '{Categorys}{Name}', [
+                    'Categorys' => Yii::t('app', 'Categorys'), 'Name' => Yii::t('app', 'Name')
                 ]),
                 'headerOptions' => [
                     'style' => [
@@ -69,8 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Category}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Category' => Yii::t('app', 'Category')
+                                'confirm' => Yii::t('app', "{Are you sure you want to}{Delete}【{$model->name}】{Categorys}？", [
+                                    'Are you sure you want to' => Yii::t('app', 'Are you sure you want to'), 
+                                    'Delete' => Yii::t('app', 'Delete'), 'Categorys' => Yii::t('app', 'Categorys')
                                 ]),
                                 'method' => 'post',
                             ],

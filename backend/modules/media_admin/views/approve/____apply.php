@@ -14,9 +14,7 @@ use yii\widgets\ActiveForm;
 MediaModuleAsset::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Apply}{Reason}', [
-    'Apply' => Yii::t('app', 'Apply'), 'Reason' => Yii::t('app', 'Reason')
-]);
+$this->title = Yii::t('app', 'Reasons For Apply');
 
 // 当前action
 $action = Yii::$app->controller->action->id

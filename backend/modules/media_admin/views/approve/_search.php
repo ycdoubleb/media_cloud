@@ -3,6 +3,7 @@
 use common\models\media\MediaApprove;
 use common\models\media\searchs\MediaApproveSearh;
 use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -18,7 +19,7 @@ use yii\widgets\ActiveForm;
             'id' => 'approve-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], ['category_id' => ArrayHelper::getValue($filters, 'category_id')]),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-9 col-md-9\">{input}</div>",  
@@ -33,19 +34,19 @@ use yii\widgets\ActiveForm;
         <div class="col-lg-6 col-md-6 clean-padding">
             <!--素材编号-->
             <?= $form->field($model, 'media_id')->textInput([
-                'placeholder' => '请输入素材编号', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', '{Media}{Number}', [
-                'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-            ]) . '：') ?>
+                'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+            ])->label(Yii::t('app', '{Medias}{Number}：', [
+                'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
+            ])) ?>
         </div>     
             
         <div class="col-lg-6 col-md-6 clean-padding">
             <!--素材名称-->
             <?= $form->field($model, 'media_name')->textInput([
-                'placeholder' => '请输出素材名称', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', '{Media}{Name}', [
-                'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
-            ]) . '：') ?>
+                'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+            ])->label(Yii::t('app', '{Medias}{Name}：', [
+                'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
+            ])) ?>
         </div>
 
         <div class="col-lg-12 col-md-12 clean-padding">
@@ -65,14 +66,16 @@ use yii\widgets\ActiveForm;
                         ]
                     ]
                 ],
-            ])->label(Yii::t('app', '{Auditing}{Type}：', [
-                'Auditing' => Yii::t('app', 'Auditing'), 'Type' => Yii::t('app', 'Type')
+            ])->label(Yii::t('app', '{Approves}{Type}：', [
+                'Approves' => Yii::t('app', 'Approves'), 'Type' => Yii::t('app', 'Type')
             ])) ?>
         </div>
 
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') ?>
+            </label>
             <div class="col-lg-10 col-md-10">
                 
                 <!--审核状态-->
@@ -82,8 +85,8 @@ use yii\widgets\ActiveForm;
                     ])->widget(Select2::class, [
                         'data' => array_diff(MediaApprove::$statusMap, [MediaApprove::STATUS_CANCELED => '已取消']),
                         'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', '{Auditing}{Status}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')
+                        'options' => ['placeholder' => Yii::t('app', '{Approves}{Status}', [
+                            'Approves' => Yii::t('app', 'Approves'), 'Status' => Yii::t('app', 'Status')
                         ])],
                         'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
@@ -97,8 +100,8 @@ use yii\widgets\ActiveForm;
                     ])->widget(Select2::class, [
                         'data' => MediaApprove::$resultMap,
                         'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', '{Auditing}{Result}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                        'options' => ['placeholder' => Yii::t('app', '{Approves}{Result}', [
+                            'Approves' => Yii::t('app', 'Approves'), 'Result' => Yii::t('app', 'Result')
                         ])],
                         'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
@@ -125,7 +128,7 @@ use yii\widgets\ActiveForm;
                     ])->widget(Select2::class, [
                         'data' => $userMap,
                         'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', 'Verifier')],
+                        'options' => ['placeholder' => Yii::t('app', 'Approver')],
                         'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>

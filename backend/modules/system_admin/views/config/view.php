@@ -1,15 +1,18 @@
 <?php
 
+use common\models\Config;
 use yii\helpers\Html;
+use yii\web\View;
 use yii\widgets\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Config */
+/* @var $this View */
+/* @var $model Config */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t(null, '{Config}{Administration}',[
-    'Config' => Yii::t('app', 'Config'),
-    'Administration' => Yii::t('app', 'Administration'),
+$this->title =  Yii::t('app', "{Configs}{Detail}",[
+    'Configs' => Yii::t('app', 'Configs'), 'Detail' => Yii::t('app', 'Detail'),
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Configs}{List}', [
+    'Configs' => Yii::t('app', 'Configs'), 'List' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

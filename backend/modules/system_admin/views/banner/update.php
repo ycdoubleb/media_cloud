@@ -6,16 +6,12 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model Banner */
 
-$this->title = Yii::t('app', '{Update}{Banner}: {nameAttribute}', [
+$this->title = Yii::t('app', '{Update}Banner', [
     'Update' => Yii::t('app', 'Update'),
-    'Banner' => Yii::t('app', 'Banner'),
-    'nameAttribute' => $model->title,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Propaganda}{List}',[
-    'Propaganda' => Yii::t('app', 'Propaganda'),
-    'List' => Yii::t('app', 'List'),
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Banner{List}', [
+    'List' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
 ?>

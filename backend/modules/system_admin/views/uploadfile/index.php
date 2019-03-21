@@ -9,12 +9,10 @@ use yii\web\View;
 
 SystemAssets::register($this);
 
-$this->title = Yii::t('app', '{Upload}{File}{Admin}',[
-    'Upload' => Yii::t('app', 'Upload'),
-    'File' => Yii::t('app', 'File'),
-    'Admin' => Yii::t('app', 'Admin'),
+$this->title = Yii::t('app', 'Uploadfile Admin');
+$this->params['breadcrumbs'][] = Yii::t('app', '{File}{List}', [
+    'File' => Yii::t('app', 'File'), 'List' => Yii::t('app', 'List')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
@@ -22,10 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="mc-tabs">
         <ul class="list-unstyled">
             <li id="file">
-                <?= Html::a('文件管理', array_merge(['index'], array_merge($filters, ['tabs' => 'file']))) ?>
+                <?= Html::a(Yii::t('app', '{File}{Admin}', [
+                    'File' => Yii::t('app', 'File'), 'Admin' => Yii::t('app', 'Admin')
+                ]), array_merge(['index'], array_merge($filters, ['tabs' => 'file']))) ?>
             </li>
             <li id="chunk">
-                <?= Html::a('文件分片管理', array_merge(['index'], array_merge($filters, ['tabs' => 'chunk']))) ?>
+                <?= Html::a(Yii::t('app', '{Filechip}{Admin}', [
+                    'Filechip' => Yii::t('app', 'Filechip'), 'Admin' => Yii::t('app', 'Admin')
+                ]), array_merge(['index'], array_merge($filters, ['tabs' => 'chunk']))) ?>
             </li>
         </ul>
     </div>
@@ -41,30 +43,34 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-
+$delMsg = Yii::t('app', 'Are you sure you want to delete?');    // 删除提示
+$selMsg = Yii::t('app', 'Please select at least one.');  // 选择提示
 $js = <<<JS
     //标签页选中效果
     $(".mc-tabs ul li[id=$tabs]").addClass('active');
         
     // 删除文件
-    $("#delete").click(function(){
-        var many_check = $("input[name='selection[]']:checked");
-        var ids = "";
-        $(many_check).each(function(){
-            ids += $(this).parents('tr').attr('data-value')+',';                       
-        });
-        // 去掉最后一个逗号
-        if (ids.length > 0) {
-            ids = ids.substr(0, ids.length - 1);
-        }else{
-            alert('请选择至少一条记录！'); return false;
+    $("#delete").click(function(e){
+        e.preventDefault();
+        var val = [],
+            url = $(this).attr("href"),
+            checkBoxs = $('input[name="selection[]"]');
+        // 循环组装素材id
+        for(i in checkBoxs){
+            if(checkBoxs[i].checked){
+               val.push(checkBoxs[i].value);
+            }
         }
-        console.log(ids);
-        console.log($(this).attr('data-url'));
-        var url=$(this).attr('data-url');
-        $.post(url, {ids}, function(rel){
-            location.reload();  //刷新页面
-        });
+        
+        if(val.length > 0){
+            if(confirm("{$delMsg}") == true){
+                $.post(url, {ids: val}, function(response){
+                    if(response.code == "0"){ location.reload();}  //刷新页面
+                });
+            }
+        }else{
+            alert("{$selMsg}");
+        }
     });  
 JS;
 $this->registerJs($js, View::POS_READY);

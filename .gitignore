@@ -40,6 +40,6 @@ phpunit.phar
 /backend/runtime/
 /backend/web/assets/
 /backend/web/upload/
-/api/runtime/
-/api/web/assets/
-/api/web/upload/
+/apiend/runtime/
+/apiend/web/assets/
+/apiend/web/upload/

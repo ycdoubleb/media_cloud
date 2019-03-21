@@ -48,5 +48,18 @@ class UseController extends Controller {
         $url = $url . "?" . http_build_query(Yii::$app->request->getQueryParams());
         return $this->redirect($url);
     }
+    
+    /**
+     * 临时下载
+     * @param string $sn
+     */
+    public function actionTempDownload($sn) {
+        $url = Acl::getTempUrlBySn($sn);
+        if (empty($url)) {
+            throw new NotFoundHttpException('找不到对应的素材！');
+        }
+        $url = $url . "?" . http_build_query(Yii::$app->request->getQueryParams());
+        return $this->redirect($url);
+    }
 
 }

@@ -379,7 +379,7 @@ class Dir extends ActiveRecord
         $leveDirs = [];
         ArrayHelper::multisort($dirs, $sort_order, SORT_DESC);
         foreach ($dirs as $id => $dir) {
-            if($dir['level'] == $level && ($include_unshow || $dir['is_del'] == 1)){
+            if($dir['level'] == $level && ($include_unshow || $dir['is_del'] == 0)){
                 $leveDirs[] = $dir;
             }
         }
@@ -405,7 +405,7 @@ class Dir extends ActiveRecord
         $childrens = [];
         ArrayHelper::multisort($dirs, $sort_order, SORT_DESC);
         foreach ($dirs as $dir) {
-            if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 1)){
+            if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 0)){
                 $childrens[] = $dir;
                 if ($recursion) {
                     $childrens = array_merge($childrens, self::getDirsChildren($dir['id'], $created_by, false, $recursion, $include_unshow, $sort_order));
@@ -434,7 +434,7 @@ class Dir extends ActiveRecord
         
         $childrens = [];
         foreach (self::$dirs as $dir) {
-            if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 1)){
+            if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 0)){
                 $childrens[] = $dir['id'];
                 if ($recursion) {
                     $childrens = array_merge($childrens, self::getDirChildrenIds($dir['id'], $created_by, $recursion, $include_unshow));

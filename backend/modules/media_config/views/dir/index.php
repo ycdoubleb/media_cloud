@@ -108,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <thead>
               <tr>
                   <th><?= Yii::t('app', 'Name') ?></th>
-                  <th><?= Yii::t('app', '{Is}{Show}',['Is' => Yii::t('app', 'Is'), 'Show' => Yii::t('app', 'Show')]) ?></th>
+                  <th><?= Yii::t('app', '{Is}{Delete}',['Is' => Yii::t('app', 'Is'), 'Delete' => Yii::t('app', 'Delete')]) ?></th>
                   <th></th>
                 </tr>
             </thead>

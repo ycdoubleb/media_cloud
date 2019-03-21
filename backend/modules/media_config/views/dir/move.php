@@ -9,7 +9,9 @@ use yii\web\View;
 /* @var $this View */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = '选择移动到哪个目录';
+$this->title = Yii::t('app', '{Move}{Dir}', [
+    'Move' => Yii::t('app', 'Move'), 'Dir' => Yii::t('app', 'Dir')
+]);
 
 ?>
 <div class="dir-move">

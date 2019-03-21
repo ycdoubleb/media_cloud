@@ -37,8 +37,11 @@ class DirController extends GridViewChangeSelfController
      */
     public function actionIndex()
     {
+        $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
+        
         return $this->render('index', [
-            'dataProvider' => Dir::getDirListFramework(),
+            'category_id' => $category_id,
+            'dataProvider' => Dir::getDirListFramework($category_id),
         ]);
     }
 
@@ -54,8 +57,9 @@ class DirController extends GridViewChangeSelfController
             // 返回json格式
             \Yii::$app->response->format = 'json';
             
+            $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
             $dir_path = ArrayHelper::getValue(Yii::$app->request->post(), 'dir_path');
-            Dir::checkIsTheDirExists($dir_path, $id);
+            Dir::checkIsTheDirExists($dir_path, $category_id, $id);
             
             return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         }
@@ -81,7 +85,7 @@ class DirController extends GridViewChangeSelfController
             try
             {  
                 $is_submit = false;
-                $moveDirChildrens  = Dir::getDirsChildren($model->id, null, false, true);  //移动目录下所有子级
+                $moveDirChildrens  = Dir::getDirsChildren($model->id, Yii::$app->user->id, $model->category_id, false, true);  //移动目录下所有子级
                 if($model->save()){
                     $is_submit = true;
                     $model->updateParentPath();    //修改路径
@@ -127,7 +131,7 @@ class DirController extends GridViewChangeSelfController
 
         Yii::$app->getResponse()->format = 'json';
        
-        if(count(Dir::getDirsChildren($id, \Yii::$app->user->id)) > 0){
+        if(count(Dir::getDirsChildren($id, \Yii::$app->user->id, $model->category_id)) > 0){
             $msg = Yii::t('app', 'Subdirectories exist under this directory and cannot be deleted.');
             $data = new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $msg);
         }else if(count($model->medias) > 0) {
@@ -152,6 +156,7 @@ class DirController extends GridViewChangeSelfController
      */
     public function actionMove($move_ids = null, $target_id = 0)
     {
+        $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
         $move_ids = explode(',', $move_ids);
         
         if (Yii::$app->request->isPost) {
@@ -189,7 +194,7 @@ class DirController extends GridViewChangeSelfController
         
         return $this->renderAjax('move', [
             'move_ids' => implode(',', $move_ids),    //所选的目录id
-            'dataProvider' => Dir::getDirListFramework($move_ids),    //用户自定义的目录结构
+            'dataProvider' => Dir::getDirListFramework($category_id, $move_ids),    //用户自定义的目录结构
         ]);
     }
     
@@ -198,16 +203,14 @@ class DirController extends GridViewChangeSelfController
      * @param string $target_id
      * @param string $id
      */
-    public function actionSearchChildren($target_id = null, $id){
-        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
+    public function actionSearchChildren($target_id = null, $category_id, $id){
+        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id, $category_id); 
         $childrens = [];
         if(count($dirsChildren) > 0){
             foreach ($dirsChildren as $index => $item) {
-                if($target_id != null){
-                    if($target_id == $item['id']){
-                        unset($item[$index]);
-                        break;
-                    }
+                if($target_id != null && $target_id == $item['id']){
+                    unset($item[$index]);
+                    break;
                 }
                 $item['isParent'] = true;
                 $childrens[] = $item;

@@ -26,10 +26,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
     <p>
         <?= Html::a(Yii::t('app', '{Create}{Dir}', [
             'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['create'], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
+        ]), ['create', 'category_id' => $category_id], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
         <?= Html::a(Yii::t('app', '{Move}{Dir}', [
             'Move' => Yii::t('app', 'Move'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['move'], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
+        ]), ['move', 'category_id' => $category_id], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
     </p>
 
     <?= FancytreeWidget::widget([
@@ -160,7 +160,7 @@ $js = <<<JS
             vals.push(selectedNodes[i].key);
         }
         if(vals.length > 0){
-            var url = $(this).attr('href') + '?move_ids=' + vals
+            var url = $(this).attr('href') + '&move_ids=' + vals
             $(".myModal").html("");
             $('.myModal').modal("show").load(url);
         }else{

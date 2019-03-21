@@ -364,8 +364,8 @@ class MediaController extends Controller
      * @param string $id
      * @param string $target_id
      */
-    public function actionSearchChildren($id, $target_id = null){
-        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
+    public function actionSearchChildren($id, $category_id = 1, $target_id = null){
+        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id, $category_id); 
         $childrens = [];
         foreach ($dirsChildren as $index => $item) {
             if($target_id != null){

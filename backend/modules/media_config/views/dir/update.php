@@ -83,22 +83,18 @@ $this->title = Yii::t('app', "{Update}{Dir}", [
                             $values = array_merge($values, [$dir->id]);
                         }
                         
-                        if($dir->parent_id > 0){
-                            echo $form->field($model, 'parent_id', [
-                                'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>\n<div class=\"col-lg-10 col-md-10\">{error}</div>",
-                            ])->widget(DepDropdown::class,[
-                                'pluginOptions' => [
-                                    'url' => Url::to(['search-children', 'target_id' => $model->id]),
-                                    'max_level' => $max_level,
-                                ],
-                                'items' => $items,
-                                'values' => $values,
-                                'itemOptions' => [
-                                    'style' => 'width: 175px; display: inline-block;',
-                                    'disabled' => $model->isNewRecord || $id == null ? true : false,
-                                ],
-                            ]);
-                        }
+                        echo $form->field($model, 'parent_id')->widget(DepDropdown::class,[
+                            'pluginOptions' => [
+                                'url' => Url::to(['search-children', 'target_id' => $model->id]),
+                                'max_level' => $max_level,
+                            ],
+                            'items' => $items,
+                            'values' => $values,
+                            'itemOptions' => [
+                                'style' => 'width: 135px; display: inline-block;',
+                                'disabled' => $model->isNewRecord || $id == null ? true : false,
+                            ],
+                        ]);
                     }
                 ?>
                 

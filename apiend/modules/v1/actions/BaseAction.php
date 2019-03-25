@@ -59,7 +59,7 @@ class BaseAction extends Action {
      */
     protected function verify(){
         $is_post = Yii::$app->request->isPost;
-        $notfounds = $this->checkRequiredParams($is_post ? $this->getBodyParams() : $this->getQueryParams(), ['appkey', 'sign', 'timestamp', 'secret']);
+        $notfounds = $this->checkRequiredParams($is_post ? $this->getBodyParams() : $this->getQueryParams(), ['appkey', 'sign', 'timestamp']);
         if (count($notfounds) > 0) {
             $this->verifyError = new Response(Response::CODE_COMMON_MISS_PARAM, null, null, ['param' => implode(',', $notfounds)]);
              return false;

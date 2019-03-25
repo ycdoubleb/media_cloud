@@ -84,10 +84,6 @@ class zTreeDropDown extends InputWidget {
             $events = array_merge(array_filter($this->pluginEvents[$key]), isset($config['pluginEvents'][$key]) ? $config['pluginEvents'][$key] : []);
         }
         $config['url'] = array_merge(array_filter($this->url), isset($config['url']) ? $config['url'] : []);
-        // 如果没有设置value，则为空
-        if(empty($config['value']) || !isset($config['value'])){
-            $this->value = '';
-        }
         
         parent::__construct($config);
     }
@@ -109,8 +105,13 @@ class zTreeDropDown extends InputWidget {
         // 设置名称
         $this->name = $this->hasModel() ? Html::getInputName($this->model, $this->attribute) : $this->name;
         
-        // 设置值
-        $this->value = $this->hasModel() ? Html::getAttributeValue($this->model, $this->attribute) : $this->value;
+        // 如果没有设置value，则为空
+        if((empty($config['value']) || !isset($config['value'])) && !$this->hasModel()){
+            $this->value = '';
+        }else{
+            // 设置值
+            $this->value = $this->hasModel() ? Html::getAttributeValue($this->model, $this->attribute) : $this->value;
+        }
         
         $this->options['class'] = 'ztree';
         

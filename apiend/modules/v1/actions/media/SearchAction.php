@@ -4,8 +4,10 @@ namespace apiend\modules\v1\actions\media;
 
 use apiend\models\Response;
 use apiend\modules\v1\actions\BaseAction;
+use common\models\media\Acl;
 use common\models\media\Dir;
 use common\models\media\Media;
+use Yii;
 use yii\db\Query;
 
 /**
@@ -83,10 +85,18 @@ class SearchAction extends BaseAction {
                 ->limit($limit)
                 ->orderBy(['Media.download_count' => SORT_DESC,'Media.name' => SORT_ASC]);
 
+        //生成临时访问路径
+        $temp_link_url = Yii::$app->params['media']['use']['temp_link_url'];
+        $medias = $query->all();
+        foreach($medias as &$media){
+            
+            $sn = Acl::getTempSnByMid($media['id']);
+            $media['url'] = "$temp_link_url?sn={$sn}";
+        }
         return new Response(Response::CODE_COMMON_OK, null, [
             'page' => $page,
             'total_count' => (int) $queryClone->select(['Media.id'])->count(),
-            'list' => $query->all(),
+            'list' => $medias,
         ]);
     }
 

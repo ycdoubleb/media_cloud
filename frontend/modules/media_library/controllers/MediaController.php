@@ -73,7 +73,7 @@ class MediaController extends Controller
             'searchModel' => $searchModel,      //搜索模型
             'filters' => $results['filter'],    //查询过滤的属性
             'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(1),
         ]);
     }
     

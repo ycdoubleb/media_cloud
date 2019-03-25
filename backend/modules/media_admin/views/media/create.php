@@ -19,7 +19,7 @@ $this->title = Yii::t('app', '{Create}{Medias}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Medias}{List}', [
     'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', 'Create');
 
 //加载 MEDIADATATR DOM 模板
 $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom'));
@@ -63,7 +63,13 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
         <div role="tabpanel" class="tab-pane fade active in" id="basics" aria-labelledby="basics-tab">
             
             <!--存储目录-->
-            <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
+            <?= $form->field($model, 'dir_id', [
+                'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">{input}</div>\n<div class=\"col-lg-8 col-md-8\">{error}</div>",  
+                'labelOptions' => [
+                    'class' => 'col-lg-1 col-md-1 control-label form-label',
+                    'style' => 'width: 125px;'
+                ],  
+            ])->widget(zTreeDropDown::class, [
                 'data' => $dirDataProvider,
                 'url' => [
                     'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),

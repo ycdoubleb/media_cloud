@@ -16,7 +16,7 @@ TagsInputAsset::register($this);
     <div class="form-group field-media-attribute_value <?= $atts['is_required'] ? 'required' : '' ?>">
         
         <?= Html::label(($atts['is_required'] ? '<span class="form-must text-danger">*</span>' : null) . $atts['name'] . '：', 
-            'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+            'field-media-attribute_value', ['class' => 'col-lg-1 col-md-1 control-label form-label', 'style' => 'width: 125px']) ?>
         
         <div class="col-lg-8 col-md-8">
             
@@ -76,7 +76,7 @@ TagsInputAsset::register($this);
 <div class="form-group field-media-tag_ids <?= isset($isTagRequired) && $isTagRequired ? 'required' : '' ?>">
     <?php 
         $for = 'field-media-tag_id';
-        $options = ['class' => 'col-lg-1 col-md-1 control-label form-label'];
+        $options = ['class' => 'col-lg-1 col-md-1 control-label form-label', 'style' => 'width: 125px'];
         
         if(isset($isTagRequired) && $isTagRequired){
             echo Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Medias}{Tags}：', [

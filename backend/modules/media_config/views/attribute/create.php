@@ -7,13 +7,10 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model MediaAttribute */
 
-$this->title = Yii::t('app', '{Create}{Media}{Attribute}', [
-    'Create' => Yii::t('app', 'Create'), 'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute')
+$this->title = Yii::t('app', '{Create}{Attribute}', [
+    'Create' => Yii::t('app', 'Create'), 'Attribute' => Yii::t('app', 'Attribute')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Media}{Attribute}', [
-    'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute')
-]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="media-attribute-create">
 

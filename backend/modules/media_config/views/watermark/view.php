@@ -13,10 +13,12 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 WatermarkAsset::register($this);
 
-$this->title =  Yii::t('app', "{Watermark}{Detail}：{$model->name}", [
+$this->title =  Yii::t('app', "{Watermark}{Detail}", [
     'Watermark' => Yii::t('app', 'Watermark'), 'Detail' => Yii::t('app', 'Detail')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Watermark'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Watermark}{List}', [
+    'Watermark' => Yii::t('app', 'Watermark'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -25,9 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel pull-left">
         
         <div class="title">
-            <?= Yii::t('app', '{Basic}{Info}',[
-                'Basic' => Yii::t('app', 'Basic'), 'Info' => Yii::t('app', 'Info'),
-            ]) ?>
+            <?= Yii::t('app', 'Basic Info') ?>
             
             <div class="pull-right">
                 
@@ -62,36 +62,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'refer_pos',
-                    'label' => Yii::t('app', '{Watermark}{Position}', [
-                        'Watermark' => Yii::t('app', 'Watermark'), 'Position' => Yii::t('app', 'Position')
-                    ]),
+                    'label' => Yii::t('app', 'Refer Pos'),
                     'value' => Watermark::$referPosMap[$model->refer_pos],
                 ],
                 'width',
                 'height',
                 [
                     'attribute' => 'dx',
-                    'label' => Yii::t('app', '{Level}{Shifting}', [
-                        'Level' => Yii::t('app', 'Level'), 'Shifting' => Yii::t('app', 'Shifting')
-                    ]),
+                    'label' => Yii::t('app', 'Dx'),
                 ],
                 [
                     'attribute' => 'dy',
-                    'label' => Yii::t('app', '{Vertical}{Shifting}', [
-                        'Vertical' => Yii::t('app', 'Vertical'), 'Shifting' => Yii::t('app', 'Shifting')
-                    ]),
+                    'label' => Yii::t('app', 'Dy'),
                 ],
                 [
                     'attribute' => 'is_del',
-                    'label' => Yii::t('app', 'Status'),
-                    'value' => $model->is_del ? '启用' : '停用'
+                    'label' => Yii::t('app', 'Is Del'),
+                    'value' => !$model->is_del ? '否' : '是'
                 ],
                 [
                     'attribute' => 'is_selected',
-                    'label' => Yii::t('app', '{Default}{Selected}', [
-                        'Default' => Yii::t('app', 'Default'), 'Selected' => Yii::t('app', 'Selected')
-                    ]),
-                   'value' => $model->is_selected ? '是' : '否'
+                    'label' => Yii::t('app', 'Is Selected'),
+                   'value' => !$model->is_selected ? '否' : '是'
                 ],
                 [
                     'attribute' => 'created_at',

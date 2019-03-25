@@ -6,7 +6,7 @@ use yii\web\View;
 /* @var $this View */
 /* @var $model MediaTypeDetail */
 
-$this->title = Yii::t('app', '{Create}{{Type}{Suffix}', [
+$this->title = Yii::t('app', '{Create}{Type}{Suffix}', [
     'Create' => Yii::t('app', 'Create'), 'Type' => Yii::t('app', 'Type'), 'Suffix' => Yii::t('app', 'Suffix')
 ]);
 

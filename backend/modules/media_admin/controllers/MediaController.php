@@ -86,7 +86,7 @@ class MediaController extends GridViewChangeSelfController
             ]),
             'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
     }
@@ -276,7 +276,7 @@ class MediaController extends GridViewChangeSelfController
             'model' => $model,
             'category_id' => $category_id,
             'isTagRequired' => false,     // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
             'wateFiles' => Watermark::getEnabledWatermarks(),
             'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
@@ -370,7 +370,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_attribute', [
             'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
             'isTagRequired' => false,  // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
         ]);
     }
     
@@ -440,7 +440,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_attribute', [
             'ids' => json_encode(explode(',', $id)),
             'isTagRequired' => true,     // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($model->category_id),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
             'tagsSelected' => $model->tags,
         ]);

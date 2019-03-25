@@ -131,7 +131,7 @@ class MediaImportController extends Controller{
             'category_id' => $category_id,
             'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'medias' => $this->getSpreadsheet('importfile'),     //excel表的素材信息
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
         ]);
     }
    

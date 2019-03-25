@@ -22,7 +22,10 @@ $this->title = Yii::t('app', '{Edit}{Basic Info}', [
         ],
         'action' => ['edit-basic', 'id' => $model->id],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\"><div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div></div>",  
+            'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+            . "</div>",  
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  

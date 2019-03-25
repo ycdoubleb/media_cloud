@@ -28,20 +28,22 @@ $wateSelected = json_encode($wateSelected);
         <?= Html::label(Yii::t('app', 'Transcoding') . '：', 'field-media-mts_need', [
             'class' => 'col-lg-1 col-md-1 control-label form-label'
         ]) ?>
-        <div class="col-lg-7 col-md-7">
-            <?= Html::radioList('Media[mts_need]', $isNewRecord, [1 => '自动', 0 => '手动'],[
-                'itemOptions'=>[
-                    'labelOptions'=>[
-                        'style'=>[
-                            'margin'=>'10px 15px 10px 0',
-                            'color' => '#999999',
-                            'font-weight' => 'normal',
+        <div class="col-lg-8 col-md-8">
+            <div class="col-lg-12 col-md-12 clean-padding">
+                <?= Html::radioList('Media[mts_need]', $isNewRecord, [1 => '自动', 0 => '手动'],[
+                    'itemOptions'=>[
+                        'labelOptions'=>[
+                            'style'=>[
+                                'margin'=>'10px 15px 10px 0',
+                                'color' => '#999999',
+                                'font-weight' => 'normal',
+                            ]
                         ]
-                    ]
-                ],
-            ]) ?>
+                    ],
+                ]) ?>
+            </div>
+            <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
         </div>
-        <div class="col-lg-7 col-md-7"><div class="help-block"></div></div>
     </div>
 <?php endif; ?>
 
@@ -50,17 +52,19 @@ $wateSelected = json_encode($wateSelected);
     <?= Html::label(Yii::t('app', 'Watermark') . '：', 'field-media-mts_watermark_ids', [
         'class' => 'col-lg-1 col-md-1 control-label form-label'
     ]) ?>
-    <div class="col-lg-7 col-md-7">
-        <div id="media-mts_watermark_ids">
-            <!--加载-->
-            <div class="loading-box">
-                <span class="loading"></span>
-                <span class="text-danger"><?= Yii::t('app', 'Watermark not config') ?></span>
+    <div class="col-lg-8 col-md-8">
+        <div class="col-lg-12 col-md-12 clean-padding">
+            <div id="media-mts_watermark_ids">
+                <!--加载-->
+                <div class="loading-box">
+                    <span class="loading"></span>
+                    <span class="text-danger"><?= Yii::t('app', 'Watermark not config') ?></span>
+                </div>
             </div>
+            <br/>
+            <!--预览-->
+            <div id="preview-watermark"></div>
         </div>
-        <br/>
-        <!--预览-->
-        <div id="preview-watermark"></div>
     </div>
 </div>
 

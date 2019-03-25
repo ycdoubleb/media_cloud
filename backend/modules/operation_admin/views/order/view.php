@@ -18,10 +18,12 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', "{Order}{Detail}：{$model->order_name}", [
-    'Order' => Yii::t('app', 'Order'), 'Detail' => Yii::t('app', 'Detail')
+$this->title = Yii::t('app', "{Orders}{Detail}", [
+    'Orders' => Yii::t('app', 'Orders'), 'Detail' => Yii::t('app', 'Detail')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Order'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Orders}{List}', [
+    'Orders' => Yii::t('app', 'Orders'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $mediaTypeIds = ArrayHelper::getColumn($goodsDataProvider->allModels, 'media.type_id');
@@ -55,15 +57,15 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                 'template' => '<tr><th class="detail-th">{label}</th><td class="detail-td">{value}</td></tr>',
                 'attributes' => [
                     [
-                        'label' => Yii::t('app', '{Order}{Name}', [
-                            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Orders}{Name}', [
+                            'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
                         ]),
                         'value' => $model->order_name
                     ],
                     'order_sn',
                     [
-                        'label' => Yii::t('app', '{Order}{Status}', [
-                            'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
+                        'label' => Yii::t('app', '{Orders}{Status}', [
+                            'Orders' => Yii::t('app', 'Orders'), 'Status' => Yii::t('app', 'Status')
                         ]),
                         'value' => Order::$orderStatusName[$model->order_status]
                     ],
@@ -74,15 +76,11 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         'value' => $model->goods_num
                     ],
                     [
-                        'label' => Yii::t('app', '{Goods}{Total Price}', [
-                            'Goods' => Yii::t('app', 'Goods'), 'Total Price' => Yii::t('app', 'Total Price')
-                        ]),
+                        'label' => Yii::t('app', 'Goods Total Price'),
                         'value' => Yii::$app->formatter->asCurrency($model->goods_amount)
                     ],
                     [
-                        'label' => Yii::t('app', '{Payable}{Amount}', [
-                            'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
-                        ]),
+                        'label' => Yii::t('app', 'Payable Amount'),
                         'value' => Yii::$app->formatter->asCurrency($model->order_amount)
                     ],
                     [
@@ -90,25 +88,19 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         'value' => !empty($model->created_by) ? $model->createdBy->nickname : null
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Status}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Status' => Yii::t('app', 'Status')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Status'),
                         'value' => Order::$playStatusName[$model->play_status]
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Mode}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Mode' => Yii::t('app', 'Mode')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Mode'),
                         'value' => !empty($model->play_code) ? Order::$playCodeMode[$model->play_code] : null
                     ],
                     [
-                        'label' => Yii::t('app', 'Order Time'),
+                        'label' => Yii::t('app', 'Place Order Time'),
                         'value' => $model->created_at > 0 ? date('Y-m-d H:i', $model->created_at) : null
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Time}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Time'),
                         'value' => $model->play_at > 0 ? date('Y-m-d H:i', $model->play_at) : null
                     ],
                     [
@@ -146,9 +138,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                     ],
                     
                     [
-                        'label' => Yii::t('app', '{Payable}{Amount}', [
-                            'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
-                        ]),
+                        'label' => Yii::t('app', 'Payable Amount'),
                         'value' => function($model){
                             return !empty($model->order_id) ? Yii::$app->formatter->asCurrency($model->order->order_amount) : null;
                         },
@@ -182,7 +172,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Voucher}', [
+                        'label' => Yii::t('app', 'Payment Voucher', [
                             'Payment' => Yii::t('app', 'Payment'), 'Voucher' => Yii::t('app', 'Voucher')
                         ]),
                         'format' => 'raw',
@@ -204,9 +194,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Time}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Time'),
                         'value' => function($model){
                             return !empty($model->order_id) && $model->order->play_at > 0 ? date('Y-m-d H:i', $model->order->play_at) : null;
                         },
@@ -225,9 +213,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                     ],           
                     [
                         'attribute' => 'content',
-                        'label' => Yii::t('app', '{Payment}{Illustration}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Illustration' => Yii::t('app', 'Illustration')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Description'),
                         'headerOptions' => [
                             'style' => [
                                 'width' => '155px',
@@ -241,8 +227,8 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', '{Auditing}{Result}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                        'label' => Yii::t('app', '{Approves}{Result}', [
+                            'Approves' => Yii::t('app', 'Approves'), 'Result' => Yii::t('app', 'Result')
                         ]),
                         'value' => function($model){
                             return $model->status == 1 ? PlayApprove::$resultName[$model->result] : null;
@@ -260,7 +246,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', 'Verifier'),
+                        'label' => Yii::t('app', 'Approver'),
                         'value' => function($model){
                             return !empty($model->handled_by) ? $model->handledBy->nickname : null;
                         },
@@ -277,9 +263,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', '{Auditing}{Time}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => Yii::t('app', 'Approves Time'),
                         'value' => function($model){
                             return !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null;
                         },
@@ -323,7 +307,6 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
             
             <?= GridView::widget([
                 'dataProvider' => $goodsDataProvider,
-    //            'filterModel' => $searchModel,
                 'layout' => "{items}\n{summary}\n{pager}",
                 'columns' => [
                     [
@@ -343,8 +326,8 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
 
                     [
                         'attribute' => 'goods_id',
-                        'label' => Yii::t('app', '{Media}{Number}', [
-                            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                        'label' => Yii::t('app', '{Medias}{Number}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
                         ]),
                         'headerOptions' => [
                             'style' => [
@@ -359,7 +342,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', 'Thumb Image'),
+                        'label' => Yii::t('app', 'Thumb Img'),
                         'format' => 'raw',
                         'value' => function($model) use($iconMap){
                             if(!empty($model->goods_id)){
@@ -388,8 +371,8 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],                    
                     [
-                        'label' => Yii::t('app', '{Media}{Name}', [
-                            'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Medias}{Name}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
                         ]),
                         'value' => function($model){
                             return !empty($model->goods_id) ? $model->media->name : null;
@@ -475,8 +458,8 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],            
                     [
-                        'label' => Yii::t('app', '{Media}{Price}', [
-                            'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
+                        'label' => Yii::t('app', '{Medias}{Price}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Price' => Yii::t('app', 'Price')
                         ]),
                         'value' => function($model){
                             return !empty($model->goods_id) ? Yii::$app->formatter->asCurrency($model->media->price) : null;
@@ -494,7 +477,7 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],            
                     [
-                        'label' => Yii::t('app', 'Tag'),
+                        'label' => Yii::t('app', 'Tags'),
                         'value' => function($model){
                             return !empty($model->goods_id) ?  implode(',', ArrayHelper::getColumn($model->media->mediaTagRefs, 'tags.name')) : null;
                         },
@@ -513,7 +496,6 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
 
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => '操作',
                         'buttons' => [
                             'media' => function($url, $model){
                                 return Html::a('查看', ['/media_admin/media/view', 'id' => $model->goods_id], ['class' => 'btn btn-default']);

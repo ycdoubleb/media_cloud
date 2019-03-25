@@ -10,9 +10,9 @@ use yii\web\View;
 <div class="form-group field-media-file_id required">
     <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Choice}{Medias}：', [
         'Choice' => Yii::t('app', 'Choice'), 'Medias' => Yii::t('app', 'Medias')
-    ]), 'video-file_id', ['class' => 'col-lg-1 col-md-1 control-label form-label']) ?>
+    ]), 'video-file_id', ['class' => 'col-lg-1 col-md-1 control-label form-label', 'style' => 'width: 125px']) ?>
     
-    <div class="col-lg-9 col-md-9">
+    <div class="col-lg-8 col-md-8">
         <div class="col-lg-12 col-md-12 clean-padding">
             <?= Webuploader::widget([
                 'id' => 'uploader-container',

@@ -1,8 +1,7 @@
 <?php
 
-use common\models\media\Dir;
 use common\models\media\Media;
-use common\widgets\depdropdown\DepDropdown;
+use common\widgets\zTree\zTreeDropDown;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -13,21 +12,16 @@ use yii\widgets\ActiveForm;
 ?>
 
 <!--存储目录-->
-<?= $form->field($model, 'dir_id', [
-    'template' => "{label}\n"
-        . "<div class=\"col-lg-7 col-md-7\">"
-            . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
-            . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
-        . "</div>", 
-])->widget(DepDropdown::class,[
-    'pluginOptions' => [
-        'url' => Url::to(['/media_config/dir/search-children']),
-        'max_level' => 10,
-    ],
-    'items' => Dir::getDirsBySameLevel($model->dir_id, Yii::$app->user->id, true, true),
-    'values' => $model->dir_id == 0 ? [] : array_values(array_filter(explode(',', Dir::getDirById($model->dir_id)->path))),
-    'itemOptions' => [
-        'style' => 'width: 175px; display: inline-block;',
+<?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
+    'id' => 'media-dir_id',
+    'name' => 'Media[dir_id]',
+    'value' => $model->dir_id,
+    'data' => $dirDataProvider,
+    'url' => [
+        'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $model->category_id]),
+        'create' => Url::to(['/media_config/dir/add-dynamic', 'category_id' => $model->category_id]),
+        'update' => Url::to(['/media_config/dir/edit-dynamic']),
+        'delete' => Url::to(['/media_config/dir/delete']),
     ],
 ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Storage Dir') . '：') ?>
 

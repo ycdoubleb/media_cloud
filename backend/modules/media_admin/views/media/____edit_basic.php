@@ -44,13 +44,17 @@ $this->title = Yii::t('app', '{Edit}{Basic Info}', [
                 <?= $this->render('____form_basic_dom', [
                     'model' => $model,
                     'form' => $form,
+                    'dirDataProvider' => $dirDataProvider
                 ]) ?>
                 
             </div>
             
             <div class="modal-footer">
                 
-                <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
+                <?= Html::button(Yii::t('app', 'Confirm'), [
+                    'id' => 'submitsave', 'class' => 'btn btn-primary btn-flat',
+                    'onclick' => 'submitSave($(this))'
+                ]) ?>
                 
                 <!--加载-->
                 <div class="loading-box" style="text-align: right">
@@ -67,30 +71,46 @@ $this->title = Yii::t('app', '{Edit}{Basic Info}', [
     
 </div>
 
-<?php
-$js = <<<JS
-   
-    var ids = $ids;
+<script type="text/javascript">
+    var ids = <?= $ids ?>;
     var isPageLoading = false;
-        
-    // 禁用回车提交表单
-    $("#media-form").keypress(function(e) {
-        if (e.which == 13) {
-          return false;
-        }
-    });    
-        
-    // 提交表单    
-    $("#submitsave").click(function(){
-        var _self = $(this);
+    
+    /**
+     * html 加载完成后初始化所有组件
+     * @returns {void}
+     */
+    window.onload = function(){
+        disabledEnterSubmit();       
+        submitSave();          
+    }
+    
+    /**
+     * 禁用回车提交表单
+     * @returns {undefined}
+     */
+    function disabledEnterSubmit(){
+        $("#media-form").keypress(function(event){
+            if (event.which == 13) {
+                return false;
+            }
+        });
+    }
+    
+    /**
+     * 提交保存
+     * @returns {undefined}
+     */
+    function submitSave(_self){
+        console.log(111);
+        validateDirDepDropdownValue($("#media-dir_id"));
+        // 如果必选项有错误提示，则返回
+        if($('div.has-error').length > 0) return;
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...
             $.each(ids, function(index, mediaId){
                 $.post('/media_admin/media/edit-basic?id=' + mediaId, $('#media-form').serialize(), function(response){
                     if(response.code == "0" && index >= ids.length - 1){
                         isPageLoading = false;  //取消设置提交当中...
-//                        _self.show();
-//                        $('.loading-box .loading, .loading-box .no_more').hide();
                         window.location.reload();
                     }
                 });
@@ -98,8 +118,26 @@ $js = <<<JS
             _self.hide();
             $('.loading-box .loading, .loading-box .no_more').show();
         }
-    });
+   }
+    
+    /**
+     * 验证存储目录下拉框是否有选择值
+     * @param {zTreeDropdown} _this
+     * @returns {undefined}
+     */
+    function validateDirDepDropdownValue(_this){
+        if(!_this.parents('div.form-group').hasClass('required')) return;
 
-JS;
-    $this->registerJs($js,  View::POS_READY);
-?>
+        if(_this.val() == ''){
+            var label = _this.parents('div.form-group').find('label.form-label').text();
+            var relabel = label.replace('*', "");
+            _this.parents('div.form-group').addClass('has-error');
+            _this.parents('div.form-group').find('div.help-block').html(relabel.replace('：', "") + '不能为空。');
+            setTimeout(function(){
+                _this.parents('div.form-group').removeClass('has-error');
+                _this.parents('div.form-group').find('div.help-block').html('');
+            }, 3000);
+        }
+    }
+
+</script>

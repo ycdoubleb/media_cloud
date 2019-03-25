@@ -5,9 +5,11 @@ use common\models\media\Media;
 use common\models\media\MediaType;
 use common\models\media\searchs\MediaSearch;
 use common\widgets\zTree\zTreeAsset;
+use common\widgets\zTree\zTreeDropDown;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -49,42 +51,28 @@ zTreeAsset::register($this);
         ])->label(Yii::t('app', 'Keyword') . '：') ?>
         
         <!--存储目录-->
-        <div class="form-group field-mediasearch-dir_id">
-
-            <?= Html::label(Yii::t('app', 'Storage Dir') . '：', 'mediasearch-dir_id', [
-                'class' => 'col-lg-1 col-md-1 control-label form-label'
-            ]) ?>
-
-            <div class="col-lg-6 col-md-6">
-
-                <div class="col-lg-12 col-md-12 clean-padding">
-
-                    <div class="zTree-dropdown-container zTree-dropdown-container--krajee">
-                        <!-- 模拟select点击框 以及option的text值显示-->
-                        <span id="zTree-dropdown-name" class="zTree-dropdown-selection zTree-dropdown-selection--single" onclick="showTree();" >
-                            <?php 
-                                $dir_id = ArrayHelper::getValue($filters, 'MediaSearch.dir_id');
-                                $dirModel = Dir::getDirById($dir_id);
-                                if(!empty($dirModel->name)){
-                                    echo $dirModel->name;
-                                }else{
-                                    echo '<span class="zTree-dropdown-selection__placeholder">'.Yii::t('app', 'Select Placeholder').'</span>';
-                                }
-                            ?>
-                        </span> 
-                        <!-- 模拟select右侧倒三角 -->
-                        <i class="zTree-dropdown-selection__arrow"></i>
-                        <!-- 存储 模拟select的value值 -->
-                        <input id="zTree-dropdown-value" type="hidden" name="MediaSearch[dir_id]" />
-                        <!-- zTree树状图 相对定位在其下方 -->
-                        <div class="zTree-dropdown-options ztree"  style="display:none;"><ul id="zTree-dropdown"></ul></div>  
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
+            'value' => ArrayHelper::getValue($filters, 'MediaSearch.dir_id'),
+            'data' => $dirDataProvider,
+            'url' => [
+                'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),
+            ],
+            'pluginOptions' => [
+                'type' => zTreeDropDown::TYPE_SEARCH,
+                'edit' => [
+                    'enable' => false
+                ]
+            ],
+            'pluginEvents' => [
+                'callback' => [
+                    'onClick' => new JsExpression('function(event, treeId, treeNode){
+                        zTreeDropdown.setVoluation(treeNode.id, treeNode.name);
+                        zTreeDropdown.hideTree();  
+                        submitForm();
+                    }'),
+                ]
+            ],
+        ])->label(Yii::t('app', 'Storage Dir') . '：') ?>
         
         <!--素材类型-->
         <?= $form->field($model, 'type_id')->checkboxList(MediaType::getMediaByType(), [
@@ -194,57 +182,5 @@ zTreeAsset::register($this);
     function submitForm (){
         $('#media-search-form').submit();
     }   
-    
-    /************************************************************************************
-     *
-     * 初始化树状下拉
-     *
-     ************************************************************************************/ 
-    //树状图展示
-    var treeDataList = <?= json_encode($dirDataProvider) ?>;
-    
-    //配置
-    var treeConfig = {
-        view:{},
-        edit: {
-            enable: false
-        },
-        //回调
-        callback: {
-            onClick: zTreeOnClick,
-            onExpand: zTreeOnExpand,
-        }
-    }
-    /**
-     * html 加载完成后初始化所有组件
-     * @returns {void}
-     */
-    window.onload = function(){
-        zTreeDropdown('zTree-dropdown', 'zTree-dropdown-name', 'zTree-dropdown-value', treeConfig, treeDataList);
-        
-    }
-    
-    //节点点击事件
-    function zTreeOnClick(event, treeId, treeNode) {
-        $('#'+treeName).html(treeNode.name);
-        $('#'+treeValue).val(treeNode.id);
-        submitForm();
-        hideTree();  
-    };
-    
-    //点击展开项, 添加节点  第一次展开的时候
-    function zTreeOnExpand(event,treeId, treeNode) {   
-        var treeObj = $.fn.zTree.getZTreeObj(treeId);
-        var parentZNode = treeObj.getNodeByParam("id", treeNode.id, null);//获取指定父节点
-        var childNodes = treeObj.transformToArray(treeNode);//获取子节点集合
-        //childNodes.length 小于等于1，就加载(第一次加载)
-        if(childNodes.length <= 1){
-            $.get('/media_config/dir/search-children?id=' + treeNode.id, function(response){
-                if(response.data.length > 0){
-                    treeObj.addNodes(parentZNode, response.data, false);     //添加节点     
-                }
-            });
-        }
-    } 
     
 </script>

@@ -73,16 +73,18 @@ class MediaController extends GridViewChangeSelfController
         $results = $searchModel->search(Yii::$app->request->queryParams);
         $medias = $results['data']['medias']; //所有素材数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');     
+        $category_id = $results['filter']['category_id'];
         
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'category_id' => $category_id,
             'filters' => $results['filter'],     //查询过滤
             'totalCount' => $results['total'],     //计算总数量
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
             ]),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
@@ -206,6 +208,7 @@ class MediaController extends GridViewChangeSelfController
         $model->loadDefaultValues();
         $model->scenario = Media::SCENARIO_CREATE;
         $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $category_id = ArrayHelper::getValue($bodyParams, 'category_id');
         
         if ($model->load($bodyParams)) {
             // 返回json格式
@@ -217,7 +220,7 @@ class MediaController extends GridViewChangeSelfController
             {   
                 $is_submit = false;
                 // 分库id
-                $model->category_id = ArrayHelper::getValue($bodyParams, 'category_id'); 
+                $model->category_id = $category_id; 
                 //检查素材是否存，检查file_id是否被引用
                 $exit_media = Media::findOne(['file_id' => $model->file_id, 'del_status' => 0]);
                 if ($exit_media) {
@@ -271,12 +274,12 @@ class MediaController extends GridViewChangeSelfController
 
         return $this->render('create', [
             'model' => $model,
-            'category_id' => ArrayHelper::getValue($bodyParams, 'category_id'),
+            'category_id' => $category_id,
             'isTagRequired' => false,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
             'wateFiles' => Watermark::getEnabledWatermarks(),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'wateSelected' => [],
         ]);
     }
@@ -353,6 +356,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_basic', [
             'model' => $model,
             'ids' => json_encode(explode(',', $id)),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($model->category_id),
         ]);
     }
     
@@ -675,10 +679,10 @@ class MediaController extends GridViewChangeSelfController
      * 重组存储目录同级的所有目录
      * @return array
      */
-    protected function getAgainInstallDirsBySameLevel()
+    protected function getAgainInstallDirsBySameLevel($category_id)
     {
         $dirDataProvider = [];
-        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, true);
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {
             foreach ($dirLists as $index => $dir) {
                 $dir['isParent'] = true;

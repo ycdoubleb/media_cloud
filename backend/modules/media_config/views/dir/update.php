@@ -52,12 +52,12 @@ $this->title = Yii::t('app', "{Update}{Dir}", [
                     $id = Yii::$app->request->getQueryParam('id');
                     //默认情况下的值
                     $max_level = 1;
-                    $items = Dir::getDirsBySameLevel(null, Yii::$app->user->id);
+                    $items = Dir::getDirsBySameLevel(null, Yii::$app->user->id, null);
                     $values = [];
                     //如果有传参id，则拿传参id的Dir模型
                     if($id != null){
                         $dir = Dir::getDirById($id);
-                        $dirsBySameLevel = Dir::getDirsBySameLevel($dir->id, Yii::$app->user->id, true, true);
+                        $dirsBySameLevel = Dir::getDirsBySameLevel($dir->id, Yii::$app->user->id, $dir->category_id, true, true);
                         //max_level = 传参id的Dir模型的level
                         $max_level = $dir->level;
                         //如果传参id的Dir模型的parent_id非0，则执行

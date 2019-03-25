@@ -125,8 +125,12 @@ class DirController extends GridViewChangeSelfController
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id = null)
     {
+        if($id == null){
+            $id = ArrayHelper::getValue(Yii::$app->request->post(), 'id');
+        }
+        
         $model = $this->findModel($id);
 
         Yii::$app->getResponse()->format = 'json';
@@ -227,9 +231,7 @@ class DirController extends GridViewChangeSelfController
      * @return json
      */
     public function actionAddDynamic()
-    {
-        $post = Yii::$app->request->post();
-        
+    {        
         if(Yii::$app->request->isPost){
             Yii::$app->getResponse()->format = 'json';
             
@@ -239,9 +241,11 @@ class DirController extends GridViewChangeSelfController
             {
                 $num = 1;
                 $newDirName = '新建目录';
-                $parent_id = ArrayHelper::getValue($post, 'parent_id');     // 父级id
+                $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
+                $category_id = ArrayHelper::getValue($bodyParams, 'category_id');     // 分库id
+                $parent_id = ArrayHelper::getValue($bodyParams, 'parent_id');     // 父级id
                 // 获取已经存在的【新建目录】or【新建目录（number）】格式的目录名称
-                $query = (new Query())->from([Dir::tableName()])->where(['parent_id' => $parent_id])
+                $query = (new Query())->from([Dir::tableName()])->where(['category_id' => $category_id, 'parent_id' => $parent_id])
                     ->andWhere(['OR', ['name' => '新建目录'], ['REGEXP', 'name',"^新建目录（[0-9]+）"]])
                     ->orderBy(['name' => SORT_ASC]);
                 $dirNameExisted = ArrayHelper::getColumn($query->all(), 'name');
@@ -259,7 +263,7 @@ class DirController extends GridViewChangeSelfController
                     }
                 }while ($num < 1000);
                 
-                $model = new Dir(['parent_id' => $parent_id, 'created_by' => \Yii::$app->user->id]);
+                $model = new Dir(['category_id' => $category_id, 'parent_id' => $parent_id, 'created_by' => \Yii::$app->user->id]);
                 $model->level = Dir::getDirById($parent_id)->level + 1;
                 $model->name = $newDirName;
 

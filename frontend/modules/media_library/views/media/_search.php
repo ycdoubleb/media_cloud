@@ -41,7 +41,7 @@ use yii\widgets\ActiveForm;
                         'max_level' => 10,
                         'onChangeEvent' => new JsExpression('function(){ submitForm()}')
                     ],
-                    'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, true, true),
+                    'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, 1, true, true),
                     'values' => $searchModel->dir_id == 0 ? [] : array_values(array_filter(explode(',', 
                             Dir::getDirById($searchModel->dir_id)->path))),
                     'itemOptions' => [

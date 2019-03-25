@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_search', [
         'model' => $searchModel,
         'filters' => $filters,
+        'category_id' => $category_id,
         'dirDataProvider' => $dirDataProvider,
         'userMap' => $userMap,
         'attrMap' => $attrMap
@@ -142,7 +143,6 @@ $js = <<<JS
             isPageLoading = true;   //设置已经提交当中...
             $.get("/media_admin/media/list?page=" + page,  params, function(response){
                 isPageLoading = false;  //取消设置提交当中...
-                console.log(response);
                 $('#media_list').html(response);
             });
             $('.loading-box .loading').show();

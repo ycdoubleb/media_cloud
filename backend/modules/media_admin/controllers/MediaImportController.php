@@ -69,6 +69,7 @@ class MediaImportController extends Controller{
         $model->loadDefaultValues();
         $model->scenario = Media::SCENARIO_CREATE;
         $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $category_id = ArrayHelper::getValue($bodyParams, 'category_id');
         
         if($model->load($bodyParams)){
             Yii::$app->response->format = 'json';
@@ -78,7 +79,7 @@ class MediaImportController extends Controller{
             {   
                 $is_submit = false;
                 // 分库id
-                $model->category_id = ArrayHelper::getValue($bodyParams, 'category_id'); 
+                $model->category_id = $category_id; 
                 
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
@@ -127,8 +128,8 @@ class MediaImportController extends Controller{
         
         return $this->render('create', [
             'model' => $model,
-            'category_id' => ArrayHelper::getValue($bodyParams, 'category_id'),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
+            'category_id' => $category_id,
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'medias' => $this->getSpreadsheet('importfile'),     //excel表的素材信息
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
         ]);
@@ -229,10 +230,10 @@ class MediaImportController extends Controller{
      * 重组存储目录同级的所有目录
      * @return array
      */
-    protected function getAgainInstallDirsBySameLevel()
+    protected function getAgainInstallDirsBySameLevel($category_id)
     {
         $dirDataProvider = [];
-        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, true);
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {
             foreach ($dirLists as $dir) {
                 $dir['isParent'] = true;

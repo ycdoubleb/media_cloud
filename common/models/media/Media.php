@@ -9,7 +9,6 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-
 /**
  * This is the model class for table "{{%media}}".
  *
@@ -30,7 +29,9 @@ use yii\db\ActiveRecord;
  * @property int $mts_status        转码状态 0无转码 1未转码 2转码中 3已转码 4转码失败
  * @property int $del_status        删除状态 0正常 1申请删除 2逻辑删除 3物理删除
  * @property int $is_link           是否联接地址 0否 1是
- * @property int $tags              标签，多个使用逗号分隔
+ * @property string $tags           标签，多个使用逗号分隔
+ * @property int $visit_count       查看/点击数
+ * @property int $download_count    下载数
  * @property string $created_by 创建人id，关联admin_user表id字段
  * @property string $updated_by 最后最新人id，关联admin_user表id
  * @property string $created_at 创建时间
@@ -47,39 +48,47 @@ use yii\db\ActiveRecord;
  * @property VideoUrl[] $videoUrls
  * @property MediaAction[] $mediaAction
  */
-class Media extends ActiveRecord
-{
-    
+class Media extends ActiveRecord {
+
     /** 创建场景 */
     const SCENARIO_CREATE = 'create';
+
     /** 更新场景 */
     const SCENARIO_UPDATE = 'update';
-    
+
     /** 状态-待入库 */
     const STATUS_INSERTING_DB = 1;
+
     /** 状态-已入库 */
     const STATUS_INSERTED_DB = 2;
+
     /** 状态-已发布 */
     const STATUS_PUBLISHED = 3;
-    
+
     /** 转码状态-无转码 */
     const MTS_STATUS_NONE = 0;
+
     /** 转码状态-无转码 */
     const MTS_STATUS_NO = 1;
+
     /** 转码状态-转码中 */
     const MTS_STATUS_DOING = 2;
+
     /** 转码状态-已转码 */
     const MTS_STATUS_YES = 3;
+
     /** 转码状态-转码失败 */
     const MTS_STATUS_FAIL = 4;
-    
+
     /** 删除状态-申请 */
     const DEL_STATUS_APPLY = 1;
+
     /** 删除状态-逻辑 */
     const DEL_STATUS_LOGIC = 2;
+
     /** 删除状态-物理 */
     const DEL_STATUS_TRUE = 3;
-    
+
     /**
      * 状态名
      * @var array 
@@ -89,7 +98,7 @@ class Media extends ActiveRecord
         self::STATUS_INSERTED_DB => '已入库',
         self::STATUS_PUBLISHED => '已发布',
     ];
-    
+
     /**
      * 转码状态名
      * @var array 
@@ -101,30 +110,29 @@ class Media extends ActiveRecord
         self::MTS_STATUS_YES => '已转码',
         self::MTS_STATUS_FAIL => '转码失败',
     ];
-    
+
     public function scenarios() {
         return [
             self::SCENARIO_CREATE => [
                 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id',
-                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by', 
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by',
                 'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
                 'duration'
             ],
             self::SCENARIO_UPDATE => ['name', 'price', 'dir_id', 'tags'],
             self::SCENARIO_DEFAULT => [
-                'id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 
-                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by', 
+                'id', 'category_id', 'type_id', 'owner_id', 'dir_id', 'file_id',
+                'size', 'status', 'mts_status', 'del_status', 'is_link', 'tags', 'created_by',
                 'updated_by', 'created_at', 'updated_at', 'name', 'cover_url', 'url', 'ext',
-                'price', 'duration'
+                'price', 'duration', 'visit_count', 'download_count',
             ]
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return '{{%media}}';
     }
 
@@ -136,18 +144,17 @@ class Media extends ActiveRecord
             TimestampBehavior::class,
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status','is_link', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'visit_count', 'download_count', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['dir_id'], 'required', 'message' => Yii::t('app', "{Storage}{Dir}{Can't be empty}", [
-                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir'),
-                "Can't be empty" => Yii::t('app', "Can't be empty.")
-            ]), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+                    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir'),
+                    "Can't be empty" => Yii::t('app', "Can't be empty.")
+                ]), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['name', 'price'], 'required', 'on' => [self::SCENARIO_UPDATE]],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],
@@ -159,8 +166,7 @@ class Media extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'category_id' => Yii::t('app', 'Category ID'),
@@ -187,82 +193,73 @@ class Media extends ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getAliyunMtsServices()
-    {
+    public function getAliyunMtsServices() {
         return $this->hasMany(AliyunMtsService::className(), ['media_id' => 'id']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getDir()
-    {
+    public function getDir() {
         return $this->hasOne(Dir::className(), ['id' => 'dir_id']);
     }
-    
+
     /**
      * @return ActiveQuery
      */
-    public function getMediaType()
-    {
+    public function getMediaType() {
         return $this->hasOne(MediaType::className(), ['id' => 'type_id']);
     }
-    
+
     /**
      * @return ActiveQuery
      */
-    public function getDetail()
-    {
+    public function getDetail() {
         return $this->hasOne(MediaDetail::className(), ['media_id' => 'id']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getMediaTagRefs()
-    {
+    public function getMediaTagRefs() {
         return $this->hasMany(MediaTagRef::className(), ['object_id' => 'id'])
-            ->where(['is_del' => 0])->with('tags');
+                        ->where(['is_del' => 0])->with('tags');
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getUploadfile()
-    {
+    public function getUploadfile() {
         return $this->hasOne(Uploadfile::className(), ['id' => 'file_id']);
     }
-    
+
     /**
      * @return ActiveQuery
      */
-    public function getOwner()
-    {
+    public function getOwner() {
         return $this->hasOne(AdminUser::className(), ['id' => 'owner_id']);
     }
-    
+
     /**
      * @return ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(AdminUser::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getVideoUrls()
-    {
+    public function getVideoUrls() {
         return $this->hasMany(VideoUrl::className(), ['media_id' => 'id'])
-            ->where(['is_del' => 0])->orderBy(['level' => SORT_ASC]);
+                        ->where(['is_del' => 0])->orderBy(['level' => SORT_ASC]);
     }
-    
+
     /**
      * @return ActiveQuery
      */
-    public function getMediaAction()
-    {
+    public function getMediaAction() {
         return $this->hasMany(MediaAction::className(), ['media_id' => 'id']);
     }
+
 }

@@ -31,7 +31,7 @@ TagsInputAsset::register($this);
                             'hideSearch' => true,
                             'options' => [
                                 'class' => 'media-attribute_value',
-                                'placeholder' => Yii::t('app', 'All')
+                                'placeholder' => Yii::t('app', 'Select Placeholder')
                             ],
                             'pluginOptions' => ['allowClear' => true],
                             'pluginEvents' => [

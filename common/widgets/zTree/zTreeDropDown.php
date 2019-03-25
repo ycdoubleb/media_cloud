@@ -109,6 +109,9 @@ class zTreeDropDown extends InputWidget {
         // 设置名称
         $this->name = $this->hasModel() ? Html::getInputName($this->model, $this->attribute) : $this->name;
         
+        // 设置值
+        $this->value = $this->hasModel() ? Html::getAttributeValue($this->model, $this->attribute) : $this->value;
+        
         $this->options['class'] = 'ztree';
         
         $this->options['placeholder'] = Yii::t('app', 'Select Placeholder');

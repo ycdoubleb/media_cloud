@@ -15,7 +15,6 @@ use yii\widgets\ActiveForm;
 <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
     'id' => 'media-dir_id',
     'name' => 'Media[dir_id]',
-    'value' => $model->dir_id,
     'data' => $dirDataProvider,
     'url' => [
         'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $model->category_id]),

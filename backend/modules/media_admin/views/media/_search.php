@@ -52,7 +52,6 @@ zTreeAsset::register($this);
         
         <!--存储目录-->
         <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
-            'value' => ArrayHelper::getValue($filters, 'MediaSearch.dir_id'),
             'data' => $dirDataProvider,
             'url' => [
                 'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),

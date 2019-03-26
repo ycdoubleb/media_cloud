@@ -391,8 +391,8 @@ class Dir extends ActiveRecord
         
         $leveDirs = [];
         foreach ($dirs as $id => $dir) {
-            if($dir['created_by'] != $created_by) continue;
-            if($dir['category_id'] != $category_id) continue;
+            if(!empty($created_by) && $dir['created_by'] != $created_by) continue;
+            if(!empty($category_id) && $dir['category_id'] != $category_id) continue;
             if($dir['level'] == $level && ($include_unshow || $dir['is_del'] == 0)){
                 $leveDirs[] = $dir;
             }
@@ -420,8 +420,8 @@ class Dir extends ActiveRecord
         $childrens = [];
         ArrayHelper::multisort($dirs, $sort_order, SORT_DESC);
         foreach ($dirs as $dir) {
-            if($dir['created_by'] != $created_by) continue;
-            if($dir['category_id'] != $category_id) continue;
+            if(!empty($created_by) && $dir['created_by'] != $created_by) continue;
+            if(!empty($category_id) && $dir['category_id'] != $category_id) continue;
             if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 0)){
                 $childrens[] = $dir;
                 if ($recursion) {
@@ -448,8 +448,8 @@ class Dir extends ActiveRecord
         
         $childrens = [];
         foreach (self::$dirs as $dir) {
-            if($dir['created_by'] != $created_by) continue;
-            if($dir['category_id'] != $category_id) continue;
+            if(!empty($created_by) && $dir['created_by'] != $created_by) continue;
+            if(!empty($category_id) && $dir['category_id'] != $category_id) continue;   
             if($dir['parent_id'] == $id && ($include_unshow || $dir['is_del'] == 0)){
                 $childrens[] = $dir['id'];
                 if ($recursion) {

@@ -28,6 +28,7 @@ $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
         'attrMap' => $attrMap,
         'filters' => $filters,
         'pages' => $pages,
+        'dirDataProvider' => $dirDataProvider
     ])?>
     <!--内容部分-->
     <div class="container content">

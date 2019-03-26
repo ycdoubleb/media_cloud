@@ -64,6 +64,7 @@ return [
     'Result' => '结果',
     'Info' => '信息',
     'Config' => '配置',
+    'Reason' => '原因',
     'Dir' => '目录',
     
     'Is Del' => '是否删除',
@@ -416,6 +417,7 @@ return [
      ***************************************************************************/
     'Orders' => '订单',
     'Invalid Orders' => '作废订单',
+    'Offline Payment' => '线下支付',
     
     // 属性名
     'Orders Sn' => '订单编号',
@@ -438,6 +440,40 @@ return [
      * 
      ***************************************************************************/
     'Goods' => '商品',
+    'Medias Operation' => '素材运营',
+
+    // 属性名
+    'Income Amount' => '收入金额',
+    
+    /***************************************************************************
+     *
+     * 后台（运营管理）- 访问路径 
+     * 
+     ***************************************************************************/
+    'Visits' => '访问',
+    'Refurbish Cache' => '刷新缓存',
+    'View Material' => '查看素材',
+    
+    // 属性名
+    'Visits Count' => '访问次数',
+    'Visits Sn' => '访问编号',
+    
+    /***************************************************************************
+     *
+     * 后台（运营管理）- 前端用户 
+     * 
+     ***************************************************************************/
+    'Frontend' => '前台',
+    
+    // 属性名
+    'Is Certificate' => '是否认证',
+    'Certificate' => '认证',
+    'Companies' => '公司',
+    'Departments' => '部门',
+    'Real Name' => '真实姓名',
+    'User Account Number' => '用户账号',
+    'Companies / Departments' => '公司/部门',
+    'Tegistration Time' => '注册时间',
     
     /***************************************************************************
      *
@@ -454,6 +490,7 @@ return [
     'Select Placeholder' => '请选择...',
     'Input Placeholder' => '请输入...',
     'In transcoding' => '转码中...',
+    'Click to enlarge view' => '单击可放大视图',
     'Please enter a name or label' => '请输入名称或标签',
     'Please select at least one.' => '请至少选择一条。',
     'Are you sure you want to delete?' => '你确定要删除吗？',
@@ -496,6 +533,7 @@ return [
     'Material Common label (Can be ignored)' => '素材通用标签(可忽略)',
     'Number of labels must not be less than 5.' => '标签数目不得少于5个。',
     'Import format: video/mp4' => '输入格式：video/mp4',
+    'Are you sure you want to cancel the selected order?' => '你确定要作废所选的订单吗？',
     'The video has been transcoded without the need to repeat the transcoding.' => '视频已被转码，无需重复转码。',
     'Please select the material that needs to be moved to the specified directory.' => '请选择需要移动到指定目录的素材。',
     'The material has been published, and the apply for be put in storage is not required.' => '素材已发布，无须申请入库。',
@@ -504,4 +542,5 @@ return [
     'There is material in this directory and cannot be deleted.' => '此目录中有素材，无法删除。',
     "Note: This material is set with the 'automatic transcoding'. After the file is re-uploaded, it will be automatically transcoded, Please don't transcode multiple times!" => '注：本素材采用“自动转码”设置。文件重新上传后，它将被自动转换，请不要多次转码！',
     'Note: This material is set with the "manually select transcoding", If "Transcoding" is required after re-uploading the file, you must manually select "re-Transcoding".' => '注：本素材采用“手动转码”设置。如果在重新上传文件后需要“转码”，则必须手动选择”重新转码”。',
+    'Note: Please ensure that the voucher amount is consistent with the amount due to the order' => '注：请确保凭证金额与应付订单金额一致'
 ];

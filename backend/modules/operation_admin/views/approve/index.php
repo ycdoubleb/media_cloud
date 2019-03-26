@@ -17,10 +17,12 @@ use yii\widgets\LinkPager;
 
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', '{Order}{Auditing}', [
-    'Order' => Yii::t('app', 'Order'), 'Auditing' => Yii::t('app', 'Auditing')
+$this->title = Yii::t('app', '{Orders}{Approves}', [
+    'Orders' => Yii::t('app', 'Orders'), 'Approves' => Yii::t('app', 'Approves')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Approves}{List}', [
+    'Approves' => Yii::t('app', 'Approves'), 'List' => Yii::t('app', 'List'), 
+]);
 ?>
 <div class="play-approve-index">
     
@@ -42,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\SerialColumn',
                 'headerOptions' => [
                     'style' => [
-                        'width' => '30px',
+                        'width' => '50px',
                         'padding' => '8px 2px',
                     ]
                 ],
@@ -53,27 +55,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
 
+//            [
+//                'label' => Yii::t('app', '{Orders}{Name}', [
+//                    'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
+//                ]),
+//                'value' => function($model){
+//                    return !empty($model->order_id) ? $model->order->order_name : null;
+//                },
+//                'headerOptions' => [
+//                    'style' => [
+//                        'width' => '150px',
+//                        'padding' => '8px 2px',
+//                    ]
+//                ],
+//                'contentOptions' => [
+//                    'style' => [
+//                        'padding' => '8px 2px',
+//                    ],
+//                ]
+//            ],
             [
-                'label' => Yii::t('app', '{Order}{Name}', [
-                    'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
-                ]),
-                'value' => function($model){
-                    return !empty($model->order_id) ? $model->order->order_name : null;
-                },
-                'headerOptions' => [
-                    'style' => [
-                        'width' => '150px',
-                        'padding' => '8px 2px',
-                    ]
-                ],
-                'contentOptions' => [
-                    'style' => [
-                        'padding' => '8px 2px',
-                    ],
-                ]
-            ],
-            [
-                'label' => Yii::t('app', 'Order Sn'),
+                'label' => Yii::t('app', 'Orders Sn'),
                 'value' => function($model){
                     return !empty($model->order_id) ? $model->order->order_sn : null;
                 },
@@ -90,9 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', '{Payable}{Amount}', [
-                    'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
-                ]),
+                'label' => Yii::t('app', 'Payable Amount'),
                 'value' => function($model){
                     return !empty($model->order_id) ? Yii::$app->formatter->asCurrency($model->order->order_amount) : null;
                 },
@@ -126,13 +126,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', '{Payment}{Voucher}', [
-                    'Payment' => Yii::t('app', 'Payment'), 'Voucher' => Yii::t('app', 'Voucher')
-                ]),
+                'label' => Yii::t('app', 'Payment Voucher'),
                 'format' => 'raw',
                 'value' => function($model){
                     return Html::a(Html::img($model->certificate_url, ['width' => 63, 'height' => 44]), null, [
-                        'title' => '单击放大查看', 'style' => 'cursor:pointer;', 'onclick' => 'amplifyPicture($(this));'
+                        'title' => Yii::t('app', 'Click to enlarge view'), 
+                        'style' => 'cursor:pointer;', 
+                        'onclick' => 'amplifyPicture($(this));'
                     ]);
                 },
                 'headerOptions' => [
@@ -148,9 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', '{Payment}{Time}', [
-                    'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
-                ]),
+                'label' => Yii::t('app', 'Payment Time'),
                 'value' => function($model){
                     return !empty($model->order_id) && $model->order->play_at > 0 ? date('Y-m-d H:i', $model->order->play_at) : null;
                 },
@@ -169,9 +167,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'content',
-                'label' => Yii::t('app', '{Payment}{Illustration}', [
-                    'Payment' => Yii::t('app', 'Payment'), 'Illustration' => Yii::t('app', 'Illustration')
-                ]),
+                'label' => Yii::t('app', 'Payment Description'),
                 'headerOptions' => [
                     'style' => [
                         'width' => '155px',
@@ -185,8 +181,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', '{Auditing}{Result}', [
-                    'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                'label' => Yii::t('app', '{Approves}{Result}', [
+                    'Approves' => Yii::t('app', 'Approves'), 'Result' => Yii::t('app', 'Result')
                 ]),
                 'value' => function($model){
                     return $model->status == 1 ? PlayApprove::$resultName[$model->result] : null;
@@ -204,7 +200,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', 'Verifier'),
+                'label' => Yii::t('app', 'Approver'),
                 'value' => function($model){
                     return !empty($model->handled_by) ? $model->handledBy->nickname : null;
                 },
@@ -221,9 +217,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'label' => Yii::t('app', '{Auditing}{Time}', [
-                    'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
-                ]),
+                'label' => Yii::t('app', 'Approves Time'),
                 'value' => function($model){
                     return !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null;
                 },
@@ -260,13 +254,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'header' => '操作',
                 'buttons' => [
-                    'approve' => function($url, $model){
-                        return Html::a(Yii::t('app', 'Auditing'), ['view', 'id' => $model->id], ['class' => 'btn btn-primary']);
+                    'approves' => function($url, $model){
+                        return Html::a(Yii::t('app', 'Approves'), ['view', 'id' => $model->id], ['class' => 'btn btn-primary']);
                     },
                     'order' => function($url, $model){
-                        return ' '. Html::a(Yii::t('app', 'Order'), ['order/view', 'id' => $model->order_id], ['class' => 'btn btn-default']);
+                        return ' '. Html::a(Yii::t('app', 'Orders'), ['order/view', 'id' => $model->order_id], ['class' => 'btn btn-default']);
                     },
                 ],
                 'headerOptions' => [
@@ -281,7 +274,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
 
-                'template' => '{approve}{order}',
+                'template' => '{approves}{order}',
             ],
         ],
     ]); ?>

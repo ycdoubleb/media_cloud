@@ -15,8 +15,12 @@ use yii\web\View;
 
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', 'Users');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', '{Frontend}{User}', [
+    'Frontend' => Yii::t('app', 'Frontend'), 'User' => Yii::t('app', 'User')
+]);
+$this->params['breadcrumbs'][] = Yii::t('app', '{User}{List}', [
+    'User' => Yii::t('app', 'User'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="user-index">
 
@@ -32,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a(Yii::t('app', 'Enable'), ['enable'], [
                     'id' => 'btn-enable', 'class' => 'btn btn-success btn-flat'
                 ]) ?>
-                <?= ' ' . Html::a(Yii::t('app', 'Disable'), ['disable'], [
+                <?= ' ' . Html::a(Yii::t('app', 'Disabled'), ['disable'], [
                     'id' => 'btn-disable', 'class' => 'btn btn-danger btn-flat'
                 ]) ?>
                 <?= ' ' . Html::a(Yii::t('app', '{Pass}{Certificate}', [
@@ -63,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 
                 [
                     'attribute' => 'nickname',
-                    'label' => Yii::t('app', 'Name'),
+                    'label' => Yii::t('app', 'Real Name'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '66px',
@@ -78,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'username',
-                    'label' => Yii::t('app', 'Account Number'),
+                    'label' => Yii::t('app', 'User Account Number'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '66px',
@@ -111,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'phone',
-                    'label' => Yii::t('app', 'Phone'),
+                    'label' => Yii::t('app', 'Contact Way'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '66px',
@@ -126,7 +130,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'company',
-                    'label' => Yii::t('app', 'Company'),
+                    'label' => Yii::t('app', 'Companies'),
                     'value' => function($model){
                         return !empty($model->profile) ? $model->profile->company : null;
                     },
@@ -144,7 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'department',
-                    'label' => Yii::t('app', 'Department'),
+                    'label' => Yii::t('app', 'Departments'),
                     'value' => function($model){
                         return !empty($model->profile) ? $model->profile->department : null;
                     },
@@ -186,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'is_certificate',
                     'format' => 'raw',
-                    'label' => Yii::t('app', 'Certificate'),
+                    'label' => Yii::t('app', 'Is Certificate'),
                     'value' => function($model){
                         if(!empty($model->profile)){
                             if($model->profile->is_certificate){
@@ -261,6 +265,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
 $js = <<<JS
         
     // 启用、停用、通过
@@ -281,7 +286,7 @@ $js = <<<JS
                 window.location.href = url + "?ids=" + val;
             }
         }else{
-            alert("请选择需要执行的用户");
+            alert("{$msg}");
         }
     });    
     

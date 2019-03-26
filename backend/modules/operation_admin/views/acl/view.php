@@ -14,9 +14,11 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 OperationModuleAsset::register($this);
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Visit}{Path}', [
-    'Visit' => Yii::t('app', 'Visit'), 'Path' => Yii::t('app', 'Path')
+$this->title = Yii::t('app', '{Visits}{Detail}', [
+    'Visits' => Yii::t('app', 'Visits'), 'Detail' => Yii::t('app', 'Detail')
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Visit}{List}', [
+    'Visit' => Yii::t('app', 'List'), 'Path' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -25,10 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
+            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">
+                <?= Yii::t('app', 'Basic Info') ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
+            <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', 'Operation Notes') ?>
+            </a>
         </li>
     </ul>
 
@@ -43,14 +49,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attributes' => [
                     [
                         'attribute' => 'id',
-                        'label' => Yii::t('app', '{Visit}{ID}', [
-                            'Visit' => Yii::t('app', 'Visit'), 'ID' => Yii::t('app', 'ID')
+                        'label' => Yii::t('app', '{Visits}{ID}', [
+                            'Visits' => Yii::t('app', 'Visits'), 'ID' => Yii::t('app', 'ID')
                         ]),
                     ],
                     [
+                        'attribute' => 'sn',
+                        'label' => Yii::t('app', 'Visits Sn'),
+                    ],
+                    [
                         'attribute' => 'name',
-                        'label' => Yii::t('app', '{Visit}{Name}', [
-                            'Visit' => Yii::t('app', 'Visit'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Visits}{Name}', [
+                            'Visits' => Yii::t('app', 'Visits'), 'Name' => Yii::t('app', 'Name')
                         ]),
                     ],
                     [
@@ -59,21 +69,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'visit_count',
-                        'label' => Yii::t('app', 'Visit Count'),
+                        'label' => Yii::t('app', 'Visits Count'),
                     ],
                     [
                         'attribute' => 'media_id',
-                        'label' => Yii::t('app', '{Media}{Number}', [
-                            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                        'label' => Yii::t('app', '{Medias}{Number}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
                         ]),
                     ],
                     [
                         'attribute' => 'order_sn',
-                        'label' => Yii::t('app', 'Order Sn'),
+                        'label' => Yii::t('app', 'Orders Sn'),
                     ],
                     [
-                        'label' => Yii::t('app', '{Order}{Name}', [
-                            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Orders}{Name}', [
+                            'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
                         ]),
                         'value' => !empty($model->order_id) ? $model->order->order_name : null,
                     ],

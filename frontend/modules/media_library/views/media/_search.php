@@ -1,8 +1,7 @@
 <?php
 
-use common\models\media\Dir;
 use common\models\media\MediaType;
-use common\widgets\depdropdown\DepDropdown;
+use common\widgets\zTree\zTreeDropDown;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -35,24 +34,32 @@ use yii\widgets\ActiveForm;
         <div class="col-lg-12 col-md-12 search-panel">
             <!--存储目录-->
             <div class="col-lg-12 col-md-12 search-dir">
-                <?= $form->field($searchModel, 'dir_id')->widget(DepDropdown::class,[
+                <?= $form->field($searchModel, 'dir_id')->widget(zTreeDropDown::class, [
+                    'data' => $dirDataProvider,
+                    'url' => [
+                        'view' => Url::to(['search-children', 'category_id' => 1]),
+                    ],
                     'pluginOptions' => [
-                        'url' => Url::to(['search-children']),
-                        'max_level' => 10,
-                        'onChangeEvent' => new JsExpression('function(){ submitForm()}')
+                        'type' => zTreeDropDown::TYPE_SEARCH,
+                        'edit' => [
+                            'enable' => false
+                        ]
                     ],
-                    'items' => Dir::getDirsBySameLevel($searchModel->dir_id, Yii::$app->user->id, 1, true, true),
-                    'values' => $searchModel->dir_id == 0 ? [] : array_values(array_filter(explode(',', 
-                            Dir::getDirById($searchModel->dir_id)->path))),
-                    'itemOptions' => [
-                        'style' => 'width: 155px; padding: 8px 10px',
+                    'pluginEvents' => [
+                        'callback' => [
+                            'onClick' => new JsExpression('function(event, treeId, treeNode){
+                                zTreeDropdown.setVoluation(treeNode.id, treeNode.name);
+                                zTreeDropdown.hideTree();  
+                                submitForm();
+                            }'),
+                        ]
                     ],
-                ])->label('存储目录：') ?>
+                ])->label(Yii::t('app', 'Storage Dir') . '：') ?>
             </div>
+            
             <!--素材类型-->
             <div class="col-lg-12 col-md-12">
                 <?= $form->field($searchModel, 'type_id')->checkboxList(MediaType::getMediaByType(), [
-                    'value' => ArrayHelper::getValue($filters, 'MediaSearch.type_id', [1, 2, 3, 4]),
                     'itemOptions'=>[
                         'onclick' => 'submitForm();',
                         'labelOptions'=>[
@@ -63,15 +70,15 @@ use yii\widgets\ActiveForm;
                             ]
                         ]
                     ],
-                ])->label(Yii::t('app', '{Media}{Type}：', [
-                    'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+                ])->label(Yii::t('app', '{Medias}{Type}：', [
+                    'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
                 ])) ?>
             </div>
             <!--属性选项-->
             <div class="col-lg-12 col-md-12">
                 <div class="form-group field-mediasearch-attribute_value_id">
                     <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-attribute_value_id"
-                           style="padding-right: 0px;">属性选项：</label>
+                           style="padding-right: 0px;"><?= Yii::t('app', 'Attribute Option') . '：' ?></label>
                     <div class="col-lg-10 col-md-10" style="padding-left: 35px;">
                         <?php foreach ($attrMap as $atts): ?>
                             <?php if($atts['index_type'] > 0): ?>
@@ -95,14 +102,16 @@ use yii\widgets\ActiveForm;
             <!--关键字-->
             <div class="col-lg-12 col-md-12">
                 <div class="form-group field-mediasearch-keyword">
-                    <label class="col-lg-1 col-md-1 control-label form-label" style="padding-right: 0px;" for="mediasearch-keyword">关键字：</label>
+                    <label class="col-lg-1 col-md-1 control-label form-label" style="padding-right: 0px;" for="mediasearch-keyword">
+                        <?= Yii::t('app', 'Keyword') . '：' ?>
+                    </label>
                     <div class="col-lg-4 col-md-4" style="padding-left: 35px;">
                         <?php
                             $keyword = ArrayHelper::getValue($filters, 'MediaSearch.keyword');
                             echo Html::input('text', 'MediaSearch[keyword]', $keyword, [
                                 'id' => 'mediasearch-keyword',
                                 'class' => 'form-control',
-                                'placeholder' => '请输入素材名称或者标签',
+                                'placeholder' => Yii::t('app', 'Please enter a name or label'),
                             ])
                         ?>
                         <div class="search-icon"><i class="glyphicon glyphicon-search"></i></div>

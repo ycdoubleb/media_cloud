@@ -71,23 +71,23 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Orders}{List}', [
                     ]
                 ],
                 
-                [
-                    'attribute' => 'order_name',
-                    'label' => Yii::t('app', '{Orders}{Name}', [
-                        'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
-                    ]),
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '200px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
+//                [
+//                    'attribute' => 'order_name',
+//                    'label' => Yii::t('app', '{Orders}{Name}', [
+//                        'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
+//                    ]),
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '200px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
                 [
                     'attribute' => 'order_sn',
                     'label' => Yii::t('app', 'Orders Sn'),
@@ -294,6 +294,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Orders}{List}', [
 </div>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
+$delMsg = Yii::t('app', 'Are you sure you want to cancel the selected order?');  // 作废消息提示
 $js = <<<JS
         
     // 导出
@@ -307,7 +309,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要导出的订单");
+            alert("{$msg}");
         }
     });
         
@@ -319,11 +321,11 @@ $js = <<<JS
             url = $(this).attr("href");
         
         if(val.length > 0){
-            if(confirm("确定要作废所选的订单？") == true){
+            if(confirm("{$delMsg}") == true){
                 window.location.href = url + "?ids=" + val;
             }
         }else{
-            alert("请选择需要作废的订单");
+            alert("{$msg}");
         }
     });
         

@@ -34,16 +34,26 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
 
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
+            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">
+                <?= Yii::t('app', 'Basic Info') ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a href="#pay" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">线下支付</a>
+            <a href="#pay" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', 'Offline Payment') ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a href="#goods" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">资源列表</a>
+            <a href="#goods" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', '{Medias}{List}', [
+                    'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
+                ]) ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
+            <a href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', 'Operation Notes') ?>
+            </a>
         </li>
     </ul>
     
@@ -62,7 +72,10 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]),
                         'value' => $model->order_name
                     ],
-                    'order_sn',
+                    [
+                        'label' => Yii::t('app', 'Orders Sn'),
+                        'value' => $model->order_sn
+                    ],
                     [
                         'label' => Yii::t('app', '{Orders}{Status}', [
                             'Orders' => Yii::t('app', 'Orders'), 'Status' => Yii::t('app', 'Status')
@@ -172,13 +185,13 @@ $iconMap = ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTy
                         ]
                     ],
                     [
-                        'label' => Yii::t('app', 'Payment Voucher', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Voucher' => Yii::t('app', 'Voucher')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Voucher'),
                         'format' => 'raw',
                         'value' => function($model){
                             return Html::a(Html::img($model->certificate_url, ['width' => 63, 'height' => 44]), null, [
-                                'title' => '单击放大查看', 'style' => 'cursor:pointer;', 'onclick' => 'amplifyPicture($(this));'
+                                'title' => Yii::t('app', 'Click to enlarge view'), 
+                                'style' => 'cursor:pointer;', 
+                                'onclick' => 'amplifyPicture($(this));'
                             ]);
                         },
                         'headerOptions' => [

@@ -228,6 +228,7 @@
     height: 128px;
     margin: 1px;
     overflow: hidden;
+    line-height: initial;
 }
 
 /* 图标 */

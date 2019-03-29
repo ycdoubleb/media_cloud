@@ -17,22 +17,9 @@ use yii\helpers\Html;
             ],
         ],
         [
-            'label' => Yii::t('app', '{Operate}{Type}', [
-                'Operate' => Yii::t('app', 'Operate'), 'Type' => Yii::t('app', 'Type')
-            ]),
+            'label' => Yii::t('app', 'Operation Type'),
             'value' => function($model) {
                 return $model->title;
-            },
-            'headerOptions' => [
-                'style' => [
-                    'width' => '120px',
-                ]
-            ],
-        ],
-        [
-            'label' => Yii::t('app', 'Created By'),
-            'value' => function($model) {
-                return !empty($model->created_by) ? $model->createdBy->nickname : null;
             },
             'headerOptions' => [
                 'style' => [
@@ -53,9 +40,18 @@ use yii\helpers\Html;
             ],
         ],
         [
-            'label' => Yii::t('app', '{Operate}{Time}', [
-                'Operate' => Yii::t('app', 'Operate'), 'Time' => Yii::t('app', 'Time')
-            ]),
+            'label' => Yii::t('app', 'Created By'),
+            'value' => function($model) {
+                return !empty($model->created_by) ? $model->createdBy->nickname : null;
+            },
+            'headerOptions' => [
+                'style' => [
+                    'width' => '120px',
+                ]
+            ],
+        ],
+        [
+            'label' => Yii::t('app', 'Operation Time'),
             'value' => function($model) {
                 return date('Y-m-d H:i', $model->created_at);
             },
@@ -67,7 +63,6 @@ use yii\helpers\Html;
         ],
         [
             'class' => 'yii\grid\ActionColumn',
-            'header' => '操作',
             'buttons' => [
                 'view' => function($url, $model) {
                     return Html::a(Yii::t('app', 'View'), ['operatelog-view', 'id' => $model->id], [

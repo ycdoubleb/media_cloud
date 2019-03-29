@@ -10,10 +10,12 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model User */
 
-$this->title = Yii::t('app', "{Update}{User}: {$model->nickname}", [
+$this->title = Yii::t('app', "{Update}{User}", [
     'Update' => Yii::t('app', 'Update'), 'User' => Yii::t('app', 'User')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{User}{List}', [
+    'User' => Yii::t('app', 'User'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 
@@ -39,9 +41,13 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
                 <?= ($model->isNewRecord ? "" : $form->field($model, 'id')->textInput(['maxlength' => 32, 'readonly' => 'true']));?>
 
-                <?= $form->field($model, 'username')->textInput(['maxlength' => 32]); ?>
+                <?= $form->field($model, 'username')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => 32
+                ])->label(Yii::t('app', 'User Account Number')); ?>
 
-                <?= $form->field($model, 'nickname')->textInput(['maxlength' => 32]); ?>
+                <?= $form->field($model, 'nickname')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => 32
+                ])->label(Yii::t('app', 'Real Name')); ?>
 
                 <?= $form->field($model, 'password_hash')->passwordInput(['minlength' => 6, 'maxlength' => 20]); ?>
 
@@ -60,7 +66,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 ]) ?>
 
 
-                <?= $form->field($model, 'phone')->textInput(['minlength' => 6, 'maxlength' => 20]); ?>
+                <?= $form->field($model, 'phone')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'minlength' => 11, 'maxlength' => 11
+                ])->label(Yii::t('app', 'Contact Way')); ?>
 
                 <?= $form->field($model, 'email')->textInput(['maxlength' => 200]) ?>
 

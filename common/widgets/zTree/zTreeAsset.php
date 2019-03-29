@@ -9,7 +9,7 @@ use yii\web\AssetBundle;
  */
 class zTreeAsset extends AssetBundle
 {
-    public $sourcePath = '@common/widgets/zTree';
+    public $sourcePath = '@common/widgets/zTree/assets';
     public $css = [
         'css/zTree-dropdown.css',
         'css/bootstrapStyle/bootstrapStyle.css',

@@ -11,9 +11,8 @@ use yii\widgets\ActiveForm;
 
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Edit}{Media}{Attribute}{Tag}', [
-    'Edit' => Yii::t('app', 'Edit'), 'Media' => Yii::t('app', 'Media'),
-    'Attribute' => Yii::t('app', 'Attribute'), 'Tag' => Yii::t('app', 'Tag')
+$this->title = Yii::t('app', '{Edit}{Attribute}{Tags}', [
+    'Edit' => Yii::t('app', 'Edit'), 'Attribute' => Yii::t('app', 'Attribute'), 'Tags' => Yii::t('app', 'Tags')
 ]);
 
 ?>

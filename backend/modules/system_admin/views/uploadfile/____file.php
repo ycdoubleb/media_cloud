@@ -10,8 +10,9 @@ use yii\helpers\Url;
 <div class="file-index">
     
     <div class="pull-right">
-        <?php
-        echo Html::a('删除文件', 'javascript:;', ['id' => 'delete',
+        <?= Html::a(Yii::t('app', '{Delete}{File}', [
+            'Delete' => Yii::t('app', 'Delete'), 'File' => Yii::t('app', 'File')
+        ]), ['uploadfile/del-file'], ['id' => 'delete',
             'data-url' => Url::to(['uploadfile/del-file']),
             'class' => 'btn btn-highlight btn-flat-lg', 'title' => '删除文件',
         ])?>
@@ -34,8 +35,9 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'id',
+                    'label' => Yii::t('app', 'ID'),
                     'headerOptions' => [
-                        'style' => 'width: 35px'
+                        'style' => 'width: 50px'
                     ],
                 ],
                 [
@@ -50,7 +52,7 @@ use yii\helpers\Url;
                     'attribute' => 'size',
                     'label' => Yii::t('app', 'Size'),
                     'headerOptions' => [
-                        'style' => 'width: 80px'
+                        'style' => 'width: 100px'
                     ],
                     'value' => function ($data) {
                         return Yii::$app->formatter->asShortSize($data['size']);
@@ -60,7 +62,7 @@ use yii\helpers\Url;
                     'attribute' => 'oss_upload_status',
                     'label' => Yii::t('app', 'OSS Upload Status'),
                     'headerOptions' => [
-                        'style' => 'width: 95px'
+                        'style' => 'width: 100px'
                     ],
                     'value' => function ($data) {
                         return Uploadfile::$ossUploadStatus[$data['oss_upload_status']];

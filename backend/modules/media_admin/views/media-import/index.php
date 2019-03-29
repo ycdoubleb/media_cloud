@@ -1,7 +1,7 @@
 <?php
 
 use backend\modules\media_admin\assets\MediaModuleAsset;
-use common\components\aliyuncs\Aliyun;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
@@ -10,9 +10,7 @@ use yii\widgets\ActiveForm;
 
 MediaModuleAsset::register($this);
 
-$this->title = Yii::t('app', '{Batch}{Import}{Media}', [
-    'Batch' => Yii::t('app', 'Batch'),  'Import' => Yii::t('app', 'Import'),  'Media' => Yii::t('app', 'Media')
-]);
+$this->title = Yii::t('app', 'Upload external chain material');
 
 ?>
 
@@ -21,7 +19,9 @@ $this->title = Yii::t('app', '{Batch}{Import}{Media}', [
     <!--警告框-->
     <?= $this->render('____media_warning_box_dom') ?>
     
-    <span class="title">上传信息表：</span>
+    <span class="title">
+        <?= Yii::t('app', 'Upload information table:') ?>
+    </span>
         
     <?php $form = ActiveForm::begin([
         'options'=>[
@@ -29,7 +29,7 @@ $this->title = Yii::t('app', '{Batch}{Import}{Media}', [
             'class'=>'form form-horizontal',
             'enctype' => 'multipart/form-data',
         ],
-        'action' => ['create'],
+        'action' => array_merge(['create'], ['category_id' => $category_id]),
     ]); ?>
 
     <div class="uploader">

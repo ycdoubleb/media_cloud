@@ -11,10 +11,12 @@ use yii\web\View;
 /* @var $searchModel MediaTypeSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Type}', [
-    'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+$this->title = Yii::t('app', '{Medias}{Type}', [
+    'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Type}{List}', [
+    'Type' => Yii::t('app', 'Type'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-type-index">
    
@@ -26,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
         'layout' => "{items}\n{summary}\n{pager}",
         'summaryOptions' => ['class' => 'hidden'],
         'pager' => [
@@ -44,8 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'attribute' => 'name',
-                'label' => Yii::t('app', '{Media}{Type}{Name}', [
-                    'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type'), 'Name' => Yii::t('app', 'Name')
+                'label' => Yii::t('app', '{Type}{Name}', [
+                    'Type' => Yii::t('app', 'Type'), 'Name' => Yii::t('app', 'Name')
                 ]),
                 'headerOptions' => [
                     'style' => [
@@ -54,9 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             [
-                'label' => Yii::t('app', '{Include}{Suffix}{Name}', [
-                    'Include' => Yii::t('app', 'Include'), 'Suffix' => Yii::t('app', 'Suffix'), 'Name' => Yii::t('app', 'Name')
-                ]),
+                'label' => Yii::t('app', 'Include Suffix Name'),
                 'value' => function($model){
                     return implode(',', ArrayHelper::getColumn($model->typeDetails, 'name'));
                 },
@@ -85,8 +84,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Type}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Type' => Yii::t('app', 'Type')
+                                'confirm' => Yii::t('app', "{Are you sure you want to}{Delete}【{$model->name}】{Type}？", [
+                                    'Are you sure you want to' => Yii::t('app', 'Are you sure you want to'), 
+                                    'Delete' => Yii::t('app', 'Delete'), 'Type' => Yii::t('app', 'Type')
                                 ]),
                                 'method' => 'post',
                             ],

@@ -10,14 +10,10 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Dir */
 
-$this->title = Yii::t('app', "{Update}{Dir}：{$model->name}", [
+$this->title = Yii::t('app', "{Update}{Dir}", [
     'Update' => Yii::t('app', 'Update'), 'Dir' => Yii::t('app', 'Dir')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+
 ?>
 <div class="dir-update">
 
@@ -27,14 +23,17 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
             'class' => 'form form-horizontal',
         ],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-9 col-md-9\">"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+            . "</div>", 
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  
         ], 
     ]); ?>
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">
@@ -48,7 +47,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 
                 <!--名称-->
                 <?= $form->field($model, 'name')->textInput([
-                    'placeholder' => '请输入...', 'maxlength' => true
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true
                 ]) ?>
 
                 <!--所属父级-->
@@ -56,12 +55,12 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                     $id = Yii::$app->request->getQueryParam('id');
                     //默认情况下的值
                     $max_level = 1;
-                    $items = Dir::getDirsBySameLevel(null, Yii::$app->user->id);
+                    $items = Dir::getDirsBySameLevel(null, Yii::$app->user->id, null);
                     $values = [];
                     //如果有传参id，则拿传参id的Dir模型
                     if($id != null){
                         $dir = Dir::getDirById($id);
-                        $dirsBySameLevel = Dir::getDirsBySameLevel($dir->id, Yii::$app->user->id, true, true);
+                        $dirsBySameLevel = Dir::getDirsBySameLevel($dir->id, Yii::$app->user->id, $dir->category_id, true, true);
                         //max_level = 传参id的Dir模型的level
                         $max_level = $dir->level;
                         //如果传参id的Dir模型的parent_id非0，则执行
@@ -87,9 +86,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             $values = array_merge($values, [$dir->id]);
                         }
                         
-                        echo $form->field($model, 'parent_id', [
-                            'template' => "{label}\n<div class=\"col-lg-10 col-md-10\">{input}</div>\n<div class=\"col-lg-10 col-md-10\">{error}</div>",
-                        ])->widget(DepDropdown::class,[
+                        echo $form->field($model, 'parent_id')->widget(DepDropdown::class,[
                             'pluginOptions' => [
                                 'url' => Url::to(['search-children', 'target_id' => $model->id]),
                                 'max_level' => $max_level,
@@ -97,7 +94,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                             'items' => $items,
                             'values' => $values,
                             'itemOptions' => [
-                                'style' => 'width: 175px; display: inline-block;',
+                                'style' => 'width: 135px; display: inline-block;',
                                 'disabled' => $model->isNewRecord || $id == null ? true : false,
                             ],
                         ]);
@@ -105,7 +102,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
                 ?>
                 
                 <!--是否启用-->
-                <?= $form->field($model, 'is_del')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) ?>
+                <?php
+//                    echo $form->field($model, 'is_del')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Use')) 
+                ?>
                 
             </div>
             

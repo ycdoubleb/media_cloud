@@ -13,12 +13,11 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', "{Order}{Auditing}{Detail}：{$model->order->order_name}", [
-    'Order' => Yii::t('app', 'Order'), 'Auditing' => Yii::t('app', 'Approve'),
-    'Detail' => Yii::t('app', 'Detail')
+$this->title = Yii::t('app', "{Approves}{Detail}", [
+   'Approves' => Yii::t('app', 'Approves'), 'Detail' => Yii::t('app', 'Detail')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Order}{Auditing}', [
-    'Order' => Yii::t('app', 'Order'), 'Auditing' => Yii::t('app', 'Auditing')
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Approves}{List}', [
+    'Approves' => Yii::t('app', 'Approves'), 'List' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -36,13 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post'
             ],
         ]); ?>
-        <?= ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
-            'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
-        ]), ['not-approve', 'id' => $model->id], [
+        <?= ' ' . Html::a(Yii::t('app', 'No Pass'), ['not-approve', 'id' => $model->id], [
             'id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat'
         ]); ?>
         
-        <span class="text-danger">（请务必检查凭证金额与订单应付金额是否一致！）</span>
+        <span class="text-danger">（<?= Yii::t('app', 'Note: Please ensure that the voucher amount is consistent with the amount due to the order') ?>）</span>
         
         <?php endif; ?>
         
@@ -50,10 +47,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
+            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">
+                <?= Yii::t('app', 'Basic Info') ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a href="#certificate" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">支付凭证</a>
+            <a href="#certificate" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', 'Payment Voucher') ?>
+            </a>
         </li>
     </ul>
     
@@ -67,19 +68,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '<tr><th class="detail-th">{label}</th><td class="detail-td">{value}</td></tr>',
                 'attributes' => [
                     [
-                        'label' => Yii::t('app', '{Order}{Name}', [
-                            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Orders}{Name}', [
+                            'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
                         ]),
                         'value' => !empty($model->order_id) ? $model->order->order_name : null
                     ],
                     [
-                        'label' => Yii::t('app', 'Order Sn'),
+                        'label' => Yii::t('app', 'Orders Sn'),
                         'value' => !empty($model->order_id) ? $model->order->order_sn : null
                     ],
                     [
-                        'label' => Yii::t('app', '{Payable}{Amount}', [
-                            'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
-                        ]),
+                        'label' => Yii::t('app', 'Payable Amount'),
                         'value' => !empty($model->order_id) ? Yii::$app->formatter->asCurrency($model->order->order_amount) : null
                     ],
                     [
@@ -87,31 +86,25 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => !empty($model->created_by) ? $model->createdBy->nickname : null
                     ],
                     [
-                        'label' => Yii::t('app', '{Payment}{Time}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Time'),
                         'value' => !empty($model->order_id) && $model->order->play_at > 0 ? date('Y-m-d H:i', $model->order->play_at) : null
                     ],
                     [
                         'attribute' => 'content',
-                        'label' => Yii::t('app', '{Payment}{Illustration}', [
-                            'Payment' => Yii::t('app', 'Payment'), 'Illustration' => Yii::t('app', 'Illustration')
-                        ]),
+                        'label' => Yii::t('app', 'Payment Description'),
                     ],
                     [
-                        'label' => Yii::t('app', '{Auditing}{Result}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                        'label' => Yii::t('app', '{Approves}{Result}', [
+                            'Approves' => Yii::t('app', 'Approves'), 'Result' => Yii::t('app', 'Result')
                         ]),
                         'value' => $model->status == 1 ? PlayApprove::$resultName[$model->result] : null
                     ],
                     [
-                        'label' => Yii::t('app', 'Verifier'),
+                        'label' => Yii::t('app', 'Approver'),
                         'value' => !empty($model->handled_by) ? $model->handledBy->nickname : null
                     ],
                     [
-                        'label' => Yii::t('app', '{Auditing}{Time}', [
-                            'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => Yii::t('app', 'Approves Time'),
                         'value' => !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null
                     ],
                     [

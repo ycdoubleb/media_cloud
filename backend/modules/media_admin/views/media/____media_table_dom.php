@@ -41,9 +41,7 @@ TagsInputAsset::register($this);
 
         [
             'attribute' => 'id',
-            'label' => Yii::t('app', '{Media}{Number}', [
-                'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-            ]),
+            'label' => Yii::t('app', 'Number'),
             'headerOptions' => [
                 'style' => [
                     'width' => '66px',
@@ -57,7 +55,7 @@ TagsInputAsset::register($this);
             ]
         ],
         [
-            'label' => Yii::t('app', 'Thumb Image'),
+            'label' => Yii::t('app', 'Thumb Img'),
             'format' => 'raw',
             'value' => function($model) use($iconMap){
                 if($model->cover_url != null){
@@ -102,9 +100,7 @@ TagsInputAsset::register($this);
             ]
         ],
         [
-            'label' => Yii::t('app', '{Storage}{Dir}', [
-                'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-            ]),
+            'label' => Yii::t('app', 'Storage Dir'),
             'value' => function($model){
                 return !empty($model->dir_id) ? $model->dir->getFullPath() : null;
             },
@@ -137,24 +133,24 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-        [
-            'attribute' => 'duration',
-            'label' => Yii::t('app', 'Duration'),
-            'value' => function($model){
-                return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
-            },
-            'headerOptions' => [
-                'style' => [
-                    'width' => '65px',
-                    'padding' => '8px 4px'
-                ]
-            ],
-            'contentOptions' => [
-                'style' => [
-                    'padding' => '8px 4px'
-                ],
-            ]
-        ],
+//        [
+//            'attribute' => 'duration',
+//            'label' => Yii::t('app', 'Duration'),
+//            'value' => function($model){
+//                return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
+//            },
+//            'headerOptions' => [
+//                'style' => [
+//                    'width' => '65px',
+//                    'padding' => '8px 4px'
+//                ]
+//            ],
+//            'contentOptions' => [
+//                'style' => [
+//                    'padding' => '8px 4px'
+//                ],
+//            ]
+//        ],
         [
             'attribute' => 'size',
             'label' => Yii::t('app', 'Size'),
@@ -163,7 +159,7 @@ TagsInputAsset::register($this);
             },
             'headerOptions' => [
                 'style' => [
-                    'width' => '80px',
+                    'width' => '100px',
                     'padding' => '8px 4px'
                 ]
             ],
@@ -175,9 +171,7 @@ TagsInputAsset::register($this);
         ],
         [
             'attribute' => 'price',
-            'label' => Yii::t('app', '{Media}{Price}', [
-                'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
-            ]),
+            'label' => Yii::t('app', 'Price'),
             'value' => function($model){
                 return Yii::$app->formatter->asCurrency($model->price);
             },
@@ -193,24 +187,24 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-        [
-            'attribute' => 'mts_status',
-            'label' => Yii::t('app', 'Mts Status'),
-            'value' => function($model){
-                return Media::$mtsStatusName[$model->mts_status];
-            },
-            'headerOptions' => [
-                'style' => [
-                    'width' => '65px',
-                    'padding' => '8px 4px'
-                ]
-            ],
-            'contentOptions' => [
-                'style' => [
-                    'padding' => '8px 4px'
-                ],
-            ]
-        ],
+//        [
+//            'attribute' => 'mts_status',
+//            'label' => Yii::t('app', 'Mts Status'),
+//            'value' => function($model){
+//                return Media::$mtsStatusName[$model->mts_status];
+//            },
+//            'headerOptions' => [
+//                'style' => [
+//                    'width' => '65px',
+//                    'padding' => '8px 4px'
+//                ]
+//            ],
+//            'contentOptions' => [
+//                'style' => [
+//                    'padding' => '8px 4px'
+//                ],
+//            ]
+//        ],
         [
             'attribute' => 'status',
             'label' => Yii::t('app', 'Status'),
@@ -229,23 +223,23 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-        [
-            'label' => Yii::t('app', 'Operator'),
-            'value' => function($model){
-                return !empty($model->owner_id) ? $model->owner->nickname : null;
-            },
-            'headerOptions' => [
-                'style' => [
-                    'width' => '60px',
-                    'padding' => '8px 4px'
-                ]
-            ],
-            'contentOptions' => [
-                'style' => [
-                    'padding' => '8px 4px'
-                ],
-            ]
-        ],
+//        [
+//            'label' => Yii::t('app', 'Operator'),
+//            'value' => function($model){
+//                return !empty($model->owner_id) ? $model->owner->nickname : null;
+//            },
+//            'headerOptions' => [
+//                'style' => [
+//                    'width' => '60px',
+//                    'padding' => '8px 4px'
+//                ]
+//            ],
+//            'contentOptions' => [
+//                'style' => [
+//                    'padding' => '8px 4px'
+//                ],
+//            ]
+//        ],
         [
             'label' => Yii::t('app', '{Upload}{Time}', [
                 'Upload' => Yii::t('app', 'Upload'), 'Time' => Yii::t('app', 'Time')
@@ -268,7 +262,7 @@ TagsInputAsset::register($this);
         ],
         [
             'attribute' => 'tags',
-            'label' => Yii::t('app', 'Tag'),
+            'label' => Yii::t('app', 'Tags'),
             'class' => GridViewChangeSelfColumn::class,
             'plugOptions' => [
                 'type' => 'input',
@@ -292,10 +286,10 @@ TagsInputAsset::register($this);
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'header' => '操作',
+            'header' => Yii::t('app', 'Operate'),
             'buttons' => [
                 'view' => function($url, $model){
-                    return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], [
+                    return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id, 'category_id' => $model->category_id], [
                         'class' => 'btn btn-default', 'target' => '_blank'
                     ]);
                 },

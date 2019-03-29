@@ -9,6 +9,7 @@ use common\models\media\Media;
 use common\models\media\MediaAttribute;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaIssue;
+use common\models\media\MediaType;
 use common\models\order\Cart;
 use common\models\order\Favorites;
 use common\models\order\Order;
@@ -66,14 +67,15 @@ class MediaController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new MediaSearch();
+        $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType())]);
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), true);
         
         return $this->render('index',[
             'searchModel' => $searchModel,      //搜索模型
             'filters' => $results['filter'],    //查询过滤的属性
             'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(1),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(1)
         ]);
     }
     
@@ -364,17 +366,18 @@ class MediaController extends Controller
      * @param string $id
      * @param string $target_id
      */
-    public function actionSearchChildren($id, $target_id = null){
-        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id); 
+    public function actionSearchChildren($id, $category_id = 1, $target_id = null){
+        $dirsChildren = Dir::getDirsChildren($id, null, $category_id); 
         $childrens = [];
-        foreach ($dirsChildren as $index => $item) {
-            if($target_id != null){
-                if($target_id == $item['id']){
+        if(count($dirsChildren) > 0){
+            foreach ($dirsChildren as $index => $item) {
+                if($target_id != null && $target_id == $item['id']){
                     unset($item[$index]);
                     break;
                 }
+                $item['isParent'] = true;
+                $childrens[] = $item;
             }
-            $childrens[] = $item;
         }
         
         Yii::$app->getResponse()->format = 'json';
@@ -421,5 +424,23 @@ class MediaController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+    
+    /**
+     * 重组存储目录同级的所有目录
+     * @return array
+     */
+    protected function getAgainInstallDirsBySameLevel($category_id)
+    {
+        $dirDataProvider = [];
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, null, $category_id, true);
+        foreach ($dirBySameLevels as $dirLists) {
+            foreach ($dirLists as $index => $dir) {
+                $dir['isParent'] = true;
+                $dirDataProvider[] = $dir;
+            }    
+        }
+        
+        return $dirDataProvider;
     }
 }

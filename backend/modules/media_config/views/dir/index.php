@@ -14,20 +14,22 @@ use yii\web\View;
 
 TabSelfColumnAssets::register($this);
 
-$this->title = Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
+$this->title = Yii::t('app', 'Storage Dir');
+
+$this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
+    'Dir' => Yii::t('app', 'Dir'), 'List' => Yii::t('app', 'List')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="dir-index">
    
     <p>
         <?= Html::a(Yii::t('app', '{Create}{Dir}', [
             'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['create'], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
+        ]), ['create', 'category_id' => $category_id], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
         <?= Html::a(Yii::t('app', '{Move}{Dir}', [
             'Move' => Yii::t('app', 'Move'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['move'], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
+        ]), ['move', 'category_id' => $category_id], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
     </p>
 
     <?= FancytreeWidget::widget([
@@ -108,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <thead>
               <tr>
                   <th><?= Yii::t('app', 'Name') ?></th>
-                  <th><?= Yii::t('app', '{Is}{Show}',['Is' => Yii::t('app', 'Is'), 'Show' => Yii::t('app', 'Show')]) ?></th>
+                  <th><?= Yii::t('app', 'Is Del') ?></th>
                   <th></th>
                 </tr>
             </thead>
@@ -158,7 +160,7 @@ $js = <<<JS
             vals.push(selectedNodes[i].key);
         }
         if(vals.length > 0){
-            var url = $(this).attr('href') + '?move_ids=' + vals
+            var url = $(this).attr('href') + '&move_ids=' + vals
             $(".myModal").html("");
             $('.myModal').modal("show").load(url);
         }else{

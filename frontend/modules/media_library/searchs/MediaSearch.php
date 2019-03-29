@@ -59,20 +59,25 @@ class MediaSearch extends Media
         $this->load($params);
         $page = ArrayHelper::getValue($params, 'page', 1);      //分页
         $limit = ArrayHelper::getValue($params, 'limit', 20);   //显示数
-        $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  //需要查找的属性
+        //分库id
+        $this->category_id = ArrayHelper::getValue($params, 'category_id', 1);
+        
+        //需要查找的属性
+        $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  
         
         // 查询素材数据
         $query = self::find()->from(['Media' => Media::tableName()]);
         
         // 主要过滤条件
         $query->andFilterWhere([
+            'Media.category_id' => $this->category_id,
             'Media.del_status' => 0,
             'Media.status' => Media::STATUS_PUBLISHED,  // 发布状态
             'Media.type_id' => $this->type_id
         ]); 
         // 目录过滤
         if(!empty($this->dir_id)){
-            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, true);
+            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, null, $this->category_id, true);
             $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
         }
         // 属性值过滤条件
@@ -105,7 +110,7 @@ class MediaSearch extends Media
             // 查询素材结果
             $mediaResult = $query->asArray()->all();
         }
-       
+        
         return [
             'filter' => $params,
             'total' => $totalCount['totalCount'],

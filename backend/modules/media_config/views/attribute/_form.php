@@ -18,10 +18,12 @@ use yii\widgets\ActiveForm;
         'options'=>[
             'id' => 'media-attribute-form',
             'class' => 'form form-horizontal',
-//            'enctype' => 'multipart/form-data',
         ],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-9 col-md-9\">"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+            . "</div>",   
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  
@@ -29,7 +31,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">
@@ -42,24 +44,26 @@ use yii\widgets\ActiveForm;
             <div class="modal-body">
                 
                 <!--名称-->
-                <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'name')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true
+                ]) ?>
                 
                 <!--所属类目-->
                 <?= $form->field($model, 'category_id')->widget(Select2::class, [
                     'data' => MediaCategory::getMediaCategory(),
                     'hideSearch' => true,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
-                ])->label(Yii::t('app', '{The}{Category}', [
-                    'The' => Yii::t('app', 'The'), 'Category' => Yii::t('app', 'Category')
-                ])) ?>
+                ])->label(Yii::t('app', 'Category For Belong')) ?>
 
                 <!--是否启用-->
-                <?= $form->field($model, 'is_del')->checkbox([
-                    'value' => 0, 'label' => '', 'style' => 'margin-top: 14px'
-                ])->label(Yii::t('app', 'Is Use')) ?>
+                <?php
+//                    echo $form->field($model, 'is_del')->checkbox([
+//                        'value' => 0, 'label' => '', 'style' => 'margin-top: 14px'
+//                    ])->label(Yii::t('app', 'Is Del')) 
+                ?>
                 
                 <!--输入类型-->
                 <?= $form->field($model, 'input_type')->widget(Select2::class, [
@@ -79,14 +83,18 @@ use yii\widgets\ActiveForm;
                 ])) ?>
                 
                 <!--是否必选-->
-                <?= $form->field($model, 'is_required')->checkbox([
-                    'value' => 1, 'label' => '', 'style' => 'margin-top: 14px'
-                ])->label(Yii::t('app', 'Is Required')) ?>
+                <?php 
+//                   echo $form->field($model, 'is_required')->checkbox([
+//                        'value' => 1, 'label' => '', 'style' => 'margin-top: 14px'
+//                    ])->label(Yii::t('app', 'Is Required')) 
+                ?>
                 
                 <!--是否搜索-->
-                <?= $form->field($model, 'index_type')->checkbox([
-                    'value' => 1, 'label' => '', 'style' => 'margin-top: 14px'
-                ])->label(Yii::t('app', 'Is Search')) ?>
+                <?php
+//                    echo $form->field($model, 'index_type')->checkbox([
+//                        'value' => 1, 'label' => '', 'style' => 'margin-top: 14px'
+//                    ])->label(Yii::t('app', 'Is Search')) 
+                ?>
                 
             </div>
 

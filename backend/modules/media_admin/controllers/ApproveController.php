@@ -98,7 +98,7 @@ class ApproveController extends Controller
                             $dataResults[] = [
                                 'id' => $meidaResults[$id]['id'],
                                 'name' => $meidaResults[$id]['name'],
-                                'reason' => '标签数量不能少于5个'
+                                'reason' => Yii::t('app', 'Number of labels must not be less than 5.')
                             ];
                             continue;
                         }
@@ -112,13 +112,13 @@ class ApproveController extends Controller
                             $dataResults[] = [
                                 'id' => $meidaResults[$id]['id'],
                                 'name' => $meidaResults[$id]['name'],
-                                'reason' => '素材已发布，无需重复申请入库'
+                                'reason' => Yii::t('app', 'The material has been published, and the apply for be put in storage is not required.')
                             ];
                         }
                     }
                 }
                 
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $dataResults);
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', 'Operation Succeeded'), $dataResults);
                 
             } catch (Exception $ex) {
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
@@ -175,13 +175,13 @@ class ApproveController extends Controller
                             $dataResults[] = [
                                 'id' => $meidaResults[$id]['id'],
                                 'name' => $meidaResults[$id]['name'],
-                                'reason' => '素材已删除，无需重复申请删除'
+                                'reason' => Yii::t('app', 'The material has been deleted, and the apply deleted is not required.')
                             ];
                         }
                     }
                 }
               
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功', $dataResults);
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', 'Operation Succeeded'), $dataResults);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
@@ -263,12 +263,12 @@ class ApproveController extends Controller
                 if($needTranscode){
                     MediaAliyunAction::addVideoTranscode($mediaModel->id, false, '/media_admin/media/tran-complete');   // 转码
                 }
-                Yii::$app->getSession()->setFlash('success','操作成功！');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:'). $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -316,12 +316,12 @@ class ApproveController extends Controller
                 }
 
                 $trans->commit();  //提交事务
-                Yii::$app->getSession()->setFlash('success','操作成功！');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }

@@ -34,8 +34,8 @@ $this->title = Yii::t('app', '{View}{Media}{Operate}{Info}', [
                     'attributes' => [
                         'id',
                         [
-                            'label' => Yii::t('app', '{Order}{Name}', [
-                                'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+                            'label' => Yii::t('app', '{Orders}{Name}', [
+                                'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
                             ]),
                             'value' => !empty($model->order_id) ? $model->order->order_name : null
                         ],

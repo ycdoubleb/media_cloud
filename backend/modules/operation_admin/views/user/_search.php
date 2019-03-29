@@ -33,19 +33,19 @@ use yii\widgets\ActiveForm;
     
         <!--用户名称-->
         <?= $form->field($model, 'nickname')->textInput([
-            'placeholder' => '请输入真实名称', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{True}{Name}：',[
-            'True' => Yii::t('app', 'True'),'Name' => Yii::t('app', 'Name')
-        ])) ?>
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'Real Name') . '：') ?>
 
         <!--用户账号-->
         <?= $form->field($model, 'username')->textInput([
-            'placeholder' => '请输入账号', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', 'Account Number') . '：') ?>
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'User Account Number') . '：') ?>
         
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">公司/部门：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Companies / Departments') . '：' ?>
+            </label>
         
             <div class="col-lg-6 col-md-6">
                 
@@ -53,7 +53,7 @@ use yii\widgets\ActiveForm;
                 <div class="col-lg-6 col-md-6 clean-padding">
                     <?= Html::activeTextInput($model, 'company', [
                         'class' => 'form-control',
-                        'placeholder' => '请输入公司',
+                        'placeholder' => Yii::t('app', 'Companies'),
                         'onchange' => 'submitForm()'
                     ]) ?>
                 </div>
@@ -62,7 +62,7 @@ use yii\widgets\ActiveForm;
                 <div class="col-lg-6 col-md-6 clean-padding">
                     <?= Html::activeTextInput($model, 'department', [
                         'class' => 'form-control',
-                        'placeholder' => '请输入部门',
+                        'placeholder' => Yii::t('app', 'Departments'),
                         'onchange' => 'submitForm()'
                     ]) ?>
                 </div>
@@ -73,7 +73,9 @@ use yii\widgets\ActiveForm;
         
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') . '：' ?>
+            </label>
         
             <div class="col-lg-6 col-md-6">
                 

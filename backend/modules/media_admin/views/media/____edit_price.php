@@ -9,10 +9,7 @@ use yii\widgets\ActiveForm;
 
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Reset}{Media}{Price}', [
-    'Reset' => Yii::t('app', 'Reset'), 'Media' => Yii::t('app', 'Media'),
-    'Price' => Yii::t('app', 'Price')
-]);
+$this->title = Yii::t('app', 'Reset Price');
 
 ?>
 <div class="media-edit-basic">
@@ -38,8 +35,8 @@ $this->title = Yii::t('app', '{Reset}{Media}{Price}', [
     
                 <!--素材价格-->
                 <div class="form-group field-media-price required">
-                    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Media}{Price}：', [
-                        'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
+                    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Medias}{Price}：', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Price' => Yii::t('app', 'Price')
                     ]), 'media-price', ['class' => 'col-lg-2 col-md-2 control-label form-label']) ?>
                     
                     <div class="col-lg-7 col-md-7">

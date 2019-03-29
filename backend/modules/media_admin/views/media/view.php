@@ -27,10 +27,12 @@ if($model->cover_url != null){
     $cover_url = '';
 }
 
-$this->title = Yii::t('app', "{Media}{Detail}：{$model->name}", [
-    'Media' => Yii::t('app', 'Media'), 'Detail' => Yii::t('app', 'Detail')
+$this->title = Yii::t('app', "{Medias}{Detail}", [
+    'Medias' => Yii::t('app', 'Medias'), 'Detail' => Yii::t('app', 'Detail')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Media'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', "{Medias}{List}", [
+    'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -38,16 +40,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">基本信息</a>
+            <a href="#basics" role="tab" data-toggle="tab" aria-controls="basics" aria-expanded="true">
+                <?= Yii::t('app', 'Basic Info') ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a id="tags-admin" href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">标签管理</a>
+            <a id="tags-admin" href="#tags" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', '{Tags}{Admin}', [
+                    'Tags' => Yii::t('app', 'Tags'), 'Admin' => Yii::t('app', 'Admin')
+                ]) ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a id="media-preview" href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">素材预览</a>
+            <a id="media-preview" href="#preview" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', '{Medias}{Preview}', [
+                    'Medias' => Yii::t('app', 'Medias'), 'Preview' => Yii::t('app', 'Preview')
+                ]) ?>
+            </a>
         </li>
         <li role="presentation" class="">
-            <a id="action-log" href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">操作记录</a>
+            <a id="action-log" href="#action" role="tab" data-toggle="tab" aria-controls="config" aria-expanded="false">
+                <?= Yii::t('app', 'Operation Notes') ?>
+            </a>
         </li>
     </ul>
 
@@ -72,19 +86,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attributes' => [
                     [
                         'attribute' => 'id',
-                        'label' => Yii::t('app', '{Media}{Number}', [
-                            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-                        ]),
+                        'label' => Yii::t('app', 'Number'),
                     ],
                     [
                         'attribute' => 'name',
-                        'label' => Yii::t('app', '{Media}{Name}', [
-                            'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                        'label' => Yii::t('app', '{Medias}{Name}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
                         ]),
                     ],
                     [
-                        'label' => Yii::t('app', '{Media}{Type}', [
-                            'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+                        'label' => Yii::t('app', '{Medias}{Type}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
                         ]),
                         'value' => !empty($model->type_id) ? $model->mediaType->name : null
                     ],
@@ -94,15 +106,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => Html::img($cover_url, ['width' => 112, 'height' => 72])
                     ],
                     [
-                        'label' => Yii::t('app', '{Media}{Price}', [
-                            'Media' => Yii::t('app', 'Media'), 'Price' => Yii::t('app', 'Price')
-                        ]),
+                        'label' => Yii::t('app', 'Price'),
                         'value' => Yii::$app->formatter->asCurrency($model->price)
                     ],
                     [
-                        'label' => Yii::t('app', '{Storage}{Dir}', [
-                            'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-                        ]),
+                        'label' => Yii::t('app', 'Storage Dir'),
                         'value' => !empty($model->dir_id) ? $model->dir->getFullPath() : null
                     ],
                     [
@@ -124,8 +132,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'created_at:datetime',
                     'updated_at:datetime',
                     [
-                        'label' => Yii::t('app', '{Media}{Content}', [
-                            'Media' => Yii::t('app', 'Media'), 'Content' => Yii::t('app', 'Content')
+                        'label' => Yii::t('app', '{Medias}{Content}', [
+                            'Medias' => Yii::t('app', 'Medias'), 'Content' => Yii::t('app', 'Content')
                         ]),
                         'value' => !empty($model->detail) ? $model->detail->content : null,
                     ],

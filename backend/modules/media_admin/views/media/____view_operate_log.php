@@ -8,8 +8,8 @@ use yii\widgets\DetailView;
 /* @var $this View */
 /* @var $model MediaActiona */
 
-$this->title = Yii::t('app', '{View}{Media}{Operate}{Info}', [
-    'View' => Yii::t('app', 'View'), 'Media' => Yii::t('app', 'Media'),
+$this->title = Yii::t('app', '{View}{Medias}{Operate}{Info}', [
+    'View' => Yii::t('app', 'View'), 'Medias' => Yii::t('app', 'Medias'),
     'Operate' => Yii::t('app', 'Operate'), 'Info' => Yii::t('app', 'Info')
 ]);
 
@@ -34,25 +34,23 @@ $this->title = Yii::t('app', '{View}{Media}{Operate}{Info}', [
                     'attributes' => [
                         'id',
                         [
-                            'label' => Yii::t('app', '{Media}{Name}', [
-                                'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                            'label' => Yii::t('app', '{Medias}{Name}', [
+                                'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
                             ]),
                             'value' => !empty($model->media_id) ? $model->media->name : null
                         ],
                         [
                             'attribute' => 'title',
-                            'label' => Yii::t('app', '{Operate}{Type}', [
-                                'Operate' => Yii::t('app', 'Operate'), 'Type' => Yii::t('app', 'Type')
-                            ]),
-                        ],
-                        [
-                            'label' => Yii::t('app', 'Created By'),
-                            'value' => !empty($model->created_by) ? $model->createdBy->nickname : null,
+                            'label' => Yii::t('app', 'Operation Type'),
                         ],
                         [
                             'label' => Yii::t('app', 'Content'),
                             'format' => 'raw',
                             'value' => $model->content,
+                        ],
+                        [
+                            'label' => Yii::t('app', 'Created By'),
+                            'value' => !empty($model->created_by) ? $model->createdBy->nickname : null,
                         ],
                         'created_at:datetime',
                         'updated_at:datetime',

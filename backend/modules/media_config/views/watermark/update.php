@@ -10,8 +10,9 @@ use yii\web\View;
 $this->title = Yii::t('app', "{Update}{Watermark}：{$model->name}", [
     'Update' => Yii::t('app', 'Update'), 'Watermark' => Yii::t('app', 'Watermark')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Watermark'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Watermark}{List}', [
+    'Watermark' => Yii::t('app', 'Watermark'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="watermark-update">

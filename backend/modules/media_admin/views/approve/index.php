@@ -19,15 +19,18 @@ MediaModuleAsset::register($this);
 /* @var $searchModel MediaApproveSearh */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Approve}', [
-    'Media' => Yii::t('app', 'Media'), 'Approve' => Yii::t('app', 'Approve')
+$this->title = Yii::t('app', '{Medias}{Approves}', [
+    'Medias' => Yii::t('app', 'Medias'), 'Approves' => Yii::t('app', 'Approves')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Approves}{List}', [
+    'Approves' => Yii::t('app', 'Approves'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-approve-index">  
     
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
         'userMap' => $userMap
     ]) ?>
 
@@ -41,9 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-passApprove', 'class' => 'btn btn-primary btn-flat']);
                     }
                     if( Helper::checkRoute(Url::to(['not-approve']))){
-                        echo ' ' . Html::a(Yii::t('app', '{No}{Pass}', [
-                            'No' => Yii::t('app', 'No'), 'Pass' => Yii::t('app', 'Pass')
-                        ]), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']);
+                        echo ' ' . Html::a(Yii::t('app', 'No Pass'), ['not-approve'], ['id' => 'btn-notApprove', 'class' => 'btn btn-danger btn-flat']);
                     }
                 ?>
             </div>
@@ -74,8 +75,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'media_id',
-                    'label' => Yii::t('app', '{Media}{Number}', [
-                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                    'label' => Yii::t('app', '{Medias}{Number}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
                     ]),
                     'headerOptions' => [
                         'style' => [
@@ -90,8 +91,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Name}', [
-                        'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+                    'label' => Yii::t('app', '{Medias}{Name}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
                     ]),
                     'value' => function($model){
                         return !empty($model->media_id) ? $model->media->name : null;
@@ -109,8 +110,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Media}{Type}', [
-                        'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
+                    'label' => Yii::t('app', '{Medias}{Type}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
                     ]),
                     'value' => function($model){
                         return !empty($model->media_id) ? $model->media->mediaType->name : null;
@@ -128,8 +129,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Auditing}{Type}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Type' => Yii::t('app', 'Type')
+                    'label' => Yii::t('app', '{Approves}{Type}', [
+                        'Approves' => Yii::t('app', 'Approves'), 'Type' => Yii::t('app', 'Type')
                     ]),
                     'value' => function($model){
                         return MediaApprove::$typeMap[$model->type];
@@ -164,9 +165,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Approve}{Time}', [
-                        'Approve' => Yii::t('app', 'Approve'), 'Time' => Yii::t('app', 'Time')
-                    ]),
+                    'label' => Yii::t('app', 'Apply Time'),
                     'value' => function($model){
                         return date('Y-m-d H:i', $model->created_at);
                     },
@@ -185,9 +184,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'content',
-                    'label' => Yii::t('app', '{Approve}{Illustration}', [
-                        'Approve' => Yii::t('app', 'Approve'), 'Illustration' => Yii::t('app', 'Illustration')
-                    ]),
+                    'label' => Yii::t('app', 'Reasons For Apply'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '160px',
@@ -201,8 +198,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Auditing}{Status}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Status' => Yii::t('app', 'Status')
+                    'label' => Yii::t('app', '{Approves}{Status}', [
+                        'Approves' => Yii::t('app', 'Approves'), 'Status' => Yii::t('app', 'Status')
                     ]),
                     'value' => function($model){
                         return MediaApprove::$statusMap[$model->status];
@@ -220,8 +217,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Auditing}{Result}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Result' => Yii::t('app', 'Result')
+                    'label' => Yii::t('app', '{Approves}{Result}', [
+                        'Approves' => Yii::t('app', 'Approves'), 'Result' => Yii::t('app', 'Result')
                     ]),
                     'value' => function($model){
                         return $model->status == 1 ? MediaApprove::$resultMap[$model->result] : null;
@@ -239,7 +236,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', 'Verifier'),
+                    'label' => Yii::t('app', 'Approver'),
                     'value' => function($model){
                         return !empty($model->handled_by) ? $model->handledBy->nickname : null;
                     },
@@ -256,8 +253,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Auditing}{Time}', [
-                        'Auditing' => Yii::t('app', 'Auditing'), 'Time' => Yii::t('app', 'Time')
+                    'label' => Yii::t('app', '{Approves}{Time}', [
+                        'Approves' => Yii::t('app', 'Approves'), 'Time' => Yii::t('app', 'Time')
                     ]),
                     'value' => function($model){
                         return !empty($model->handled_at) ? date('Y-m-d H:i', $model->handled_at) : null;
@@ -295,12 +292,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => '操作',
+                    'header' => Yii::t('app', 'Operate'),
                     'buttons' => [
                         'view' => function($url, $model){
-                            return Html::a(Yii::t('app', '{View}{Media}', [
-                                'View' => Yii::t('app', 'View'), 'Media' => Yii::t('app', 'Media')
-                            ]), ['media/view', 'id' => $model->media_id], [
+                            return Html::a(Yii::t('app', '{View}{Medias}', [
+                                'View' => Yii::t('app', 'View'), 'Medias' => Yii::t('app', 'Medias')
+                            ]), ['media/view', 'id' => $model->media_id, 'category_id' => !empty($model->media_id) ? $model->media->category_id : null], [
                                 'class' => 'btn btn-default', 'target' => '_blank'
                             ]);
                         },
@@ -348,6 +345,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
 $js = <<<JS
         
     // 弹出素材编辑页面面板
@@ -366,7 +364,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要的审核");
+            alert("{$msg}");
         }
     });    
    

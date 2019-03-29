@@ -67,7 +67,7 @@ $this->title = Yii::t('app', '{Set}{Status}', [
                         <?= Html::textarea('Acl[content]', null, [
                             'id' => 'MediaApprove-content', 
                             'class' => 'form-control',
-                            'placeholder' => '请输入原因',
+                            'placeholder' => Yii::t('app', 'Input Placeholder'),
                             'maxlength' => true,
                             'rows' => 15,
                         ]) ?>

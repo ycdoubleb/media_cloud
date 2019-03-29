@@ -2,11 +2,13 @@
 
 namespace backend\modules\system_admin\controllers;
 
+use common\models\api\ApiResponse;
 use common\modules\webuploader\models\searchs\UploadfileChunkSearch;
 use common\modules\webuploader\models\searchs\UploadfileSearch;
 use common\modules\webuploader\models\Uploadfile;
 use common\modules\webuploader\models\UploadfileChunk;
 use Yii;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -26,7 +28,8 @@ class UploadfileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['POST'],
+                    'del-file' => ['POST'],
+                    'del-chunk' => ['POST'],
                 ],
             ],
         ];
@@ -63,11 +66,23 @@ class UploadfileController extends Controller
      */
     public function actionDelFile()
     {
-        $id = Yii::$app->request->post('ids');
-        $file_ids = explode(',', $id);
+        if(Yii::$app->request->isPost){
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            try {
 
-        if(count($file_ids) != 0){
-            Uploadfile::updateAll(['is_del' => 1, 'updated_at' => time()], ['id' => $file_ids]);
+                $file_ids = ArrayHelper::getValue(Yii::$app->request->post(), 'ids');
+
+                if(count($file_ids) > 0){
+                    Uploadfile::updateAll(['is_del' => 1, 'updated_at' => time()], ['id' => $file_ids]);
+                }
+
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+
+            } catch (Exception $ex) {
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            }
         }
     }
     
@@ -76,12 +91,23 @@ class UploadfileController extends Controller
      */
     public function actionDelChunk()
     {
-        $id = Yii::$app->request->post('ids');
-        $chunk_ids = explode(',', $id);
+        if(Yii::$app->request->isPost){
+            // 返回json格式
+            \Yii::$app->response->format = 'json';
+            
+            try {
 
-        if(count($chunk_ids) != 0){
-            UploadfileChunk::updateAll(['is_del' => 1, 'updated_at' => time()], ['chunk_id' => $chunk_ids]);
+                $chunk_ids = ArrayHelper::getValue(Yii::$app->request->post(), 'ids');
+
+                if(count($chunk_ids) > 0){
+                    UploadfileChunk::updateAll(['is_del' => 1, 'updated_at' => time()], ['chunk_id' => $chunk_ids]);
+                }
+
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK);
+
+            } catch (Exception $ex) {
+                return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
+            }
         }
     }
-    
 }

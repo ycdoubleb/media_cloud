@@ -1,7 +1,12 @@
 <?php
 
 use common\models\AdminUser;
+use common\models\media\MediaCategory;
+use yii\bootstrap\Nav;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 /* @var $this View */
@@ -19,6 +24,26 @@ use yii\web\View;
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
+        
+        <?php 
+            $menuItems = [];
+            $categorys = (new Query())->from(MediaCategory::tableName())->all();    // 获取所有分库
+            $module = Yii::$app->controller->module->id;    // 模块
+            $controller = Yii::$app->controller->id;        // 控制器
+            $action = Yii::$app->controller->action->id;    // 方法名
+            $params = Yii::$app->request->queryParams;      // 当前参数
+            $url = Url::to(['/'. $module . '/' . $controller . '/' . $action]);
+            foreach ($categorys as $cate) {
+                $menuItemUrl = array_merge([$url], array_merge($params, ['category_id' => $cate['id']]));
+                $menuItems[] = ['label' => $cate['name'], 'url' => $menuItemUrl, 'visible' => !Yii::$app->user->isGuest];
+            }
+            
+            echo Nav::widget([
+                'options' => ['class' => 'navbar-nav navbar-left'],
+                'items' => $menuItems,
+                'activateParents' => false, //启用选择【子级】【父级】显示高亮
+            ]);
+        ?>
 
         <?php if(Yii::$app->user->isGuest): ?>
         <div class="navbar-custom-menu">

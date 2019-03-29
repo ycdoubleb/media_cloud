@@ -1,22 +1,23 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\Crontab;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Crontab */
+/* @var $this View */
+/* @var $model Crontab */
 
-$this->title = Yii::t('app', '{Create} {Crontab}', ['Create' => Yii::t('app', 'Create'),'Crontab' => Yii::t('app', 'Crontab'),]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Crontabs'), 'url' => ['index']];
+$this->title = Yii::t('app', '{Create}{Crontabs}', [
+    'Create' => Yii::t('app', 'Create'), 'Crontabs' => Yii::t('app', 'Crontabs')
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Crontabs}{List}', [
+    'Crontabs' => Yii::t('app', 'Crontabs'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="crontab-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?=
-    $this->render('_form', [
+    <?= $this->render('_form', [
         'model' => $model,
-    ])
-    ?>
+    ]) ?>
 
 </div>

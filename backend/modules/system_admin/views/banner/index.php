@@ -15,11 +15,10 @@ use yii\web\View;
 
 SystemAssets::register($this);
 
-$this->title = Yii::t('app', '{Propaganda}{List}',[
-    'Propaganda' => Yii::t('app', 'Propaganda'),
-    'List' => Yii::t('app', 'List'),
+$this->title = Yii::t('app', 'Banner Admin');
+$this->params['breadcrumbs'][] = Yii::t('app', 'Banner{List}', [
+    'List' => Yii::t('app', 'List')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
 
 ?>
 

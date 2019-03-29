@@ -73,18 +73,20 @@ class MediaController extends GridViewChangeSelfController
         $results = $searchModel->search(Yii::$app->request->queryParams);
         $medias = $results['data']['medias']; //所有素材数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');     
+        $category_id = $results['filter']['category_id'];
         
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'category_id' => $category_id,
             'filters' => $results['filter'],     //查询过滤
             'totalCount' => $results['total'],     //计算总数量
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
             ]),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'userMap' => ArrayHelper::map($results['data']['users'], 'id', 'nickname'),
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
     }
@@ -205,9 +207,10 @@ class MediaController extends GridViewChangeSelfController
         ]);
         $model->loadDefaultValues();
         $model->scenario = Media::SCENARIO_CREATE;
-        $post = Yii::$app->request->post();
+        $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
+        $category_id = ArrayHelper::getValue($bodyParams, 'category_id');
         
-        if ($model->load($post)) {
+        if ($model->load($bodyParams)) {
             // 返回json格式
             Yii::$app->response->format = 'json';
             
@@ -216,30 +219,31 @@ class MediaController extends GridViewChangeSelfController
             try
             {   
                 $is_submit = false;
-                
+                // 分库id
+                $model->category_id = $category_id; 
                 //检查素材是否存，检查file_id是否被引用
                 $exit_media = Media::findOne(['file_id' => $model->file_id, 'del_status' => 0]);
                 if ($exit_media) {
-                    $a = Html::a('查看', Url::to(['/media_admin/media/view', 'id' => $exit_media->id], true), ['target' => '_blank']);
+                    $a = Html::a(Yii::t('app', 'View'), Url::to(['/media_admin/media/view', 'id' => $exit_media->id], true), ['target' => '_blank']);
                     return new ApiResponse(ApiResponse::CODE_COMMON_DATA_REPEAT, "素材已存在！【编号：{$exit_media->id}， 名称：{$exit_media->name}】$a", $exit_media->toArray());
                 }
 
                 // 类型详细
                 $typeDetail = MediaTypeDetail::findOne(['name' => $model->ext, 'is_del' => 0]);
                 if($typeDetail == null){
-                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, '上传的文件后缀不存在');
+                    return new ApiResponse(ApiResponse::CODE_COMMON_DATA_INVALID, Yii::t('app', 'Uploaded file suffix does not exist.'));
                 }
                 // 保存素材类型
                 $model->type_id = $typeDetail->type_id;
                 // 属性值
-                $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
+                $media_attrs = ArrayHelper::getValue($bodyParams, 'Media.attribute_value');
                 // 标签
-                $model->tags = ArrayHelper::getValue($post, 'Media.tags');
+                $model->tags = ArrayHelper::getValue($bodyParams, 'Media.tags');
                 $tags = Tags::saveTags($model->tags);
                 // 转码需求
-                $mts_need = ArrayHelper::getValue($post, 'Media.mts_need');
+                $mts_need = ArrayHelper::getValue($bodyParams, 'Media.mts_need');
                 // 水印id
-                $wate_ids = implode(',', ArrayHelper::getValue($post, 'Media.mts_watermark_ids' , []));
+                $wate_ids = implode(',', ArrayHelper::getValue($bodyParams, 'Media.mts_watermark_ids' , []));
                 
                 if($model->validate() && $model->save()){
                     $is_submit = true;
@@ -270,11 +274,12 @@ class MediaController extends GridViewChangeSelfController
 
         return $this->render('create', [
             'model' => $model,
+            'category_id' => $category_id,
             'isTagRequired' => false,     // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
             'mimeTypes' => MediaTypeDetail::getMediaTypeDetailByTypeId(),
             'wateFiles' => Watermark::getEnabledWatermarks(),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'wateSelected' => [],
         ]);
     }
@@ -337,11 +342,13 @@ class MediaController extends GridViewChangeSelfController
                 
                 if($is_submit){
                     $trans->commit();  //提交事务
-                    return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
+                    Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
+                    return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', 'Operation Succeeded'));
                 }
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:'). $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }            
         }
@@ -349,6 +356,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_basic', [
             'model' => $model,
             'ids' => json_encode(explode(',', $id)),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($model->category_id),
         ]);
     }
     
@@ -362,7 +370,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_attribute', [
             'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
             'isTagRequired' => false,  // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
         ]);
     }
     
@@ -420,10 +428,11 @@ class MediaController extends GridViewChangeSelfController
                         MediaAction::savaMediaAction($model->id,  $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                     }
                 }
-                
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', 'Operation Succeeded'));
                 
             } catch (Exception $ex) {
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:'). $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -431,7 +440,7 @@ class MediaController extends GridViewChangeSelfController
         return $this->renderAjax('____edit_attribute', [
             'ids' => json_encode(explode(',', $id)),
             'isTagRequired' => true,     // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(),
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($model->category_id),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),
             'tagsSelected' => $model->tags,
         ]);
@@ -487,15 +496,13 @@ class MediaController extends GridViewChangeSelfController
                     if($need_tran){
                         MediaAliyunAction::addVideoTranscode($model->id, true, '/media_admin/media/tran-complete');   // 转码
                     }
-                    Yii::$app->getSession()->setFlash('success','操作成功！');
+                    Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 }
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
             }
-            
-            return $this->redirect(['view', 'id' => $model->id]);
         }
         
         return $this->renderAjax('____anew_upload', [
@@ -526,10 +533,10 @@ class MediaController extends GridViewChangeSelfController
                 // 保存操作记录
                 MediaAction::savaMediaAction($model->id,  '重新转码', '修改');
                 
-                Yii::$app->getSession()->setFlash('success','操作成功！');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 
             } catch (Exception $ex) {
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
             }
             
             return $this->redirect(['view', 'id' => $model->id]);
@@ -618,9 +625,13 @@ class MediaController extends GridViewChangeSelfController
         {
             $model = $this->findModel($id);
             if($model->mts_status == Media::MTS_STATUS_YES){
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '转码成功', $model->toArray());
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', '{Transcoding}{Success}', [
+                    'Transcoding' => Yii::t('app', 'Transcoding'), 'Success' => Yii::t('app', 'Success'),
+                ]), $model->toArray());
             }else if($model->mts_status == Media::MTS_STATUS_FAIL){
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '转码失败', $model->toArray());
+                return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', '{Transcoding}{Fail}', [
+                    'Transcoding' => Yii::t('app', 'Transcoding'), 'Fail' => Yii::t('app', 'Fail'),
+                ]), $model->toArray());
             }
         } catch (Exception $ex) {
             return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, $ex->getMessage(), $ex->getTraceAsString());
@@ -668,10 +679,10 @@ class MediaController extends GridViewChangeSelfController
      * 重组存储目录同级的所有目录
      * @return array
      */
-    protected function getAgainInstallDirsBySameLevel()
+    protected function getAgainInstallDirsBySameLevel($category_id)
     {
         $dirDataProvider = [];
-        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, true);
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {
             foreach ($dirLists as $index => $dir) {
                 $dir['isParent'] = true;

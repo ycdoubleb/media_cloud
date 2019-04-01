@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Goods}{List}', [
 
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
         'uploadedByMap' => $uploadedByMap,
         'createdByMap' => $createdByMap,
     ]) ?>

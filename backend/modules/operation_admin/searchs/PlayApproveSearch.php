@@ -3,7 +3,9 @@
 namespace backend\modules\operation_admin\searchs;
 
 use common\models\AdminUser;
+use common\models\media\Media;
 use common\models\order\Order;
+use common\models\order\OrderGoods;
 use common\models\order\PlayApprove;
 use common\models\User;
 use yii\base\Model;
@@ -63,6 +65,8 @@ class PlayApproveSearch extends PlayApprove
     {
         $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
         $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        // 分库id
+        $category_id = ArrayHelper::getValue($params, 'category_id');   
         
         $query = self::find()->from(['Approve' => PlayApprove::tableName()]);
         
@@ -71,11 +75,13 @@ class PlayApproveSearch extends PlayApprove
         // 关联用户表         
         $query->leftJoin(['User' => User::tableName()], '(User.id =Approve.created_by)');
         $query->leftJoin(['AdminUser' => AdminUser::tableName()], '(AdminUser.id = Approve.handled_by)');
-        // 复制查询
-        $queryCopy = clone $query;
-        
+
         // 关联订单表
         $query->leftJoin(['Order' => Order::tableName()], 'Order.id = Approve.order_id');
+        // 关联商品表
+        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id');
+        // 关联素材表
+        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
 
         // 必要条件
         $query->andFilterWhere([
@@ -83,6 +89,7 @@ class PlayApproveSearch extends PlayApprove
             'Approve.status' => $this->status,
             'Approve.handled_by' => $this->handled_by,
             'Approve.created_by' => $this->created_by,
+            'Media.category_id' => $category_id,
         ]);
         
         // 过滤已作废的订单
@@ -91,11 +98,11 @@ class PlayApproveSearch extends PlayApprove
         // 模糊查询
         $query->andFilterWhere(['like', 'Order.order_name', $this->order_name]);
         
-        // 按审批id分组
-        $query->groupBy(['Approve.id']);
-        
-        // 计算总数
-        $totalCount = $query->count('*');
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Approve.id) AS totalCount'])
+            ->asArray()->one();
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
@@ -114,7 +121,7 @@ class PlayApproveSearch extends PlayApprove
 
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'createdBys' => $createdByResults,
                 'handledBys' => $handledByResults,

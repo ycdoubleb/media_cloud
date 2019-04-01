@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
             'id' => 'acl-searc-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-11 col-md-11\">{input}</div>",  

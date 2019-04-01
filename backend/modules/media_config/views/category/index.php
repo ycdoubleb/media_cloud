@@ -1,6 +1,7 @@
 <?php
 
 use common\models\searchs\MediaCategorySearch;
+use common\utils\I18NUitl;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\grid\GridView;
@@ -48,9 +49,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Categorys}{List}', [
 
             [
                 'attribute' => 'name',
-                'label' => Yii::t('app', '{Categorys}{Name}', [
-                    'Categorys' => Yii::t('app', 'Categorys'), 'Name' => Yii::t('app', 'Name')
-                ]),
+                'label' => I18NUitl::t('app', '{Categorys}{Name}'),
                 'headerOptions' => [
                     'style' => [
                         'width' => '1000px',
@@ -68,13 +67,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Categorys}{List}', [
                     },
                     'delete' => function ($url, $model){
                         return ' ' . Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
-                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
+                            'id' => 'btn-deleteCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure you want to}{Delete}【{$model->name}】{Categorys}？", [
-                                    'Are you sure you want to' => Yii::t('app', 'Are you sure you want to'), 
-                                    'Delete' => Yii::t('app', 'Delete'), 'Categorys' => Yii::t('app', 'Categorys')
-                                ]),
+                                'confirm' => I18NUitl::t('app', "{Are you sure you want to}{Delete}【{$model->name}】{Categorys}？"),
                                 'method' => 'post',
                             ],
                         ]);

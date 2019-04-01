@@ -3,6 +3,7 @@
 namespace backend\modules\operation_admin\searchs;
 
 use common\models\media\Acl;
+use common\models\media\Media;
 use common\models\User;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
@@ -49,6 +50,8 @@ class AclSearch extends Acl
     {
         $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
         $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
+        // 分库id
+        $category_id = ArrayHelper::getValue($params, 'category_id');   
         
         // 查询数据
         $query = self::find()->from(['Acl' => self::tableName()]);
@@ -57,8 +60,9 @@ class AclSearch extends Acl
         
         // 关联用户表
         $query->leftJoin(['User' => User::tableName()], 'User.id = Acl.user_id');
-        // 复制对象
-        $queryCopy = clone $query;
+        // 关联素材表
+        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id');
+        
       
         // 必要条件
         $query->andFilterWhere([
@@ -67,16 +71,17 @@ class AclSearch extends Acl
             'Acl.media_id' => $this->media_id,
             'Acl.user_id' => $this->user_id,
             'Acl.status' => $this->status,
+            'Media.category_id' => $category_id,
         ]);
         
         // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name]);
-
-        // 按商品id分组
-        $query->groupBy(['Acl.id']);
         
-        // 计算总数
-        $totalCount = $query->count('*');
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Acl.id) AS totalCount'])
+            ->asArray()->one();
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
@@ -92,7 +97,7 @@ class AclSearch extends Acl
         
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'users' => $userResults,
                 'acls' => $aclResults,

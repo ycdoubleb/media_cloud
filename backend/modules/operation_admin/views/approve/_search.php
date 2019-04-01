@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
             'id' => 'play-approve-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  

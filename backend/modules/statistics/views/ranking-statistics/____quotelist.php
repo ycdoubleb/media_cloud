@@ -1,5 +1,6 @@
 <?php
 
+use common\utils\I18NUitl;
 use yii\grid\GridView;
 
 /**
@@ -22,17 +23,14 @@ use yii\grid\GridView;
             ],
             [
                 'attribute' => 'id',
-                'label' => Yii::t('app', 'Media Sn'),
+                'label' => I18NUitl::t('app', '{Medias}{Number}'),
                 'headerOptions' => [
                     'style' => 'width: 75px',
                 ],
             ],
             [
                 'attribute' => 'name',
-                'label' => Yii::t('app', '{Media}{Name}', [
-                    'Media' => Yii::t('app', 'Media'),
-                    'Name' => Yii::t('app', 'Name'),
-                ]),
+                'label' => I18NUitl::t('app', '{Medias}{Name}'),
             ],
             [
                 'attribute' => 'nickname',
@@ -43,10 +41,7 @@ use yii\grid\GridView;
             ],
             [
                 'attribute' => 'value',
-                'label' => Yii::t('app', '{Reference}{Frequency}',[
-                    'Reference' => Yii::t('app', 'Reference'),
-                    'Frequency' => Yii::t('app', 'Frequency')
-                ]),
+                'label' => I18NUitl::t('app', '{Reference}{Frequency}'),
                 'format' => 'raw',
                 'value' => function($data) {
                     return $data['value'];

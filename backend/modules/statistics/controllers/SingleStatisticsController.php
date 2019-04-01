@@ -12,26 +12,28 @@ use Yii;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
-use yii\web\Request;
 
 /**
  * Default controller for the `statistic_admin` module
  */
 class SingleStatisticsController extends Controller
 {
+    private $category_id;
+    
     /**
      * Renders the index view for the module
      * @return string
      */
     public function actionIndex()
     {
-        /* @var $request Request */
-        $request = Yii::$app->getRequest();
-        $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');
-        $month = $request->getQueryParam('month') == null ? '' : $request->getQueryParam('month');
-        $userId = $request->getQueryParam('nickname');      //购买人 or 运营人
-        $mediaId = $request->getQueryParam('media_id');     //素材编号
+        $params = Yii::$app->request->queryParams;
+        $year = ArrayHelper::getValue($params, 'year');
+        $month = ArrayHelper::getValue($params, 'month');
+        $userId = ArrayHelper::getValue($params, 'nickname');
+        $mediaId = ArrayHelper::getValue($params, 'media_id');
+        $this->category_id = ArrayHelper::getValue($params, 'category_id'); 
         $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'operator');    // 过滤条件tabs
+        
         
         return $this->render('index', [
             'operator' => $this->getStatisticsByOperator($year, $month, $userId),   //运营人
@@ -46,7 +48,7 @@ class SingleStatisticsController extends Controller
             'userId' => $userId,
             'mediaId' => $mediaId,
             'nicknameData' => $this->getNickname($tabs),
-            'filters' => Yii::$app->request->queryParams,  //过滤条件
+            'filters' => $params,  //过滤条件
         ]);
     }
     
@@ -61,6 +63,7 @@ class SingleStatisticsController extends Controller
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
+                ->where(['Media.category_id' => $this->category_id])
                 ->andFilterWhere(['Media.owner_id' => $userId]);
         
         // 素材数量
@@ -68,10 +71,8 @@ class SingleStatisticsController extends Controller
         $mediaQuery->addSelect(['COUNT(Media.id) AS media_num'])
             ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);   //已发布的素材
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%Y')" => $year]);
-            $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%m')" => $month]);
-        }
+        $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%Y')" => $year]);
+        $mediaQuery->andFilterWhere(["FROM_UNIXTIME(Media.created_at, '%m')" => $month]);
         $mediaNum = $mediaQuery->one();
         
         // 素材总收入金额
@@ -100,17 +101,21 @@ class SingleStatisticsController extends Controller
      */
     protected function getStatisticsByPurchaser($year, $month, $userId)
     {
-        $query = (new Query())
+        $orderQuery = (new Query())->select(['Order.id', 'order_amount'])
                 ->from(['Order' => Order::tableName()])
+                ->leftJoin(['Goods' => OrderGoods::tableName()], 'Goods.order_id = Order.id')
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id')
+                ->where(['Media.category_id' => $this->category_id])
                 ->andFilterWhere(['Order.order_status' => 
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
-                ->andFilterWhere(['Order.created_by' => $userId]);
+                ->andFilterWhere(['Order.created_by' => $userId])
+                ->groupBy('Order.id');
+        
+        $query = (new Query())->from(['Order' => $orderQuery]);
         
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
-        }
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         
         // 购买素材数量
         $mediaQuery = clone $query;
@@ -137,11 +142,13 @@ class SingleStatisticsController extends Controller
     {
         $query = (new Query())
                 ->from(['Media' => Media::tableName()])
+                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
+                ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
+                ->where(['Media.category_id' => $this->category_id])
                 ->andFilterWhere(['Media.id' => $mediaId])
                 ->andFilterWhere(['Order.order_status' => 
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
-                ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
-                ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id');
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);   //待确认和已确认的订单
+                
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){
@@ -164,6 +171,7 @@ class SingleStatisticsController extends Controller
         $clickQuery = (new Query())->from(['MediaVisitLog' => MediaVisitLog::tableName()]);
         $clickQuery->addSelect(['MediaVisitLog.visit_count AS click_num'])
             ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
+            ->where(['Media.category_id' => $this->category_id])
             ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);  //已发布的素材
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){

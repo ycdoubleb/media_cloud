@@ -20,16 +20,20 @@ use yii\web\Request;
  */
 class RankingStatisticsController extends Controller
 {
+    
+    private $category_id;
+
+
     /**
      * Renders the index view for the module
      * @return string
      */
     public function actionIndex()
     {
-        /* @var $request Request */
-        $request = Yii::$app->getRequest();
-        $year = $request->getQueryParam('year') == null ? '' : $request->getQueryParam('year');
-        $month = $request->getQueryParam('month') == null ? '' : $request->getQueryParam('month');
+        $params = Yii::$app->request->queryParams;
+        $year = ArrayHelper::getValue($params, 'year');
+        $month = ArrayHelper::getValue($params, 'month');
+        $this->category_id = ArrayHelper::getValue($params, 'category_id'); 
 
         return $this->render('index', [
             'operator' => $this->getAmountByOperator($year, $month),   //运营人
@@ -59,17 +63,17 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['SUM(OrderGoods.amount) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Order.order_status' => 
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
-                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
-
+                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id')
+                ->where(['Media.category_id' => $this->category_id])
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);   //待确认和已确认的订单
+                
+        
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
-        }
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         
         // 运营人总收入金额
         $totalAmount = clone $query;
@@ -110,18 +114,24 @@ class RankingStatisticsController extends Controller
     protected function getAmountByPurchaser($year, $month)
     {
         /* @var $query Query */
-        $query = (new Query())
-                ->select(['SUM(Order.order_amount) AS value'])
+        $orderQuery = (new Query())
+                ->select(['order_amount', 'nickname', 'Order.created_by'])
                 ->from(['Order' => Order::tableName()])
+                ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by')
+                ->leftJoin(['Goods' => OrderGoods::tableName()], 'Goods.order_id = Order.id')
+                ->leftJoin(['Media' => Media::tableName()], 'Media.id = Goods.goods_id')
+                ->where(['Media.category_id' => $this->category_id])
                 ->andFilterWhere(['Order.order_status' => 
                     [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
-                ->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
+                ->groupBy('Order.id');
         
+        $query = (new Query())
+                ->select(['SUM(Order.order_amount) AS value'])
+                ->from(['Order' => $orderQuery]);
+                
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
-        }
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         
         // 购买人总支出金额
         $totalAmount = clone $query;
@@ -129,14 +139,14 @@ class RankingStatisticsController extends Controller
         
         // 购买人饼图数据
         $chartsData = clone $query;
-        $chartsData->addSelect(['User.nickname AS name']);
+        $chartsData->addSelect(['Order.nickname AS name']);
         $chartsData->groupBy('Order.created_by');
         $chartsResult = $chartsData->all();
         
         // 购买人表格数据
         $listsData = clone $query;
         $totalResult = empty($totalResults['value']) ? 1 : $totalResults['value'];
-        $listsData->addSelect(['User.nickname AS name', "SUM(Order.order_amount) / $totalResult AS proportion"]);
+        $listsData->addSelect(['Order.nickname AS name', "SUM(Order.order_amount) / $totalResult AS proportion"]);
         $listsData->groupBy('Order.created_by');
         $listsData->orderBy(['proportion' => SORT_DESC]);   //倒序
         $listsResult = $listsData->all();
@@ -165,17 +175,17 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['SUM(OrderGoods.amount) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Order.order_status' => 
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
-                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
+                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id')
+                ->where(['Media.category_id' => $this->category_id])
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);   //待确认和已确认的订单
+                
         
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
-        }
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%Y')" => $year]);
+        $query->andFilterWhere(["FROM_UNIXTIME(Order.created_at, '%m')" => $month]);
         
         // 素材收入总金额
         $totalAmount = clone $query;
@@ -228,15 +238,14 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['Media.id','MediaVisitLog.visit_count AS value'])
                 ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')
-                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
+                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id')
+                ->where(['Media.category_id' => $this->category_id])
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED]);   //已发布的素材
         
         /* 当年份/月份参数不为空时 */
-        if($year != null || $month != null){
-            $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
-            $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
-        }
+        $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%Y')" => $year]);
+        $query->andFilterWhere(["FROM_UNIXTIME(MediaVisitLog.visit_time, '%m')" => $month]);
         
         // 素材总学习量
         $totalClick = clone $query;
@@ -292,12 +301,13 @@ class RankingStatisticsController extends Controller
         $query = (new Query())
                 ->select(['COUNT(Order.id) AS value'])
                 ->from(['Media' => Media::tableName()])
-                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
-                ->andFilterWhere(['Order.order_status' => 
-                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]])   //待确认和已确认的订单
                 ->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.goods_id = Media.id')
                 ->leftJoin(['Order' => Order::tableName()], 'Order.id = OrderGoods.order_id')
-                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id');
+                ->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.owner_id')
+                ->where(['Media.category_id' => $this->category_id])
+                ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
+                ->andFilterWhere(['Order.order_status' => 
+                    [Order::ORDER_STATUS_TO_BE_CONFIRMED, Order::ORDER_STATUS_CONFIRMED]]);   //待确认和已确认的订单
         
         /* 当年份/月份参数不为空时 */
         if($year != null || $month != null){

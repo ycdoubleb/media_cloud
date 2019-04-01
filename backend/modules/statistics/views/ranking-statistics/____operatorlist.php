@@ -1,5 +1,6 @@
 <?php
 
+use common\utils\I18NUitl;
 use yii\grid\GridView;
 
 /**
@@ -26,10 +27,7 @@ use yii\grid\GridView;
             ],
             [
                 'attribute' => 'value',
-                'label' => Yii::t('app', '{Income}{Amount}',[
-                    'Income' => Yii::t('app', 'Income'),
-                    'Amount' => Yii::t('app', 'Amount')
-                ]),
+                'label' => I18NUitl::t('app', 'Income Amount'),
                 'format' => 'raw',
                 'value' => function($data) {
                     return Yii::$app->formatter->asCurrency($data['value']);

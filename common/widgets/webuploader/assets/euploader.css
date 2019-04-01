@@ -264,7 +264,6 @@
     -o-transition: all 0.2s linear;
     -moz-transition: all 0.2s linear;
     transition: all 0.2s linear;
-    background: url("../imgs/play_icon.png") no-repeat center center;
 }
 .tile .euploader-item .euploader-item-play-icon img:hover{
     transform: translate3d(0, -2px, 0);

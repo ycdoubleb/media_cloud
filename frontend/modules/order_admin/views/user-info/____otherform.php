@@ -34,9 +34,13 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
     
-    <?= $form->field($peofileModel, 'company')->textInput(['maxlength' => true, 'placeholder' => '公司名称']) ?>
+    <?= $form->field($peofileModel, 'company')->textInput([
+        'maxlength' => true, 'placeholder' => '公司名称'
+    ])->label(Yii::t('app', 'Companies')) ?>
     
-    <?= $form->field($peofileModel, 'department')->textInput(['maxlength' => true, 'placeholder' => '部门']) ?>
+    <?= $form->field($peofileModel, 'department')->textInput([
+        'maxlength' => true, 'placeholder' => '部门'
+    ])->label(Yii::t('app', 'Departments')) ?>
                 
     
     <div class="form-group btn-addupd" style="padding-left: 95px;">

@@ -4,6 +4,7 @@ use common\components\aliyuncs\Aliyun;
 use common\models\media\Acl;
 use common\models\order\Order;
 use common\utils\DateUtil;
+use common\utils\I18NUitl;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -29,7 +30,7 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'goods_id',
-                    'label' => Yii::t('app', 'Media Sn'),
+                    'label' => Yii::t('app', 'Medias Sn'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
@@ -48,10 +49,7 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'media_name',
-                    'label' => Yii::t('app', '{Media}{Name}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Name' => Yii::t('app', 'Name')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Name}'),
                     'format' => 'raw',
                     'value' => function ($data) {
                         return '<span class="multi-line-clamp">' . $data['media_name'] . '</span>';
@@ -89,10 +87,7 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'price',
-                    'label' => Yii::t('app', '{Media}{Price}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Price' => Yii::t('app', 'Price')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Price}'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
@@ -137,10 +132,6 @@ use yii\helpers\Url;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Yii::t('app', '{Problem}{Feedback}', [
-                        'Problem' => Yii::t('app', 'Problem'),
-                        'Feedback' => Yii::t('app', 'Feedback'),
-                    ]),
                     'template' => '{view}',
                     'headerOptions' => ['style' => 'width: 80px'],
                     'buttons' => [

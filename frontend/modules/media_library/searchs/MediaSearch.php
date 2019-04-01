@@ -2,11 +2,11 @@
 
 namespace frontend\modules\media_library\searchs;
 
+use common\models\Config;
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAttValueRef;
 use common\models\media\MediaType;
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -59,8 +59,6 @@ class MediaSearch extends Media
         $this->load($params);
         $page = ArrayHelper::getValue($params, 'page', 1);      //分页
         $limit = ArrayHelper::getValue($params, 'limit', 20);   //显示数
-        //分库id
-        $this->category_id = ArrayHelper::getValue($params, 'category_id', 1);
         
         //需要查找的属性
         $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);  

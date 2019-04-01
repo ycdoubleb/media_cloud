@@ -1,6 +1,7 @@
 <?php
 
 use common\components\aliyuncs\Aliyun;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\grid\GridView;
 
@@ -27,10 +28,7 @@ ModuleAssets::register($this);
             ],
             [
                 'attribute' => 'certificate_url',
-                'label' => Yii::t('app', '{Payment}{Voucher}', [
-                    'Payment' => Yii::t('app', 'Payment'),
-                    'Voucher' => Yii::t('app', 'Voucher')
-                ]),
+                'label' => Yii::t('app', 'Payment Voucher'),
                 'format' => 'raw',
                 'value' => function($data){
                     return '<img src="'.Aliyun::absolutePath(!empty($data['certificate_url']) ? 
@@ -42,10 +40,7 @@ ModuleAssets::register($this);
             ],
             [
                 'attribute' => 'created_at',
-                'label' => Yii::t('app', '{Payment}{Time}',[
-                    'Payment' => Yii::t('app', 'Payment'),
-                    'Time' => Yii::t('app', 'Time')
-                ]),
+                'label' => Yii::t('app', 'Payment Time'),
                 'headerOptions' => [
                     'style' => 'width: 100px',
                 ],
@@ -55,10 +50,7 @@ ModuleAssets::register($this);
             ],
             [
                 'attribute' => 'content',
-                'label' => Yii::t('app', '{Payment}{Illustration}',[
-                    'Payment' => Yii::t('app', 'Payment'),
-                    'Illustration' => Yii::t('app', 'Illustration')
-                ]),
+                'label' => Yii::t('app', 'Payment Description'),
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<span class="multi-line-clamp">' . $data['content'] . '</span>';
@@ -79,10 +71,7 @@ ModuleAssets::register($this);
 //            ],
             [
                 'attribute' => 'result',
-                'label' => Yii::t('app', '{Auditing}{Result}',[
-                    'Auditing' => Yii::t('app', 'Auditing'),
-                    'Result' => Yii::t('app', 'Result')
-                ]),
+                'label' => I18NUitl::t('app', '{Approves}{Result}'),
                 'headerOptions' => [
                     'style' => 'width: 90px',
                 ],
@@ -95,10 +84,7 @@ ModuleAssets::register($this);
             ],
             [
                 'attribute' => 'handled_at',
-                'label' => Yii::t('app', '{Auditing}{Time}',[
-                    'Auditing' => Yii::t('app', 'Auditing'),
-                    'Time' => Yii::t('app', 'Time')
-                ]),
+                'label' => I18NUitl::t('app', '{Approves}{Time}'),
                 'headerOptions' => [
                     'style' => 'width: 100px',
                 ],
@@ -108,7 +94,6 @@ ModuleAssets::register($this);
             ],
             [
                 'attribute' => 'feedback',
-                'label' => Yii::t('app', 'Remarks'),
                 'format' => 'raw',
                 'value' => function ($data) {
                     return '<span class="multi-line-clamp">' . $data['feedback'] . '</span>';

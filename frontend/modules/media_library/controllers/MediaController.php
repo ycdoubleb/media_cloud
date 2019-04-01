@@ -4,6 +4,7 @@ namespace frontend\modules\media_library\controllers;
 
 use common\components\aliyuncs\Aliyun;
 use common\models\api\ApiResponse;
+use common\models\Config;
 use common\models\media\Dir;
 use common\models\media\Media;
 use common\models\media\MediaAttribute;
@@ -67,15 +68,16 @@ class MediaController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType())]);
+        $category_id = $this->findConfigModel()->config_value;
+        $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType()), 'category_id' => $category_id]);
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), true);
         
         return $this->render('index',[
             'searchModel' => $searchModel,      //搜索模型
             'filters' => $results['filter'],    //查询过滤的属性
             'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId(1),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel(1)
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id)
         ]);
     }
     
@@ -85,7 +87,8 @@ class MediaController extends Controller
      */
     public function actionMediaData()
     {
-        $searchModel = new MediaSearch();
+        $category_id = $this->findConfigModel()->config_value;
+        $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType()), 'category_id' => $category_id]);
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), false);
         $medias = array_values($results['data']['media']);                  //素材数据
         
@@ -366,7 +369,8 @@ class MediaController extends Controller
      * @param string $id
      * @param string $target_id
      */
-    public function actionSearchChildren($id, $category_id = 1, $target_id = null){
+    public function actionSearchChildren($id, $target_id = null){
+        $category_id = $this->findConfigModel()->config_value;
         $dirsChildren = Dir::getDirsChildren($id, null, $category_id); 
         $childrens = [];
         if(count($dirsChildren) > 0){
@@ -427,11 +431,27 @@ class MediaController extends Controller
     }
     
     /**
+     * Finds the Media model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Media the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findConfigModel()
+    {
+        if (($model = Config::findOne(['config_name' => 'category_id'])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+    
+    /**
      * 重组存储目录同级的所有目录
      * @return array
      */
     protected function getAgainInstallDirsBySameLevel($category_id)
-    {
+    {        
         $dirDataProvider = [];
         $dirBySameLevels = Dir::getDirsBySameLevel(null, null, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {

@@ -1,6 +1,7 @@
 <?php
 
 use common\models\media\Acl;
+use common\utils\I18NUitl;
 use frontend\modules\media_library\assets\MainAssets;
 use frontend\modules\media_library\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
@@ -13,10 +14,7 @@ MainAssets::register($this);
 ModuleAssets::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Media}{Detail}', [
-    'Media' => Yii::t('app', 'Media'),
-    'Detail' => Yii::t('app', 'Detail')
-]);
+$this->title = I18NUitl::t('app', '{Medias}{Detail}');
 ?>
 
 <div class="media_library mediacloud">

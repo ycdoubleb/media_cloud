@@ -1,5 +1,7 @@
 <?php
 
+use common\models\User;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\MainAssets;
 use yii\helpers\Html;
 use yii\web\View;
@@ -41,10 +43,7 @@ $menuItems = [
             'module' => 'order_admin',
             'controller' => 'order',
             'action' => 'index',
-            'label' => Yii::t('app', '{My}{Order}', [
-                'My' => Yii::t('app', 'My'),
-                'Order' => Yii::t('app', 'Order'),
-            ]),
+            'label' => I18NUitl::t('app', '{My}{Orders}'),
             'url' => ['/order_admin/order/index'],
             'icons' => null, 
             'condition' => true,
@@ -54,10 +53,7 @@ $menuItems = [
             'module' => 'order_admin',
             'controller' => 'medias',
             'action' => 'index',
-            'label' => Yii::t('app', '{My}{Media}', [
-                'My' => Yii::t('app', 'My'),
-                'Media' => Yii::t('app', 'Media'),
-            ]),
+            'label' => I18NUitl::t('app', '{My}{Medias}'),
             'url' => ['/order_admin/medias/index'],
             'icons' => null, 
             'condition' => true,
@@ -67,10 +63,7 @@ $menuItems = [
             'module' => 'order_admin',
             'controller' => 'favorites',
             'action' => 'index',
-            'label' => Yii::t('app', '{My}{Favorites}', [
-                'My' => Yii::t('app', 'My'),
-                'Favorites' => Yii::t('app', 'Favorites'),
-            ]),
+            'label' => I18NUitl::t('app', '{My}{Favorites}'),
             'url' => ['/order_admin/favorites/index'],
             'icons' => null, 
             'condition' => true,
@@ -80,10 +73,7 @@ $menuItems = [
             'module' => 'order_admin',
             'controller' => 'cart',
             'action' => 'index',
-            'label' => Yii::t('app', '{My}{Cart}', [
-                'My' => Yii::t('app', 'My'),
-                'Cart' => Yii::t('app', 'Cart'),
-            ]),
+            'label' => I18NUitl::t('app', '{My}{Cart}'),
             'url' => ['/order_admin/cart/index'],
             'icons' => null, 
             'condition' => true,
@@ -107,7 +97,7 @@ foreach ($menuItems as $index => $items) {
 }
 $admin = implode("", $menuHtml['admin']);
 
-$userDetails = common\models\User::findOne(Yii::$app->user->id);
+$userDetails = User::findOne(Yii::$app->user->id);
 $userAvatar = $userDetails->avatar;
 $userName = $userDetails->nickname;
 $html = <<<Html

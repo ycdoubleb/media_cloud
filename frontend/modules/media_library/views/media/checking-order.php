@@ -2,6 +2,8 @@
 
 use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\CartSearch;
+use common\utils\DateUtil;
+use common\utils\I18NUitl;
 use frontend\modules\media_library\assets\MainAssets;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\data\ActiveDataProvider;
@@ -14,10 +16,7 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel CartSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Checking}{Order}', [
-    'Checking' => Yii::t('app', 'Checking'),
-    'Order' => Yii::t('app', 'Order'),
-]);
+$this->title = I18NUitl::t('app', '{Checking}{Orders}');
 
 MainAssets::register($this);
 ModuleAssets::register($this);
@@ -102,7 +101,7 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'id',
-                                'label' => Yii::t('app', 'Media Sn'),
+                                'label' => Yii::t('app', 'Medias Sn'),
                                 'headerOptions' => [
                                     'style' => 'width: 120px',
                                 ],
@@ -121,10 +120,7 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'name',
-                                'label' => Yii::t('app', '{Media}{Name}',[
-                                    'Media' => Yii::t('app', 'Media'),
-                                    'Name' => Yii::t('app', 'Name')
-                                ]),
+                                'label' => I18NUitl::t('app', '{Medias}{Name}'),
                             ],
                             [
                                 'attribute' => 'type_id',
@@ -143,7 +139,7 @@ ModuleAssets::register($this);
                                     'style' => 'width: 90px',
                                 ],
                                 'value' => function($data) {
-                                    return $data['duration'];
+                                    return $data['duration'] > 0 ? DateUtil::intToTime($data['duration'], ':', true) : null;
                                 },
                             ],
                             [
@@ -158,10 +154,7 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'attribute' => 'price',
-                                'label' => Yii::t('app', '{Media}{Price}',[
-                                    'Media' => Yii::t('app', 'Media'),
-                                    'Price' => Yii::t('app', 'Price')
-                                ]),
+                                'label' => I18NUitl::t('app', '{Medias}{Price}'),
                                 'headerOptions' => [
                                     'style' => 'width: 100px',
                                 ],
@@ -171,9 +164,9 @@ ModuleAssets::register($this);
                             ],
                             [
     //                            'attribute' => 'num',
-                                'label' => Yii::t('app', 'Num'),
+                                'label' => I18NUitl::t('app', '{Medias}{Num}'),
                                 'headerOptions' => [
-                                    'style' => 'width: 50px',
+                                    'style' => 'width: 100px',
                                 ],
                                 'value' => function($data) {
                                     return '1';
@@ -181,7 +174,6 @@ ModuleAssets::register($this);
                             ],
                             [
                                 'class' => 'yii\grid\ActionColumn',
-                                'header' => Yii::t('app', 'Operation'),
                                 'template' => '{view}',
                                 'headerOptions' => ['style' => 'width: 100px'],
                                 'buttons' => [

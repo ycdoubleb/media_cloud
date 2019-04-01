@@ -2,6 +2,7 @@
 
 use common\components\aliyuncs\Aliyun;
 use common\utils\DateUtil;
+use common\utils\I18NUitl;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
@@ -26,7 +27,7 @@ use yii\helpers\Html;
                 ],
                 [
                     'attribute' => 'goods_id',
-                    'label' => Yii::t('app', 'Media Sn'),
+                    'label' => Yii::t('app', 'Medias Sn'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
@@ -45,10 +46,7 @@ use yii\helpers\Html;
                 ],
                 [
                     'attribute' => 'media_name',
-                    'label' => Yii::t('app', '{Media}{Name}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Name' => Yii::t('app', 'Name')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Name}'),
                 ],
                 [
                     'attribute' => 'type_name',
@@ -79,10 +77,7 @@ use yii\helpers\Html;
                 ],
                 [
                     'attribute' => 'price',
-                    'label' => Yii::t('app', '{Media}{Price}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Price' => Yii::t('app', 'Price')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Price}'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
@@ -102,7 +97,6 @@ use yii\helpers\Html;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Yii::t('app', 'Operation'),
                     'template' => '{view}',
                     'headerOptions' => ['style' => 'width: 100px'],
                     'buttons' => [

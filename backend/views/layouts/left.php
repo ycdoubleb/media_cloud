@@ -1,6 +1,7 @@
 <?php
 
 use common\models\AdminUserr;
+use common\models\Config;
 use common\modules\rbac\components\Helper;
 use common\widgets\Menu;
 use yii\helpers\ArrayHelper;
@@ -37,7 +38,8 @@ use yii\helpers\ArrayHelper;
         <!-- /.search form -->
         <?php 
             $params = Yii::$app->request->queryParams;      // 当前参数
-            $category_id = ArrayHelper::getValue($params, 'category_id', 1);
+            $config_value = Config::findOne(['config_name' => 'category_id'])->config_value;
+            $category_id = ArrayHelper::getValue($params, 'category_id', $config_value);
             $menuItems = [['label' => 'Menu Yii2', 'options' => ['class' => 'header']]];
             if(Yii::$app->user->isGuest){
                 $menuItems []= ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest];
@@ -100,11 +102,11 @@ use yii\helpers\ArrayHelper;
                         'url' => '#',
                         'items' => [
                             
-                            ['label' => '订单列表', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/order/index'], ['category_id' => $category_id])],
-                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/approve/index'], ['category_id' => $category_id])],
+                            ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/operation_admin/order/index']],
+                            ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/approve/index']],
                             ['label' => '素材运营', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/goods/index'], ['category_id' => $category_id])],
-                            ['label' => '访问路径', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/acl/index'], ['category_id' => $category_id])],
-                            ['label' => '前台用户', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/user/index'], ['category_id' => $category_id])],
+                            ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl/index']],
+                            ['label' => '前台用户', 'icon' => 'circle-o', 'url' => ['/operation_admin/user/index']],
                         ],
                     ],
                     [
@@ -113,9 +115,9 @@ use yii\helpers\ArrayHelper;
                         'url' => '#',
                         'items' => [
                             
-                            ['label' => '总统计', 'icon' => 'circle-o', 'url' => array_merge(['/statistics/all-statistics/index'], ['category_id' => $category_id])],
-                            ['label' => '排行统计', 'icon' => 'circle-o', 'url' => array_merge(['/statistics/ranking-statistics/index'], ['category_id' => $category_id])],
-                            ['label' => '单独统计', 'icon' => 'circle-o', 'url' => array_merge(['/statistics/single-statistics/index'], ['category_id' => $category_id])],
+                            ['label' => '总统计', 'icon' => 'circle-o', 'url' => ['/statistics/all-statistics/index']],
+                            ['label' => '排行统计', 'icon' => 'circle-o', 'url' => ['/statistics/ranking-statistics/index']],
+                            ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],
                         ]
                     ],
                 ]);

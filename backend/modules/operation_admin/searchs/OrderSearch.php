@@ -56,25 +56,18 @@ class OrderSearch extends Order
         $page = ArrayHelper::getValue($params, 'page', 1);   
         //显示数
         $limit = ArrayHelper::getValue($params, 'limit', 10);   
-        // 分库id
-        $category_id = ArrayHelper::getValue($params, 'category_id');   
         
         //查询订单
         $query = self::find()->from(['Order' => self::tableName()]);
 
         // 关联用户表
         $query->leftJoin(['User' => User::tableName()], 'User.id = Order.created_by');
-        // 关联商品表
-        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id');
-        // 关联素材表
-        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
        
         // 条件查询
         $query->andFilterWhere([
             'order_sn' => $this->order_sn,
             'order_status' => $this->order_status,
             'created_by' => $this->created_by,
-            'category_id' => $category_id,
         ]);
 
         // 过滤已作废的订单

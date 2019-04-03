@@ -77,11 +77,9 @@ class SiteController extends Controller
         }
 
         $model = new LoginAdminForm(['userClass' => AdminUser::class]);
-        // 查询配置
-        $config = Config::findOne(['config_name' => 'category_id']);
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
 //            return $this->goBack();
-            return $this->redirect(['statistics/all-statistics/index', 'category_id' => $config->config_value]);
+            return $this->redirect(['statistics/all-statistics/index']);
         } else {
             $model->password = '';
 

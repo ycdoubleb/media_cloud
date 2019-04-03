@@ -65,8 +65,6 @@ class PlayApproveSearch extends PlayApprove
     {
         $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
         $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
-        // 分库id
-        $category_id = ArrayHelper::getValue($params, 'category_id');   
         
         $query = self::find()->from(['Approve' => PlayApprove::tableName()]);
         
@@ -78,10 +76,7 @@ class PlayApproveSearch extends PlayApprove
 
         // 关联订单表
         $query->leftJoin(['Order' => Order::tableName()], 'Order.id = Approve.order_id');
-        // 关联商品表
-        $query->leftJoin(['OrderGoods' => OrderGoods::tableName()], 'OrderGoods.order_id = Order.id');
-        // 关联素材表
-        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = OrderGoods.goods_id');
+       
 
         // 必要条件
         $query->andFilterWhere([
@@ -89,7 +84,6 @@ class PlayApproveSearch extends PlayApprove
             'Approve.status' => $this->status,
             'Approve.handled_by' => $this->handled_by,
             'Approve.created_by' => $this->created_by,
-            'Media.category_id' => $category_id,
         ]);
         
         // 过滤已作废的订单

@@ -50,8 +50,6 @@ class AclSearch extends Acl
     {
         $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
         $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
-        // 分库id
-        $category_id = ArrayHelper::getValue($params, 'category_id');   
         
         // 查询数据
         $query = self::find()->from(['Acl' => self::tableName()]);
@@ -60,8 +58,6 @@ class AclSearch extends Acl
         
         // 关联用户表
         $query->leftJoin(['User' => User::tableName()], 'User.id = Acl.user_id');
-        // 关联素材表
-        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id');
         
       
         // 必要条件
@@ -71,7 +67,6 @@ class AclSearch extends Acl
             'Acl.media_id' => $this->media_id,
             'Acl.user_id' => $this->user_id,
             'Acl.status' => $this->status,
-            'Media.category_id' => $category_id,
         ]);
         
         // 模糊查询

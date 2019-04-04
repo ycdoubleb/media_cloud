@@ -38,8 +38,12 @@ use yii\helpers\ArrayHelper;
         <!-- /.search form -->
         <?php 
             $params = Yii::$app->request->queryParams;      // 当前参数
-            $config_value = Config::findOne(['config_name' => 'category_id'])->config_value;
-            $category_id = ArrayHelper::getValue($params, 'category_id', $config_value);
+            if(($config = Config::findOne(['config_name' => 'category_id'])) !== null){
+                $config_category_id = $config->config_value;
+            }else{
+                $config_category_id = 1;
+            }
+            $category_id = ArrayHelper::getValue($params, 'category_id', $config_category_id);
             $menuItems = [['label' => 'Menu Yii2', 'options' => ['class' => 'header']]];
             if(Yii::$app->user->isGuest){
                 $menuItems []= ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest];

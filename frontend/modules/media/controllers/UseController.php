@@ -5,6 +5,7 @@ namespace frontend\modules\media\controllers;
 use common\models\log\MediaVisitLog;
 use common\models\log\UserVisitLog;
 use common\models\media\Acl;
+use common\models\media\Media;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -41,11 +42,13 @@ class UseController extends Controller {
      * @param string $sn
      */
     public function actionTempLink($sn) {
-        $url = Acl::getTempUrlBySn($sn);
-        if (empty($url)) {
+        $tempInfo = Acl::getTempInfoBySn($sn);
+        if (empty($tempInfo)) {
             throw new NotFoundHttpException('找不到对应的素材！');
         }
-        $url = $url . "?" . http_build_query(Yii::$app->request->getQueryParams());
+        // 查看次数+1
+        Media::updateAllCounters(['visit_count' => 1 ], ['id' => $tempInfo['media_id']]);
+        $url = $tempInfo['url'] . "?" . http_build_query(Yii::$app->request->getQueryParams());
         return $this->redirect($url);
     }
     
@@ -54,11 +57,13 @@ class UseController extends Controller {
      * @param string $sn
      */
     public function actionTempDownload($sn) {
-        $url = Acl::getTempUrlBySn($sn);
-        if (empty($url)) {
+        $tempInfo = Acl::getTempInfoBySn($sn);
+        if (empty($tempInfo)) {
             throw new NotFoundHttpException('找不到对应的素材！');
         }
-        $url = $url . "?" . http_build_query(Yii::$app->request->getQueryParams());
+        // 下载次数+1
+        Media::updateAllCounters(['download_count' => 1 ], ['id' => $tempInfo['media_id']]);
+        $url = $tempInfo['url'] . "?" . http_build_query(Yii::$app->request->getQueryParams());
         return $this->redirect($url);
     }
 

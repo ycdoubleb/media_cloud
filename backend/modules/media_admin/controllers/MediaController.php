@@ -367,6 +367,7 @@ class MediaController extends GridViewChangeSelfController
      */
     public function actionBatchEditAttribute()
     {
+        $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
         return $this->renderAjax('____edit_attribute', [
             'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
             'isTagRequired' => false,  // 判断标签是否需要必须
@@ -395,9 +396,13 @@ class MediaController extends GridViewChangeSelfController
                 // 属性值
                 $media_attrs = ArrayHelper::getValue($post, 'Media.attribute_value');
                 // 标签
-                $model->tags = ArrayHelper::getValue($post, 'Media.tags');
-                // 保存标签
-                $tags = Tags::saveTags($model->tags);
+                $tags = '';
+                $media_tags = ArrayHelper::getValue($post, 'Media.tags');
+                if(!empty($media_tags)){
+                    $model->tags = $media_tags;
+                    // 保存标签
+                    $tags = Tags::saveTags($model->tags);
+                }
                 //获取所有新属性值
                 $newAttributes = $model->getDirtyAttributes();
                 //获取所有旧属性值

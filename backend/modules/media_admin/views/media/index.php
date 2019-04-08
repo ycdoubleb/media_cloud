@@ -39,10 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php 
                     if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
                         || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
-                        echo  Html::a(Yii::t('app', 'Reset Price'), ['batch-edit-price'], [
+                        echo  Html::a(Yii::t('app', 'Reset Price'), ['batch-edit-price', 'category_id' => $category_id], [
                             'id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat'
                         ]); 
-                        echo ' '.Html::a(Yii::t('app', 'Reset Tags'), ['batch-edit-attribute'], [
+                        echo ' '.Html::a(Yii::t('app', 'Reset Tags'), ['batch-edit-attribute', 'category_id' => $category_id], [
                             'id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat'
                         ]);
                         echo ' '.Html::a(Yii::t('app', 'Apply For Be Put In Storage'), ['approve/add-apply'], [
@@ -174,7 +174,7 @@ $js = <<<JS
             url = $(this).attr("href");
         if(val.length > 0){
             $(".myModal").html("");
-            $('.myModal').modal("show").load(url + "?id=" + val);
+            $('.myModal').modal("show").load(url + "&id=" + val);
         }else{
             alert("{$msg}");
         }

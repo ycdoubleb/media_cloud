@@ -18,10 +18,10 @@ use yii\widgets\ActiveForm;
             'id' => 'acl-searc-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-9 col-md-9\">{input}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-11 col-md-11\">{input}</div>",  
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  
@@ -30,64 +30,81 @@ use yii\widgets\ActiveForm;
 
     <div class="col-lg-12 col-md-12 panel">
     
-        <div class="clo-lg-6 col-md-6 clear-padding">
-            <!--访问ID-->
-            <?= $form->field($model, 'id')->textInput([
-                'placeholder' => '请输入访问ID', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', '{Visit}{ID}：', [
-                'Visit' => Yii::t('app', 'Visit'), 'ID' => Yii::t('app', 'ID')
-            ])) ?>
+        <div class="col-lg-12 col-md-12 clear-padding">
+            
+<!--            <div class="col-lg-6 col-md-6 clear-padding">
+                访问ID
+                <?php
+//                   echo $form->field($model, 'id')->textInput([
+//                        'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+//                    ])->label(Yii::t('app', '{Visits}{ID}：', [
+//                        'Visits' => Yii::t('app', 'Visits'), 'ID' => Yii::t('app', 'ID')
+//                    ])) 
+                ?>
+            </div>-->
+            
+            <div class="clo-lg-6 col-md-6 clear-padding">
+                <!--访问名称-->
+                <?= $form->field($model, 'sn')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+                ])->label(Yii::t('app', 'Visits Sn') . '：') ?>
+                
+                <!--访问名称-->
+                <?php
+//                    echo $form->field($model, 'name')->textInput([
+//                        'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+//                    ])->label(Yii::t('app', '{Visits}{Name}：', [
+//                        'Visits' => Yii::t('app', 'Visits'), 'Name' => Yii::t('app', 'Name')
+//                    ])) 
+                ?>
+            </div>
+            
         </div>
         
-        <div class="clo-lg-6 col-md-6 clear-padding">
-            <!--访问名称-->
-            <?= $form->field($model, 'name')->textInput([
-                'placeholder' => '请输入访问名称', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', '{Visit}{Name}：', [
-                'Visit' => Yii::t('app', 'Visit'), 'Name' => Yii::t('app', 'Name')
-            ])) ?>
-        </div>
-        
-        <div class="clo-lg-6 col-md-6 clear-padding">
-            <!--素材编号-->
-            <?= $form->field($model, 'media_id')->textInput([
-                'placeholder' => '请输入素材编号', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', '{Media}{Number}：', [
-                'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
-            ])) ?>
+        <div class="col-lg-12 col-md-12 clear-padding">
+            
+            <div class="clo-lg-6 col-md-6 clear-padding">
+                <!--素材编号-->
+                <?= $form->field($model, 'media_id')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+                ])->label(Yii::t('app', '{Medias}{Number}：', [
+                    'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
+                ])) ?>
 
-            <!--订单编号-->
-            <?= $form->field($model, 'order_sn')->textInput([
-                'placeholder' => '请输入订单编号', 'onchange' => 'submitForm()'
-            ])->label(Yii::t('app', 'Order Sn'). '：') ?>
+                <!--订单编号-->
+                <?= $form->field($model, 'order_sn')->textInput([
+                    'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+                ])->label(Yii::t('app', 'Orders Sn'). '：') ?>
 
-            <!--状态-->
-            <?= $form->field($model, 'status')->checkboxList(Acl::$statusMap, [
-                'style' => 'margin-right: -60px;',
-                'itemOptions'=>[
-                    'onclick' => 'submitForm();',
-                    'labelOptions'=>[
-                        'style'=>[
-                            'margin'=>'5px 30px 10px 0px',
-                            'color' => '#666666',
-                            'font-weight' => 'normal',
+                <!--状态-->
+                <?= $form->field($model, 'status')->checkboxList(Acl::$statusMap, [
+                    'style' => 'margin-right: -60px;',
+                    'itemOptions'=>[
+                        'onclick' => 'submitForm();',
+                        'labelOptions'=>[
+                            'style'=>[
+                                'margin'=>'5px 30px 10px 0px',
+                                'color' => '#666666',
+                                'font-weight' => 'normal',
+                            ]
                         ]
-                    ]
-                ],
-            ])->label(Yii::t('app', 'Status'). '：') ?>
+                    ],
+                ])->label(Yii::t('app', 'Status'). '：') ?>
 
-            <!--购买人-->
-            <?= $form->field($model, 'user_id',[
-                'template' => "{label}\n<div class=\"col-lg-3 col-md-3\">{input}</div>",  
-            ])->widget(Select2::class, [
-                'data' => $userMap,
-                'hideSearch' => true,
-                'options' => ['placeholder' => Yii::t('app', 'All')],
-                'pluginOptions' => ['allowClear' => true],
-                'pluginEvents' => ['change' => 'function(){ submitForm()}']
-            ])->label(Yii::t('app', 'Purchaser') . '：') ?>
-        
-       </div>
+                <!--购买人-->
+                <?= $form->field($model, 'user_id',[
+                    'template' => "{label}\n<div class=\"col-lg-4 col-md-4\">{input}</div>",  
+                ])->widget(Select2::class, [
+                    'data' => $userMap,
+                    'hideSearch' => true,
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
+                    'pluginOptions' => ['allowClear' => true],
+                    'pluginEvents' => ['change' => 'function(){ submitForm()}']
+                ])->label(Yii::t('app', 'Purchaser') . '：') ?>
+
+           </div>
+            
+        </div>
         
     </div>    
 

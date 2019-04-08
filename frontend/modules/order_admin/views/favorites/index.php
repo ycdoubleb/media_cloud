@@ -3,6 +3,7 @@
 use common\components\aliyuncs\Aliyun;
 use common\models\order\searchs\FavoritesSearch;
 use common\utils\DateUtil;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
 use yii\data\ActiveDataProvider;
@@ -22,7 +23,7 @@ $this->title = Yii::t('app', 'Favorites');
 ?>
 <div class="favorites-index main">
     <div class="mc-title">
-        <span><?= Yii::t('app', '{My}{Favorites}', ['My' => Yii::t('app', 'My'), 'Favorites' => Yii::t('app', 'Favorites')])?></span>
+        <span><?= I18NUitl::t('app', '{My}{Favorites}')?></span>
     </div>
     <?= $this->render('_search', [
         'searchModel' => $searchModel,
@@ -58,17 +59,14 @@ $this->title = Yii::t('app', 'Favorites');
                 ],
                 [
                     'attribute' => 'media_id',
-                    'label' => Yii::t('app', 'Media Sn'),
+                    'label' => I18NUitl::t('app', '{Medias}{Number}'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
                 ],
                 [
                     'attribute' => 'media_name',
-                    'label' => Yii::t('app', '{Media}{Name}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Name' => Yii::t('app', 'Name')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Name}'),
                     'format' => 'raw',
                     'value' => function($data){
                         return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">'.$data['media_name'].'</span>';
@@ -83,10 +81,7 @@ $this->title = Yii::t('app', 'Favorites');
                 ],
                 [
                     'attribute' => 'price',
-                    'label' => Yii::t('app', '{Media}{Price}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Price' => Yii::t('app', 'Price')
-                    ]),
+                    'label' => I18NUitl::t('app', '{Medias}{Price}'),
                     'headerOptions' => [
                         'style' => 'width: 80px',
                     ],
@@ -130,7 +125,6 @@ $this->title = Yii::t('app', 'Favorites');
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Yii::t('app', 'Operation'),
                     'template' => '{view}',
                     'headerOptions' => ['style' => 'width: 100px'],
                     'buttons' => [

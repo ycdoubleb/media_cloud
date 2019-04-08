@@ -92,7 +92,7 @@ class AclController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionRefreshCach($id)
+    public function actionRefurbishCach($id)
     {
         if(\Yii::$app->request->isPost){
             // 返回json格式
@@ -109,7 +109,7 @@ class AclController extends Controller
             }
         }
         
-        return $this->renderAjax('____refresh_cach', [
+        return $this->renderAjax('____refurbish_cach', [
             'ids' => json_encode(explode(',', $id)), // 所有id
         ]);
     }

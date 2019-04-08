@@ -49,6 +49,7 @@ class UploadfileSearch extends Uploadfile {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'key' => 'id'
         ]);
 
         $this->load($params);

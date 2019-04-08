@@ -6,10 +6,7 @@ use yii\web\View;
 /* @var $this View */
 /* 选择支付方式的模态框 */
 
-$this->title = Yii::t('app', '{Payment}{Mode}',[
-    'Payment' => Yii::t('app', 'Payment'),
-    'Mode' => Yii::t('app', 'Mode')
-]);
+$this->title = Yii::t('app', 'Payment Mode');
 
 ?>
 <div class="payment-method main mc-modal">

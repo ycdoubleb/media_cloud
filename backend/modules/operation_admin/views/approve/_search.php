@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
             'id' => 'play-approve-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -32,15 +32,15 @@ use yii\widgets\ActiveForm;
     
         <!--订单名称-->
         <?= $form->field($model, 'order_name')->textInput([
-            'placeholder' => '请输入订单名称', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{Order}{Name}', [
-            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', '{Orders}{Name}', [
+            'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
         ]) . '：') ?>
         
         <!--订单编号-->
         <?= $form->field($model, 'order_sn')->textInput([
-            'placeholder' => '请输入订单编号', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', 'Order Sn') . '：') ?>
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'Orders Sn') . '：') ?>
                 
         <!--审核状态-->
         <?= $form->field($model, 'status')->checkboxList(PlayApprove::$statusName, [
@@ -55,13 +55,15 @@ use yii\widgets\ActiveForm;
                     ]
                 ]
             ],
-        ])->label(Yii::t('app', '{Order}{Status}：', [
-            'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
+        ])->label(Yii::t('app', '{Orders}{Status}：', [
+            'Orders' => Yii::t('app', 'Orders'), 'Status' => Yii::t('app', 'Status')
         ])) ?>
         
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') . '：' ?>
+            </label>
             <div class="col-lg-6 col-md-6">
                 
                 <!--购买人-->
@@ -84,7 +86,7 @@ use yii\widgets\ActiveForm;
                     ])->widget(Select2::class, [
                         'data' => $handledByMap,
                         'hideSearch' => true,
-                        'options' => ['placeholder' => Yii::t('app', 'Handled By')],
+                        'options' => ['placeholder' => Yii::t('app', 'Approver')],
                         'pluginOptions' => ['allowClear' => true],
                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
                     ]) ?>

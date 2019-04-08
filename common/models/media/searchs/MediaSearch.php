@@ -78,6 +78,8 @@ class MediaSearch extends Media
         $page = ArrayHelper::getValue($params, 'page', 1);               
         //显示数
         $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        //分库id
+        $this->category_id = ArrayHelper::getValue($params, 'category_id', 1);
         //属性值
         $attrValIds = array_filter($this->attribute_value_id ? $this->attribute_value_id : []);
         
@@ -99,13 +101,14 @@ class MediaSearch extends Media
         
         // 目录过滤
         if(!empty($this->dir_id)){
-            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, true);
+            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, $this->category_id, true);
             $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
         }
         
         // 必要条件
         $query->andFilterWhere([
             'Media.id' => $this->id,
+            'Media.category_id' => $this->category_id,
             'Media.type_id' => $this->type_id,
             'Media.owner_id' => $this->owner_id,
             'Media.status' => $this->status,
@@ -129,7 +132,7 @@ class MediaSearch extends Media
         
         // 按媒体id分组
         $query->select([
-            'Media.id', 'Media.cover_url', 'Media.name', 'Media.dir_id', 'Media.type_id',
+            'Media.id', 'Media.category_id', 'Media.cover_url', 'Media.name', 'Media.dir_id', 'Media.type_id',
             'Media.duration', 'Media.size', 'Media.price', 'Media.mts_status', 'Media.status',
             'Media.owner_id', 'Media.created_at', 'Media.tags', 'Media.ext'
         ]);

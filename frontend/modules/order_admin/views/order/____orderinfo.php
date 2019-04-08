@@ -1,6 +1,7 @@
 <?php
 
 use common\models\order\Order;
+use common\utils\I18NUitl;
 use yii\widgets\DetailView;
 
 /**
@@ -22,14 +23,11 @@ use yii\widgets\DetailView;
                 ],
                 [
                     'attribute' => 'goods_num',
-                    'label' => Yii::t('app', '{Media}{Total}',[
-                        'Media' => Yii::t('app', 'Media'),
-                        'Total' => Yii::t('app', 'Total'),
-                    ])
+                    'label' => I18NUitl::t('app', '{Medias}{Num}')
                 ],
                 [
                     'attribute' => 'created_at',
-                    'label' => Yii::t('app', 'Order Time'),
+                    'label' => Yii::t('app', 'Place Order Time'),
                     'value' => function($model){
                         return !empty($model->created_at) ? date('Y-m-d H:i', $model->created_at) : null;
                     }
@@ -43,10 +41,7 @@ use yii\widgets\DetailView;
                 [
                     'attribute' => 'user_note',
                     'format' => 'raw',
-                    'label' => Yii::t('app', '{User}{Message}',[
-                        'User' => Yii::t('app', 'User'),
-                        'Message' => Yii::t('app', 'Message'),
-                    ]),
+                    'label' => Yii::t('app', 'User Note'),
                     'contentOptions' => [
                         'style' => 'word-break: break-all',
                     ]
@@ -62,30 +57,21 @@ use yii\widgets\DetailView;
             'attributes' => [
                 [
                     'attribute' => 'order_status',
-                    'label' => Yii::t('app', '{Order}{Status}',[
-                        'Order' => Yii::t('app', 'Order'),
-                        'Status' => Yii::t('app', 'Status'),
-                    ]),
+                    'label' => I18NUitl::t('app', '{Orders}{Status}'),
                     'value' => function ($data) {
                         return Order::$orderStatusName[$data['order_status']];
                     }
                 ],
                 [
                     'attribute' => 'order_amount',
-                    'label' => Yii::t('app', '{Order}{Amount}',[
-                        'Order' => Yii::t('app', 'Order'),
-                        'Amount' => Yii::t('app', 'Amount'),
-                    ]),
+                    'label' => I18NUitl::t('app', '{Orders}{Amount}'),
                     'value' => function($data) {
                         return '￥'. $data['order_amount'];
                     }
                 ],
                 [
                     'attribute' => 'play_code',
-                    'label' => Yii::t('app', '{Payment}{Mode}',[
-                        'Payment' => Yii::t('app', 'Payment'),
-                        'Mode' => Yii::t('app', 'Mode'),
-                    ]),
+                    'label' => Yii::t('app', 'Payment Mode'),
                     'value' => function($data) {
                         return $data['play_code'] == 'eeplay' ? '线下支付' : '';
                     }

@@ -11,10 +11,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('app', '{Create}{Dir}', [
     'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Storage}{Dir}', [
-    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir')
-]), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="dir-create">
 
@@ -24,14 +21,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'form form-horizontal',
         ],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-9 col-md-9\">"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+            . "</div>", 
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  
         ], 
     ]); ?>
     
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             
             <div class="modal-header">

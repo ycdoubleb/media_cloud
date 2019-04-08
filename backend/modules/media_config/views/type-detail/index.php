@@ -9,7 +9,6 @@ use yii\data\Pagination;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\LinkPager;
 
@@ -17,10 +16,12 @@ use yii\widgets\LinkPager;
 /* @var $searchModel MediaTypeDetailSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{File}{Suffix}', [
-    'Media' => Yii::t('app', 'Media'), 'File' => Yii::t('app', 'File'), 'Suffix' => Yii::t('app', 'Suffix')
+$this->title = Yii::t('app', '{Medias}{File}{Suffix}', [
+    'Medias' => Yii::t('app', 'Medias'), 'File' => Yii::t('app', 'File'), 'Suffix' => Yii::t('app', 'Suffix')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{File}{Suffix}{List}', [
+    'File' => Yii::t('app', 'File'), 'Suffix' => Yii::t('app', 'Suffix'), 'List' => Yii::t('app', 'List') 
+]);
 ?>
 <div class="media-type-detail-index">
 
@@ -87,9 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             [
-                'label' => Yii::t('app', '{The}{Media}{Type}', [
-                    'The' => Yii::t('app', 'The'), 'Media' => Yii::t('app', 'Media'), 'Type' => Yii::t('app', 'Type')
-                ]),
+                'label' => Yii::t('app', 'Type For Belong'),
                 'format' => 'raw',
                 'filter' => Select2::widget([
                     'model' => $searchModel,
@@ -112,16 +111,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'is_del',
-                'label' => Yii::t('app', 'Is Use'),
+                'label' => Yii::t('app', 'Is Del'),
                 'class' => GridViewChangeSelfColumn::class,
-                'plugOptions' => [
-                    'labels' => ['禁用', '启用'],
-                    'values' => [1, 0],
-                ],
                 'filter' => Select2::widget([
                     'model' => $searchModel,
                     'attribute' => 'is_del',
-                    'data' => ['启用', '禁用'],
+                    'data' => ['否', '是'],
                     'hideSearch' => true,
                     'options' => ['placeholder' => Yii::t('app', 'All')],
                     'pluginOptions' => [
@@ -148,8 +143,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Suffix}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Suffix' => Yii::t('app', 'Suffix')
+                                'confirm' => Yii::t('app', "{Are you sure you want to}{Delete}【{$model->name}】？", [
+                                    'Are you sure you want to' => Yii::t('app', 'Are you sure you want to'), 
+                                    'Delete' => Yii::t('app', 'Delete')
                                 ]),
                                 'method' => 'post',
                             ],

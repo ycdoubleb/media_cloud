@@ -1,6 +1,7 @@
 <?php
 
 use common\models\order\Order;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
 use yii\helpers\ArrayHelper;
@@ -13,10 +14,7 @@ use yii\web\View;
 ModuleAssets::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Order}{Detail}', [
-    'Order' => Yii::t('app', 'Order'),
-    'Detail' => Yii::t('app', 'Detail'),
-]);
+$this->title = I18NUitl::t('app', '{Orders}{Detail}');
 $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
 
 ?>
@@ -24,7 +22,7 @@ $tabs = ArrayHelper::getValue(Yii::$app->request->queryParams, 'tabs', 'base');
     <!--头部信息 / 按钮-->
     <div class="mc-title">
         <span>
-            <?= $this->title . ' > ' . '订单：' . $model->order_sn; ?>
+            <?= $this->title  ?>
         </span>
         <div class="btngroup pull-right">
             <?php 

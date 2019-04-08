@@ -17,7 +17,9 @@ use yii\widgets\LinkPager;
 /* @var $dataProvider ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Watermark');
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Watermark}{List}', [
+    'Watermark' => Yii::t('app', 'Watermark'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="watermark-index">
 
@@ -29,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-//        'filterModel' => $searchModel,
         'layout' => "{items}\n{summary}\n{pager}",
         'summaryOptions' => ['class' => 'hidden'],
         'pager' => [
@@ -76,9 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'dx',
-                'label' => Yii::t('app', '{Level}{Shifting}', [
-                    'Level' => Yii::t('app', 'Level'), 'Shifting' => Yii::t('app', 'Shifting')
-                ]),
+                'label' => Yii::t('app', 'Dx'),
                 'headerOptions' => [
                     'style' => [
                         'width' => '85px',
@@ -87,9 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'dy',
-                'label' => Yii::t('app', '{Vertical}{Shifting}', [
-                    'Vertical' => Yii::t('app', 'Vertical'), 'Shifting' => Yii::t('app', 'Shifting')
-                ]),
+                'label' => Yii::t('app', 'Dy'),
                 'headerOptions' => [
                     'style' => [
                         'width' => '85px',
@@ -98,9 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'refer_pos',
-                'label' => Yii::t('app', '{Watermark}{Position}', [
-                    'Watermark' => Yii::t('app', 'Watermark'), 'Position' => Yii::t('app', 'Position')
-                ]),
+                'label' => Yii::t('app', 'Refer Pos'),
                 'value' => function($model){
                     return Watermark::$referPosMap[$model->refer_pos];
                 },
@@ -112,14 +107,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'is_selected',
-                'label' => Yii::t('app', '{Default}{Selected}', [
-                    'Default' => Yii::t('app', 'Default'), 'Selected' => Yii::t('app', 'Selected')
-                ]),
+                'label' => Yii::t('app', 'Is Selected'),
                 'class' => GridViewChangeSelfColumn::class,
-                'plugOptions' => [
-                    'labels' => ['否', '是'],
-                    'values' => [0, 1],
-                ],
                 'headerOptions' => [
                     'style' => [
                         'width' => '70px',
@@ -128,11 +117,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'is_del',
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t('app', 'Is Del'),
                 'class' => GridViewChangeSelfColumn::class,
                 'plugOptions' => [
-                    'labels' => ['停用', '启用'],
-                    'values' => [1, 0],
                     'url' => Url::to(['enable'], true),
                 ],
                 'headerOptions' => [
@@ -162,14 +149,19 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'buttons' => [
+                    'view' => function ($url, $model){
+                        return Html::a(Yii::t('yii', 'View'), ['view', 'id' => $model->id], [
+                            'id' => 'btn-viewWatermark', 'class' => 'btn btn-default'
+                        ]);
+                    },
                     'updata' => function ($url, $model){
-                        return Html::a(Yii::t('yii', 'Update'), ['update', 'id' => $model->id], [
-                            'id' => 'btn-updateWatermark', 'class' => 'btn btn-default'
+                        return ' ' . Html::a(Yii::t('yii', 'Update'), ['update', 'id' => $model->id], [
+                            'id' => 'btn-updateWatermark', 'class' => 'btn btn-primary'
                         ]);
                     },
                     'delete' => function ($url, $model){
                         return ' ' . Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
-                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
+                            'id' => 'btn-deleteWatermark', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
                                 'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Watermark}", [
@@ -186,7 +178,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
                             
-                'template' => '{updata}{delete}',
+                'template' => '{view}{updata}{delete}',
             ],
         ],
     ]); ?>

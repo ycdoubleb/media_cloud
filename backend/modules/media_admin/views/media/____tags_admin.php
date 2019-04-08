@@ -27,8 +27,8 @@ use yii\web\View;
         <?php endforeach; ?>
         <tr>
             <th class="detail-th">
-                <?= Yii::t('app', '{Media}{Tag}', [
-                    'Media' => Yii::t('app', 'Media'), 'Tag' => Yii::t('app', 'Tag')
+                <?= Yii::t('app', '{Medias}{Tags}', [
+                    'Medias' => Yii::t('app', 'Medias'), 'Tags' => Yii::t('app', 'Tags')
                 ]) ?>
             </th>
             <td class="detail-td"><?= $model->tags ?></td>

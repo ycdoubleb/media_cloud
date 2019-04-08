@@ -1,17 +1,20 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\searchs\ConfigSearch;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\searchs\ConfigSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this View */
+/* @var $searchModel ConfigSearch */
+/* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t(null, '{Config}{Administration}',[
-    'Config' => Yii::t('app', 'Config'),
-    'Administration' => Yii::t('app', 'Administration'),
+$this->title = Yii::t('app', 'Config Admin');
+$this->params['breadcrumbs'][] = Yii::t('app', '{Configs}{List}', [
+    'Configs' => Yii::t('app', 'Configs'), 'List' => Yii::t('app', 'List')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="config-index">
 
@@ -19,9 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t(null, '{Create}{Config}',[
+        <?= Html::a(Yii::t(null, '{Create}{Configs}',[
             'Create' => Yii::t('app', 'Create'),
-            'Config' => Yii::t('app', 'Config'),
+            'Configs' => Yii::t('app', 'Configs'),
         ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
@@ -31,27 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
-            [
-                'attribute' => 'config_name',
-                'label' => Yii::t(null, '{Config}{Name}',[
-                    'Config' => Yii::t('app', 'Config'),
-                    'Name' => Yii::t('app', 'Name'),
-                ])
-            ],
-            [
-                'attribute' => 'config_value',
-                'label' => Yii::t(null, '{Config}{Value}',[
-                    'Config' => Yii::t('app', 'Config'),
-                    'Value' => Yii::t('app', 'Value'),
-                ])
-            ],
-            //'config_name',
-            //'config_value:ntext',
+            'config_name',
+            'config_value:ntext',
             'des:ntext',
-            //'created_at',
-            // 'updated_at',
-
+            
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

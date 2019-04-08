@@ -1,6 +1,7 @@
 <?php
 
 use common\models\searchs\MediaCategorySearch;
+use common\utils\I18NUitl;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\grid\GridView;
@@ -13,16 +14,18 @@ use yii\widgets\LinkPager;
 /* @var $searchModel MediaCategorySearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Category}', [
-    'Media' => Yii::t('app', 'Media'), 'Category' => Yii::t('app', 'Category')
+$this->title = Yii::t('app', '{Medias}{Categorys}', [
+    'Medias' => Yii::t('app', 'Medias'), 'Categorys' => Yii::t('app', 'Categorys')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Categorys}{List}', [
+    'Categorys' => Yii::t('app', 'Categorys'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-category-index">
   
     <p>
-        <?= Html::a(Yii::t('app', '{Create}{Category}', [
-            'Create' => Yii::t('app', 'Create'), 'Category' => Yii::t('app', 'Category')
+        <?= Html::a(Yii::t('app', '{Create}{Categorys}', [
+            'Create' => Yii::t('app', 'Create'), 'Categorys' => Yii::t('app', 'Categorys')
         ]), ['create'], ['id' => 'btn-addCate', 'class' => 'btn btn-success']) ?>
     </p>
 
@@ -46,9 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'attribute' => 'name',
-                'label' => Yii::t('app', '{Media}{Category}{Name}', [
-                    'Media' => Yii::t('app', 'Media'), 'Category' => Yii::t('app', 'Category'), 'Name' => Yii::t('app', 'Name')
-                ]),
+                'label' => I18NUitl::t('app', '{Categorys}{Name}'),
                 'headerOptions' => [
                     'style' => [
                         'width' => '1000px',
@@ -66,12 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'delete' => function ($url, $model){
                         return ' ' . Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
-                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
+                            'id' => 'btn-deleteCate', 'class' => 'btn btn-danger',
                             'data' => [
                                 'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->name}】{Category}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Category' => Yii::t('app', 'Category')
-                                ]),
+                                'confirm' => I18NUitl::t('app', "{Are you sure you want to}{Delete}【{$model->name}】{Categorys}？"),
                                 'method' => 'post',
                             ],
                         ]);

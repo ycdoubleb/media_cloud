@@ -1,15 +1,23 @@
 <?php
 
+use common\models\Crontab;
 use yii\helpers\Html;
+use yii\web\View;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Crontab */
+/* @var $this View */
+/* @var $model Crontab */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Crontabs'), 'url' => ['index']];
+$this->title =  Yii::t('app', "{Crontabs}{Detail}",[
+    'Crontabs' => Yii::t('app', 'Crontabs'), 'Detail' => Yii::t('app', 'Detail'),
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Crontabs}{List}', [
+    'Crontabs' => Yii::t('app', 'Crontabs'), 'List' => Yii::t('app', 'List')
+]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+
+YiiAsset::register($this);
 ?>
 <div class="crontab-view">
 

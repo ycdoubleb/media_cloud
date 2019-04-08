@@ -9,6 +9,7 @@ use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
 
@@ -51,6 +52,7 @@ class AttributeController extends GridViewChangeSelfController
                 'allModels' => $results['data']['attribute'],
                 'key' => 'id',
             ]),
+            'category_id' => ArrayHelper::getValue(\Yii::$app->request->queryParams, 'category_id')
         ]);
     }
 
@@ -85,7 +87,9 @@ class AttributeController extends GridViewChangeSelfController
     {
         $model = new MediaAttribute();
         $model->loadDefaultValues();
-
+        //分库id
+        $model->category_id = ArrayHelper::getValue(\Yii::$app->request->queryParams, 'category_id');
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         }

@@ -47,6 +47,8 @@ class MediaAttributeSearch extends MediaAttribute
         $page = ArrayHelper::getValue($params, 'page', 1);               
         //显示数
         $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        //分库id
+        $this->category_id = ArrayHelper::getValue($params, 'category_id');
         
         // 查询属性
         $query = MediaAttribute::find();

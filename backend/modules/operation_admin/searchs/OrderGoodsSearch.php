@@ -71,7 +71,8 @@ class OrderGoodsSearch extends OrderGoods
     {
         $page = ArrayHelper::getValue($params, 'page', 1);                              //分页
         $limit = ArrayHelper::getValue($params, 'limit', 10);                           //显示数
-        
+        // 分库id
+        $category_id = ArrayHelper::getValue($params, 'category_id');   
         // 查询数据
         $query = self::find()->from(['Goods' => self::tableName()]);
         
@@ -83,13 +84,12 @@ class OrderGoodsSearch extends OrderGoods
         // 关联用户表
         $query->leftJoin(['AdminUser' => AdminUser::tableName()], 'AdminUser.id = Media.created_by');
         $query->leftJoin(['User' => User::tableName()], 'User.id = Goods.created_by');
-        // 复制对象
-        $queryCopy = clone $query;
         
         // 必要条件
         $query->andFilterWhere([
             'Media.id' => $this->meida_sn,
             'Media.created_by' => $this->uploaded_by,
+            'Media.category_id' => $category_id,
             'Goods.created_by' => $this->created_by,
             'Goods.is_del' => 0,
         ]);
@@ -99,11 +99,11 @@ class OrderGoodsSearch extends OrderGoods
         // 模糊查询
         $query->andFilterWhere(['like', 'Media.name', $this->meida_name]);
         
-        // 按商品id分组
-        $query->groupBy(['Goods.id']);
-        
-        // 计算总数
-        $totalCount = $query->count('*');
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Goods.id) AS totalCount'])
+            ->asArray()->one();
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
@@ -122,7 +122,7 @@ class OrderGoodsSearch extends OrderGoods
         
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'uploadedBys' => $uploadedByResult,
                 'createdBys' => $createdByResult,

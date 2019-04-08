@@ -2,6 +2,7 @@
 
 use common\models\order\Order;
 use common\models\order\searchs\OrderSearch;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
@@ -16,7 +17,7 @@ use yii\web\View;
 
 ModuleAssets::register($this);
 
-$this->title = Yii::t('app', 'Order');
+$this->title = Yii::t('app', 'Orders');
 ?>
 <div class="order-index main">
     <div class="mc-tabs">
@@ -53,16 +54,14 @@ $this->title = Yii::t('app', 'Order');
                 'columns' => [
                     [
                         'attribute' => 'order_sn',
-                        'label' => Yii::t('app', 'Order Sn'),
+                        'label' => Yii::t('app', 'Orders Sn'),
                         'headerOptions' => [
                             'style' => 'width: 130px',
                         ],
                     ],
                     [
                         'attribute' => 'order_name',
-                        'label' => Yii::t('app', '{Order}{Name}', [
-                            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Orders}{Name}'),
                         'headerOptions' => [
                             'style' => 'width: 190px',
                         ],
@@ -73,9 +72,7 @@ $this->title = Yii::t('app', 'Order');
                     ],
                     [
                         'attribute' => 'order_status',
-                        'label' => Yii::t('app', '{Order}{Status}', [
-                            'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Orders}{Status}'),
                         'headerOptions' => [
                             'style' => 'width: 70px',
                         ],
@@ -85,9 +82,7 @@ $this->title = Yii::t('app', 'Order');
                     ],
                     [
                         'attribute' => 'order_amount',
-                        'label' => Yii::t('app', '{Order}{Amount}', [
-                            'Order' => Yii::t('app', 'Order'), 'Amount' => Yii::t('app', 'Amount')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Orders}{Amount}'),
                         'headerOptions' => [
                             'style' => 'width: 80px',
                         ],
@@ -97,16 +92,14 @@ $this->title = Yii::t('app', 'Order');
                     ],
                     [
                         'attribute' => 'goods_num',
-                        'label' => Yii::t('app', '{Media}{Total}', [
-                            'Media' => Yii::t('app', 'Media'), 'Total' => Yii::t('app', 'Total')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Medias}{Num}'),
                         'headerOptions' => [
                             'style' => 'width: 70px',
                         ],
                     ],
                     [
                         'attribute' => 'created_at',
-                        'label' => Yii::t('app', 'Order Time'),
+                        'label' => Yii::t('app', 'Place Order Time'),
                         'headerOptions' => [
                             'style' => 'width: 80px;',
                         ],
@@ -117,7 +110,6 @@ $this->title = Yii::t('app', 'Order');
                     ],
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Operation'),
                         'template' => '{view}{place-order}{confirm}{delete}',
                         'headerOptions' => ['style' => 'width: 275px'],
                         'contentOptions' => ['style' => 'text-align: left'],

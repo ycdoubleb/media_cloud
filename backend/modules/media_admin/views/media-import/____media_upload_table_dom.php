@@ -16,7 +16,11 @@ $media_upload_tr_dom = str_replace("\n", ' ', $this->render('____media_upload_tr
 
 <div class="media-upload-table">
   
-    <span class="title">素材列表：</span>
+    <span class="title">
+        <?= Yii::t('app', '{Medias}{List}：', [
+            'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
+        ]) ?>
+    </span>
     
     <!--导入的素材列表-->
     <table id="mediaUploadTable" class="table table-striped table-bordered">

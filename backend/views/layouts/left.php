@@ -1,8 +1,10 @@
 <?php
 
 use common\models\AdminUserr;
+use common\models\Config;
 use common\modules\rbac\components\Helper;
 use common\widgets\Menu;
+use yii\helpers\ArrayHelper;
 
 /* @var $user AdminUserr */
 ?>
@@ -35,6 +37,13 @@ use common\widgets\Menu;
         </form>
         <!-- /.search form -->
         <?php 
+            $params = Yii::$app->request->queryParams;      // 当前参数
+            if(($config = Config::findOne(['config_name' => 'category_id'])) !== null){
+                $config_category_id = $config->config_value;
+            }else{
+                $config_category_id = 1;
+            }
+            $category_id = ArrayHelper::getValue($params, 'category_id', $config_category_id);
             $menuItems = [['label' => 'Menu Yii2', 'options' => ['class' => 'header']]];
             if(Yii::$app->user->isGuest){
                 $menuItems []= ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest];
@@ -49,7 +58,7 @@ use common\widgets\Menu;
                             ['label' => '配置管理', 'icon' => 'circle-o', 'url' => ['/system_admin/config/index'],],
                             ['label' => '日常任务', 'icon' => 'circle-o', 'url' => ['/system_admin/crontab/index'],],
                             ['label' => '数据库备份', 'icon' => 'database', 'url' => ['/system_admin/db-backup/index']],
-                            ['label' => 'redis缓存管理', 'icon' => 'circle-o', 'url' => ['/rediscache_admin/acl/index']],
+                            ['label' => 'Redis缓存管理', 'icon' => 'circle-o', 'url' => ['/rediscache_admin/acl/index']],
                             ['label' => 'Banner管理', 'icon' => 'circle-o', 'url' => ['/system_admin/banner/index']],
                             ['label' => '上传文件管理', 'icon' => 'circle-o', 'url' => ['/system_admin/uploadfile/index']]
                         ],
@@ -72,10 +81,10 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '上传素材', 'icon' => 'circle-o', 'url' => ['/media_admin/media/create']],
-                            ['label' => '素材列表', 'icon' => 'circle-o', 'url' => ['/media_admin/media/index']],
-                            ['label' => '素材审核', 'icon' => 'circle-o', 'url' => ['/media_admin/approve/index']],
-                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => ['/media_admin/recycle/index']],
+                            ['label' => '上传素材', 'icon' => 'circle-o', 'url' => array_merge(['/media_admin/media/create'], ['category_id' => $category_id])],
+                            ['label' => '素材列表', 'icon' => 'circle-o', 'url' => array_merge(['/media_admin/media/index'], ['category_id' => $category_id])],
+                            ['label' => '素材审核', 'icon' => 'circle-o', 'url' => array_merge(['/media_admin/approve/index'], ['category_id' => $category_id])],
+                            ['label' => '回收站', 'icon' => 'circle-o', 'url' => array_merge(['/media_admin/recycle/index'], ['category_id' => $category_id])],
                         ],
                     ],
                     [
@@ -83,11 +92,11 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
-                            ['label' => '素材分类配置', 'icon' => 'circle-o', 'url' => ['/media_config/category/index']],
+                            ['label' => '素材类库配置', 'icon' => 'circle-o', 'url' => ['/media_config/category/index']],
                             ['label' => '素材类型配置', 'icon' => 'circle-o', 'url' => ['/media_config/type/index']],
-                            ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => ['/media_config/dir/index']],
+                            ['label' => '存储目录配置', 'icon' => 'circle-o', 'url' => array_merge(['/media_config/dir/index'], ['category_id' => $category_id])],
                             ['label' => '文件后缀配置', 'icon' => 'circle-o', 'url' => ['/media_config/type-detail/index']],
-                            ['label' => '素材属性配置', 'icon' => 'circle-o', 'url' => ['/media_config/attribute/index']],
+                            ['label' => '素材属性配置', 'icon' => 'circle-o', 'url' => array_merge(['/media_config/attribute/index'], ['category_id' => $category_id])],
                             ['label' => '素材水印配置', 'icon' => 'circle-o', 'url' => ['/media_config/watermark/index']],
                         ],
                     ],
@@ -96,9 +105,10 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
+                            
                             ['label' => '订单列表', 'icon' => 'circle-o', 'url' => ['/operation_admin/order/index']],
                             ['label' => '订单审核', 'icon' => 'circle-o', 'url' => ['/operation_admin/approve/index']],
-                            ['label' => '素材运营', 'icon' => 'circle-o', 'url' => ['/operation_admin/goods/index']],
+                            ['label' => '素材运营', 'icon' => 'circle-o', 'url' => array_merge(['/operation_admin/goods/index'], ['category_id' => $category_id])],
                             ['label' => '访问路径', 'icon' => 'circle-o', 'url' => ['/operation_admin/acl/index']],
                             ['label' => '前台用户', 'icon' => 'circle-o', 'url' => ['/operation_admin/user/index']],
                         ],
@@ -108,6 +118,7 @@ use common\widgets\Menu;
                         'icon' => 'bars',
                         'url' => '#',
                         'items' => [
+                            
                             ['label' => '总统计', 'icon' => 'circle-o', 'url' => ['/statistics/all-statistics/index']],
                             ['label' => '排行统计', 'icon' => 'circle-o', 'url' => ['/statistics/ranking-statistics/index']],
                             ['label' => '单独统计', 'icon' => 'circle-o', 'url' => ['/statistics/single-statistics/index']],

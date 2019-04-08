@@ -2,6 +2,7 @@
 
 use common\models\media\MediaIssue;
 use common\models\vk\CustomerAdmin;
+use common\utils\I18NUitl;
 use common\widgets\ueditor\UEDitor;
 use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
@@ -74,14 +75,9 @@ $this->title = Yii::t('app', '{Feedback}{Problem}',[
                                 ]
                             ]
                         ],
-                    ])->label(Yii::t('app', '{Problem}{Type}：',[
-                        'Problem' => Yii::t('app', 'Problem'), 'Type' => Yii::t('app', 'Type')
-                    ])) ?>
+                    ])->label(I18NUitl::t('app', '{Problem}{Type}：')) ?>
                     <!--问题描述-->
-                    <?= $form->field($model, 'content')->widget(UEDitor::class)->label(Yii::t('app', '{Problem}{Des}：',[
-                            'Problem' => Yii::t('app', 'Problem'),
-                            'Des' => Yii::t('app', 'Des')
-                        ])) ?>
+                    <?= $form->field($model, 'content')->widget(UEDitor::class)->label(I18NUitl::t('app', '{Problem}{Des}：')) ?>
 
                     <?php ActiveForm::end(); ?>
                 </div>

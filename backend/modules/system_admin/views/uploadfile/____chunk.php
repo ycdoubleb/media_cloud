@@ -9,9 +9,9 @@ use yii\helpers\Url;
 <div class="file-index">
     
     <div class="pull-right">
-        <?php
-        echo Html::a('删除分片', 'javascript:;', ['id' => 'delete',
-            'data-url' => Url::to(['uploadfile/del-chunk']),
+        <?= Html::a(Yii::t('app', '{Delete}{Chip}', [
+            'Delete' => Yii::t('app', 'Delete'), 'Chip' => Yii::t('app', 'Chip')
+        ]), ['uploadfile/del-chunk'], ['id' => 'delete',
             'class' => 'btn btn-highlight btn-flat-lg', 'title' => '删除分片',
         ])?>
     </div>
@@ -33,7 +33,7 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'chunk_id',
-                    'label' => Yii::t('app', 'Chunk Id'),
+                    'label' => Yii::t('app', 'Chunk ID'),
                     'headerOptions' => [
                         'style' => 'width: 220px'
                     ],
@@ -51,7 +51,7 @@ use yii\helpers\Url;
                 ],
                 [
                     'attribute' => 'chunk_index',
-                    'label' => Yii::t('app', 'Chunk Index'),
+                    'label' => Yii::t('app', 'Index'),
                     'headerOptions' => [
                         'style' => 'width: 80px'
                     ],

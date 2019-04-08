@@ -1,6 +1,7 @@
 <?php
 
 use backend\modules\statistics\assets\StatisticsModuleAsset;
+use common\utils\I18NUitl;
 use common\widgets\charts\ChartAsset;
 use kartik\widgets\Select2;
 use yii\helpers\Html;
@@ -21,13 +22,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="mc-tabs">
             <ul class="list-unstyled">
                 <li id="operator">
-                    <?= Html::a('运营人', array_merge(['index'], ['tabs' => 'operator'])) ?>
+                    <?= Html::a(I18NUitl::t('app', 'Operator'), array_merge(['index'], array_merge($filters, ['tabs' => 'operator']))) ?>
                 </li>
                 <li id="purchaser">
-                    <?= Html::a('购买人', array_merge(['index'], ['tabs' => 'purchaser'])) ?>
+                    <?= Html::a(I18NUitl::t('app', 'Purchaser'), array_merge(['index'], array_merge($filters, ['tabs' => 'purchaser']))) ?>
                 </li>
                 <li id="media">
-                    <?= Html::a('素材', array_merge(['index'], ['tabs' => 'media'])) ?>
+                    <?= Html::a(I18NUitl::t('app', 'Medias'), array_merge(['index'], array_merge($filters, ['tabs' => 'media']))) ?>
                 </li>
             </ul>
         </div>
@@ -36,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <form id="order-form" class="form-horizontal">
                     <!--时间段搜索-->
                     <div class="form-group field-order-confirm_at required">
-                        <label class="control-label">时间:</label>
+                        <label class="control-label"><?= I18NUitl::t('app', 'Time') ?>：</label>
                         <div class="control-input years-input">
                             <?= Select2::widget([
                                 'name' => 'year',
@@ -60,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="form-group field-media required">
                         <?php if($tabs != 'media'):?>
                             <!--姓名搜索-->
-                            <label class="control-label">姓名:</label>
+                            <label class="control-label"><?= I18NUitl::t('app', 'Full Name') ?>：</label>
                             <div class="control-input select-nickname">
                                 <?= Select2::widget([
                                     'name' => 'nickname',
@@ -76,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         <?php else:?>
                             <!--素材编号搜索-->
-                            <label class="control-label">编号:</label>
+                            <label class="control-label"><?= I18NUitl::t('app', 'Number') ?>：</label>
                             <div class="control-input" style="vertical-align: bottom">
                                 <?= Html::input('text', 'media_id', $mediaId, [
                                     'class' => 'form-control mediaid-value'
@@ -95,9 +96,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="panel-content">
                 <?php
                     switch ($tabs){
-                        case 'operator': echo $this->render('____operator', ['operator' => $operator]);  break;
-                        case 'purchaser': echo $this->render('____purchaser', ['purchaser' => $purchaser]);  break;
-                        case 'media': echo $this->render('____media', ['media' => $media]);  break;
+                        case 'operator': 
+                            echo $this->render('____operator', ['operator' => $operator]);  
+                            break;
+                        case 'purchaser': 
+                            echo $this->render('____purchaser', ['purchaser' => $purchaser]);  
+                            break;
+                        case 'media': 
+                            echo $this->render('____media', ['media' => $media]);  
+                            break;
                     }
                 ?>
             </div>

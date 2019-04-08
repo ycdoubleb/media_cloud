@@ -10,7 +10,11 @@ use yii\helpers\Html;
             
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">提交结果</h4>
+                <h4 class="modal-title" id="myModalLabel">
+                    <?= Yii::t('app', '{Submit}{Result}', [
+                        'Submit' => Yii::t('app', 'Submit'), 'Result' => Yii::t('app', 'Result')
+                    ]) ?>
+                </h4>
             </div>
             
             <div class="modal-body result-info" id="myModalBody">
@@ -26,12 +30,24 @@ use yii\helpers\Html;
                 </p>
                 
                 <!--文本-->
-                <p class="text-default" style="font-size: 13px;">以下为失败列表：</p>
+                <p class="text-default" style="font-size: 13px;"><?= Yii::t('app', 'The following is a failure list:') ?></p>
                 
                 <!--失败列表-->
                 <table class="table table-striped table-bordered result-table">
                     <thead>
-                        <tr><th style="width: 30px;">#</th><th style="width: 210px;">文件名</th><th style="width: 300px;">失败原因</th></tr>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th style="width: 210px;">
+                                <?= Yii::t('app', '{File}{Name}', [
+                                    'File' => Yii::t('app', 'File'), 'Name' => Yii::t('app', 'Name')
+                                ]) ?>
+                            </th>
+                            <th style="width: 300px;">
+                                <?= Yii::t('app', '{Fail}{Cause}', [
+                                    'Fail' => Yii::t('app', 'Fail'), 'Cause' => Yii::t('app', 'Cause')
+                                ]) ?>
+                            </th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>

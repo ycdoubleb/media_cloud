@@ -59,7 +59,9 @@ class MediaApproveSearch extends MediaApprove
         //分页
         $page = ArrayHelper::getValue($params, 'page', 1);      
         //显示数
-        $limit = ArrayHelper::getValue($params, 'limit', 10);                           
+        $limit = ArrayHelper::getValue($params, 'limit', 10);       
+        // 分库id
+        $category_id = ArrayHelper::getValue($params, 'category_id', 1);
         
         //所有用户
         $userResults = AdminUser::find()->select(['id', 'nickname'])->all();
@@ -67,19 +69,13 @@ class MediaApproveSearch extends MediaApprove
         // 查询审核列表
         $query = self::find()->from(['Approve' => MediaApprove::tableName()]);
         
-//        ->select(['Approve.*', 'COUNT(Approve.id) AS totalCount']);
-        
         // 关联媒体表
-        if(!empty($this->media_id) || !empty($this->media_name)){
-            $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id');
-            // 按媒体id查询
-            $query->andFilterWhere(['Approve.media_id' => $this->media_id]);
-            // 模糊查询
-            $query->andFilterWhere(['like', 'Media.name', $this->media_name]);
-        }
-        
+        $query->leftJoin(['Media' => Media::tableName()], 'Media.id = Approve.media_id');
+                
         // 必要要条件
         $query->andFilterWhere([
+            'Media.category_id' => $category_id,
+            'Approve.media_id' => $this->media_id,
             'Approve.type' => $this->type,
             'Approve.status' => $this->status,
             'Approve.result' => $this->result,
@@ -88,6 +84,9 @@ class MediaApproveSearch extends MediaApprove
         ]);
         $query->andFilterWhere(['!=', 'Approve.status', self::STATUS_CANCELED]);
        
+        // 模糊查询
+        $query->andFilterWhere(['like', 'Media.name', $this->media_name]);
+        
         // 复制对象
         $queryCopy = clone $query;
         // 查询计算总数量

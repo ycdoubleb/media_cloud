@@ -1,25 +1,30 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\searchs\CrontabSearch;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\searchs\CrontabSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this View */
+/* @var $searchModel CrontabSearch */
+/* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Crontabs');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', '{Crontabs}{Task}', [
+    'Crontabs' => Yii::t('app', 'Crontabs'), 'Task' => Yii::t('app', 'Task')
+]);
+$this->params['breadcrumbs'][] = Yii::t('app', '{Crontabs}{List}', [
+    'Crontabs' => Yii::t('app', 'Crontabs'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="crontab-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <p>
 
-        <?=
-        Html::a(Yii::t('app', '{Create} {Crontab}', ['Create' => Yii::t('app', 'Create'), 'Crontab' => Yii::t('app', 'Crontab'),])
-                , ['create'], ['class' => 'btn btn-success'])
-        ?>
+        <?= Html::a(Yii::t('app', '{Create}{Crontabs}', [
+            'Create' => Yii::t('app', 'Create'), 'Crontabs' => Yii::t('app', 'Crontabs')
+        ]), ['create'], ['class' => 'btn btn-success']) ?>
+        
     </p>
 
     <?=

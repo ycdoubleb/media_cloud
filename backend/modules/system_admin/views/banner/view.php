@@ -13,14 +13,11 @@ use yii\widgets\DetailView;
 YiiAsset::register($this);
 SystemAssets::register($this);
 
-$this->title = Yii::t('app', '{Propaganda}{Page}{Detail}',[
-    'Propaganda' => Yii::t('app', 'Propaganda'),
-    'Page' => Yii::t('app', 'Page'),
+$this->title = Yii::t('app', 'Banner{Detail}',[
     'Detail' => Yii::t('app', 'Detail'),
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Propaganda}{List}',[
-    'Propaganda' => Yii::t('app', 'Propaganda'),
-    'List' => Yii::t('app', 'List'),
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Banner{List}', [
+    'List' => Yii::t('app', 'List')
 ]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 

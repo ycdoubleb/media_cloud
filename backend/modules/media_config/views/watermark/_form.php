@@ -35,7 +35,10 @@ $path = !$model->isNewRecord ? $model->url : '';
             'enctype' => 'multipart/form-data',
         ],
         'fieldConfig' => [  
-            'template' => "{label}\n<div class=\"col-lg-7 col-md-7\">{input}</div>\n<div class=\"col-lg-7 col-md-7\">{error}</div>",  
+            'template' => "{label}\n<div class=\"col-lg-8 col-md-8\">"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{input}</div>\n"
+                . "<div class=\"col-lg-12 col-md-12 clean-padding\">{error}</div>"
+            . "</div>",
             'labelOptions' => [
                 'class' => 'col-lg-1 col-md-1 control-label form-label',
             ],  
@@ -46,7 +49,7 @@ $path = !$model->isNewRecord ? $model->url : '';
 
     <!--水印名称-->
     <?= $form->field($model, 'name')->textInput([
-        'placeholder' => '请输入水印名称', 'maxlength' => true
+        'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => true
     ])->label(Yii::t('app', '{Watermark}{Name}', [
         'Watermark' => Yii::t('app', 'Watermark'), 'Name' => Yii::t('app', 'Name')
     ])) ?>
@@ -63,9 +66,7 @@ $path = !$model->isNewRecord ? $model->url : '';
             ],
             'onchange' => 'changeRefer_pos()'
         ],
-    ])->label(Yii::t('app', '{Watermark}{Position}', [
-        'Watermark' => Yii::t('app', 'Watermark'), 'Position' => Yii::t('app', 'Position')
-    ])) ?>
+    ])->label(Yii::t('app', 'Refer Pos')) ?>
 
     <!--宽-->
     <?php 
@@ -113,9 +114,7 @@ $path = !$model->isNewRecord ? $model->url : '';
             'type' => 'number', 'value' => $model->dx, 
             'min' => $shiftSelected ? 8 : 0, 'max' => $shiftSelected ? 4096 : 1, 
             'step' => $shiftSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
-        ])->label(Yii::t('app', '{Level}{Shifting}', [
-            'Level' => Yii::t('app', 'Level'), 'Shifting' => Yii::t('app', 'Shifting')
-        ]));
+        ])->label(Yii::t('app', 'Dx'));
     ?>
 
     <!--垂直偏移-->
@@ -132,9 +131,7 @@ $path = !$model->isNewRecord ? $model->url : '';
             'type' => 'number', 'value' => $model->dy, 
             'min' => $shiftSelected ? 8 : 0, 'max' => $shiftSelected ? 4096 : 1, 
             'step' => $shiftSelected ? 1 : 0.01, 'onchange' => 'changeRefer_pos()',
-        ])->label(Yii::t('app', '{Vertical}{Shifting}', [
-            'Vertical' => Yii::t('app', 'Vertical'), 'Shifting' => Yii::t('app', 'Shifting')
-        ])); 
+        ])->label(Yii::t('app', 'Dy')); 
     ?>
 
     <!--水印文件-->
@@ -159,7 +156,9 @@ $path = !$model->isNewRecord ? $model->url : '';
     <?= Html::activeHiddenInput($model, 'oss_key', ['value' => $model->isNewRecord ? '' : $model->oss_key]) ?>
     
     <!--是否选中-->
-    <?= $form->field($model, 'is_selected')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Selected')) ?>
+    <?php
+//        echo $form->field($model, 'is_selected')->checkbox(['value' => 1, 'style' => 'margin-top: 14px'], false)->label(Yii::t('app', 'Is Selected')) 
+    ?>
 
     <!--预览-->
     <div class="form-group">

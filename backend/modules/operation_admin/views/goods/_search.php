@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
             'id' => 'order-goods-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -31,21 +31,23 @@ use yii\widgets\ActiveForm;
     
         <!--素材名称-->
         <?= $form->field($model, 'meida_name')->textInput([
-            'placeholder' => '请输入素材名称', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{Media}{Name}：', [
-            'Media' => Yii::t('app', 'Media'), 'Name' => Yii::t('app', 'Name')
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', '{Medias}{Name}：', [
+            'Medias' => Yii::t('app', 'Medias'), 'Name' => Yii::t('app', 'Name')
         ])) ?>
         
         <!--素材编-->
         <?= $form->field($model, 'meida_sn')->textInput([
-            'placeholder' => '请输入素材编号', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{Media}{Number}：', [
-            'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', '{Medias}{Number}：', [
+            'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
         ])) ?>
        
         <!--其他选项-->
         <div class="form-group field-mediasearch-other_options">
-            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">其他选项：</label>
+            <label class="col-lg-1 col-md-1 control-label form-label" for="mediasearch-other_options">
+                <?= Yii::t('app', 'Other Option') ?>
+            </label>
             <div class="col-lg-6 col-md-6">
                 
                 <!--上传者-->

@@ -17,17 +17,19 @@ use yii\widgets\LinkPager;
 /* @var $searchModel MediaAttributeSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Attribute}', [
-    'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute')
+$this->title = Yii::t('app', '{Medias}{Attribute}', [
+    'Medias' => Yii::t('app', 'Medias'), 'Attribute' => Yii::t('app', 'Attribute')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Attribute}{List}', [
+   'Attribute' => Yii::t('app', 'Attribute'),  'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="media-attribute-index">
 
     <p>
         <?= Html::a(Yii::t('app', '{Create}{Attribute}', [
             'Create' => Yii::t('app', 'Create'), 'Attribute' => Yii::t('app', 'Attribute')
-        ]), ['create'], ['id' => 'btn-addAttr', 'class' => 'btn btn-success']) ?>
+        ]), ['create', 'category_id' => $category_id], ['id' => 'btn-addAttr', 'class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -60,16 +62,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             [
-                'label' => Yii::t('app', '{The}{Category}', [
-                    'The' => Yii::t('app', 'The'), 'Category' => Yii::t('app', 'Category')
-                ]),
+                'label' => Yii::t('app', 'Category For Belong'),
                 'format' => 'raw',
                 'filter' => Select2::widget([
                     'model' => $searchModel,
                     'attribute' => 'category_id',
                     'data' => MediaCategory::getMediaCategory(),
-                    'hideSearch' => false,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'hideSearch' => true,
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
@@ -79,31 +79,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'headerOptions' => [
                     'style' => [
-                        'width' => '168px',
+                        'width' => '120px',
                     ],
                 ],
             ],
             [
                 'attribute' => 'is_del',
-                'label' => Yii::t('app', 'Is Use'),
+                'label' => Yii::t('app', 'Is Del'),
                 'class' => GridViewChangeSelfColumn::class,
-                'plugOptions' => [
-                    'labels' => ['禁用', '启用'],
-                    'values' => [1, 0],
-                ],
                 'filter' => Select2::widget([
                     'model' => $searchModel,
                     'attribute' => 'is_del',
-                    'data' => ['启用', '禁用'],
+                    'data' => ['否', '是'],
                     'hideSearch' => true,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
                 ]),
                 'headerOptions' => [
                     'style' => [
-                        'width' => '120px',
+                        'width' => '115px',
                     ],
                 ],
             ],
@@ -116,8 +112,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'model' => $searchModel,
                     'attribute' => 'input_type',
                     'data' => MediaAttribute::$inputTypeMap,
-                    'hideSearch' => false,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'hideSearch' => true,
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
@@ -139,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]),
                 'headerOptions' => [
                     'style' => [
-                        'width' => '96px',
+                        'width' => '70px',
                     ],
                 ],
             ],     
@@ -151,14 +147,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'is_required',
                     'data' => ['是', '否'],
                     'hideSearch' => true,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
                 ]),
                 'headerOptions' => [
                     'style' => [
-                        'width' => '86px',
+                        'width' => '115px',
                     ],
                 ],
             ],
@@ -171,14 +167,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'index_type',
                     'data' => ['是', '否'],
                     'hideSearch' => true,
-                    'options' => ['placeholder' => Yii::t('app', 'All')],
+                    'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
                 ]),
                 'headerOptions' => [
                     'style' => [
-                        'width' => '86px',
+                        'width' => '115px',
                     ],
                 ],
             ],

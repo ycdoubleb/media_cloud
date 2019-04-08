@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use common\models\AdminUser;
+use common\models\Config;
 use common\models\LoginAdminForm;
 use Yii;
 use yii\filters\AccessControl;
@@ -61,7 +62,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->redirect(['statistics/all-statistics/index']);
+        return $this->redirect(['statistics/all-statistics/index', 'category_id' => 1]);
     }
 
     /**

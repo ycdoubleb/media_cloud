@@ -8,8 +8,8 @@ use yii\widgets\ActiveForm;
 /* @var $this View */
 /* @var $model Media */
 
-$this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
-    'Anew' => Yii::t('app', 'Anew'), 'Media' => Yii::t('app', 'Media'),
+$this->title = Yii::t('app', '{Anew}{Upload}{Medias}{File}', [
+    'Anew' => Yii::t('app', 'Anew'), 'Medias' => Yii::t('app', 'Medias'),
     'Upload' => Yii::t('app', 'Upload'), 'File' => Yii::t('app', 'File')
 ]);
 
@@ -64,8 +64,7 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     var url = "anew-upload?id=<?= $model->id ?>";
     //批量上传控制器
     var mediaBatchUpload;
-    //是否已上传完成所有文件
-    window.isUploadFinished = false;
+    
     /**
      * html 加载完成后初始化所有组件
      * @returns {void}
@@ -93,7 +92,9 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
      * @returns {Array|uploaderMedias}
      */
     function uploadComplete(data){
-        mediaBatchUpload.addMediaData(data);
+        if(!!data){
+            mediaBatchUpload.addMediaData(data);
+        }
     }
     
     /**
@@ -102,7 +103,26 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
      * @returns {undefined}
      */
     function fileDequeued(data){
-        mediaBatchUpload.delMediaData(data.dbFile);
+        if(!!data.dbFile){
+            if(mediaBatchUpload.completed_num > 0){
+                mediaBatchUpload.completed_num -= 1;
+            }
+            mediaBatchUpload.delMediaData(data.dbFile);
+        }
+    }
+    
+    /**
+     * 是否已上传完成所有文件
+     * @returns {Boolean}
+     */
+    function isFileUploadFinished(){
+        var fileSummary = $('#uploader-container').data('uploader').getFileSummary();
+        // 如果失败数、上传中数量、等待上传数量大于0则表示素材文件列表存在未完成上传文件，显示提示
+        if(fileSummary.failed > 0 || fileSummary.progress > 0 || fileSummary.queue > 0){
+            return false;
+        }else{
+            return true;
+        }
     }
     
     /************************************************************************************
@@ -113,9 +133,10 @@ $this->title = Yii::t('app', '{Anew}{Upload}{Media}{File}', [
     function initSubmit(){
         // 提交上传
         $("#submitsave").click(function(){
-            validateWebuploaderValue(mediaBatchUpload.medias.length);
-            if($('div.has-error').length > 0 || !window.isUploadFinished) return;
+            validateWebuploaderValue($('#euploader-list tbody').find('tr').length, isFileUploadFinished());
+            if($('div.has-error').length > 0) return;
             mediaBatchUpload.submit();
+            window.location.reload();
         });
     }
     

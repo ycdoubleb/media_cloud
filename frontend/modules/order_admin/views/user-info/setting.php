@@ -1,7 +1,7 @@
 <?php
 
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -11,10 +11,7 @@ use yii\web\View;
  * and open the template in the editor.
  */
 
-$this->title = Yii::t('app', '{Personal}{Set}', [
-    'Personal' => Yii::t('app', 'Personal'),
-    'Set' => Yii::t('app', 'Set'),
-]);
+$this->title = I18NUitl::t('app', '{Personal}{Set}');
 
 ModuleAssets::register($this);
 

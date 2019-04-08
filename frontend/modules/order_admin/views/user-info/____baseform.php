@@ -26,9 +26,13 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
     
-    <?= $form->field($userModel, 'username')->textInput(['maxlength' => true, 'placeholder' => '账号', 'disabled' => true]) ?>
-    
-    <?= $form->field($userModel, 'nickname')->textInput(['maxlength' => true, 'placeholder' => '真实名称', 'disabled' => true]) ?>
+    <?= $form->field($userModel, 'username')->textInput([
+        'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => 32
+    ])->label(Yii::t('app', 'User Account Number')); ?>
+
+    <?= $form->field($userModel, 'nickname')->textInput([
+        'placeholder' => Yii::t('app', 'Input Placeholder'), 'maxlength' => 32
+    ])->label(Yii::t('app', 'Real Name')); ?>
                 
     <?= $form->field($userModel, 'avatar')->widget(ImagePicker::class); ?>
     

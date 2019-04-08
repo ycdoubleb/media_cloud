@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
         <div class="clo-lg-6 col-md-6 clear-padding">
             <!--banner名称-->
             <?= $form->field($model, 'title')->textInput([
-                'placeholder' => '请输Banner名称', 'onchange' => 'submitForm()'
+                'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
             ])->label(Yii::t('app', 'Name') . '：') ?>
             
             <!--创建人-->

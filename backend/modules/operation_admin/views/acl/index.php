@@ -17,15 +17,18 @@ use yii\widgets\LinkPager;
 
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', '{Visit}{Path}', [
-    'Visit' => Yii::t('app', 'Visit'), 'Path' => Yii::t('app', 'Path')
+$this->title = Yii::t('app', '{Visits}{Path}', [
+    'Visits' => Yii::t('app', 'Visits'), 'Path' => Yii::t('app', 'Path')
 ]);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = Yii::t('app', '{Visits}{List}', [
+    'Visits' => Yii::t('app', 'Visits'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="acl-index">
 
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
         'userMap' => $userMap
     ]) ?>
     
@@ -37,8 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a(Yii::t('app', 'Export'), ['export'], [
                     'id' => 'btn-export', 'class' => 'btn btn-primary btn-flat'
                 ]) ?>
-                <?= ' ' . Html::a(Yii::t('app', 'Refresh Cache'), ['refresh-cach'], [
-                    'id' => 'btn-refreshCach', 'class' => 'btn btn-primary btn-flat'
+                <?= ' ' . Html::a(Yii::t('app', 'Refurbish Cache'), ['refurbish-cach'], [
+                    'id' => 'btn-refurbishCach', 'class' => 'btn btn-primary btn-flat'
                 ]) ?>
                 <?= ' ' . Html::a(Yii::t('app', '{Set}{Status}', [
                     'Set' => Yii::t('app', 'Set'), 'Status' => Yii::t('app', 'Status')
@@ -73,8 +76,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'id',
-                    'label' => Yii::t('app', '{Visit}{ID}', [
-                        'Visit' => Yii::t('app', 'Visit'), 'ID' => Yii::t('app', 'ID')
+                    'label' => Yii::t('app', '{Visits}{ID}', [
+                        'Visits' => Yii::t('app', 'Visits'), 'ID' => Yii::t('app', 'ID')
                     ]),
                     'headerOptions' => [
                         'style' => [
@@ -89,10 +92,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'attribute' => 'name',
-                    'label' => Yii::t('app', '{Visit}{Name}', [
-                        'Visit' => Yii::t('app', 'Visit'), 'Name' => Yii::t('app', 'Name')
-                    ]),
+                    'attribute' => 'sn',
+                    'label' => Yii::t('app', 'Visits Sn'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '180px',
@@ -105,6 +106,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
+//                [
+//                    'attribute' => 'name',
+//                    'label' => Yii::t('app', '{Visits}{Name}', [
+//                        'Visits' => Yii::t('app', 'Visits'), 'Name' => Yii::t('app', 'Name')
+//                    ]),
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '180px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
                 [
                     'label' => Yii::t('app', 'Status'),
                     'format' => 'raw',
@@ -125,7 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'visit_count',
-                    'label' => Yii::t('app', 'Visit Count'),
+                    'label' => Yii::t('app', 'Visits Count'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '80px',
@@ -140,8 +158,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'media_id',
-                    'label' => Yii::t('app', '{Media}{Number}', [
-                        'Media' => Yii::t('app', 'Media'), 'Number' => Yii::t('app', 'Number')
+                    'label' => Yii::t('app', '{Medias}{Number}', [
+                        'Medias' => Yii::t('app', 'Medias'), 'Number' => Yii::t('app', 'Number')
                     ]),
                     'headerOptions' => [
                         'style' => [
@@ -157,7 +175,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'order_sn',
-                    'label' => Yii::t('app', 'Order Sn'),
+                    'label' => Yii::t('app', 'Orders Sn'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '150px',
@@ -170,42 +188,42 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]
                 ],
-                [
-                    'label' => Yii::t('app', '{Order}{Name}', [
-                        'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
-                    ]),
-                    'value' => function($model){
-                        return !empty($model->order_id) ? $model->order->order_name : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '200px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
-                [
-                    'label' => Yii::t('app', 'Purchaser'),
-                    'value' => function($model){
-                        return !empty($model->user_id) ? $model->user->nickname : null;
-                    },
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '70px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
+//                [
+//                    'label' => Yii::t('app', '{Orders}{Name}', [
+//                        'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
+//                    ]),
+//                    'value' => function($model){
+//                        return !empty($model->order_id) ? $model->order->order_name : null;
+//                    },
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '200px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
+//                [
+//                    'label' => Yii::t('app', 'Purchaser'),
+//                    'value' => function($model){
+//                        return !empty($model->user_id) ? $model->user->nickname : null;
+//                    },
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '70px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
                 [
                     'label' => Yii::t('app', '{Create}{Time}', [
                         'Create' => Yii::t('app', 'Create'), 'Time' => Yii::t('app', 'Time')
@@ -229,7 +247,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => '操作',
                     'buttons' => [
                         'preview' => function($url, $model){
                             return Html::a(Yii::t('app', 'Preview'), ['preview', 'id' => $model->id], [
@@ -237,7 +254,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
                         'media' => function($url, $model){
-                            return ' ' . Html::a('查看素材', ['/media_admin/media/view', 'id' => $model->media_id], ['class' => 'btn btn-default']);
+                            return ' ' . Html::a(Yii::t('app', 'View Material'), ['/media_admin/media/view', 'id' => $model->media_id], ['class' => 'btn btn-default']);
                         },
                         'view' => function($url, $model){
                             return ' '. Html::a(Yii::t('app', 'Detail'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
@@ -287,10 +304,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/layouts/modal'); ?>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
 $js = <<<JS
         
     // 导出 & 刷新 & 设置状态
-    $('#btn-export, #btn-refreshCach, #btn-setStatus').click(function(e){
+    $('#btn-export, #btn-refurbishCach, #btn-setStatus').click(function(e){
         e.preventDefault();
         var val = [],
             checkBoxs = $('input[name="selection[]"]'),
@@ -306,7 +324,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要的id");
+            alert("{$msg}");
         }
     });  
     

@@ -92,12 +92,12 @@ class RecycleController extends Controller
                 }
                 
                 $trans->commit();  //提交事务
-                Yii::$app->getSession()->setFlash('success','操作成功！');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
@@ -145,12 +145,12 @@ class RecycleController extends Controller
                 }
                 
                 $trans->commit();  //提交事务
-                Yii::$app->getSession()->setFlash('success','操作成功！');
+                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK);
                 
             } catch (Exception $ex) {
                 $trans ->rollBack(); //回滚事务
-                Yii::$app->getSession()->setFlash('error','操作失败::'.$ex->getMessage());
+                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }

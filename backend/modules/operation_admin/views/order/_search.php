@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
             'id' => 'order-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => ['index'],
+        'action' => array_merge(['index'], $filters),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -34,15 +34,15 @@ use yii\widgets\ActiveForm;
     
         <!--订单名称-->
         <?= $form->field($model, 'order_name')->textInput([
-            'placeholder' => '请输入订单名称', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', '{Order}{Name}', [
-            'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', '{Orders}{Name}', [
+            'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
         ]) . '：') ?>
         
         <!--订单编号-->
         <?= $form->field($model, 'order_sn')->textInput([
-            'placeholder' => '请输入订单编号', 'onchange' => 'submitForm()'
-        ])->label(Yii::t('app', 'Order Sn') . '：') ?>
+            'placeholder' => Yii::t('app', 'Input Placeholder'), 'onchange' => 'submitForm()'
+        ])->label(Yii::t('app', 'Orders Sn') . '：') ?>
                 
         <!--订单状态-->
         <?= $form->field($model, 'order_status')->checkboxList(array_diff(Order::$orderStatusName, [Order::ORDER_STATUS_INVALID => '已作废']), [
@@ -57,8 +57,8 @@ use yii\widgets\ActiveForm;
                     ]
                 ]
             ],
-        ])->label(Yii::t('app', '{Order}{Status}：', [
-            'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
+        ])->label(Yii::t('app', '{Orders}{Status}：', [
+            'Orders' => Yii::t('app', 'Orders'), 'Status' => Yii::t('app', 'Status')
         ])) ?>
         
         <!--购买人-->
@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
         ])->widget(Select22::class, [
             'data' => $userMap,
             'hideSearch' => true,
-            'options' => ['placeholder' => Yii::t('app', 'All')],
+            'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
             'pluginOptions' => ['allowClear' => true],
             'pluginEvents' => ['change' => 'function(){ submitForm()}']
         ])->label(Yii::t('app', 'Purchaser') . '：') ?>

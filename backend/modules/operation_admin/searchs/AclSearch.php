@@ -3,6 +3,7 @@
 namespace backend\modules\operation_admin\searchs;
 
 use common\models\media\Acl;
+use common\models\media\Media;
 use common\models\User;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
@@ -57,8 +58,7 @@ class AclSearch extends Acl
         
         // 关联用户表
         $query->leftJoin(['User' => User::tableName()], 'User.id = Acl.user_id');
-        // 复制对象
-        $queryCopy = clone $query;
+        
       
         // 必要条件
         $query->andFilterWhere([
@@ -71,12 +71,12 @@ class AclSearch extends Acl
         
         // 模糊查询
         $query->andFilterWhere(['like', 'name', $this->name]);
-
-        // 按商品id分组
-        $query->groupBy(['Acl.id']);
         
-        // 计算总数
-        $totalCount = $query->count('*');
+        // 复制对象
+        $queryCopy = clone $query;
+        // 查询计算总数量
+        $totalResults = $queryCopy->select(['COUNT(Acl.id) AS totalCount'])
+            ->asArray()->one();
         
         //显示数量
         $query->offset(($page - 1) * $limit)->limit($limit);
@@ -92,7 +92,7 @@ class AclSearch extends Acl
         
         return [
             'filter' => $params,
-            'total' => $totalCount,
+            'total' => $totalResults['totalCount'],
             'data' => [
                 'users' => $userResults,
                 'acls' => $aclResults,

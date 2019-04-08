@@ -19,13 +19,16 @@ use yii\widgets\LinkPager;
 
 OperationModuleAsset::register($this);
 
-$this->title = Yii::t('app', 'Order');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Orders');
+$this->params['breadcrumbs'][] = Yii::t('app', '{Orders}{List}', [
+    'Orders' => Yii::t('app', 'Orders'), 'List' => Yii::t('app', 'List')
+]);
 ?>
 <div class="order-index">
 
     <?= $this->render('_search', [
         'model' => $searchModel,
+        'filters' => $filters,
         'userMap' => $userMap
     ]) ?>
     
@@ -35,9 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
             
             <div class="pull-right">
                 <?php if(Helper::checkRoute(Url::to(['invalid']))){
-                    echo Html::a(Yii::t('app', '{Invalid}{Order}', [
-                        'Invalid' => Yii::t('app', 'Invalid'), 'Order' => Yii::t('app', 'Order')
-                    ]), ['invalid'], ['id' => 'btn-invalid', 'class' => 'btn btn-danger btn-flat']);
+                    echo Html::a(Yii::t('app', 'Invalid Orders'), ['invalid'], [
+                        'id' => 'btn-invalid', 'class' => 'btn btn-danger btn-flat'
+                    ]);
                 }?>
                 <?= Html::a(Yii::t('app', 'Export'), ['export'], [
                     'id' => 'btn-export', 'class' => 'btn btn-primary btn-flat'
@@ -69,26 +72,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 
-                [
-                    'attribute' => 'order_name',
-                    'label' => Yii::t('app', '{Order}{Name}', [
-                        'Order' => Yii::t('app', 'Order'), 'Name' => Yii::t('app', 'Name')
-                    ]),
-                    'headerOptions' => [
-                        'style' => [
-                            'width' => '200px',
-                            'padding' => '8px 4px'
-                        ]
-                    ],
-                    'contentOptions' => [
-                        'style' => [
-                            'padding' => '8px 4px'
-                        ],
-                    ]
-                ],
+//                [
+//                    'attribute' => 'order_name',
+//                    'label' => Yii::t('app', '{Orders}{Name}', [
+//                        'Orders' => Yii::t('app', 'Orders'), 'Name' => Yii::t('app', 'Name')
+//                    ]),
+//                    'headerOptions' => [
+//                        'style' => [
+//                            'width' => '200px',
+//                            'padding' => '8px 4px'
+//                        ]
+//                    ],
+//                    'contentOptions' => [
+//                        'style' => [
+//                            'padding' => '8px 4px'
+//                        ],
+//                    ]
+//                ],
                 [
                     'attribute' => 'order_sn',
-                    'label' => Yii::t('app', 'Order Sn'),
+                    'label' => Yii::t('app', 'Orders Sn'),
                     'headerOptions' => [
                         'style' => [
                             'width' => '150px',
@@ -102,8 +105,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Order}{Status}', [
-                        'Order' => Yii::t('app', 'Order'), 'Status' => Yii::t('app', 'Status')
+                    'label' => Yii::t('app', '{Orders}{Status}', [
+                        'Orders' => Yii::t('app', 'Orders'), 'Status' => Yii::t('app', 'Status')
                     ]),
                     'value' => function($model){
                         return Order::$orderStatusName[$model->order_status];
@@ -138,9 +141,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Payable}{Amount}', [
-                        'Payable' => Yii::t('app', 'Payable'), 'Amount' => Yii::t('app', 'Amount')
-                    ]),
+                    'label' => Yii::t('app', 'Payable Amount'),
                     'value' => function($model){
                         return Yii::$app->formatter->asCurrency($model->order_amount);
                     },
@@ -174,9 +175,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Payment}{Mode}', [
-                        'Payment' => Yii::t('app', 'Payment'), 'Mode' => Yii::t('app', 'Mode')
-                    ]),
+                    'label' => Yii::t('app', 'Payment Mode'),
                     'value' => function($model){
                         return !empty($model->play_code) ? Order::$playCodeMode[$model->play_code] : null;
                     },
@@ -193,7 +192,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', 'Order Time'),
+                    'label' => Yii::t('app', 'Place Order Time'),
                     'value' => function($model){
                         return $model->created_at > 0 ? date('Y-m-d H:i', $model->created_at) : null;
                     },
@@ -211,9 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
                 [
-                    'label' => Yii::t('app', '{Payment}{Time}', [
-                        'Payment' => Yii::t('app', 'Payment'), 'Time' => Yii::t('app', 'Time')
-                    ]),
+                    'label' => Yii::t('app', 'Payment Time'),
                     'value' => function($model){
                         return $model->play_at > 0 ? date('Y-m-d H:i', $model->play_at) : null;
                     },
@@ -253,7 +250,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => '操作',
                     'buttons' => [
                         'view' => function($url, $model){
                             return Html::a(Yii::t('app', 'View'), ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
@@ -299,6 +295,8 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
+$msg = Yii::t('app', 'Please select at least one.');    // 消息提示
+$delMsg = Yii::t('app', 'Are you sure you want to cancel the selected order?');  // 作废消息提示
 $js = <<<JS
         
     // 导出
@@ -312,7 +310,7 @@ $js = <<<JS
             $(".myModal").html("");
             $('.myModal').modal("show").load(url + "?id=" + val);
         }else{
-            alert("请选择需要导出的订单");
+            alert("{$msg}");
         }
     });
         
@@ -324,11 +322,11 @@ $js = <<<JS
             url = $(this).attr("href");
         
         if(val.length > 0){
-            if(confirm("确定要作废所选的订单？") == true){
+            if(confirm("{$delMsg}") == true){
                 window.location.href = url + "?ids=" + val;
             }
         }else{
-            alert("请选择需要作废的订单");
+            alert("{$msg}");
         }
     });
         

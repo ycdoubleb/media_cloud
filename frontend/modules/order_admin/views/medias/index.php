@@ -4,6 +4,7 @@ use common\components\aliyuncs\Aliyun;
 use common\models\media\Acl;
 use common\models\order\searchs\OrderSearch;
 use common\utils\DateUtil;
+use common\utils\I18NUitl;
 use frontend\modules\order_admin\assets\ModuleAssets;
 use kartik\growl\GrowlAsset;
 use yii\data\ActiveDataProvider;
@@ -19,12 +20,12 @@ use yii\web\View;
 ModuleAssets::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', 'Media');
+$this->title = Yii::t('app', 'Medias');
 
 ?>
 <div class="resources-index main">
     <div class="mc-title">
-        <span><?= Yii::t('app', '{My}{Media}', ['My' => Yii::t('app', 'My'), 'Media' => Yii::t('app', 'Media')])?></span>
+        <span><?= I18NUitl::t('app', '{My}{Medias}')?></span>
     </div>
     <?= $this->render('_search', [
         'searchModel' => $searchModel,
@@ -51,17 +52,14 @@ $this->title = Yii::t('app', 'Media');
                     ],
                     [
                         'attribute' => 'media_id',
-                        'label' => Yii::t('app', 'Media Sn'),
+                        'label' => I18NUitl::t('app', '{Medias}{Number}'),
                         'headerOptions' => [
                             'style' => 'width: 80px',
                         ],
                     ],
                     [
                         'attribute' => 'media_name',
-                        'label' => Yii::t('app', '{Media}{Name}',[
-                            'Media' => Yii::t('app', 'Media'),
-                            'Name' => Yii::t('app', 'Name')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Medias}{Name}'),
                         'format' => 'raw',
                         'value' => function($data){
                             return '<span class="multi-line-clamp" style="-webkit-line-clamp:3">'.$data['media_name'].'</span>';
@@ -69,10 +67,7 @@ $this->title = Yii::t('app', 'Media');
                     ],
                     [
                         'attribute' => 'order_sn',
-                        'label' => Yii::t('app', '{Order Sn}/{Name}',[
-                            'Order Sn' => Yii::t('app', 'Order Sn'),
-                            'Name' => Yii::t('app', 'Name')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Orders Sn}/{Name}'),
                         'headerOptions' => [
                             'style' => [
                                 'width' => '140px',
@@ -92,10 +87,7 @@ $this->title = Yii::t('app', 'Media');
                     ],     
                     [
                         'attribute' => 'price',
-                        'label' => Yii::t('app', '{Media}{Price}',[
-                            'Media' => Yii::t('app', 'Media'),
-                            'Price' => Yii::t('app', 'Price')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Medias}{Price}'),
                         'headerOptions' => [
                             'style' => 'width: 80px',
                         ],
@@ -126,6 +118,7 @@ $this->title = Yii::t('app', 'Media');
                     ],
                     [
                         'attribute' => 'size',
+                        'format' => 'raw',
                         'label' => Yii::t('app', 'Size'),
                         'headerOptions' => [
                             'style' => 'width: 80px',
@@ -136,10 +129,7 @@ $this->title = Yii::t('app', 'Media');
                     ],            
                     [
                         'attribute' => 'created_at',
-                        'label' => Yii::t('app', '{Buy}{Time}',[
-                            'Buy' => Yii::t('app', 'Buy'),
-                            'Time' => Yii::t('app', 'Time')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Buy}{Time}'),
                         'headerOptions' => [
                             'style' => 'width: 80px',
                         ],
@@ -149,9 +139,7 @@ $this->title = Yii::t('app', 'Media');
                         'contentOptions' => ['style' => 'font-size: 13px'],
                     ],
                     [
-                        'label' => Yii::t('app', '{Copy}{Route}', [
-                            'Copy' => Yii::t('app', 'Copy'), 'Route' => Yii::t('app', 'Route')
-                        ]),
+                        'label' => I18NUitl::t('app', '{Copy}{Route}'),
                         'headerOptions' => [
                             'style' => [
                                 'width' => '90px',
@@ -185,7 +173,6 @@ $this->title = Yii::t('app', 'Media');
                     ],
                     [
                         'class' => 'yii\grid\ActionColumn',
-                        'header' => Yii::t('app', 'Operation'),
                         'template' => '{view}',
                         'headerOptions' => ['style' => 'width: 65px'],
                         'buttons' => [

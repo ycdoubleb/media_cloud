@@ -10,12 +10,12 @@ use yii\widgets\DetailView;
 /* @var $this View */
 /* @var $model MediaAttribute */
 
-$this->title =  Yii::t('app', "{Media}{Attribute}：{$model->name}", [
-    'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute')
+$this->title =  Yii::t('app', "{Attribute}{Detail}", [
+    'Attribute' => Yii::t('app', 'Attribute'), 'Detail' => Yii::t('app', 'Detail')
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Media}{Attribute}', [
-    'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute')
-]), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{Attribute}{List}', [
+    'Attribute' => Yii::t('app', 'Attribute'), 'List' => Yii::t('app', 'List') 
+]), 'url' => ['index', 'category_id' => $model->category_id]];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 ?>
@@ -24,11 +24,7 @@ YiiAsset::register($this);
     <!--基本信息-->
     <div class="panel pull-left">
         
-        <div class="title">
-            <?= Yii::t('app', '{Basic}{Info}',[
-                'Basic' => Yii::t('app', 'Basic'), 'Info' => Yii::t('app', 'Info'),
-            ]) ?>
-        </div>
+        <div class="title"><?= Yii::t('app', 'Basic Info') ?></div>
         
         <?= DetailView::widget([
             'model' => $model,
@@ -41,14 +37,12 @@ YiiAsset::register($this);
                     ]),
                 ],
                 [
-                    'label' => Yii::t('app', '{The}{Category}', [
-                        'The' => Yii::t('app', 'The'), 'Category' => Yii::t('app', 'Category')
-                    ]),
+                    'label' => Yii::t('app', 'Category For Belong'),
                     'value' => !empty($model->category_id) ? $model->category->name : null,
                 ],
                 [
-                    'label' => Yii::t('app', 'Is Use'),
-                    'value' => !$model->is_del ? '是' : '否',
+                    'label' => Yii::t('app', 'Is Del'),
+                    'value' => !$model->is_del ? '否' : '是',
                 ],
                 [
                     'label' => Yii::t('app', '{Input}{Type}', [
@@ -80,13 +74,7 @@ YiiAsset::register($this);
         
         <div class="title">
             
-            <div class="pull-left">
-                
-                <?= Yii::t('app', '{Attribute}{Value}',[
-                    'Attribute' => Yii::t('app', 'Attribute'), 'Value' => Yii::t('app', 'Value'),
-                ]) ?>
-                
-            </div>
+            <div class="pull-left"><?= Yii::t('app', 'Attribute Candidate Value') ?></div>
             
             <div class="btngroup pull-right">
                 <?= Html::a(Yii::t('app', 'Add'), ['attribute-value/create', 'attribute_id' => $model->id], 

@@ -15,10 +15,6 @@ use yii\widgets\LinkPager;
 /* @var $searchModel MediaAttributeValueSearch */
 /* @var $dataProvider ActiveDataProvider */
 
-$this->title = Yii::t('app', '{Media}{Attribute}{Value}', [
-    'Media' => Yii::t('app', 'Media'), 'Attribute' => Yii::t('app', 'Attribute'), 'Value' => Yii::t('app', 'Value')
-]);
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="media-attribute-value-index">
 
@@ -58,11 +54,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'is_del',
-                'label' => Yii::t('app', 'Is Use'),
+                'label' => Yii::t('app', 'Is Del'),
                 'class' => GridViewChangeSelfColumn::class,
                 'plugOptions' => [
-                    'labels' => ['禁用', '启用'],
-                    'values' => [1, 0],
                     'url' => Url::to(['attribute-value/change-value'], true),
                 ],
                 'headerOptions' => [
@@ -71,31 +65,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
             ],
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'buttons' => [
-                    'delete' => function ($url, $model){
-                        return ' ' . Html::a(Yii::t('yii', 'Delete'), ['attribute-value/delete', 'id' => $model->id, 'attribute_id' => $model->attribute_id], [
-                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
-                            'data' => [
-                                'pjax' => 0, 
-                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->value}】{Value}", [
-                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Value' => Yii::t('app', 'Value')
-                                ]),
-                                'method' => 'post',
-                            ],
-                        ]);
-                    },
-                ],
-                'headerOptions' => [
-                    'style' => [
-                        'width' => '200px',
-                    ],
-                ],
-
-                'template' => '{delete}',
-            ],
+//
+//            [
+//                'class' => 'yii\grid\ActionColumn',
+//                'buttons' => [
+//                    'delete' => function ($url, $model){
+//                        return ' ' . Html::a(Yii::t('yii', 'Delete'), ['attribute-value/delete', 'id' => $model->id, 'attribute_id' => $model->attribute_id], [
+//                            'id' => 'btn-updateCate', 'class' => 'btn btn-danger',
+//                            'data' => [
+//                                'pjax' => 0, 
+//                                'confirm' => Yii::t('app', "{Are you sure}{Delete}【{$model->value}】{Value}", [
+//                                    'Are you sure' => Yii::t('app', 'Are you sure '), 'Delete' => Yii::t('app', 'Delete'), 'Value' => Yii::t('app', 'Value')
+//                                ]),
+//                                'method' => 'post',
+//                            ],
+//                        ]);
+//                    },
+//                ],
+//                'headerOptions' => [
+//                    'style' => [
+//                        'width' => '200px',
+//                    ],
+//                ],
+//
+//                'template' => '{delete}',
+//            ],
         ],
     ]); ?>
     

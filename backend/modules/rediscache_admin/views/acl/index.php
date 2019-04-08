@@ -120,6 +120,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 break;
             case 'hash': setHash(data.values);
                 break;
+            case 'string': setString(data.values);
+                break;
             default: setDefault(data.values);
         }
     }
@@ -165,7 +167,20 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     
     /**
-     * 生成表格 Type:set string list
+     * 生成表格 Type: string
+     * @param {array} values
+     * @returns {undefined}
+     */
+    function setString(values){
+        var _table = '<thead><tr><th>Value</th></tr></thead><tbody>',
+            _tr = '';
+            _tr += "<tr><td>" + values +"</td></tr>";
+        var _tabsle = _table +  _tr + '</tbody>';
+        $(".key-detail").html(_tabsle);
+    }
+    
+    /**
+     * 生成表格 Type:set list
      * @param {array} values
      * @returns {undefined}
      */

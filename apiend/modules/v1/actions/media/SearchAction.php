@@ -83,15 +83,16 @@ class SearchAction extends BaseAction {
         //查询出所有值
         $query->offset(($page - 1) * $limit)
                 ->limit($limit)
-                ->orderBy(['Media.download_count' => SORT_DESC,'Media.name' => SORT_ASC]);
+                ->orderBy(['Media.download_count' => SORT_DESC, 'Media.name' => SORT_ASC]);
 
-        //生成临时访问路径
+        //生成临时访问路径和下载路径
         $temp_link_url = Yii::$app->params['media']['use']['temp_link_url'];
+        $temp_download_url = Yii::$app->params['media']['use']['temp_download_url'];
         $medias = $query->all();
         foreach($medias as &$media){
-            
             $sn = Acl::getTempSnByMid($media['id']);
             $media['url'] = "$temp_link_url?sn={$sn}";
+            $media['download_url'] = "$temp_download_url?sn={$sn}";
         }
         return new Response(Response::CODE_COMMON_OK, null, [
             'page' => $page,

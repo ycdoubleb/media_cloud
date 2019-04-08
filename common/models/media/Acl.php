@@ -382,7 +382,8 @@ class Acl extends ActiveRecord {
             $media = Media::findOne(['id' => $media_id]);
             if ($media) {
                 //缓存 临时码与媒体路径,设置一天有效
-                RedisService::getRedis()->setex(self::REDIS_TEMP_DATA_KEY . $sn, self::REDIS_TEMP_SN_EXPIRE_TIME, $media->url);
+                $tempInfo = ['media_id' => $media_id, 'url' => $media->url];
+                RedisService::getRedis()->setex(self::REDIS_TEMP_DATA_KEY . $sn, self::REDIS_TEMP_SN_EXPIRE_TIME, json_encode($tempInfo));
                 return $sn;
             } else {
                 return "";
@@ -400,6 +401,23 @@ class Acl extends ActiveRecord {
         if (RedisService::getRedis()->exists($key)) {
             //查找临时访问路径
             return RedisService::getRedis()->get($key);
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * 通过临时访问码返回媒体信息(id url)
+     * 
+     * @param string $sn
+     */
+    public static function getTempInfoBySn($sn) {
+        $key = self::REDIS_TEMP_DATA_KEY . $sn;
+        
+        if (RedisService::getRedis()->exists($key)) {
+            //查找媒体信息
+            $tempInfo = RedisService::getRedis()->get($key);
+            return json_decode($tempInfo, true);
         } else {
             return "";
         }

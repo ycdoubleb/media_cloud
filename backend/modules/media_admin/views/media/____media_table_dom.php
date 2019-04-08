@@ -316,11 +316,15 @@ $js = <<<JS
     $("input[data-role=tagsinput]").tagsinput();
         
     $('#grid-view table tbody tr').each(function(){
-        $(this).click(function(){
-            if($(this).children(":first").children('input[name="selection[]"]').is(':checked')){
-                $(this).children(":first").children('input[name="selection[]"]').prop("checked",false);
-            }else{
-                $(this).children(":first").children('input[name="selection[]"]').prop("checked",true);
+        $(this).click(function(e){
+            e = window.event || e;
+            var obj = e.srcElement || e.target;
+            if($(obj).is('td')){
+                if($(this).children(":first").children('input[name="selection[]"]').is(':checked')){
+                    $(this).children(":first").children('input[name="selection[]"]').prop("checked",false);
+                }else{
+                    $(this).children(":first").children('input[name="selection[]"]').prop("checked",true);
+                }
             }
         });
     });

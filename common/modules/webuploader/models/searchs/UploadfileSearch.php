@@ -42,7 +42,7 @@ class UploadfileSearch extends Uploadfile {
     {
         $query = (new Query())
                 ->select(['Uploadfile.id', 'Uploadfile.name', 'Uploadfile.path', 'Uploadfile.size', 'Uploadfile.oss_upload_status',
-                    'AdminUser.nickname AS created_by', 'Uploadfile.created_at'])
+                    'Uploadfile.md5', 'AdminUser.nickname AS created_by', 'Uploadfile.created_at'])
                 ->from(['Uploadfile' => Uploadfile::tableName()]);
 
         // add conditions that should always apply here
@@ -65,6 +65,9 @@ class UploadfileSearch extends Uploadfile {
         // grid filtering conditions
         $query->andWhere(['is_del' => 0]);
 
+        $query->andFilterWhere(['md5' => $this->md5]);
+        $query->andFilterWhere(['like', 'Uploadfile.name', $this->name]);
+        
         return $dataProvider;
     }
     

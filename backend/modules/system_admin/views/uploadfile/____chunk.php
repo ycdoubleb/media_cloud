@@ -19,6 +19,7 @@ use yii\helpers\Url;
     <div class="content-panel">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
             'tableOptions' => ['class' => 'table table-bordered table-striped mc-table'],
             'layout' => "{items}\n{summary}\n{pager}",
             'rowOptions'=>function($searchModel){
@@ -48,6 +49,7 @@ use yii\helpers\Url;
                 [
                     'attribute' => 'chunk_path',
                     'label' => Yii::t('app', 'Path'),
+                    'filter' => false,
                 ],
                 [
                     'attribute' => 'chunk_index',
@@ -55,6 +57,7 @@ use yii\helpers\Url;
                     'headerOptions' => [
                         'style' => 'width: 80px'
                     ],
+                    'filter' => false,
                 ],
                 [
                     'attribute' => 'created_at',
@@ -62,6 +65,7 @@ use yii\helpers\Url;
                     'headerOptions' => [
                         'style' => 'width: 95px'
                     ],
+                    'filter' => false,
                     'value' => function ($data) {
                         return date('Y-m-d H:i', $data['created_at']); 
                     }

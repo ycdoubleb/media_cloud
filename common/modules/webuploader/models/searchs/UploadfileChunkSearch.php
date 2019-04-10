@@ -67,6 +67,11 @@ class UploadfileChunkSearch extends UploadfileChunk
 
         // grid filtering conditions
         $query->andWhere(['is_del' => 0]);
+        
+        $query->andFilterWhere([
+            'chunk_id' => $this->chunk_id,
+            'file_md5' => $this->file_md5,
+        ]);
 
         return $dataProvider;
     }

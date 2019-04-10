@@ -59,6 +59,8 @@ class MediaAttValueRef extends ActiveRecord
      */
     public static function saveMediaAttValueRef($media_id, $media_attrs)
     {
+        if(empty($media_attrs)) return;
+        
         try {
             if(is_array($media_attrs)){
                 $mediaAttValue = [];

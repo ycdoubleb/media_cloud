@@ -1,7 +1,6 @@
 <?php
 
 use common\models\media\Media;
-use common\utils\DateUtil;
 use common\widgets\grid\GridViewChangeSelfColumn;
 use common\widgets\tagsinput\TagsInputAsset;
 use yii\grid\GridView;
@@ -15,7 +14,7 @@ TagsInputAsset::register($this);
 
 ?>
 
-<?= GridView::widget([
+<?=GridView::widget([
     'id' => 'grid-view',
     'dataProvider' => $dataProvider,
     'layout' => "{items}\n{summary}\n{pager}",  
@@ -241,6 +240,7 @@ TagsInputAsset::register($this);
 //            ]
 //        ],
         [
+            'attribute' => 'created_at',
             'label' => Yii::t('app', '{Upload}{Time}', [
                 'Upload' => Yii::t('app', 'Upload'), 'Time' => Yii::t('app', 'Time')
             ]),
@@ -315,6 +315,20 @@ TagsInputAsset::register($this);
 $js = <<<JS
     
     $("input[data-role=tagsinput]").tagsinput();
+        
+    $('#grid-view table tbody tr').each(function(){
+        $(this).click(function(e){
+            e = window.event || e;
+            var obj = e.srcElement || e.target;
+            if($(obj).is('td')){
+                if($(this).children(":first").children('input[name="selection[]"]').is(':checked')){
+                    $(this).children(":first").children('input[name="selection[]"]').prop("checked",false);
+                }else{
+                    $(this).children(":first").children('input[name="selection[]"]').prop("checked",true);
+                }
+            }
+        });
+    });
         
 JS;
     $this->registerJs($js,  View::POS_READY);

@@ -75,7 +75,7 @@ class MediaSearch extends Media
         $this->load($params);
           
         //分页
-        $page = ArrayHelper::getValue($params, 'page', 1);               
+        $page = ArrayHelper::getValue($params, 'page', 1);  
         //显示数
         $limit = ArrayHelper::getValue($params, 'limit', 10);     
         //分库id
@@ -96,7 +96,7 @@ class MediaSearch extends Media
                 $query->andFilterWhere(["AttValRef_$index.attribute_value_id" => $id]);
             }
         }else{
-             $query->orderBy(['Media.created_at' => SORT_DESC]);
+             $query->orderBy(['Media.name' => SORT_ASC]);
         }
         
         // 目录过滤

@@ -82,9 +82,11 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             <!--属性选择-->
             <?= $this->render('____form_attribute_dom', [
                 'attrMap' => $attrMap,
+            ]) ?>
+            
+            <!--标签-->
+            <?= $this->render('____form_tags_dom', [
                 'isTagRequired' => $isTagRequired,
-                'attrSelected' => isset($attrSelected) ? $attrSelected : null,
-                'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
             ]) ?>
 
             <!--素材上传-->
@@ -254,6 +256,19 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
                 _this.parents('div.form-group').find('div.help-block').html('');
             }, 3000);
         }
+    }
+    
+    /**
+     * 提交时验证
+     * @returns {undefined}
+     */
+    function submitValidate()
+    {
+        $('div.form-group').find('.media-attribute_value, .media-tag_id').each(function(){
+            validateDepDropdownValue($(this));
+            validateCheckboxList($(this).find('input'));
+            validateTags($(this));
+        });
     }
     
 </script>

@@ -106,9 +106,12 @@ class UploadAction extends BaseAction {
             $fileChunk = new UploadfileChunk(['chunk_id' => $chunkMd5, 'file_md5' => $fileMd5, 'chunk_path' => "{$filePath}_{$chunk}.part", 'chunk_index' => $chunk]);
         }
         $fileChunk->is_del = 0;
-        $fileChunk->save();
-        // Return Success JSON-RPC response
-        return new UploadResponse(UploadResponse::CODE_COMMON_OK);
+        if($fileChunk->save()){
+            // Return Success JSON-RPC response
+            return new UploadResponse(UploadResponse::CODE_COMMON_OK);
+        }else{
+            return new UploadResponse(UploadResponse::CODE_COMMON_SAVE_DB_FAIL,null,$fileChunk->getErrorSummary(true));
+        }
     }
 
     /**

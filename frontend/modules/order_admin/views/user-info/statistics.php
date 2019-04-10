@@ -1,8 +1,8 @@
 <?php
 
+use common\utils\I18NUitl;
 use common\widgets\charts\ChartAsset;
 use frontend\modules\order_admin\assets\ModuleAssets;
-use kartik\daterange\DateRangePicker;
 use kartik\widgets\Select2;
 use yii\web\View;
 
@@ -12,10 +12,7 @@ use yii\web\View;
  * and open the template in the editor.
  */
 
-$this->title = Yii::t('app', '{Data}{Statistics}', [
-    'Data' => Yii::t('app', 'Data'),
-    'Statistics' => Yii::t('app', 'Statistics'),
-]);
+$this->title = I18NUitl::t('app', '{Data}{Statistics}');
 
 ModuleAssets::register($this);
 ChartAsset::register($this);

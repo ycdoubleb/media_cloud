@@ -62,8 +62,8 @@ class BaseUser extends ActiveRecord implements IdentityInterface{
     public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
-            'username' => Yii::t('app', 'Account Number'),
-            'nickname' => Yii::t('app', '{True}{Name}',['True' => Yii::t('app', 'True'),'Name' => Yii::t('app', 'Name'),]),
+            'username' => Yii::t('app', 'User Account Number'),
+            'nickname' => Yii::t('app', 'Real Name'),
             'password_hash' => Yii::t('app', 'Password Hash'),
             'password2' => Yii::t('app', 'Password2'),
             'password_reset_token' => Yii::t('app', 'Password Reset Token'),

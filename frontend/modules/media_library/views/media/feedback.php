@@ -15,10 +15,7 @@ use yii\widgets\ActiveForm;
 
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Feedback}{Problem}',[
-    'Feedback' => Yii::t('app', 'Feedback'),
-    'Problem' => Yii::t('app', 'Problem')
-]);
+$this->title = I18NUitl::t('app', '{Feedback}{Problem}');
 
 ?>
 

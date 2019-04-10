@@ -1,15 +1,14 @@
 <?php
 
 use backend\modules\rediscache_admin\assets\RedisCacheAdminAsset;
+use common\utils\I18NUitl;
 use yii\web\View;
 
 /* @var $this View */
 
 RedisCacheAdminAsset::register($this);
 
-$this->title = Yii::t('app', '{Visit}{Path}', [
-            'Visit' => Yii::t('app', 'Visit'), 'Path' => Yii::t('app', 'Path')
-        ]);
+$this->title = I18NUitl::t('app', '{Visits}{Path}');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>

@@ -61,8 +61,8 @@ $this->title = I18NUitl::t('app', '{Medias}{Detail}');
             <div class="mc-tabs">
                 <ul class="list-unstyled">
                     <li id="details">
-                        <?= Html::a('详情', 'javascript:;', [
-                            'id' => 'list', 'title' => '详情'
+                        <?= Html::a(Yii::t('app', 'Detail'), 'javascript:;', [
+                            'id' => 'list', 'title' => Yii::t('app', 'Detail')
                         ]);?>
                     </li>
                     <li id="comment">

@@ -12,10 +12,7 @@ MainAssets::register($this);
 ModuleAssets::register($this);
 GrowlAsset::register($this);
 
-$this->title = Yii::t('app', '{Media}{Online}',[
-    'Media' => Yii::t('app', 'Media'),
-    'Online' => Yii::t('app', 'Online')
-]);
+$this->title = \common\utils\I18NUitl::t('app', '{Medias}{Online}');
 
 $pages = ArrayHelper::getValue($filters, 'pages', 'list');   //表格显示
 

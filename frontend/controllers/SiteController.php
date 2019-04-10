@@ -196,7 +196,7 @@ class SiteController extends Controller {
             $now_time = time();                                         //当前时间
             
             if ($sessonPhone != $phone || $sessonCode != $code || $now_time >= $time_out) {
-                Yii::$app->getSession()->setFlash('error', '号码、验证码不匹配或验证码已失效！');
+                Yii::$app->getSession()->setFlash('error', '手机号、验证码不匹配或验证码已失效！');
             }elseif ($user = $this->signup($post)) {
                 if (Yii::$app->getUser()->login($user)) {
                     return $this->goHome();
@@ -300,9 +300,9 @@ class SiteController extends Controller {
 
         \Yii::$app->getResponse()->format = 'json';
         $post = \Yii::$app->request->post();
-        $phone = ArrayHelper::getValue($post, 'MOBILE');   //获取输入的电话号码
+        $phone = ArrayHelper::getValue($post, 'MOBILE');        //获取输入的电话号码
         $pathName = ArrayHelper::getValue($post, 'pathname');   //获取点击发送验证码时的路径
-        $name = trim(strrchr($pathName, '/'), '/');
+        $name = trim(strrchr($pathName, '/'), '/');             //当前页面名
 
         //检查提交的号码是否存在
         $hasPhone = (new Query())->select(['id'])->from(['User' => User::tableName()])
@@ -344,8 +344,7 @@ class SiteController extends Controller {
      */
     public function actionChickPhone() {
         \Yii::$app->getResponse()->format = 'json';
-        $post = \Yii::$app->request->post();
-        $phone = ArrayHelper::getValue($post, 'phone');   //获取输入的邀请码
+        $phone = ArrayHelper::getValue(\Yii::$app->request->post(), 'phone');   //获取输入的邀请码
         
         $hasPhone = (new Query())->select(['id'])->from(['User' => User::tableName()])
                 ->andFilterWhere(['status' => User::STATUS_ACTIVE, 'phone' => $phone])
@@ -359,28 +358,26 @@ class SiteController extends Controller {
     }
 
     /**
-     * 验证输入的验证码是否正确
+     * 验证输入的验证码是否正确或是否失效
      * @return array
      */
     public function actionProvingCode() {
         \Yii::$app->getResponse()->format = 'json';
-        $post = \Yii::$app->request->post();
-        $code = ArrayHelper::getValue($post, 'code');   //获取输入的邀请码
-        //保存在sesson中的验证码
-        $params_code = Yii::$app->session->get('code_code', '');
-        //保存在sesson中的过期时间
-        $time_out = Yii::$app->session->get('code_timeOut', '');
+        $code = ArrayHelper::getValue(\Yii::$app->request->post(), 'code');   //获取输入的邀请码
+        
+        $params_code = Yii::$app->session->get('code_code', '');    //保存在sesson中的验证码
+        $time_out = Yii::$app->session->get('code_timeOut', '');    //保存在sesson中的过期时间
         $now_time = time();      //当前时间
 
-        if ($time_out >= $now_time) {
-            if ($params_code == $code) {
-                return new ApiResponse(ApiResponse::CODE_COMMON_OK, '验证码正确');
-            } else {
-                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '验证码错误');
-            }
+        if ($params_code == $code) {
+            return new ApiResponse(ApiResponse::CODE_COMMON_OK, '验证码正确');
         } else {
-            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '验证码失效');
+            if ($time_out >= $now_time) {
+                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '验证码失效');
+            }
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '验证码错误');
         }
+        
     }
 
     /**
@@ -389,18 +386,17 @@ class SiteController extends Controller {
      */
     public function actionCheckPhoneCode() {
         \Yii::$app->getResponse()->format = 'json';
-        $post = \Yii::$app->request->post();
-        $phone = ArrayHelper::getValue($post, 'phone');        //联系方式
-        $code = ArrayHelper::getValue($post, 'code');  //验证码
+        $phone = ArrayHelper::getValue(\Yii::$app->request->post(), 'phone'); //联系方式
+        $code = ArrayHelper::getValue(\Yii::$app->request->post(), 'code');   //验证码
 
         if (empty($phone)) {
             Yii::$app->getSession()->setFlash('error', '手机号不能为空！');
         } elseif (empty($code)) {
             Yii::$app->getSession()->setFlash('error', '验证码不能为空！');
         }
-        //保存在sesson中的电话号码
-        $sessonPhone = Yii::$app->session->get('code_phone', '');
-        $sessonCode = Yii::$app->session->get('code_code', '');
+        
+        $sessonPhone = Yii::$app->session->get('code_phone', '');   //保存在sesson中的电话号码
+        $sessonCode = Yii::$app->session->get('code_code', '');     //保存在sesson中的验证码
         if ($sessonPhone != $phone) {
             Yii::$app->getSession()->setFlash('error', '手机号与验证码不匹配！');
         } elseif ($code != $sessonCode) {
@@ -420,8 +416,7 @@ class SiteController extends Controller {
     protected function getTotalMediaNumber($month = false)
     {
         // 符合条件的媒体
-        $mediaQuey = (new Query())
-                ->select(['Media.id', 'Media.type_id'])
+        $mediaQuey = (new Query())->select(['Media.id', 'Media.type_id'])
                 ->from(['Media' => Media::tableName()])
                 ->andFilterWhere(['status' => Media::STATUS_PUBLISHED, 'Media.del_status' => 0]);
         /* 过滤非本月的数据 */

@@ -1,6 +1,7 @@
 <?php
 
 use common\models\media\MediaType;
+use common\utils\I18NUitl;
 use common\widgets\zTree\zTreeDropDown;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -70,9 +71,7 @@ use yii\widgets\ActiveForm;
                             ]
                         ]
                     ],
-                ])->label(Yii::t('app', '{Medias}{Type}：', [
-                    'Medias' => Yii::t('app', 'Medias'), 'Type' => Yii::t('app', 'Type')
-                ])) ?>
+                ])->label(I18NUitl::t('app', '{Medias}{Type}：')) ?>
             </div>
             <!--属性选项-->
             <div class="col-lg-12 col-md-12">

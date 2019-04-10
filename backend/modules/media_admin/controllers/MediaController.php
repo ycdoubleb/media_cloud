@@ -21,6 +21,7 @@ use common\models\Watermark;
 use common\widgets\grid\GridViewChangeSelfController;
 use Yii;
 use yii\data\ArrayDataProvider;
+use yii\data\Sort;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -107,6 +108,13 @@ class MediaController extends GridViewChangeSelfController
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
+                'sort' => new Sort([
+                    'attributes' =>[
+                        'name',
+                        'created_at'
+                    ],
+                    'route' => Url::to(['index'])
+                ])
             ]),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
@@ -361,17 +369,31 @@ class MediaController extends GridViewChangeSelfController
     }
     
     /**
-     * 批量编辑 素材属性标签
+     * 批量编辑 素材标签
      * @param string $id
      * @return mixed
      */
     public function actionBatchEditAttribute()
     {
-        $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
-        return $this->renderAjax('____edit_attribute', [
+        $params = Yii::$app->request->queryParams;
+        
+        $category_id = ArrayHelper::getValue($params, 'category_id');
+        return $this->renderAjax('____batch_edit_attribute', [
+            'ids' => json_encode(explode(',', ArrayHelper::getValue($params, 'id'))),    // 所有素材id
+            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
+        ]);
+    }
+    
+    /**
+     * 批量编辑 素材标签
+     * @param string $id
+     * @return mixed
+     */
+    public function actionBatchEditTags()
+    {
+        return $this->renderAjax('____batch_edit_tags', [
             'ids' => json_encode(explode(',', ArrayHelper::getValue(Yii::$app->request->queryParams, 'id'))),    // 所有素材id
             'isTagRequired' => false,  // 判断标签是否需要必须
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
         ]);
     }
     
@@ -408,15 +430,16 @@ class MediaController extends GridViewChangeSelfController
                 //获取所有旧属性值
                 $oldAttributes = $model->getOldAttributes();  
                 
-                // 获取旧属性值
-                $oldMediaAttVals = $this->getOldMediaAttributeValue($model->id, array_keys($media_attrs));
-                
-                // 把素材属性转换成字符串
-                foreach ($oldMediaAttVals as $att_name => $att_values){
-                    $att_value = implode('、', $att_values);
-                    $oldAttValues .= "{$att_name}:{$att_value}；";
+                if(!empty($media_attrs)){
+                    // 获取旧属性值
+                    $oldMediaAttVals = $this->getOldMediaAttributeValue($model->id, array_keys($media_attrs));
+
+                    // 把素材属性转换成字符串
+                    foreach ($oldMediaAttVals as $att_name => $att_values){
+                        $att_value = implode('、', $att_values);
+                        $oldAttValues .= "{$att_name}:{$att_value}；";
+                    }
                 }
-                
                 // 若发生修改则返回修改后的属性
                 $dataProvider = [
                     '素材属性' => !empty($oldAttValues) ? $oldAttValues : null,
@@ -433,17 +456,17 @@ class MediaController extends GridViewChangeSelfController
                         MediaAction::savaMediaAction($model->id,  $this->renderPartial("____media_update_dom", ['dataProvider' => array_filter($dataProvider)]), '修改');
                     }
                 }
-                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
+//                Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Operation Succeeded'));
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, Yii::t('app', 'Operation Succeeded'));
                 
             } catch (Exception $ex) {
-                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:'). $ex->getMessage());
+//                Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:'). $ex->getMessage());
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
             
         return $this->renderAjax('____edit_attribute', [
-            'ids' => json_encode(explode(',', $id)),
+            'model' => $model,
             'isTagRequired' => true,     // 判断标签是否需要必须
             'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($model->category_id),
             'attrSelected' => MediaAttValueRef::getMediaAttValueRefByMediaId($model->id),

@@ -320,6 +320,7 @@ return [
     'Medias' => '素材',
     'Anew' => '重新',
     'Reset Price' => '重置价格',
+    'Reset Attribute' => '重置属性',
     'Reset Tags' => '重置标签',
     'Apply For Be Put In Storage' => '申请入库',
     'Basic Info' => '基本信息',

@@ -1,6 +1,8 @@
 <?php
 
 use common\models\media\Media;
+use common\utils\I18NUitl;
+use common\widgets\tagsinput\TagsInputAsset;
 use kartik\growl\GrowlAsset;
 use yii\helpers\Html;
 use yii\web\View;
@@ -10,10 +12,9 @@ use yii\widgets\ActiveForm;
 /* @var $model Media */
 
 GrowlAsset::register($this);
+TagsInputAsset::register($this);
 
-$this->title = Yii::t('app', '{Edit}{Attribute}{Tags}', [
-    'Edit' => Yii::t('app', 'Edit'), 'Attribute' => Yii::t('app', 'Attribute'), 'Tags' => Yii::t('app', 'Tags')
-]);
+$this->title = I18NUitl::t('app', '{Edit}{Attribute}');
 
 ?>
 <div class="media-edit-attribute">
@@ -37,11 +38,6 @@ $this->title = Yii::t('app', '{Edit}{Attribute}{Tags}', [
             
             <div class="modal-body">
     
-                <?= $this->render('____form_attribute_dom', [
-                    'attrMap' => $attrMap,
-                    'attrSelected' => isset($attrSelected) ? $attrSelected : null,
-                ]) ?>
-                
                 <?= $this->render('____form_tags_dom', [
                     'isTagRequired' => $isTagRequired,
                     'tagsSelected' => isset($tagsSelected) ? $tagsSelected : null ,
@@ -52,6 +48,12 @@ $this->title = Yii::t('app', '{Edit}{Attribute}{Tags}', [
             <div class="modal-footer">
                 
                 <?= Html::button(Yii::t('app', 'Confirm'), ['id' => 'submitsave', 'class' => 'btn btn-primary btn-flat']) ?>
+                
+                <!--加载-->
+                <div class="loading-box" style="text-align: right">
+                    <span class="loading" style="display: none"></span>
+                    <span class="no_more" style="display: none">提交中...</span>
+                </div>
                 
             </div>
                 
@@ -64,7 +66,10 @@ $this->title = Yii::t('app', '{Edit}{Attribute}{Tags}', [
 
 <?php
 $js = <<<JS
-       
+    
+    var ids = $ids;
+    var isPageLoading = false;
+   
     // 初始化标签组件
     $("input[data-role=tagsinput]").tagsinput();
     
@@ -75,36 +80,34 @@ $js = <<<JS
         }
     });
         
+    console.log(window.page, window.params);
+        
     // 提交表单    
     $("#submitsave").click(function(){
-        submitValidate();
-        if($('div.has-error').length > 0) return;
-        
         var _self = $(this);
-        $.post("/media_admin/media/edit-attribute?id={$model->id}", $('#media-form').serialize(), function(response){
-            if(response.code == "0"){
-                window.location.reload();
-                $.notify({
-                    message: response['msg'],    //提示消息
-                },{
-                    type: "success", //成功类型
+        if(!isPageLoading){
+            isPageLoading = true;   //设置已经提交当中...
+            $.each(ids, function(index, id){
+                $.post("/media_admin/media/edit-attribute?id=" + id, $('#media-form').serialize(), function(response){
+                    if(response.code == "0" && index >= ids.length - 1){
+                        isPageLoading = false;  //取消设置提交当中...
+                        $('.myModal').modal('hide');
+                        // 获取素材数据 
+                        $.get("/media_admin/media/list?page=" + window.page,  window.params, function(response){
+                            $('#media_list').html(response);
+                        });
+                        $.notify({
+                            message: response['msg'],    //提示消息
+                        },{
+                            type: "success", //成功类型
+                        });
+                    }
                 });
-            }
-        });
+            });
+            _self.hide();
+            $('.loading-box .loading, .loading-box .no_more').show();
+        }
     });
-        
-    /**
-     * 提交时验证
-     * @returns {undefined}
-     */
-    function submitValidate()
-    {
-        $('div.form-group').find('.media-attribute_value, .media-tag_id').each(function(){
-            validateDepDropdownValue($(this));
-            validateCheckboxList($(this).find('input'));
-            validateTags($(this));
-        });
-    }
 
 JS;
     $this->registerJs($js,  View::POS_READY);

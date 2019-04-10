@@ -240,6 +240,7 @@ TagsInputAsset::register($this);
 //            ]
 //        ],
         [
+            'attribute' => 'created_at',
             'label' => Yii::t('app', '{Upload}{Time}', [
                 'Upload' => Yii::t('app', 'Upload'), 'Time' => Yii::t('app', 'Time')
             ]),

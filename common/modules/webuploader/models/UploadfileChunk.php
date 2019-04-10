@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "{{%uploadfile_chunk}}".
  *
+ * @property integer $id
  * @property string $chunk_id
  * @property string $file_md5
  * @property string $chunk_path

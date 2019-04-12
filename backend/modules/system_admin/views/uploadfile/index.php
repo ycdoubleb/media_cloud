@@ -34,7 +34,11 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{File}{List}', [
     
     <div class="mc-panel">
         <?php if($tabs == 'file'){
-                echo $this->render('____file', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+                echo $this->render('____file', [
+                    'createdBy' => $createdBy,
+                    'searchModel' => $searchModel, 
+                    'dataProvider' => $dataProvider
+                ]);
             } else {
                 echo $this->render('____chunk', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
             }

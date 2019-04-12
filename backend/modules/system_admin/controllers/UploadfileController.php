@@ -56,6 +56,7 @@ class UploadfileController extends Controller
         return $this->render('index', [
             'tabs' => $tabs,
             'filters' => $params,
+            'createdBy' => $this->getUserByUploadfile(),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -109,5 +110,16 @@ class UploadfileController extends Controller
                 return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, $ex->getMessage(), $ex->getTraceAsString());
             }
         }
+    }
+    
+    protected function getUserByUploadfile()
+    {
+        $query = (new \yii\db\Query())
+                ->select(['User.id', 'User.nickname'])
+                ->from(['Uploadfile' => Uploadfile::tableName()])
+                ->leftJoin(['User' => \common\models\AdminUser::tableName()], 'User.id = Uploadfile.created_by')
+                ->all();
+        
+        return ArrayHelper::map($query, 'id', 'nickname');
     }
 }

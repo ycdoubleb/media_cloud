@@ -9,6 +9,12 @@
     <input id="<?= $id ?>" type="hidden" name="<?= $name ?>" />
     <!-- zTree树状图 相对定位在其下方 -->
     <div class="zTree-dropdown-options <?= $class ?>" style="display: none">
+        <?php if(empty($data)): ?>
+        <ul class="zTree-dropdown-results">
+            <li class="zTree-dropdown-results__option">未找到结果</li>
+        </ul>
+        <?php else: ?>
         <ul id="<?= $plugin_container ?>"></ul>
+        <?php endif; ?>
     </div>  
 </div>

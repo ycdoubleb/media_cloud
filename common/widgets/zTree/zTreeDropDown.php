@@ -141,6 +141,7 @@ class zTreeDropDown extends InputWidget {
     public function renderWidget(){
         
         echo $this->render('demo', [
+            'data' => $this->data,
             'plugin_container' => $this->pluginOptions['container'],
             'id' => $this->id,
             'name' => $this->name,

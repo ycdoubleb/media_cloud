@@ -71,3 +71,13 @@ and open the template in the editor.
     max-height: 200px;
     overflow-y: auto;
 }
+
+.zTree-dropdown-container--krajee .zTree-dropdown-results {
+    margin: -5px;
+}
+
+.zTree-dropdown-container--krajee li.zTree-dropdown-results__option{
+    padding: 5px;
+    background-color: #FCF8E3;
+    color: #C09853;
+}

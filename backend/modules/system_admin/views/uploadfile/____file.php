@@ -1,6 +1,7 @@
 <?php
 
 use common\modules\webuploader\models\Uploadfile;
+use kartik\widgets\Select2;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -72,10 +73,18 @@ use yii\helpers\Url;
                 [
                     'attribute' => 'oss_upload_status',
                     'label' => Yii::t('app', 'OSS Upload Status'),
-                    'headerOptions' => [
-                        'style' => 'width: 100px'
-                    ],
-                    'filter' => false,
+                    'headerOptions' => ['style' => 'width: 115px'],
+                    'filter' => Select2::widget([
+                        //'value' => null,
+                        'model' => $searchModel,
+                        'attribute' => 'oss_upload_status',
+                        'data' => Uploadfile::$ossUploadStatus,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]),
                     'value' => function ($data) {
                         return Uploadfile::$ossUploadStatus[$data['oss_upload_status']];
                     }
@@ -83,10 +92,18 @@ use yii\helpers\Url;
                 [
                     'attribute' => 'created_by',
                     'label' => Yii::t('app', 'Created By'),
-                    'headerOptions' => [
-                        'style' => 'width: 95px'
-                    ],
-                    'filter' => false,
+                    'headerOptions' => ['style' => 'width: 115px'],
+                    'filter' => Select2::widget([
+                        //'value' => null,
+                        'model' => $searchModel,
+                        'attribute' => 'created_by',
+                        'data' => $createdBy,
+                        'hideSearch' => true,
+                        'options' => ['placeholder' => Yii::t('app', 'Select Placeholder')],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]),
                     'value' => function ($data) {
                         return $data['created_by'];
                     }

@@ -65,7 +65,11 @@ class UploadfileSearch extends Uploadfile {
         // grid filtering conditions
         $query->andWhere(['is_del' => 0]);
 
-        $query->andFilterWhere(['md5' => $this->md5]);
+        $query->andFilterWhere([
+            'md5' => $this->md5,
+            'oss_upload_status' => $this->oss_upload_status,
+            'created_by' => $this->created_by
+        ]);
         $query->andFilterWhere(['like', 'Uploadfile.name', $this->name]);
         
         return $dataProvider;

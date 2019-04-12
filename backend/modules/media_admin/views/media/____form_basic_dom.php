@@ -15,9 +15,10 @@ use yii\widgets\ActiveForm;
 <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
     'data' => $dirDataProvider,
     'url' => [
-        'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $model->category_id]),
+        'index' => Url::to(['/media_config/dir/search-children', 'category_id' => $model->category_id]),
+        'view' => Url::to(['/media_config/dir/view']),
         'create' => Url::to(['/media_config/dir/add-dynamic', 'category_id' => $model->category_id]),
-        'update' => Url::to(['/media_config/dir/edit-dynamic']),
+        'update' => Url::to(['/media_config/dir/edit-dynamic', 'category_id' => $model->category_id]),
         'delete' => Url::to(['/media_config/dir/delete']),
     ],
 ])->label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Storage Dir') . '：') ?>

@@ -233,7 +233,7 @@ class DirController extends GridViewChangeSelfController
      * @param string $id
      */
     public function actionSearchChildren($target_id = null, $category_id, $id){
-        $dirsChildren = Dir::getDirsChildren($id, \Yii::$app->user->id, $category_id); 
+        $dirsChildren = Dir::getDirsChildren($id, null, $category_id); 
         $childrens = [];
         if(count($dirsChildren) > 0){
             foreach ($dirsChildren as $index => $item) {

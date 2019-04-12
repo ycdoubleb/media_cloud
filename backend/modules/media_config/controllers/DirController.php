@@ -320,7 +320,7 @@ class DirController extends GridViewChangeSelfController
                 $dirNames = ArrayHelper::getColumn($query->all(), 'name');
                 
                 //如果存在重名，则提示
-                if(in_array($model->name, $dirNames)){
+                if(in_array($name, $dirNames)){
                     return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, Yii::t('app', 'The directory name already exists, please rename.'));
                 }
                 

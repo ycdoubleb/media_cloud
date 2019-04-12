@@ -104,7 +104,6 @@ $this->title = Yii::t('app', '{Edit}{Basic Info}', [
      * @returns {undefined}
      */
     function submitSave(_self){
-        console.log(111);
         validateDirDepDropdownValue($("#media-dir_id"));
         // 如果必选项有错误提示，则返回
         if($('div.has-error').length > 0) return;

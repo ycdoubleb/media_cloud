@@ -28,17 +28,7 @@
         //初始化树状插件
         _self.__initzTree();    
         
-        //如果值非空则设置默认值
-        if(!!_self.value){
-            var treeObj = $.fn.zTree.getZTreeObj(_self.tree_id);
-            var nodes = treeObj.getNodes();
-            for(var i in nodes){
-                if(nodes[i].id == _self.value){
-                    _self.setVoluation(nodes[i].id, nodes[i].name);
-                    break;
-                }
-            }
-        }
+        _self.__setDefaultValue();
     }
     
     /**
@@ -142,21 +132,35 @@
     };
 
     /**
-     * 编辑节点名
-     * @param {type} event
+     * 编辑节点名前
      * @param {type} treeId
      * @param {type} treeNode
+     * @param {type} newName
      * @param {type} isCancel
-     * @returns {undefined}
+     * @returns {Boolean}
      */
-    zTreeDropdown.prototype.zTreeOnRename = function (event, treeId, treeNode, isCancel) {        
-        $.post(_self.url.update,{id: treeNode.id, name: treeNode.name}, function(response){
-            if(response.code == "0" && response.data != null){
-                _self.setVoluation(response.data.id, response.data.name);
-            }else{
-                alert(response.msg);
+    zTreeDropdown.prototype.zTreeBeforeRename = function (treeId, treeNode, newName, isCancel) {    
+        $.ajax({
+            type: 'post',
+            async: false,
+            url: _self.url.update,
+            data: {id: treeNode.id, name: newName},
+            success: function(response){
+                if(response.code != "0" && response.data == null){
+                    isCancel = false;
+                    $.notify({
+                        message: response.msg,    //提示消息
+                    },{
+                        type: "danger", //错误类型
+                    });
+                }else{
+                    _self.setVoluation(response.data.id, response.data.name);
+                    isCancel = true;
+                }
             }
         });
+        
+        return isCancel;
     }
 
     /**
@@ -168,7 +172,11 @@
     zTreeDropdown.prototype.zTreeBeforeRemove = function (treeId, treeNode) {        
         $.post(_self.url.delete, {id: treeNode.id}, function(response){
             if(response.code != "0"){
-                alert(response.msg);
+                $.notify({
+                    message: response.msg,    //提示消息
+                },{
+                    type: "danger", //错误类型
+                });
             }else{
                 var treeObj = $.fn.zTree.getZTreeObj(treeId);
                 var parentNode = treeNode.getParentNode();  // 获取父级节点
@@ -196,6 +204,24 @@
         $("#" + _self.dropdown_id + "-text").html(text);
     }
 
+
+    /**
+     * 设置默认值
+     * @returns {undefined}
+     */
+    zTreeDropdown.prototype. __setDefaultValue = function(){
+        //如果值非空则设置默认值
+        if(!!_self.value){
+            var treeObj = $.fn.zTree.getZTreeObj(_self.tree_id);
+            var nodes = treeObj.getNodes();
+            for(var i in nodes){
+                if(nodes[i].id == _self.value){
+                    _self.setVoluation(nodes[i].id, nodes[i].name);
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * 动态加载子级目录(第一次展开的时候)
@@ -231,7 +257,7 @@
             } 
         }  
     }
-
+    
     /**
      * 初始化插件
      * @returns {undefined}

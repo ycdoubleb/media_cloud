@@ -2,6 +2,7 @@
 
 namespace common\widgets\zTree;
 
+use kartik\growl\GrowlAsset;
 use ReflectionException;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -69,7 +70,7 @@ class zTreeDropDown extends InputWidget {
         'callback' => [
             'onClick' => '',
             'onExpand' => '',
-            'onRename' => '',
+            'beforeRenamer' => '',
             'beforeRemove' => '',
         ],
     ];
@@ -156,6 +157,7 @@ class zTreeDropDown extends InputWidget {
         $view = $this->getView();
         // 加载资源
         zTreeAsset::register($view);
+        GrowlAsset::register($view);
         
         // 初始树状数据
         $treeDataList = Json::encode($this->data);
@@ -168,7 +170,7 @@ class zTreeDropDown extends InputWidget {
                     $events['removeHoverDom'] = new JsExpression('zTreeDropdown.removeHoverDom');
                     $events['onClick'] = new JsExpression('zTreeDropdown.zTreeOnClick');
                     $events['onExpand'] = new JsExpression('zTreeDropdown.zTreeOnExpand');
-                    $events['onRename'] = new JsExpression('zTreeDropdown.zTreeOnRename');
+                    $events['beforeRename'] = new JsExpression('zTreeDropdown.zTreeBeforeRename');
                     $events['beforeRemove'] = new JsExpression('zTreeDropdown.zTreeBeforeRemove');
                     break;
                 case self::TYPE_SEARCH :

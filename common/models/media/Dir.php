@@ -369,7 +369,7 @@ class Dir extends ActiveRecord
                 $listFramework[] = $item;
             }
         }
-        var_dump($listFramework);exit;
+
         return $listFramework;
     }
     

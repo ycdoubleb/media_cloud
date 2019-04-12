@@ -15,9 +15,11 @@ use yii\db\Query;
  *
  * @author Administrator
  */
-class SearchAction extends BaseAction {
+class SearchAction extends BaseAction
+{
 
-    public function run() {
+    public function run()
+    {
         if (!$this->verify()) {
             return $this->verifyError;
         }
@@ -56,7 +58,7 @@ class SearchAction extends BaseAction {
                 ->select(['Media.id', 'Media.name', 'Media.type_id', 'Media.cover_url', 'Media.tags', 'Media.created_at', 'Media.size', 'Media.visit_count', 'Media.download_count'])
                 ->from(['Media' => Media::tableName()])
                 ->leftJoin(['Dir' => Dir::tableName()], 'Media.dir_id = Dir.id')
-                ->where(['Media.del_status' => 0, 'Media.category_id' => $category_id])
+                ->where(['Media.del_status' => 0, 'Media.status' => Media::STATUS_PUBLISHED, 'Media.category_id' => $category_id])
                 ->andFilterWhere(['Media.type_id' => $types]);
 
         //-----------------------       
@@ -89,7 +91,7 @@ class SearchAction extends BaseAction {
         $temp_link_url = Yii::$app->params['media']['use']['temp_link_url'];
         $temp_download_url = Yii::$app->params['media']['use']['temp_download_url'];
         $medias = $query->all();
-        foreach($medias as &$media){
+        foreach ($medias as &$media) {
             $sn = Acl::getTempSnByMid($media['id']);
             $media['url'] = "$temp_link_url?sn={$sn}";
             $media['download_url'] = "$temp_download_url?sn={$sn}";

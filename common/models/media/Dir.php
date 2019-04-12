@@ -354,7 +354,6 @@ class Dir extends ActiveRecord
             // 如果id存在则过滤
             if(in_array($_data['id'], $ids)) continue;
             if($_data['category_id'] != $category_id) continue;
-//            if(!empty($name) && $_data['name'] != $name) continue;
             if($_data['parent_id'] == $parent_id){
                 $item = [
                     'title'=> $_data['name'],

@@ -579,8 +579,9 @@ return [
     'The material has been published, and the apply for be put in storage is not required.' => '素材已发布，无须申请入库。',
     'The material has been deleted, and the apply deleted is not required.' => '素材已删除，无须申请删除。',
     'Subdirectories exist under this directory and cannot be deleted.' => '子目录存在于此目录下，无法删除。',
+    'The directory name already exists, please rename.' => '目录名已经存在，请重命名。',
     'There is material in this directory and cannot be deleted.' => '此目录中有素材，无法删除。',
     "Note: This material is set with the 'automatic transcoding'. After the file is re-uploaded, it will be automatically transcoded, Please don't transcode multiple times!" => '注：本素材采用“自动转码”设置。文件重新上传后，它将被自动转换，请不要多次转码！',
     'Note: This material is set with the "manually select transcoding", If "Transcoding" is required after re-uploading the file, you must manually select "re-Transcoding".' => '注：本素材采用“手动转码”设置。如果在重新上传文件后需要“转码”，则必须手动选择”重新转码”。',
-    'Note: Please ensure that the voucher amount is consistent with the amount due to the order' => '注：请确保凭证金额与应付订单金额一致'
+    'Note: Please ensure that the voucher amount is consistent with the amount due to the order' => '注：请确保凭证金额与应付订单金额一致',
 ];

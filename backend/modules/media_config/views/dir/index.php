@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\web\View;
+use yii\widgets\ActiveForm;
 
 /* @var $this View */
 /* @var $searchModel DirSearh */
@@ -23,15 +24,19 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
 ?>
 <div class="dir-index">
    
-    <p>
-        <?= Html::a(Yii::t('app', '{Create}{Dir}', [
-            'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['create', 'category_id' => $category_id], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('app', '{Move}{Dir}', [
-            'Move' => Yii::t('app', 'Move'), 'Dir' => Yii::t('app', 'Dir')
-        ]), ['move', 'category_id' => $category_id], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
-    </p>
-
+    <div class="col-lg-12 col-md-12" style="margin-bottom: 10px;">
+        
+        <div class="pull-left">
+            <?= Html::a(Yii::t('app', '{Create}{Dir}', [
+                'Create' => Yii::t('app', 'Create'), 'Dir' => Yii::t('app', 'Dir')
+            ]), ['create', 'category_id' => $category_id], ['id' => 'btn-addDir', 'class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t('app', '{Move}{Dir}', [
+                'Move' => Yii::t('app', 'Move'), 'Dir' => Yii::t('app', 'Dir')
+            ]), ['move', 'category_id' => $category_id], ['id' => 'btn-moveDir', 'class' => 'btn btn-primary']) ?>
+        </div>
+        
+    </div>
+        
     <?= FancytreeWidget::widget([
         'options' =>[
             'id' => 'table-fancytree_1', // 设置整体id
@@ -84,11 +89,11 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
                             _this.click(function(e){
                                 e.preventDefault();
                                 if(confirm("您确定要删除此项吗？") == true){
-                                    $.post(\'/media_config/dir/delete?id=\' + node.key, function(rel){
-                                        if(rel.code == 0){
+                                    $.post(\'/media_config/dir/delete?id=\' + node.key, function(response){
+                                        if(response.code == 0){
                                             node.remove();
                                         }else{
-                                            alert(rel.msg);
+                                            alert(response.msg);
                                         }
                                     });
                                 }
@@ -100,7 +105,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
         ]
     ]); ?>
     
-    <div class="table-responsive">
+    <div class="table-responsive col-lg-12 col-md-12">
         <table id="table-fancytree_1" class="table table-bordered table-hover detail-view">
             <colgroup>
                 <col width="700px"></col>

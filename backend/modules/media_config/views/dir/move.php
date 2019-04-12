@@ -77,7 +77,11 @@ $js = <<<JS
     var moveIds = "$move_ids";
     $('#submitsave').click(function(){
         var _nodes = $("#table-fancytree_2").fancytree("getActiveNode");
-        $.post('/media_config/dir/move?move_ids=' + moveIds + '&target_id=' + _nodes.key);
+        $.post('/media_config/dir/move?move_ids=' + moveIds + '&target_id=' + _nodes.key, function(response){
+            if(response.code != "0"){
+                alert(response.msg + "【" + response.data.join(',')+ "】");
+            }
+        });
     });               
 JS;
     $this->registerJs($js,  View::POS_READY);

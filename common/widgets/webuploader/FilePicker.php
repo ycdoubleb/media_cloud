@@ -28,6 +28,9 @@ class FilePicker extends WebuploaderInput{
     public function init(){
         $this->pluginOptions['type'] = self::TYPE_TILE;
         $this->pluginOptions['targetAttribute'] = 'url';
+        if(isset($this->pluginOptions['mini']) && $this->pluginOptions['mini']){
+            $this->pluginOptions['rootAddedClass'] = 'mini';
+        }
         
         parent::init();
     }

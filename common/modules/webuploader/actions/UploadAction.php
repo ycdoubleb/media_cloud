@@ -71,7 +71,7 @@ class UploadAction extends BaseAction {
         $fileChunk;
         //检查分片是否上传过
         if ($chunkMd5 != '') {
-            $fileChunk = UploadfileChunk::findOne(['chunk_id' => $chunkMd5]);
+            $fileChunk = UploadfileChunk::findOne(['chunk_id' => $chunkMd5, 'file_md5' => $fileMd5]);
             if ($fileChunk != null && $fileChunk->is_del == 0 && file_exists($fileChunk->chunk_path)) {
                 //分片已存在
                 return new UploadResponse(UploadResponse::CODE_CHUNK_EXIT, null, $fileChunk->toArray());
@@ -106,9 +106,12 @@ class UploadAction extends BaseAction {
             $fileChunk = new UploadfileChunk(['chunk_id' => $chunkMd5, 'file_md5' => $fileMd5, 'chunk_path' => "{$filePath}_{$chunk}.part", 'chunk_index' => $chunk]);
         }
         $fileChunk->is_del = 0;
-        $fileChunk->save();
-        // Return Success JSON-RPC response
-        return new UploadResponse(UploadResponse::CODE_COMMON_OK);
+        if($fileChunk->validate() && $fileChunk->save()){
+            // Return Success JSON-RPC response
+            return new UploadResponse(UploadResponse::CODE_COMMON_OK,null,$fileChunk->toArray());
+        }else{
+            return new UploadResponse(UploadResponse::CODE_COMMON_SAVE_DB_FAIL,null,$fileChunk->getErrorSummary(true));
+        }
     }
 
     /**

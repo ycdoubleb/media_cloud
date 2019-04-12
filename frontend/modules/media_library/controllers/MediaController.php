@@ -390,6 +390,19 @@ class MediaController extends Controller
     }
     
     /**
+     * 获取 目录详情
+     * @param string $id
+     */
+    public function actionDirDetail($id)
+    {
+        $dir = Dir::getDirById($id); 
+        
+        Yii::$app->getResponse()->format = 'json';
+        
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $dir->toArray());
+    }
+    
+    /**
      * 保存反馈问题
      * @param type $post
      * @return array

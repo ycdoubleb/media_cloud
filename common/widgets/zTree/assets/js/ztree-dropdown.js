@@ -212,12 +212,20 @@
     zTreeDropdown.prototype. __setDefaultValue = function(){
         //如果值非空则设置默认值
         if(!!_self.value){
-            var treeObj = $.fn.zTree.getZTreeObj(_self.tree_id);
-            var nodes = treeObj.getNodes();
-            for(var i in nodes){
-                if(nodes[i].id == _self.value){
-                    _self.setVoluation(nodes[i].id, nodes[i].name);
-                    break;
+            // 如果子级树状是动态获取则需要动态获取对应目录设置赋值
+            if(_self.url.view){
+                $.get(_self.url.view, {id: _self.value}, function(response){
+                    _self.setVoluation(response.data.id, response.data.name);
+                });
+            }else{
+                var treeObj = $.fn.zTree.getZTreeObj(_self.tree_id);
+                var nodes = treeObj.getNodes();
+
+                for(var i in nodes){
+                    if(nodes[i].id == _self.value){
+                        _self.setVoluation(nodes[i].id, nodes[i].name);
+                        break;
+                    }
                 }
             }
         }
@@ -236,7 +244,7 @@
         
         //childNodes.length 小于等于1，就加载(第一次加载)
         if(childNodes.length <= 1){
-            $.get(_self.url.view, {id: treeNode.id}, function(response){
+            $.get(_self.url.index, {id: treeNode.id}, function(response){
                 if(response.data.length > 0){
                     treeObj.addNodes(parentZNode, response.data, false);     //添加节点     
                 }

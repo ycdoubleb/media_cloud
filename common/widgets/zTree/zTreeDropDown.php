@@ -36,6 +36,7 @@ class zTreeDropDown extends InputWidget {
      * @var type 
      */
     public $url = [
+        'index' => '', 
         'view' => '', 
         'create' => '',
         'update' => '',

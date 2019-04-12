@@ -38,7 +38,8 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($searchModel, 'dir_id')->widget(zTreeDropDown::class, [
                     'data' => $dirDataProvider,
                     'url' => [
-                        'view' => Url::to(['search-children', 'category_id' => 1]),
+                        'index' => Url::to(['search-children']),
+                        'view' => Url::to(['dir-detail']),
                     ],
                     'pluginOptions' => [
                         'type' => zTreeDropDown::TYPE_SEARCH,

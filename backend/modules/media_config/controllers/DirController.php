@@ -46,6 +46,19 @@ class DirController extends GridViewChangeSelfController
     }
 
     /**
+     * 获取 目录详情
+     * @param string $id
+     */
+    public function actionView($id)
+    {
+        $dir = Dir::getDirById($id); 
+        
+        Yii::$app->getResponse()->format = 'json';
+        
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $dir->toArray());
+    }
+    
+    /**
      * 创建 素材存储目录配置
      * 如果创建成功，浏览器将被重定向到“index”页面。
      * @param string $id

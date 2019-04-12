@@ -54,7 +54,8 @@ zTreeAsset::register($this);
         <?= $form->field($model, 'dir_id')->widget(zTreeDropDown::class, [
             'data' => $dirDataProvider,
             'url' => [
-                'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),
+                'index' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),
+                'view' => Url::to(['/media_config/dir/view']),
             ],
             'pluginOptions' => [
                 'type' => zTreeDropDown::TYPE_SEARCH,

@@ -171,7 +171,7 @@ class DirController extends GridViewChangeSelfController
                 $is_submit = true;
                 $renameMap = [];   //重名
                 //获取目标目录下的所有子目录名    
-                $targetDirNames = ArrayHelper::getColumn(Dir::findAll(['parent_id' => $target_id]), 'name');
+                $targetDirNames = ArrayHelper::getColumn(Dir::findAll(['category_id' => $category_id, 'parent_id' => $target_id]), 'name');
                 //获取所要移动的目录
                 $moveDirs = Dir::find()->where(['id' => $move_ids])->orderBy(['path' => SORT_ASC])->all();   
                 $moveDirNames = ArrayHelper::getColumn($moveDirs, 'name');
@@ -300,7 +300,7 @@ class DirController extends GridViewChangeSelfController
      */
     public function actionEditDynamic()
     {
-        $post = Yii::$app->request->post();
+        $bodyParams = ArrayHelper::merge(Yii::$app->request->queryParams, Yii::$app->request->post());
         
         if(Yii::$app->request->isPost){
             Yii::$app->getResponse()->format = 'json';
@@ -309,14 +309,16 @@ class DirController extends GridViewChangeSelfController
             $trans = Yii::$app->db->beginTransaction();
             try
             {
-                $id = ArrayHelper::getValue($post, 'id');     // 父级id
-                $name = ArrayHelper::getValue($post, 'name');   // 名称
+                $id = ArrayHelper::getValue($bodyParams, 'id');     //id
+                $category_id = ArrayHelper::getValue($bodyParams, 'category_id');     //分库id
+                $name = ArrayHelper::getValue($bodyParams, 'name');   // 名称
                 
                 $model = Dir::findOne($id);
                 $model->name = $name;
                 //获取该目录下父级的所有目录
                 $query = (new Query())->from([Dir::tableName()])
-                    ->where(['parent_id' => $model->parent_id]);
+                    ->where(['category_id' => $category_id, 'parent_id' => $model->parent_id])
+                    ->andWhere(['!=', 'id', $model->id]);
                 $dirNames = ArrayHelper::getColumn($query->all(), 'name');
                 
                 //如果存在重名，则提示

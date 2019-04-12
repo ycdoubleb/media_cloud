@@ -72,7 +72,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
             ])->widget(zTreeDropDown::class, [
                 'data' => $dirDataProvider,
                 'url' => [
-                    'view' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),
+                    'index' => Url::to(['/media_config/dir/search-children', 'category_id' => $category_id]),
                     'create' => Url::to(['/media_config/dir/add-dynamic', 'category_id' => $category_id]),
                     'update' => Url::to(['/media_config/dir/edit-dynamic', 'category_id' => $category_id]),
                     'delete' => Url::to(['/media_config/dir/delete']),

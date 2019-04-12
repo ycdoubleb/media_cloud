@@ -2,14 +2,15 @@
 
 namespace backend\modules\system_admin\controllers;
 
+use Exception;
 use Yii;
-use yii\caching\Cache;
-use yii\di\Instance;
 use yii\web\Controller;
 
-class CacheController extends Controller {
+class CacheController extends Controller
+{
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
 
         $dirs = [
             Yii::getAlias('@backend') . '/runtime/cache',
@@ -20,7 +21,11 @@ class CacheController extends Controller {
 //            Yii::getAlias('@apiend') . '/runtime/cache',
         ];
         foreach ($dirs as $path) {
-            $this->do_rmdir($path, false);
+            try {
+                $this->do_rmdir($path, false);
+            } catch (Exception $ex) {
+                Yii::$app->getSession()->addFlash('danger', $ex->getMessage());
+            }
         }
         return $this->render('index');
     }
@@ -31,7 +36,8 @@ class CacheController extends Controller {
      * @return bool
      */
 
-    private function do_rmdir($dirname, $self = true) {
+    private function do_rmdir($dirname, $self = true)
+    {
         if (!file_exists($dirname)) {
             return false;
         }

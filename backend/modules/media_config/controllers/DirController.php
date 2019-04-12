@@ -169,12 +169,24 @@ class DirController extends GridViewChangeSelfController
             try
             { 
                 $is_submit = true;
-                $targetModel = Dir::getDirById($target_id);  //目标模型        
+                $renameMap = [];   //重名
+                //获取目标目录下的所有子目录名    
+                $targetDirNames = ArrayHelper::getColumn(Dir::findAll(['parent_id' => $target_id]), 'name');
                 //获取所要移动的目录
                 $moveDirs = Dir::find()->where(['id' => $move_ids])->orderBy(['path' => SORT_ASC])->all();   
+                $moveDirNames = ArrayHelper::getColumn($moveDirs, 'name');
+                foreach ($moveDirNames as $name) {
+                    if(in_array($name, $targetDirNames)){
+                        $renameMap[] = $name;
+                    }
+                }
+                //如果存在重名，则返回
+                if(!empty($renameMap)){
+                    Yii::$app->getResponse()->format = 'json';
+                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, Yii::t('app', 'The directory name already exists, please rename.'), $renameMap);
+                }
+                
                 foreach ($moveDirs as $moveModel) {
-                    //旧的父级目录路径
-                    $old_parent_path = str_replace(' > '. $moveModel->name, '', $moveModel->getFullPath());
                     //如果移动的分类父级id不在所要移动的id数组里，则设置所要移动的父级id为目标id
                     if(!in_array($moveModel->parent_id, $move_ids)){
                         $moveModel->parent_id = $target_id;
@@ -302,7 +314,16 @@ class DirController extends GridViewChangeSelfController
                 
                 $model = Dir::findOne($id);
                 $model->name = $name;
-
+                //获取该目录下父级的所有目录
+                $query = (new Query())->from([Dir::tableName()])
+                    ->where(['parent_id' => $model->parent_id]);
+                $dirNames = ArrayHelper::getColumn($query->all(), 'name');
+                
+                //如果存在重名，则提示
+                if(in_array($model->name, $dirNames)){
+                    return new ApiResponse(ApiResponse::CODE_COMMON_SAVE_DB_FAIL, Yii::t('app', 'The directory name already exists, please rename.'));
+                }
+                
                 if($model->save()){
                     $model->updateParentPath(); //修改路径
                     Dir::invalidateCache();    //清除缓存

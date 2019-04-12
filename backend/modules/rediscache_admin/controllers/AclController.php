@@ -5,13 +5,27 @@ namespace backend\modules\rediscache_admin\controllers;
 use common\components\redis\RedisService;
 use common\models\api\ApiResponse;
 use Yii;
+use yii\db\Exception;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 
 /**
  * Default controller for the `rediscache_admin` module
  */
-class AclController extends Controller {
-
+class AclController extends Controller
+{
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create' => ['del-redis'],
+                ],
+            ],
+        ];
+    }
+    
     /**
      * Renders the index view for the module
      * @return string
@@ -60,6 +74,25 @@ class AclController extends Controller {
         }
     }
     
+    /**
+     * 删除redis缓存
+     * @return mixed
+     */
+    public function actionDelRedis()
+    {
+        $redisKeys = Yii::$app->getRequest()->post('redisKeys', []);
+        
+        try {
+            RedisService::getRedis()->del(...(array) $redisKeys);
+            Yii::$app->getSession()->setFlash('success','删除成功！');
+            
+        } catch (Exception $ex) {
+            Yii::$app->getSession()->setFlash('error','删除失败！');
+        }
+        
+        return $this->redirect('index');
+    }
+
     /**
      * 获取key值
      * @param string $key

@@ -88,7 +88,9 @@
 
       if (typeof item === "string" && this.$element[0].tagName === 'INPUT') {
         var delimiter = (self.options.delimiterRegex) ? self.options.delimiterRegex : self.options.delimiter;
-        var items = item.split(delimiter);
+        var itemRep1 = item.replace(/、/g, '，');
+        var itemRep2 = itemRep1.replace(/，/g, delimiter);
+        var items = itemRep2.split(delimiter);
         if (items.length > 1) {
           for (var i = 0; i < items.length; i++) {
             this.add(items[i], true);

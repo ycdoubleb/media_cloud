@@ -72,6 +72,7 @@ class MediaSearch extends Media
      */
     public function search($params)
     {        
+//        var_dump($params);exit;
         $this->load($params);
           
         //分页

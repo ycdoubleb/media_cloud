@@ -99,9 +99,11 @@ class MediaController extends GridViewChangeSelfController
     public function actionList()
     {
         $searchModel = new MediaSearch();
-        $results = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $results = $searchModel->search($params);
         $medias = $results['data']['medias']; //所有素材数据
         $mediaTypeIds = ArrayHelper::getColumn($medias, 'type_id');      
+        $category_id = ArrayHelper::getColumn($medias, 'category_id');      
         
         return $this->renderAjax('____media_table_dom', [
             'searchModel' => $searchModel,

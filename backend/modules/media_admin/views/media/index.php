@@ -144,7 +144,7 @@ $js = <<<JS
         // 获取素材数据 
         if(!isPageLoading){
             isPageLoading = true;   //设置已经提交当中...
-            $.get("/media_admin/media/list?page=" + page,  params, function(response){
+            $.get("/media_admin/media/list", $.extend(params, {page: page}), function(response){
                 isPageLoading = false;  //取消设置提交当中...
                 $('#media_list').html(response);
             });

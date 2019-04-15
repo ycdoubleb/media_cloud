@@ -132,24 +132,24 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-//        [
-//            'attribute' => 'duration',
-//            'label' => Yii::t('app', 'Duration'),
-//            'value' => function($model){
-//                return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
-//            },
-//            'headerOptions' => [
-//                'style' => [
-//                    'width' => '65px',
-//                    'padding' => '8px 4px'
-//                ]
-//            ],
-//            'contentOptions' => [
-//                'style' => [
-//                    'padding' => '8px 4px'
-//                ],
-//            ]
-//        ],
+        [
+            'attribute' => 'duration',
+            'label' => Yii::t('app', 'Duration'),
+            'value' => function($model){
+                return $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : null;
+            },
+            'headerOptions' => [
+                'style' => [
+                    'width' => '65px',
+                    'padding' => '8px 4px'
+                ]
+            ],
+            'contentOptions' => [
+                'style' => [
+                    'padding' => '8px 4px'
+                ],
+            ]
+        ],
         [
             'attribute' => 'size',
             'label' => Yii::t('app', 'Size'),
@@ -186,24 +186,24 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-//        [
-//            'attribute' => 'mts_status',
-//            'label' => Yii::t('app', 'Mts Status'),
-//            'value' => function($model){
-//                return Media::$mtsStatusName[$model->mts_status];
-//            },
-//            'headerOptions' => [
-//                'style' => [
-//                    'width' => '65px',
-//                    'padding' => '8px 4px'
-//                ]
-//            ],
-//            'contentOptions' => [
-//                'style' => [
-//                    'padding' => '8px 4px'
-//                ],
-//            ]
-//        ],
+        [
+            'attribute' => 'mts_status',
+            'label' => Yii::t('app', 'Mts Status'),
+            'value' => function($model){
+                return Media::$mtsStatusName[$model->mts_status];
+            },
+            'headerOptions' => [
+                'style' => [
+                    'width' => '65px',
+                    'padding' => '8px 4px'
+                ]
+            ],
+            'contentOptions' => [
+                'style' => [
+                    'padding' => '8px 4px'
+                ],
+            ]
+        ],
         [
             'attribute' => 'status',
             'label' => Yii::t('app', 'Status'),
@@ -222,23 +222,23 @@ TagsInputAsset::register($this);
                 ],
             ]
         ],
-//        [
-//            'label' => Yii::t('app', 'Operator'),
-//            'value' => function($model){
-//                return !empty($model->owner_id) ? $model->owner->nickname : null;
-//            },
-//            'headerOptions' => [
-//                'style' => [
-//                    'width' => '60px',
-//                    'padding' => '8px 4px'
-//                ]
-//            ],
-//            'contentOptions' => [
-//                'style' => [
-//                    'padding' => '8px 4px'
-//                ],
-//            ]
-//        ],
+        [
+            'label' => Yii::t('app', 'Operator'),
+            'value' => function($model){
+                return !empty($model->owner_id) ? $model->owner->nickname : null;
+            },
+            'headerOptions' => [
+                'style' => [
+                    'width' => '60px',
+                    'padding' => '8px 4px'
+                ]
+            ],
+            'contentOptions' => [
+                'style' => [
+                    'padding' => '8px 4px'
+                ],
+            ]
+        ],
         [
             'attribute' => 'created_at',
             'label' => Yii::t('app', '{Upload}{Time}', [

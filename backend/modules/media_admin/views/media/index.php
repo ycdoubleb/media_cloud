@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <!--分页-->
         <div class="page">
             <ul class="pagination" style="float: left"></ul>
-            <div class="pull-left" style="display: inline-block; margin: 20px 0px">
+            <div class="pull-left" style="display: inline-block; margin: 20px 5px">
                 <?= Html::dropDownList('pageSize', ArrayHelper::getValue($filters, 'pageSize', 10), [10 => 10, 20 => 20, 50 => 50, 100 => 100], [
                     'style' => 'height: 34px;', 'onchange' => 'setPerPageNum($(this).val())'
                 ]) ?>

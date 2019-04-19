@@ -110,6 +110,7 @@ class MediaController extends GridViewChangeSelfController
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
+                'pagination' => false,
 //                'sort' => new Sort([
 //                    'attributes' =>[
 //                        'name',

@@ -4,6 +4,7 @@ use backend\modules\media_admin\assets\MediaModuleAsset;
 use common\models\media\searchs\MediaSearch;
 use common\modules\rbac\components\Helper;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
@@ -39,7 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php 
                     if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
                         || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
-                        echo  Html::a(Yii::t('app', 'Reset Price'), ['batch-edit-price', 'category_id' => $category_id], [
+                        echo  Html::a(Yii::t('app', 'Reset Dir'), ['batch-edit-dir', 'category_id' => $category_id], [
+                            'id' => 'btn-editDir', 'class' => 'btn btn-primary btn-flat'
+                        ]); 
+                        echo ' '. Html::a(Yii::t('app', 'Reset Price'), ['batch-edit-price', 'category_id' => $category_id], [
                             'id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat'
                         ]); 
                         echo ' '.Html::a(Yii::t('app', 'Reset Attribute'), ['batch-edit-attribute', 'category_id' => $category_id], [
@@ -66,35 +70,19 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         
-<!--        <div class="title">
-            <div class="pull-right">
-                
-                <?php 
-                    if(Helper::checkRoute(Url::to(['batch-edit-price'])) || Helper::checkRoute(Url::to(['batch-edit-attribute'])) 
-                        || Helper::checkRoute(Url::to(['approve/add-apply'])) || Helper::checkRoute(Url::to(['approve/del-apply']))){
-                        echo  Html::a(Yii::t('app', '{Reset}{Price}', [
-                            'Reset' => Yii::t('app', 'Reset'), 'Price' => Yii::t('app', 'Price')
-                        ]), ['batch-edit-price'], ['id' => 'btn-editPrice', 'class' => 'btn btn-primary btn-flat']); 
-                        echo ' '.Html::a(Yii::t('app', '{Reset}{Tag}', [
-                            'Reset' => Yii::t('app', 'Reset'), 'Tag' => Yii::t('app', 'Tag')
-                        ]), ['batch-edit-attribute'], ['id' => 'btn-editAttribute', 'class' => 'btn btn-primary btn-flat']);
-                        echo ' '.Html::a(Yii::t('app', '{Apply}{Into}{DB}', [
-                            'Apply' => Yii::t('app', 'Apply'), 'Into' => Yii::t('app', 'Into'), 'DB' => Yii::t('app', 'DB')
-                        ]), ['approve/add-apply'], ['id' => 'btn-addApply', 'class' => 'btn btn-danger btn-flat']);
-                        echo ' ' . Html::a(Yii::t('app', '{Apply}{Delete}', [
-                            'Apply' => Yii::t('app', 'Apply'), 'Delete' => Yii::t('app', 'Delete')
-                        ]), ['approve/del-apply'], ['id' => 'btn-delApply', 'class' => 'btn btn-danger btn-flat']);
-                    }
-                ?>
-            </div>
-            
-        </div>-->
-        
         <!--总结-->
         <div class="summary"></div>
 
         <!--分页-->
-        <div class="page"><ul class="pagination"></ul></div>
+        <div class="page">
+            <ul class="pagination" style="float: left"></ul>
+            <div class="pull-left" style="display: inline-block; margin: 20px 0px">
+                <?= Html::dropDownList('pageSize', ArrayHelper::getValue($filters, 'pageSize', 10), [10 => 10, 20 => 20, 50 => 50, 100 => 100], [
+                    'style' => 'height: 34px;', 'onchange' => 'setPerPageNum($(this).val())'
+                ]) ?>
+            </div>
+        </div>
+        
         
     </div>
     
@@ -105,6 +93,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $msg = Yii::t('app', 'Please select at least one.');    // 消息提示
+$url = Yii::$app->request->url;
+$pageSize = ArrayHelper::getValue($filters, 'pageSize', 10);
 $params_js = json_encode($filters); //js参数
 $js = <<<JS
     initPageNav();
@@ -135,7 +125,7 @@ $js = <<<JS
         window.params = $params_js;  //传值
         var isPageLoading = false;
         var totalCount = $totalCount;
-        var pageSize = 10;
+        var pageSize = $pageSize;
         var pageCount = Math.ceil(totalCount / pageSize);
         var pagination = $('.pagination').data()['bootstrapPaginator'];
         
@@ -171,7 +161,7 @@ $js = <<<JS
     });
        
     // 出素材编辑标签面板
-    $('#btn-editPrice, #btn-editAttribute, #btn-editTags').click(function(e){
+    $('#btn-editDir, #btn-editPrice, #btn-editAttribute, #btn-editTags').click(function(e){
         e.preventDefault();
         var val = getCheckBoxsValue(), 
             url = $(this).attr("href");
@@ -199,7 +189,36 @@ $js = <<<JS
         
         return val
     }
-    
+        
+            
+    /**
+     * 对象转url参数
+     *  @param string url    地址 
+     * @param array data    参数对象
+     */
+    function urlEncode (param, key, encode) {  
+        if(param==null) return '';  
+        var paramStr = '';  
+        var t = typeof (param);  
+        if (t == 'string' || t == 'number' || t == 'boolean') {  
+            paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(param) : param);  
+        } else {  
+            for (var i in param) {  
+                var k = key == null ? i : key + (param instanceof Array ? '[' + i + ']' : '.' + i);  
+                paramStr += urlEncode(param[i], k, encode);  
+            }  
+        }  
+        return paramStr;  
+    }
+            
+    /**
+     * 设置每页显示的数量
+     * @param string value    值 
+     */
+    window.setPerPageNum = function (value){
+        var urlParams = $.extend(params, {page: 1, pageSize: value});
+        window.location.href = "/media_admin/media/index?"+urlEncode(urlParams).substr(1);
+    }   
     
 JS;
     $this->registerJs($js,  View::POS_READY);

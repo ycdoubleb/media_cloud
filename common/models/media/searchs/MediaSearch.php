@@ -78,7 +78,7 @@ class MediaSearch extends Media
         //分页
         $page = ArrayHelper::getValue($params, 'page', 1);  
         //显示数
-        $limit = ArrayHelper::getValue($params, 'limit', 10);     
+        $limit = ArrayHelper::getValue($params, 'pageSize', 10);     
         //分库id
         $this->category_id = ArrayHelper::getValue($params, 'category_id', 1);
         //属性值

@@ -322,6 +322,7 @@ return [
     'Reset Price' => '重置价格',
     'Reset Attribute' => '重置属性',
     'Reset Tags' => '重置标签',
+    'Reset Dir' => '重置目录',
     'Apply For Be Put In Storage' => '申请入库',
     'Basic Info' => '基本信息',
     'Operation Notes' => '操作记录',

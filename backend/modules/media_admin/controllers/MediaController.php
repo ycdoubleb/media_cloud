@@ -110,13 +110,13 @@ class MediaController extends GridViewChangeSelfController
             'dataProvider' => new ArrayDataProvider([
                 'allModels' => $medias,
                 'key' => 'id',
-                'sort' => new Sort([
-                    'attributes' =>[
-                        'name',
-                        'created_at'
-                    ],
-                    'route' => Url::to(['index'])
-                ])
+//                'sort' => new Sort([
+//                    'attributes' =>[
+//                        'name',
+//                        'created_at'
+//                    ],
+//                    'route' => Url::to(['index'])
+//                ])
             ]),
             'iconMap' => ArrayHelper::map(MediaTypeDetail::getMediaTypeDetailByTypeId($mediaTypeIds, false), 'name', 'icon_url'),
         ]);
@@ -291,6 +291,23 @@ class MediaController extends GridViewChangeSelfController
             'wateFiles' => Watermark::getEnabledWatermarks(),
             'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
             'wateSelected' => [],
+        ]);
+    }
+    
+    /**
+     * 批量编辑 素材价格
+     * @param string $id
+     * @return mixed
+     */
+    public function actionBatchEditDir()
+    {
+        $params = Yii::$app->request->queryParams;
+        $category_id = ArrayHelper::getValue($params, 'category_id');
+        
+        return $this->renderAjax('____edit_dir', [
+            'ids' => json_encode(explode(',', ArrayHelper::getValue($params, 'id'))),    // 所有素材id
+            'category_id' => $category_id,
+            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id),
         ]);
     }
     

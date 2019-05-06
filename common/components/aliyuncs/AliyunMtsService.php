@@ -4,7 +4,7 @@ namespace common\components\aliyuncs;
 
 use common\models\media\Media;
 use Yii;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -101,7 +101,7 @@ class AliyunMtsService extends ActiveRecord
      * 从反馈里批量添加记录
      * 
      * @param string $media_id      视频ID
-     * @param Object $response      反馈数据
+     * @param BaseObject $response      反馈数据
      */
     public static function batchInsertServiceForMts($media_id, $response) {
         //保存调用记录，用于完成核实

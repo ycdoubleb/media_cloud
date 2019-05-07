@@ -50,7 +50,7 @@ class CrontabController extends Controller {
         $pool = [];
         $startExectime = $this->getCurrentTime();
         $php_path = \Yii::$app->params['php_path'];
-        $yii_path = dirname(dirname(__DIR__)).'\yii';
+        $yii_path = dirname(dirname(__DIR__)).'/yii';
       
         foreach ($tasks as $task) {
             $pool[] = proc_open("$php_path $yii_path $task->route", [], $pipe);

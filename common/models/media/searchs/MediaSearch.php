@@ -101,7 +101,7 @@ class MediaSearch extends Media
         
         // 目录过滤
         if(!empty($this->dir_id)){
-            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, Yii::$app->user->id, $this->category_id, true);
+            $dirChildrenIds = Dir::getDirChildrenIds($this->dir_id, null, $this->category_id, true);
             $query->andFilterWhere(['Media.dir_id' => ArrayHelper::merge($dirChildrenIds, [$this->dir_id])]);
         }
         

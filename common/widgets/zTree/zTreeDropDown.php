@@ -168,19 +168,33 @@ class zTreeDropDown extends InputWidget {
         foreach ($this->pluginEvents as &$events){
             switch ($this->pluginOptions['type']){
                 case self::TYPE_EDITED:
-                    $events['addHoverDom'] = new JsExpression('zTreeDropdown.addHoverDom');
-                    $events['removeHoverDom'] = new JsExpression('zTreeDropdown.removeHoverDom');
-                    $events['onClick'] = new JsExpression('zTreeDropdown.zTreeOnClick');
-                    $events['onExpand'] = new JsExpression('zTreeDropdown.zTreeOnExpand');
-                    $events['beforeRename'] = new JsExpression('zTreeDropdown.zTreeBeforeRename');
-                    $events['beforeRemove'] = new JsExpression('zTreeDropdown.zTreeBeforeRemove');
+                    $events['addHoverDom'] = new JsExpression('function(treeId, treeNode){
+                        zTreeDropdown.addHoverDom(treeId, treeNode);
+                    }');
+                    $events['removeHoverDom'] = new JsExpression('function(treeId, treeNode){
+                        zTreeDropdown.removeHoverDom(treeId, treeNode);
+                    }');
+                    $events['onClick'] =  new JsExpression('function(event, treeId, treeNode){
+                        zTreeDropdown.zTreeOnClick(event, treeId, treeNode);
+                    }');
+                    $events['onExpand'] = new JsExpression('function(event, treeId, treeNode){
+                        zTreeDropdown.zTreeOnExpand(event, treeId, treeNode);
+                    }');
+                    $events['beforeRename'] = new JsExpression('function(treeId, treeNode, newName, isCancel){
+                        zTreeDropdown.zTreeBeforeRename(treeId, treeNode, newName, isCancel);
+                    }');
+                    $events['beforeRemove'] = new JsExpression('function(treeId, treeNode){
+                        zTreeDropdown.zTreeBeforeRemove(treeId, treeNode);
+                    }');
                     break;
                 case self::TYPE_SEARCH :
-                    $events['onExpand'] = new JsExpression('zTreeDropdown.zTreeOnExpand');
+                    $events['onExpand'] = new JsExpression('function(event, treeId, treeNode){
+                        zTreeDropdown.zTreeOnExpand(event, treeId, treeNode);
+                    }');
                     break;
             }
         }
-        
+                
         // 配置
         $treeConfig = Json::encode(array_merge($this->pluginOptions, $this->pluginEvents));
         
@@ -188,22 +202,22 @@ class zTreeDropDown extends InputWidget {
         $url = Json::encode($this->url);
        
         $js = <<< JS
-                
-            var zTreeDropdown = new zTree.zTreeDropdown();
-                
-            zTreeDropdown.init({
-                dropdown: "{$this->id}",
+            // 配置
+            var config = {
                 value: "{$this->value}",
                 placeholder: "{$this->options['placeholder']}",
-                treeid: "{$this->pluginOptions['container']}",
-                class: "{$this->options['class']}",
-                config: $treeConfig,
-                dataList: $treeDataList,
+                tree_id: "{$this->pluginOptions['container']}",
+                tree_class: "{$this->options['class']}",
+                tree_config: $treeConfig,
+                tree_data: $treeDataList,
                 url: $url,
-            });
-            
+            }         
+            // 初始化组件
+            var zTreeDropdown = $("#{$this->id}").ztreeDropdown(config);
             // 单击显示下拉列表
-            $("#{$this->id}-text").bind("click", function(){
+            $("#{$this->id}").bind("click", function(){
+                // 重新初始化组件
+                var zTreeDropdown = $(this).ztreeDropdown(config);
                 zTreeDropdown.showTree();
             });
 JS;

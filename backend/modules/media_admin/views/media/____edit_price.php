@@ -35,11 +35,11 @@ $this->title = Yii::t('app', 'Reset Price');
     
                 <!--素材价格-->
                 <div class="form-group field-media-price required">
-                    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', '{Medias}{Price}：', [
+                    <?= Html::label(Yii::t('app', '{Medias}{Price}：', [
                         'Medias' => Yii::t('app', 'Medias'), 'Price' => Yii::t('app', 'Price')
                     ]), 'media-price', ['class' => 'col-lg-2 col-md-2 control-label form-label']) ?>
                     
-                    <div class="col-lg-7 col-md-7">
+                    <div class="col-lg-9 col-md-9">
                         <div class="col-lg-12 col-md-12 clean-padding">
                             
                             <?= Html::textInput('Media[price]', '0.00', [

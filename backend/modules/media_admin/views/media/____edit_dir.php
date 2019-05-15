@@ -35,11 +35,11 @@ $this->title = Yii::t('app', 'Reset Dir');
             
             <div class="modal-body">
     
-                <!--素材价格-->
+                <!--编辑目录-->
                 <div class="form-group field-media-dir_id required">
-                    <?= Html::label('<span class="form-must text-danger">*</span>' . Yii::t('app', 'Storage Dir'), 'media-dir_id', ['class' => 'col-lg-2 col-md-2 control-label form-label']) ?>
+                    <?= Html::label(Yii::t('app', 'Storage Dir'), 'media-dir_id', ['class' => 'col-lg-2 col-md-2 control-label form-label']) ?>
                     
-                    <div class="col-lg-7 col-md-7">
+                    <div class="col-lg-9 col-md-9">
                         <div class="col-lg-12 col-md-12 clean-padding">
                             
                             <?= zTreeDropDown::widget([

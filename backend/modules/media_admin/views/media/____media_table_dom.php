@@ -270,7 +270,8 @@ TagsInputAsset::register($this);
                 'url' => Url::to(['change-tags'], true),
             ],
             'inputOptions' => [
-                'data-role' => 'tagsinput',
+                //'data-role' => 'tagsinput',
+                'data-role' => 'my-tagsinput',
             ],
             'headerOptions' => [
                 'style' => [
@@ -314,8 +315,7 @@ TagsInputAsset::register($this);
 
 <?php
 $js = <<<JS
-    
-    $("input[data-role=tagsinput]").tagsinput();
+    $("input[data-role=my-tagsinput]").tagsinput();
         
     $('#grid-view table tbody tr').each(function(){
         $(this).click(function(e){

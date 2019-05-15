@@ -1,8 +1,3 @@
-/*
- * bootstrap-tagsinput v0.8.0
- * 
- */
-
 (function ($) {
   "use strict";
 
@@ -10,7 +5,6 @@
     tagClass: function(item) {
       return 'label label-info';
     },
-    focusClass: 'focus',
     itemValue: function(item) {
       return item ? item.toString() : item;
     },
@@ -27,22 +21,20 @@
     confirmKeys: [13, 44],
     delimiter: ',',
     delimiterRegex: null,
-    cancelConfirmKeysOnEmpty: false,
+    cancelConfirmKeysOnEmpty: true,
     onTagExists: function(item, $tag) {
       $tag.hide().fadeIn();
     },
     trimValue: false,
-    allowDuplicates: false,
-    triggerChange: true
+    allowDuplicates: false
   };
 
   /**
    * Constructor function
    */
   function TagsInput(element, options) {
-    this.isInit = true;
     this.itemsArray = [];
-
+    
     this.$element = $(element);
     this.$element.hide();
 
@@ -50,15 +42,14 @@
     this.multiple = (this.isSelect && element.hasAttribute('multiple'));
     this.objectItems = options && options.itemValue;
     this.placeholderText = element.hasAttribute('placeholder') ? this.$element.attr('placeholder') : '';
-    this.inputSize = Math.max(1, this.placeholderText.length);
+//    this.inputSize = Math.max(1, this.placeholderText.length);
 
     this.$container = $('<div class="bootstrap-tagsinput"></div>');
-    this.$input = $('<input type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
+    this.$input = $('<input type="text" placeholder="' + this.placeholderText + '" style="width:30%;height:22px;"/>').appendTo(this.$container);
 
     this.$element.before(this.$container);
 
     this.build(options);
-    this.isInit = false;
   }
 
   TagsInput.prototype = {
@@ -97,14 +88,16 @@
 
       if (typeof item === "string" && this.$element[0].tagName === 'INPUT') {
         var delimiter = (self.options.delimiterRegex) ? self.options.delimiterRegex : self.options.delimiter;
-        var items = item.split(delimiter);
+        var itemRep1 = item.replace(/、/g, '，');
+        var itemRep2 = itemRep1.replace(/，/g, delimiter);
+        var items = itemRep2.split(delimiter);
         if (items.length > 1) {
           for (var i = 0; i < items.length; i++) {
             this.add(items[i], true);
           }
 
           if (!dontPushVal)
-            self.pushVal(self.options.triggerChange);
+            self.pushVal();
           return;
         }
       }
@@ -113,7 +106,7 @@
           itemText = self.options.itemText(item),
           tagClass = self.options.tagClass(item),
           itemTitle = self.options.itemTitle(item);
-
+          
       // Ignore items allready added
       var existing = $.grep(self.itemsArray, function(item) { return self.options.itemValue(item) === itemValue; } )[0];
       if (existing && !self.options.allowDuplicates) {
@@ -142,17 +135,12 @@
 
       var $tag = $('<span class="tag ' + htmlEncode(tagClass) + (itemTitle !== null ? ('" title="' + itemTitle) : '') + '">' + htmlEncode(itemText) + '<span data-role="remove"></span></span>');
       $tag.data('item', item);
+      
       self.findInputWrapper().before($tag);
       $tag.after(' ');
 
-      // Check to see if the tag exists in its raw or uri-encoded form
-      var optionExists = (
-        $('option[value="' + encodeURIComponent(itemValue) + '"]', self.$element).length ||
-        $('option[value="' + htmlEncode(itemValue) + '"]', self.$element).length
-      );
-
       // add <option /> if item represents a value not present in one of the <select />'s options
-      if (self.isSelect && !optionExists) {
+      if (self.isSelect && !$('option[value="' + encodeURIComponent(itemValue) + '"]',self.$element)[0]) {
         var $option = $('<option selected>' + htmlEncode(itemText) + '</option>');
         $option.data('item', item);
         $option.attr('value', itemValue);
@@ -160,22 +148,13 @@
       }
 
       if (!dontPushVal)
-        self.pushVal(self.options.triggerChange);
+        self.pushVal();
 
       // Add class when reached maxTags
       if (self.options.maxTags === self.itemsArray.length || self.items().toString().length === self.options.maxInputLength)
         self.$container.addClass('bootstrap-tagsinput-max');
 
-      // If using typeahead, once the tag has been added, clear the typeahead value so it does not stick around in the input.
-      if ($('.typeahead, .twitter-typeahead', self.$container).length) {
-        self.$input.typeahead('val', '');
-      }
-
-      if (this.isInit) {
-        self.$element.trigger($.Event('itemAddedOnInit', { item: item, options: options }));
-      } else {
-        self.$element.trigger($.Event('itemAdded', { item: item, options: options }));
-      }
+      self.$element.trigger($.Event('itemAdded', { item: item, options: options }));
     },
 
     /**
@@ -207,7 +186,7 @@
       }
 
       if (!dontPushVal)
-        self.pushVal(self.options.triggerChange);
+        self.pushVal();
 
       // Remove class when reached maxTags
       if (self.options.maxTags > self.itemsArray.length)
@@ -228,7 +207,7 @@
       while(self.itemsArray.length > 0)
         self.itemsArray.pop();
 
-      self.pushVal(self.options.triggerChange);
+      self.pushVal();
     },
 
     /**
@@ -275,10 +254,7 @@
             return self.options.itemValue(item).toString();
           });
 
-      self.$element.val(val, true);
-
-      if (self.options.triggerChange)
-        self.$element.trigger('change');
+      self.$element.val(val, true).trigger('change');
     },
 
     /**
@@ -295,7 +271,7 @@
       makeOptionItemFunction(self.options, 'itemValue');
       makeOptionItemFunction(self.options, 'itemText');
       makeOptionFunction(self.options, 'tagClass');
-      
+
       // Typeahead Bootstrap version 2.3.2
       if (self.options.typeahead) {
         var typeahead = self.options.typeahead || {};
@@ -318,7 +294,7 @@
             this.map = {};
             var map = this.map,
                 data = typeahead.source(query);
-
+                
             if ($.isFunction(data.success)) {
               // support for Angular callbacks
               data.success(processItems);
@@ -350,20 +326,25 @@
 
       // typeahead.js
       if (self.options.typeaheadjs) {
+          var typeaheadConfig = null;
+          var typeaheadDatasets = {};
 
           // Determine if main configurations were passed or simply a dataset
           var typeaheadjs = self.options.typeaheadjs;
-          if (!$.isArray(typeaheadjs)) {
-              typeaheadjs = [null, typeaheadjs];
+          if ($.isArray(typeaheadjs)) {
+            typeaheadConfig = typeaheadjs[0];
+            typeaheadDatasets = typeaheadjs[1];
+          } else {
+            typeaheadDatasets = typeaheadjs;
           }
-          var valueKey = typeaheadjs[1].valueKey; // We should test typeaheadjs.size >= 1
-          var f_datum = valueKey ? function (datum) { return datum[valueKey];  }
-                                 : function (datum) {  return datum;  }
-          $.fn.typeahead.apply(self.$input,typeaheadjs).on('typeahead:selected', $.proxy(function (obj, datum) {
-              self.add( f_datum(datum) );
-              self.$input.typeahead('val', '');
-            }, self));
 
+          self.$input.typeahead(typeaheadConfig, typeaheadDatasets).on('typeahead:selected', $.proxy(function (obj, datum) {
+            if (typeaheadDatasets.valueKey)
+              self.add(datum[typeaheadDatasets.valueKey]);
+            else
+              self.add(datum);
+            self.$input.typeahead('val', '');
+          }, self));
       }
 
       self.$container.on('click', $.proxy(function(event) {
@@ -373,6 +354,7 @@
         self.$input.focus();
       }, self));
 
+      
         if (self.options.addOnBlur && self.options.freeInput) {
           self.$input.on('focusout', $.proxy(function(event) {
               // HACK: only process on focusout when no typeahead opened, to
@@ -384,15 +366,6 @@
           }, self));
         }
 
-      // Toggle the 'focus' css class on the container when it has focus
-      self.$container.on({
-        focusin: function() {
-          self.$container.addClass(self.options.focusClass);
-        },
-        focusout: function() {
-          self.$container.removeClass(self.options.focusClass);
-        },
-      });
 
       self.$container.on('keydown', 'input', $.proxy(function(event) {
         var $input = $(event.target),
@@ -450,7 +423,7 @@
         var textLength = $input.val().length,
             wordSpace = Math.ceil(textLength / 5),
             size = textLength + wordSpace + 1;
-        $input.attr('size', Math.max(this.inputSize, $input.val().length));
+//        $input.attr('size', Math.max(this.inputSize, $input.val().length));
       }, self));
 
       self.$container.on('keypress', 'input', $.proxy(function(event) {
@@ -472,7 +445,7 @@
 
             // If the field is empty, let the event triggered fire as usual
             if (self.options.cancelConfirmKeysOnEmpty === false) {
-                event.preventDefault();
+               event.preventDefault();
             }
          }
 
@@ -480,7 +453,7 @@
          var textLength = $input.val().length,
             wordSpace = Math.ceil(textLength / 5),
             size = textLength + wordSpace + 1;
-         $input.attr('size', Math.max(this.inputSize, $input.val().length));
+//         $input.attr('size', Math.max(this.inputSize, $input.val().length));
       }, self));
 
       // Remove icon clicked
@@ -494,7 +467,7 @@
       // Only add existing value as tags when using strings as tags
       if (self.options.itemValue === defaultOptions.itemValue) {
         if (self.$element[0].tagName === 'INPUT') {
-            self.add(self.$element.val(),true);
+            self.add(self.$element.val());
         } else {
           $('option', self.$element).each(function() {
             self.add($(this).attr('value'), true);

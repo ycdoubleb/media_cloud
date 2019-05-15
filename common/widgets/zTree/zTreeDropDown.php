@@ -202,8 +202,8 @@ class zTreeDropDown extends InputWidget {
         $url = Json::encode($this->url);
        
         $js = <<< JS
-            // 配置
-            var config = {
+            // 初始化组件
+            var zTreeDropdown = $("#{$this->id}").ztreeDropdown({
                 value: "{$this->value}",
                 placeholder: "{$this->options['placeholder']}",
                 tree_id: "{$this->pluginOptions['container']}",
@@ -211,13 +211,9 @@ class zTreeDropDown extends InputWidget {
                 tree_config: $treeConfig,
                 tree_data: $treeDataList,
                 url: $url,
-            }         
-            // 初始化组件
-            var zTreeDropdown = $("#{$this->id}").ztreeDropdown(config);
+            });
             // 单击显示下拉列表
             $("#{$this->id}").bind("click", function(){
-                // 重新初始化组件
-                var zTreeDropdown = $(this).ztreeDropdown(config);
                 zTreeDropdown.showTree();
             });
 JS;

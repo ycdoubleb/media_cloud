@@ -8,9 +8,8 @@
  * @returns {undefined}
  */
 ;(function($,window,document){
-    var _self;
     var zTreeDropdown = function(element, options){
-        _self = this;
+        var _self = this;
         _self.$elem = $(element);
         _self.defaults = {
             plug_id: null,
@@ -44,6 +43,7 @@
          * @returns {undefined}
          */
         init: function(){
+            var _self = this;
             _self._initzTree();
             _self._setDefaultValue();
         },
@@ -53,6 +53,7 @@
          * @returns {undefined}
          */
         _initzTree: function(){
+            var _self = this;
             var treeId = $('#' + _self.options.tree_id);
             $.fn.zTree.init(treeId, _self.options.tree_config, _self.options.tree_data);
         },
@@ -62,6 +63,7 @@
          * @returns {undefined}
          */
         _setDefaultValue: function(){
+            var _self = this;
             //如果值非空则设置默认值
             if(!!_self.options.value){
                 // 如果子级树状是动态获取则需要动态获取对应目录设置赋值
@@ -86,9 +88,11 @@
         /**
          * 区域外点击事件
          * @param {type} event
+         * @param {type} element
          * @returns {undefined}
          */
-        _onBodyDownByActionType: function(event){
+        _onBodyDownByActionType: function(event, element){
+            var _self = element;
             if (event.target.id.indexOf(_self.options.tree_id) == -1){  
                 if(event.target.id != 'selectDevType'){
                     _self.hideTree(); 
@@ -103,6 +107,7 @@
          * @returns {undefined}
          */
         _dynamicallyLoadingSubDir: function(treeId, treeNode){
+            var _self = this;
             var treeObj = $.fn.zTree.getZTreeObj(treeId);
             var parentZNode = treeObj.getNodeByParam("id", treeNode.id, null);//获取指定父节点
             var childNodes = treeObj.transformToArray(treeNode);//获取子节点集合
@@ -124,6 +129,7 @@
          * @returns {undefined}
          */
         setVoluation: function(value, text){
+            var _self = this;
             _self.plug_id.siblings('input[type="hidden"]').val(value);
             _self.plug_id.html(text);
         },
@@ -134,6 +140,7 @@
          * @returns {undefined}
          */
         showTree: function(){
+            var _self = this;
             var ztree = _self.plug_id.siblings("div." + _self.options.tree_class);
             // 显示或隐藏树状列表
             if(ztree.css('display') == 'none'){
@@ -142,7 +149,9 @@
                 ztree.css('display','none'); 
             }
 
-            $("body").bind("mousedown", _self._onBodyDownByActionType); 
+            $("body").bind("mousedown", function(event){
+                _self._onBodyDownByActionType(event, _self)
+            }); 
         },
         
         /**
@@ -150,11 +159,14 @@
          * @returns {Boolean}
          */
         hideTree: function(){
+            var _self = this;
             var ztree = _self.plug_id.siblings("div." + _self.options.tree_class);
             // 隐藏树状列表
             ztree.css('display','none'); 
 
-            $("body").unbind("mousedown", _self._onBodyDownByActionType); 
+            $("body").unbind("mousedown", function(event){
+                _self._onBodyDownByActionType(event, _self)
+            });
 
             return false;
         },
@@ -166,6 +178,7 @@
          * @returns {undefined}
          */
         addHoverDom: function(treeId, treeNode){
+            var _self = this;
             var sObj = $("#" + treeNode.tId + "_span");
             if (treeNode.editNameFlag || $("#addBtn_" + treeNode.tId).length > 0)
                 return;
@@ -214,6 +227,7 @@
          * @returns {undefined}
          */
         zTreeOnExpand: function(event,treeId, treeNode){
+            var _self = this;
             _self._dynamicallyLoadingSubDir(treeId, treeNode);
         },
         
@@ -225,6 +239,7 @@
          * @returns {undefined}
          */
         zTreeOnClick: function(event, treeId, treeNode){
+            var _self = this;
             _self.setVoluation(treeNode.id, treeNode.name);
             _self.hideTree();  
         },
@@ -238,6 +253,7 @@
          * @returns {Boolean}
          */
         zTreeBeforeRename: function(treeId, treeNode, newName, isCancel){
+            var _self = this;
             $.ajax({
                 type: 'post',
                 async: false,
@@ -268,6 +284,7 @@
          * @returns {Boolean}
          */
         zTreeBeforeRemove: function(treeId, treeNode){
+            var _self = this;
             $.post(_self.options.url.delete, {id: treeNode.id}, function(response){
                 if(response.code != "0"){
                     $.notify({

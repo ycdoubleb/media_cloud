@@ -233,7 +233,7 @@ class MediaImportController extends Controller{
     protected function getAgainInstallDirsBySameLevel($category_id)
     {
         $dirDataProvider = [];
-        $dirBySameLevels = Dir::getDirsBySameLevel(null, Yii::$app->user->id, $category_id, true);
+        $dirBySameLevels = Dir::getDirsBySameLevel(null, null, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {
             foreach ($dirLists as $dir) {
                 $dir['isParent'] = true;

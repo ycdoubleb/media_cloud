@@ -11,12 +11,11 @@ use common\models\media\MediaType;
  *
  * @author Administrator
  */
-class ListAction extends BaseAction {
+class ListAction extends BaseAction
+{
 
-    public function run() {
-        if (!$this->verify()) {
-            return $this->verifyError;
-        }
+    public function run()
+    {
         $types = MediaType::find()
                 ->select(['id', 'name', 'sign'])
                 ->where(['is_del' => 0])

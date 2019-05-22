@@ -4,9 +4,9 @@ namespace apiend\modules\v1\actions;
 
 use apiend\components\encryption\EncryptionService;
 use apiend\models\Response;
+use common\core\ApiException;
 use Yii;
 use yii\base\Action;
-use yii\base\Object;
 
 /**
  * Description of BaseAction
@@ -84,6 +84,7 @@ class BaseAction extends Action {
         if (time() * 1000 - $timestamp > 60 * 1000) {
             throw new ApiException(new Response(Response::CODE_COMMON_TIMEOUT, null, ["server_time" => time() * 1000]));
         }
+        
         if (!$this->getParam('secret')) {
             //没加密情况
             if (!$this->verifySignNoSecret($this->getParam('sign'))) {

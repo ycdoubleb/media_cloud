@@ -13,7 +13,6 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
-use yii\web\NotFoundHttpException;
 
 /**
  * This is the model class for table "{{%acl}}".
@@ -38,7 +37,8 @@ use yii\web\NotFoundHttpException;
  * @property User $user 
  * @property AclAction[] $aclAction
  */
-class Acl extends ActiveRecord {
+class Acl extends ActiveRecord
+{
 
     /** 状态-暂停 */
     const STATUS_SUSPEND = 0;
@@ -92,7 +92,7 @@ class Acl extends ActiveRecord {
     /**
      * 临时sn超时时间
      */
-    const REDIS_TEMP_SN_EXPIRE_TIME = 24 * 60 *60;
+    const REDIS_TEMP_SN_EXPIRE_TIME = 24 * 60 * 60;
 
     /**
      * 状态
@@ -118,14 +118,16 @@ class Acl extends ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return '{{%acl}}';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             TimestampBehavior::class,
         ];
@@ -134,7 +136,8 @@ class Acl extends ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['order_id', 'media_id', 'level', 'user_id', 'status', 'visit_count', 'expire_at', 'created_at', 'updated_at'], 'integer'],
             [['media_id'], 'required'],
@@ -147,7 +150,8 @@ class Acl extends ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => Yii::t('app', 'ID'),
             'sn' => Yii::t('app', 'Sn'),
@@ -169,28 +173,32 @@ class Acl extends ActiveRecord {
     /**
      * @return ActiveQuery
      */
-    public function getMedia() {
+    public function getMedia()
+    {
         return $this->hasOne(Media::class, ['id' => 'media_id']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getOrder() {
+    public function getOrder()
+    {
         return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getAclAction() {
+    public function getAclAction()
+    {
         return $this->hasMany(AclAction::className(), ['acl_id' => 'id'])
                         ->where(['acl_id' => $this->id]);
     }
@@ -200,7 +208,8 @@ class Acl extends ActiveRecord {
      * @param int $order_id 订单ID
      * @throws Exception
      */
-    public static function saveAcl($order_id) {
+    public static function saveAcl($order_id)
+    {
         try {
             // 查询已经存在的acl
             $aclResults = self::find()->where(['order_id' => $order_id])->asArray()->all();
@@ -241,21 +250,22 @@ class Acl extends ActiveRecord {
             throw new Exception($ex->getMessage());
         }
     }
-    
+
     /**
      * 更新访问列表路径
      * @param type $media_id    媒体ID
      * @param type $level       媒体等级
      */
-    public static function updateAcl($media_id, $level = []) {
+    public static function updateAcl($media_id, $level = [])
+    {
         $acls = self::find()->select([
-                'Acl.id', 'Acl.sn', "IF(VideoUrl.url IS NULL or VideoUrl.level = 0, Media.url, VideoUrl.url) as url"
-            ])->from(['Acl' => Acl::tableName()])
-            ->leftJoin(['VideoUrl' => VideoUrl::tableName()], '(Acl.media_id = VideoUrl.media_id AND Acl.level = VideoUrl.level AND VideoUrl.is_del = 0)')
-            ->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id')
-            ->where(['Media.id' => $media_id])
-            ->andFilterWhere(['VideoUrl.level' => $level])
-            ->asArray()->all();
+                            'Acl.id', 'Acl.sn', "IF(VideoUrl.url IS NULL or VideoUrl.level = 0, Media.url, VideoUrl.url) as url"
+                        ])->from(['Acl' => Acl::tableName()])
+                        ->leftJoin(['VideoUrl' => VideoUrl::tableName()], '(Acl.media_id = VideoUrl.media_id AND Acl.level = VideoUrl.level AND VideoUrl.is_del = 0)')
+                        ->leftJoin(['Media' => Media::tableName()], 'Media.id = Acl.media_id')
+                        ->where(['Media.id' => $media_id])
+                        ->andFilterWhere(['VideoUrl.level' => $level])
+                        ->asArray()->all();
 
         $acl_sn = [];
         foreach ($acls as &$value) {
@@ -280,19 +290,21 @@ class Acl extends ActiveRecord {
      * 
      * @param string|array $acl_sn      
      */
-    public static function clearCache($acl_sn) {
+    public static function clearCache($acl_sn)
+    {
         $acl_sns = is_array($acl_sn) ? $acl_sn : [$acl_sn];
         foreach ($acl_sns as &$acl_sn) {
             $acl_sn = self::REDIS_DATA_KEY . $acl_sn;
         }
         RedisService::getRedis()->del(...(array) $acl_sns);
     }
-    
+
     /**
      * 清除一个或者多个临时访问缓存
      * @param string|array $media_id
      */
-    private static function clearMediaTempSNCacheByMid($media_id) {
+    private static function clearMediaTempSNCacheByMid($media_id)
+    {
         $media_ids = is_array($media_id) ? $media_id : [$media_id];
         foreach ($media_ids as &$media_ids) {
             $media_ids = self::REDIS_TEMP_SN_KEY . $media_ids;
@@ -305,7 +317,8 @@ class Acl extends ActiveRecord {
      * 
      * @param int $acl_id     访问ID
      */
-    public static function visitIncrby($acl_sn) {
+    public static function visitIncrby($acl_sn)
+    {
         //添加增量
         $key = self::REDIS_DATA_KEY . $acl_sn;
         RedisService::getRedis()->hincrby($key, 'visit_count', 1);
@@ -316,7 +329,8 @@ class Acl extends ActiveRecord {
     /**
      * 更新已修改的缓存访问数
      */
-    public static function updateDirtyFromCache() {
+    public static function updateDirtyFromCache()
+    {
         //返回所有修改的键
         $members = RedisService::getRedis()->smembers(self::REDIS_DIRTY_KEY);
         //需要更新的值
@@ -340,7 +354,8 @@ class Acl extends ActiveRecord {
      * @param array $fields     获取指定字段
      * @return array ['id', 'url', 'media_id', 'user_id', 'visit_count']
      */
-    public static function getAclInfoBySn($sn, $fields = ['url']) {
+    public static function getAclInfoBySn($sn, $fields = ['url'])
+    {
         $key = self::REDIS_DATA_KEY . $sn;
         // 从缓存取出分类数据
         $acls = RedisService::getRedis()->hmget($key, $fields);
@@ -368,7 +383,8 @@ class Acl extends ActiveRecord {
      * 
      * @param int $media_id
      */
-    public static function getTempSnByMid($media_id) {
+    public static function getTempSnByMid($media_id)
+    {
         //查找临时访问 sn 码
         $key = self::REDIS_TEMP_SN_KEY . $media_id;
         if (RedisService::getRedis()->exists($key)) {
@@ -381,8 +397,11 @@ class Acl extends ActiveRecord {
             RedisService::getRedis()->setex($key, self::REDIS_TEMP_SN_EXPIRE_TIME, $sn);
             $media = Media::findOne(['id' => $media_id]);
             if ($media) {
+                $videoUrl = VideoUrl::findOne(['media_id' => $media->id, 'level' => VideoUrl::LEVEL_HD, 'is_del' => 0]);
+                //不转码视频使用原格式
+                $url = $videoUrl ? $videoUrl->url : $media->url;
                 //缓存 临时码与媒体路径,设置一天有效
-                $tempInfo = ['media_id' => $media_id, 'url' => $media->url];
+                $tempInfo = ['media_id' => $media_id, 'url' => $url];
                 RedisService::getRedis()->setex(self::REDIS_TEMP_DATA_KEY . $sn, self::REDIS_TEMP_SN_EXPIRE_TIME, json_encode($tempInfo));
                 return $sn;
             } else {
@@ -396,7 +415,8 @@ class Acl extends ActiveRecord {
      * 
      * @param string $sn
      */
-    public static function getTempUrlBySn($sn) {
+    public static function getTempUrlBySn($sn)
+    {
         $key = self::REDIS_TEMP_DATA_KEY . $sn;
         if (RedisService::getRedis()->exists($key)) {
             //查找临时访问路径
@@ -405,15 +425,16 @@ class Acl extends ActiveRecord {
             return "";
         }
     }
-    
+
     /**
      * 通过临时访问码返回媒体信息(id url)
      * 
      * @param string $sn
      */
-    public static function getTempInfoBySn($sn) {
+    public static function getTempInfoBySn($sn)
+    {
         $key = self::REDIS_TEMP_DATA_KEY . $sn;
-        
+
         if (RedisService::getRedis()->exists($key)) {
             //查找媒体信息
             $tempInfo = RedisService::getRedis()->get($key);

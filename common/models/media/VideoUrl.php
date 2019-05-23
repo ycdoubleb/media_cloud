@@ -30,6 +30,17 @@ use yii\db\ActiveRecord;
  */
 class VideoUrl extends ActiveRecord
 {
+    /* 原始 */
+    const LEVEL_SOURCE = 0;
+    /* 流畅 */
+    const LEVEL_LD = 1;
+    /* 标清 */
+    const LEVEL_SD = 2;
+    /* 高清 */
+    const LEVEL_HD = 3;
+    /* 超清 */
+    const LEVEL_FD = 4;
+    
     public static $videoLevelName = ['原始', '流畅', '标清', '高清', '超清',];
 
     /**

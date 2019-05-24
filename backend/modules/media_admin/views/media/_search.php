@@ -187,11 +187,13 @@ zTreeAsset::register($this);
     // 全选
     function selectall(){
         $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', true);
+        submitForm();
     }
     
     // 反选
     function unselectall(){
         $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', false);
+        submitForm();
     }
     
 </script>

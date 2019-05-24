@@ -28,7 +28,7 @@ zTreeAsset::register($this);
             'id' => 'media-search-form',
             'class' => 'form form-horizontal',
         ],
-        'action' => array_merge(['index'], ['category_id' => ArrayHelper::getValue($filters, 'category_id')]),
+        'action' => array_merge(['index'], array_merge(['category_id' => ArrayHelper::getValue($filters, 'category_id')], $filters)),
         'method' => 'get',
         'fieldConfig' => [  
             'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
@@ -75,15 +75,16 @@ zTreeAsset::register($this);
         ])->label(Yii::t('app', 'Storage Dir') . '：') ?>
         
         <!--素材类型-->
-        <?= $form->field($model, 'type_id')->checkboxList(MediaType::getMediaByType(), [
+        <?= $form->field($model, 'type_id', [
+            'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}"
+            . "<span class=\"selectall\" onclick=\"selectall();\">全选</span>|<span class=\"unselectall\" onclick=\"unselectall();\">反选</span></div>", 
+        ])->checkboxList(MediaType::getMediaByType(), [
+            'style' => 'display: inline-block;',
             'itemOptions'=>[
+                'class' => 'pull-left',
                 'onclick' => 'submitForm();',
                 'labelOptions'=>[
-                    'style'=>[
-                        'margin'=>'5px 30px 10px 0px',
-                        'color' => '#666666',
-                        'font-weight' => 'normal',
-                    ]
+                    'class' => 'checkbox-list-label'
                 ]
             ],
         ])->label(Yii::t('app', '{Medias}{Type}：', [
@@ -182,5 +183,15 @@ zTreeAsset::register($this);
     function submitForm (){
         $('#media-search-form').submit();
     }   
+    
+    // 全选
+    function selectall(){
+        $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', true);
+    }
+    
+    // 反选
+    function unselectall(){
+        $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', false);
+    }
     
 </script>

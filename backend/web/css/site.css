@@ -358,6 +358,16 @@ a.desc:after {
     margin: 0 !important; 
 }
 
+/* 全选，反选 */
+.selectall, .unselectall {
+    margin: 0px 3px;
+    font-size: 13px;
+    outline: none;
+    text-decoration: none;
+    color: #72afd2;
+    cursor: pointer;
+}
+
 /*******************************************************************************
  *
  * 自定义select2的样式
@@ -448,6 +458,13 @@ a.desc:after {
     width: auto;
     height: auto; 
     border-color: transparent;
+}
+
+.form .form-group .checkbox-list-label{
+    margin: 10px 0px;
+    margin-right: 30px;
+    color: #666666;
+    font-weight: normal;
 }
 
 .form .dep-dropdowns {

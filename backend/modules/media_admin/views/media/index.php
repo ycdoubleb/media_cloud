@@ -8,13 +8,13 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
+use yii\widgets\ActiveForm;
 
 /* @var $this View */
 /* @var $searchModel MediaSearch */
 /* @var $dataProvider ActiveDataProvider */
 
 MediaModuleAsset::register($this);
-
 
 $this->title = Yii::t('app', '{Medias}{List}', [
     'Medias' => Yii::t('app', 'Medias'), 'List' => Yii::t('app', 'List')
@@ -77,9 +77,26 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="page">
             <ul class="pagination" style="float: left"></ul>
             <div class="pull-left" style="display: inline-block; margin: 20px 5px">
+                <?php $form = ActiveForm::begin([
+                    'options'=>[
+                        'id' => 'media-pagesize-form',
+                        'class' => 'form form-horizontal',
+                    ],
+                    'action' => array_merge(['index'], $filters),
+                    'method' => 'get',
+                    'fieldConfig' => [  
+                        'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}</div>",  
+                        'labelOptions' => [
+                            'class' => 'col-lg-1 col-md-1 control-label form-label',
+                        ],  
+                    ], 
+                ]); ?>
+                
                 <?= Html::dropDownList('pageSize', ArrayHelper::getValue($filters, 'pageSize', 10), [10 => 10, 20 => 20, 50 => 50, 100 => 100], [
-                    'style' => 'height: 34px;', 'onchange' => 'setPerPageNum($(this).val())'
+                    'style' => 'height: 34px;', 'onchange' => "$('#media-pagesize-form').submit()"
                 ]) ?>
+                
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
         
@@ -189,36 +206,6 @@ $js = <<<JS
         
         return val
     }
-        
-            
-    /**
-     * 对象转url参数
-     *  @param string url    地址 
-     * @param array data    参数对象
-     */
-    function urlEncode (param, key, encode) {  
-        if(param==null) return '';  
-        var paramStr = '';  
-        var t = typeof (param);  
-        if (t == 'string' || t == 'number' || t == 'boolean') {  
-            paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(param) : param);  
-        } else {  
-            for (var i in param) {  
-                var k = key == null ? i : key + (param instanceof Array ? '[' + i + ']' : '.' + i);  
-                paramStr += urlEncode(param[i], k, encode);  
-            }  
-        }  
-        return paramStr;  
-    }
-            
-    /**
-     * 设置每页显示的数量
-     * @param string value    值 
-     */
-    window.setPerPageNum = function (value){
-        var urlParams = $.extend(params, {page: 1, pageSize: value});
-        window.location.href = "/media_admin/media/index?"+urlEncode(urlParams).substr(1);
-    }   
     
 JS;
     $this->registerJs($js,  View::POS_READY);

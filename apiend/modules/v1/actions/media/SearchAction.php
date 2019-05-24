@@ -17,12 +17,10 @@ use yii\db\Query;
  */
 class SearchAction extends BaseAction
 {
-
+    protected $requiredParams = ['category_id'];
+    
     public function run()
     {
-        if (!$this->verify()) {
-            return $this->verifyError;
-        }
         //指定搜索目录，默认为根目录
         $dir_id = $this->getSecretParam('dir_id', 0);
         //素材库，不能为空
@@ -42,14 +40,6 @@ class SearchAction extends BaseAction
         $keyword = str_replace(['，', '、', ',', ' '], '|', $keyword);          //转换为 k|k|k 格式
         $page = $page < 1 ? 1 : $page;
         $types = $type_id == "" ? [] : explode(',', $type_id);                  //转换 t,t,t 为 [t,t,t] 数组
-
-
-
-        /* 检查必须参数 */
-        $notfounds = $this->checkRequiredParams($this->getSecretParams(), ['category_id']);
-        if (count($notfounds) > 0) {
-            return new Response(Response::CODE_COMMON_MISS_PARAM, null, null, ['param' => implode(',', $notfounds)]);
-        }
 
         /*
          * 建立查询

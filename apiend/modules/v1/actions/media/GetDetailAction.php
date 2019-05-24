@@ -12,21 +12,16 @@ use common\models\media\Media;
  *
  * @author Administrator
  */
-class GetDetailAction extends BaseAction {
+class GetDetailAction extends BaseAction
+{
 
-    public function run() {
-        if (!$this->verify()) {
-            return $this->verifyError;
-        }
+    protected $requiredParams = ['media_id'];
+
+    public function run()
+    {
         $post = $this->getSecretParams();
         //指定ID
         $media_id = $this->getSecretParam('media_id', null);
-
-        /* 检查必须参数 */
-        $notfounds = $this->checkRequiredParams($post, ['media_id']);
-        if (count($notfounds) > 0) {
-            return new Response(Response::CODE_COMMON_MISS_PARAM, null, null, ['param' => implode(',', $notfounds)]);
-        }
 
         $media = Media::findOne(['id' => $media_id, 'del_status' => 0]);
 

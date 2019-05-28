@@ -151,10 +151,9 @@ class Media extends ActiveRecord {
     public function rules() {
         return [
             [['category_id', 'type_id', 'owner_id', 'dir_id', 'file_id', 'size', 'status', 'mts_status', 'del_status', 'is_link', 'visit_count', 'download_count', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['dir_id'], 'required', 'message' => Yii::t('app', "{Storage}{Dir}{Can't be empty}", [
-                    'Storage' => Yii::t('app', 'Storage'), 'Dir' => Yii::t('app', 'Dir'),
-                    "Can't be empty" => Yii::t('app', "Can't be empty.")
-                ]), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+            [['dir_id'], 'required', 'message' => Yii::t('app', "{StorageDir}{Can't be empty}", [
+                'StorageDir' => Yii::t('app', 'Storage Dir'), "Can't be empty" => Yii::t('app', "Can't be empty.")
+            ]), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['name', 'price'], 'required', 'on' => [self::SCENARIO_UPDATE]],
             [['price', 'duration'], 'number'],
             [['name'], 'string', 'max' => 100],

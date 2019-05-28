@@ -85,6 +85,7 @@ class zTreeDropDown extends InputWidget {
         foreach ($this->pluginEvents as $key => &$events) {
             $events = array_merge(array_filter($this->pluginEvents[$key]), isset($config['pluginEvents'][$key]) ? $config['pluginEvents'][$key] : []);
         }
+        
         $config['url'] = array_merge(array_filter($this->url), isset($config['url']) ? $config['url'] : []);
         
         parent::__construct($config);
@@ -163,7 +164,6 @@ class zTreeDropDown extends InputWidget {
         
         // 初始树状数据
         $treeDataList = Json::encode($this->data);
-        
         // 配置常用事件
         foreach ($this->pluginEvents as &$events){
             switch ($this->pluginOptions['type']){
@@ -175,6 +175,7 @@ class zTreeDropDown extends InputWidget {
                         zTreeDropdown.removeHoverDom(treeId, treeNode);
                     }');
                     $events['onClick'] =  new JsExpression('function(event, treeId, treeNode){
+                        console.log(zTreeDropdown);
                         zTreeDropdown.zTreeOnClick(event, treeId, treeNode);
                     }');
                     $events['onExpand'] = new JsExpression('function(event, treeId, treeNode){
@@ -194,7 +195,7 @@ class zTreeDropDown extends InputWidget {
                     break;
             }
         }
-                
+        
         // 配置
         $treeConfig = Json::encode(array_merge($this->pluginOptions, $this->pluginEvents));
         
@@ -202,19 +203,18 @@ class zTreeDropDown extends InputWidget {
         $url = Json::encode($this->url);
        
         $js = <<< JS
-            // 初始化组件
-            var zTreeDropdown = $("#{$this->id}").ztreeDropdown({
-                value: "{$this->value}",
-                placeholder: "{$this->options['placeholder']}",
-                tree_id: "{$this->pluginOptions['container']}",
-                tree_class: "{$this->options['class']}",
-                tree_config: $treeConfig,
-                tree_data: $treeDataList,
-                url: $url,
-            });
-            // 单击显示下拉列表
-            $("#{$this->id}").bind("click", function(){
-                zTreeDropdown.showTree();
+                
+            jQuery(function($){
+                // 初始化组件
+                var zTreeDropdown = $("#zTree-dropdown-{$this->id}").ztreeDropdown({
+                    value: "{$this->value}",
+                    placeholder: "{$this->options['placeholder']}",
+                    tree_id: "{$this->pluginOptions['container']}",
+                    tree_class: "{$this->options['class']}",
+                    tree_config: $treeConfig,
+                    tree_data: $treeDataList,
+                    url: $url,
+                });
             });
 JS;
         $view->registerJs($js, View::POS_READY);

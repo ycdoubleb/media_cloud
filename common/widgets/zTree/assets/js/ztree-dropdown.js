@@ -46,6 +46,10 @@
             var _self = this;
             _self._initzTree();
             _self._setDefaultValue();
+            // 单击显示下拉列表
+            _self.plug_id.find('span.zTree-dropdown-selection').bind("click", function(){
+                _self.showTree();
+            });
         },
         
         /**
@@ -54,7 +58,7 @@
          */
         _initzTree: function(){
             var _self = this;
-            var treeId = $('#' + _self.options.tree_id);
+            var treeId = _self.plug_id.find('ul#' + _self.options.tree_id);
             $.fn.zTree.init(treeId, _self.options.tree_config, _self.options.tree_data);
         },
         
@@ -130,8 +134,8 @@
          */
         setVoluation: function(value, text){
             var _self = this;
-            _self.plug_id.siblings('input[type="hidden"]').val(value);
-            _self.plug_id.html(text);
+            _self.plug_id.find('input[type="hidden"]').val(value);
+            _self.plug_id.find('span.zTree-dropdown-selection').html(text);
         },
         
         /**
@@ -141,7 +145,7 @@
          */
         showTree: function(){
             var _self = this;
-            var ztree = _self.plug_id.siblings("div." + _self.options.tree_class);
+            var ztree = _self.plug_id.find("div." + _self.options.tree_class);
             // 显示或隐藏树状列表
             if(ztree.css('display') == 'none'){
                 ztree.css('display','block'); 
@@ -160,7 +164,7 @@
          */
         hideTree: function(){
             var _self = this;
-            var ztree = _self.plug_id.siblings("div." + _self.options.tree_class);
+            var ztree = _self.plug_id.find("div." + _self.options.tree_class);
             // 隐藏树状列表
             ztree.css('display','none'); 
 
@@ -240,6 +244,13 @@
          */
         zTreeOnClick: function(event, treeId, treeNode){
             var _self = this;
+            var plugParents = _self.plug_id.parents('div.form-group');
+            // 如果是模型规则调用，则执行
+            if(plugParents.length > 0 && plugParents.hasClass('has-error')){
+                _self.plug_id.parents('div.form-group').removeClass('has-error').addClass('has-success');
+                plugParents.find('div.help-block').html('');
+            }
+            
             _self.setVoluation(treeNode.id, treeNode.name);
             _self.hideTree();  
         },
@@ -315,7 +326,8 @@
      * @returns {zTreeDropdown}
      */
     $.fn.ztreeDropdown = function(options){
-        return new zTreeDropdown(this, options);
+        var ztreeDropdown = new zTreeDropdown(this, options)
+        return ztreeDropdown;
     }
     
 })(jQuery,window,document);

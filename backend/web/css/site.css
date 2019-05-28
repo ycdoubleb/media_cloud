@@ -479,6 +479,15 @@ a.desc:after {
     box-shadow: none;
 }
 
+/* 自定义标签的样式 */
+.form .form-group .bootstrap-tagsinput{
+    padding: 0px 6px;
+}
+/* 设置标签输入框的高度 */
+.form .form-group .bootstrap-tagsinput input {
+    height: 34px;
+}
+
 /*******************************************************************************
  *
  * 面板

@@ -246,7 +246,7 @@ $media_data_tr_dom = str_replace("\n", ' ', $this->render('____media_data_tr_dom
     function validateDirDepDropdownValue(_this){
         if(!_this.parents('div.form-group').hasClass('required')) return;
 
-        if(_this.siblings('input[type="hidden"]').val() == ''){
+        if(_this.val() == ''){
             var label = _this.parents('div.form-group').find('label.form-label').text();
             var relabel = label.replace('*', "");
             _this.parents('div.form-group').addClass('has-error');

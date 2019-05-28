@@ -97,7 +97,7 @@ $this->title = I18NUitl::t('app', '{Medias}{Detail}');
                 <div class="resource-show">
                     <?php
                         $mediaType = $model->mediaType->sign;
-                        $mediaUrl = Url::to(['/media/use/temp-link', 'sn' => Acl::getTempSnByMid($model->id)]); //临时访问路径（有效期1天）
+                        $mediaUrl = Url::to(['/media/use/temp-link', 'sn' => Acl::getTempSnByMid($model->id)],true); //临时访问路径（有效期1天）
                         $cover_url = $model->cover_url;     //封面路径
                         switch ($mediaType){
                             case 'video' : 

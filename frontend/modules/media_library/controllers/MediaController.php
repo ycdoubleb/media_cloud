@@ -22,6 +22,7 @@ use frontend\modules\media_library\searchs\MediaSearch;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -33,6 +34,7 @@ use yii\web\NotFoundHttpException;
  */
 class MediaController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -53,7 +55,7 @@ class MediaController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['view'],   //素材详情
+                        'actions' => ['view'], //素材详情
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -61,7 +63,7 @@ class MediaController extends Controller
             ]
         ];
     }
-    
+
     /**
      * Renders the index view for the module
      * @return string
@@ -71,16 +73,28 @@ class MediaController extends Controller
         $category_id = $this->findConfigModel()->config_value;
         $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType()), 'category_id' => $category_id]);
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), true);
-        
-        return $this->render('index',[
-            'searchModel' => $searchModel,      //搜索模型
-            'filters' => $results['filter'],    //查询过滤的属性
-            'totalCount' => $results['total'],  //总数量
-            'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
-            'dirDataProvider' => $this->getAgainInstallDirsBySameLevel($category_id)
+        //获取当前目录的父级分类[顶级目录,子级目录,……]
+
+        if ($searchModel->dir_id == null || $searchModel->dir_id == "0") {
+            //没有选择任何单位情况下，只需要显示顶级目录
+            $dirLevels = [Dir::getDirsByLevel(null, $category_id, 1, true)];
+        } else {
+            $dirLevels = Dir::getDirsBySameLevel($searchModel->dir_id, null, $category_id, true, true);
+        }
+        $dirCounts = [];
+        foreach($dirLevels as $level => $dirs){
+            $dirCounts = $dirCounts + $this->getDirMediaCount(array_keys($dirs),$level+1,1);
+        }
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel, //搜索模型
+                    'filters' => $results['filter'], //查询过滤的属性
+                    'totalCount' => $results['total'], //总数量
+                    'attrMap' => MediaAttribute::getMediaAttributeByCategoryId($category_id),
+                    'dirDatas' => ['dirLevels' => $dirLevels,'dirCounts' => $dirCounts],
         ]);
     }
-    
+
     /**
      * Index（素材库）页素材列表数据
      * @return ApiResponse
@@ -91,7 +105,7 @@ class MediaController extends Controller
         $searchModel = new MediaSearch(['type_id' => array_keys(MediaType::getMediaByType()), 'category_id' => $category_id]);
         $results = $searchModel->searchMediaData(array_merge(Yii::$app->request->queryParams, ['limit' => 10]), false);
         $medias = array_values($results['data']['media']);                  //素材数据
-        
+
         $icons = [
             'video' => 'glyphicon glyphicon-facetime-video',
             'image' => 'glyphicon glyphicon-picture',
@@ -109,22 +123,21 @@ class MediaController extends Controller
             $item['tags'] = isset($item['tag_name']) ? $item['tag_name'] : 'null';
             $item['icon'] = isset($icons[$item['type_sign']]) ? $icons[$item['type_sign']] : '';
         }
-            
+
         //如果是ajax请求，返回json
-        if(\Yii::$app->request->isAjax){
+        if (\Yii::$app->request->isAjax) {
             Yii::$app->getResponse()->format = 'json';
-            try
-            { 
+            try {
                 $data = [
-                        'result' => $medias, 
-                        'page' => $results['filter']['page']
-                    ];
+                    'result' => $medias,
+                    'page' => $results['filter']['page']
+                ];
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, '请求成功！', $data);
-            }catch (Exception $ex) {
+            } catch (Exception $ex) {
                 return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '请求失败::' . $ex->getMessage());
             }
         }
-        
+
         return $this->render('media-data');
     }
 
@@ -139,20 +152,19 @@ class MediaController extends Controller
         $model = $this->findModel($id);
         // 是否已被收藏
         $hasFavorite = Favorites::findOne([
-            'goods_id' => $id,
-            'created_by' => \Yii::$app->user->id,
-            'is_del' => 0
+                    'goods_id' => $id,
+                    'created_by' => \Yii::$app->user->id,
+                    'is_del' => 0
         ]);
-        
+
         $attributeInfo = MediaAttValueRef::getMediaAttValueRefByMediaId($model->id, false); // 素材属性
         $tagsInfo = ArrayHelper::getColumn($model->mediaTagRefs, 'tags.name');      // 标签信息
-
         // 组装素材属性
         $attr = [];
         foreach ($attributeInfo as $value) {
             $attr[] = ['label' => $value['attr_name'], 'value' => $value['attr_value']];
         }
-        
+
         // 素材基础数据
         $datas = [
             ['label' => '素材编号', 'value' => $model->id],
@@ -162,23 +174,22 @@ class MediaController extends Controller
             ['label' => '时长', 'value' => $model->duration > 0 ? DateUtil::intToTime($model->duration, ':', true) : ''],
             ['label' => '大小', 'value' => Yii::$app->formatter->asShortSize($model->size)]
         ];
-        
+
         // 如果合并后数据为奇数 则添加一个数组
         $result = array_merge($datas, $attr);
-        if(count($result)%2 == 1){
+        if (count($result) % 2 == 1) {
             $result[] = ['label' => '', 'value' => ''];
         }
 
         return $this->render('view', [
-            'filters' => Yii::$app->request->queryParams,
-            'model' => $model,
-            'datas' => $result,
-            'tagsInfo' => implode('，', $tagsInfo),
-            'hasFavorite' => !empty($hasFavorite),
+                    'filters' => Yii::$app->request->queryParams,
+                    'model' => $model,
+                    'datas' => $result,
+                    'tagsInfo' => implode('，', $tagsInfo),
+                    'hasFavorite' => !empty($hasFavorite),
         ]);
-        
     }
-    
+
     /**
      * 把素材批量加入购物车
      * @return minxd
@@ -186,28 +197,27 @@ class MediaController extends Controller
     public function actionAddCarts()
     {
         Yii::$app->getResponse()->format = 'json';
-        
-        try{
+
+        try {
             $id = Yii::$app->request->post('ids');
             $media_ids = explode(',', $id);
-            foreach($media_ids as $media_id){
+            foreach ($media_ids as $media_id) {
                 $model = Cart::findOne(['goods_id' => $media_id, 'created_by' => \Yii::$app->user->id]);
-                if($model == null){
+                if ($model == null) {
                     $model = new Cart(['goods_id' => $media_id, 'created_by' => \Yii::$app->user->id]);
                 } else {
                     $model->is_del = 0;
                 }
                 $model->save();
             }
-            Yii::$app->getSession()->setFlash('success','加入购物车成功！');
+            Yii::$app->getSession()->setFlash('success', '加入购物车成功！');
             return new ApiResponse(ApiResponse::CODE_COMMON_OK);
         } catch (Exception $ex) {
-            Yii::$app->getSession()->setFlash('error','加入购物车失败！失败原因::'.$ex->getMessage());
-            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：'.$ex->getMessage());
+            Yii::$app->getSession()->setFlash('error', '加入购物车失败！失败原因::' . $ex->getMessage());
+            return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '加入购物车失败！失败原因：' . $ex->getMessage());
         }
-
     }
-    
+
     /**
      * 核对订单 / 提交订单后跳转到下单成功页面
      * @return mixed
@@ -216,16 +226,16 @@ class MediaController extends Controller
     {
         // 使用主布局main的布局样式
         $this->layout = '@app/views/layouts/main';
-        
-        $order_sn = date('YmdHis',time()) . rand(1000, 9999);
-        
+
+        $order_sn = date('YmdHis', time()) . rand(1000, 9999);
+
         $id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'id');
         $media_ids = explode(',', $id);
         $medias = Media::findAll($media_ids);
 
         $total_price = 0;
         // 计算选中素材的总数和价格
-        foreach ($medias as $media){
+        foreach ($medias as $media) {
             $total_price += $media->price;
         }
 
@@ -237,9 +247,9 @@ class MediaController extends Controller
         $model->created_by = Yii::$app->user->id;   //创建用户
 
         $userProfile = UserProfile::findOne(['user_id' => Yii::$app->user->id]); // 当前用户附加属性
-        if($userProfile->is_certificate == 1){
+        if ($userProfile->is_certificate == 1) {
             // 保存订单
-            if($model->load(Yii::$app->request->post()) && $model->save()){
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 try {
                     // 保存订单操作记录
                     OrderAction::savaOrderAction($model->id, '提交订单', '提交订单', $model->order_status, $model->play_status, Yii::$app->user->id);
@@ -252,31 +262,30 @@ class MediaController extends Controller
                             $value->price, Yii::$app->user->id, time(), time()
                         ];
                     }
-                    Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(),
-                        ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
+                    Yii::$app->db->createCommand()->batchInsert(OrderGoods::tableName(), ['order_id', 'order_sn', 'goods_id', 'price', 'amount', 'created_by', 'created_at', 'updated_at'], $data)->execute();
                     // 跳转到下单成功页
                     return $this->redirect(['/order_admin/cart/place-order',
-                        'id' => $model->id,
+                                'id' => $model->id,
                     ]);
                 } catch (Exception $ex) {
-                    Yii::$app->getSession()->setFlash('error', '失败原因：'.$ex->getMessage());
+                    Yii::$app->getSession()->setFlash('error', '失败原因：' . $ex->getMessage());
                 }
             }
         } else {
             return $this->render('error');
         }
-        
+
         return $this->render('checking-order', [
-            'model' => $model,    // 订单模型
-            'dataProvider' =>  new ArrayDataProvider([
-                'allModels' => array_values($medias),
-                'key' => 'id',
-            ]),
-            'sel_num' => count($media_ids),      // 选中数量
-            'total_price' => $total_price,  // 选中的素材总价
+                    'model' => $model, // 订单模型
+                    'dataProvider' => new ArrayDataProvider([
+                        'allModels' => array_values($medias),
+                        'key' => 'id',
+                            ]),
+                    'sel_num' => count($media_ids), // 选中数量
+                    'total_price' => $total_price, // 选中的素材总价
         ]);
     }
-    
+
     /**
      * 收藏 or 取消收藏 素材资源
      * @param int $id   素材ID
@@ -285,10 +294,10 @@ class MediaController extends Controller
     public function actionChangeFavorite($id)
     {
         Yii::$app->getResponse()->format = 'json';
-        
+
         $model = Favorites::findOne(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
-        if($model != null){
-            if($model->is_del == 0){
+        if ($model != null) {
+            if ($model->is_del == 0) {
                 $model->is_del = 1;
                 $is_favorite = false;
             } else {
@@ -303,12 +312,11 @@ class MediaController extends Controller
 
         if ($model->save()) {
             return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $is_favorite);
-        } 
-        else {
+        } else {
             return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN);
         }
     }
-    
+
     /**
      * 打开反馈问题的模态框 / 添加反馈问题操作
      * @param int $id   素材ID
@@ -323,21 +331,20 @@ class MediaController extends Controller
             Yii::$app->getResponse()->format = 'json';
             /** 开启事务 */
             $trans = Yii::$app->db->beginTransaction();
-            try
-            {  
+            try {
                 $results = $this->saveFeedback(Yii::$app->request->post());
-                if($results <= 0){
+                if ($results <= 0) {
                     throw new Exception($model->getErrors());
                 }
                 $trans->commit();  //提交事务
                 return new ApiResponse(ApiResponse::CODE_COMMON_OK, '操作成功！');
-            }catch (Exception $ex) {
-                $trans ->rollBack(); //回滚事务
-                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '操作失败::'.$ex->getMessage());
+            } catch (Exception $ex) {
+                $trans->rollBack(); //回滚事务
+                return new ApiResponse(ApiResponse::CODE_COMMON_UNKNOWN, '操作失败::' . $ex->getMessage());
             }
         } else {
             return $this->renderAjax('feedback', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -350,16 +357,16 @@ class MediaController extends Controller
     public function actionAddCart($id)
     {
         $model = Cart::findOne(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
-        if($model != null){
+        if ($model != null) {
             $model->is_del = 0;
         } else {
             $model = new Cart(['goods_id' => $id, 'created_by' => \Yii::$app->user->id]);
         }
-        
+
         if ($model->save()) {
-            Yii::$app->getSession()->setFlash('success','成功加入购物车！');
+            Yii::$app->getSession()->setFlash('success', '成功加入购物车！');
         } else {
-            Yii::$app->getSession()->setFlash('error','加入购物车失败！');
+            Yii::$app->getSession()->setFlash('error', '加入购物车失败！');
         }
         return $this->redirect(['view', 'id' => $id]);
     }
@@ -369,13 +376,14 @@ class MediaController extends Controller
      * @param string $id
      * @param string $target_id
      */
-    public function actionSearchChildren($id, $target_id = null){
+    public function actionSearchChildren($id, $target_id = null)
+    {
         $category_id = $this->findConfigModel()->config_value;
-        $dirsChildren = Dir::getDirsChildren($id, null, $category_id); 
+        $dirsChildren = Dir::getDirsChildren($id, null, $category_id);
         $childrens = [];
-        if(count($dirsChildren) > 0){
+        if (count($dirsChildren) > 0) {
             foreach ($dirsChildren as $index => $item) {
-                if($target_id != null && $target_id == $item['id']){
+                if ($target_id != null && $target_id == $item['id']) {
                     unset($item[$index]);
                     break;
                 }
@@ -383,25 +391,25 @@ class MediaController extends Controller
                 $childrens[] = $item;
             }
         }
-        
+
         Yii::$app->getResponse()->format = 'json';
-        
-        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $childrens);
+
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $childrens);
     }
-    
+
     /**
      * 获取 目录详情
      * @param string $id
      */
     public function actionDirDetail($id)
     {
-        $dir = Dir::getDirById($id); 
-        
+        $dir = Dir::getDirById($id);
+
         Yii::$app->getResponse()->format = 'json';
-        
-        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null , $dir->toArray());
+
+        return new ApiResponse(ApiResponse::CODE_COMMON_OK, null, $dir->toArray());
     }
-    
+
     /**
      * 保存反馈问题
      * @param type $post
@@ -422,11 +430,11 @@ class MediaController extends Controller
             'updated_at' => time(),
         ];
         /** 添加$values数组到表里 */
-        $num = Yii::$app->db->createCommand()->insert(MediaIssue::tableName(),$values)->execute();
-        
+        $num = Yii::$app->db->createCommand()->insert(MediaIssue::tableName(), $values)->execute();
+
         return $num;
     }
-    
+
     /**
      * Finds the Media model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -442,7 +450,7 @@ class MediaController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
-    
+
     /**
      * Finds the Media model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -458,22 +466,50 @@ class MediaController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
-    
+
     /**
      * 重组存储目录同级的所有目录
      * @return array
      */
     protected function getAgainInstallDirsBySameLevel($category_id)
-    {        
+    {
         $dirDataProvider = [];
         $dirBySameLevels = Dir::getDirsBySameLevel(null, null, $category_id, true);
         foreach ($dirBySameLevels as $dirLists) {
             foreach ($dirLists as $index => $dir) {
                 $dir['isParent'] = true;
                 $dirDataProvider[] = $dir;
-            }    
+            }
         }
-        
+
         return $dirDataProvider;
     }
+
+    /**
+     * 获取目录下的媒体数
+     * 
+     * @param array $dirIds
+     */
+    protected function getDirMediaCount($dirIds, $level = 1, $category_id = null)
+    {
+        $query = (new Query())
+                ->select(["SUBSTRING_INDEX( Dir.path, ',', ($level + 1) ) AS tpath", 'count(*) as count'])
+                ->from(['Media' => Media::tableName()])
+                ->leftJoin(['Dir' => Dir::tableName()], 'Dir.id = Media.dir_id')
+                ->where([
+                    'Media.status' => Media::STATUS_PUBLISHED,
+                    'Media.del_status' => 0,
+                ])
+                ->andFilterWhere(['Media.category_id' => $category_id,])
+                ->groupBy('tpath');
+
+        $result = $query->all();
+        $result = ArrayHelper::map($result, function($item) {
+                    $tpath = explode(',', $item['tpath']);
+                    return end($tpath);
+                }, 'count');
+                
+        return $result;
+    }
+
 }

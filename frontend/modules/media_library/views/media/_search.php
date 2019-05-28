@@ -1,8 +1,10 @@
 <?php
 
+use common\models\media\Dir;
 use common\models\media\MediaType;
 use common\utils\I18NUitl;
 use common\widgets\zTree\zTreeDropDown;
+use frontend\modules\media_library\searchs\MediaSearch;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -10,6 +12,13 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\ActiveForm;
+
+/* @var $searchModel MediaSearch  */
+
+$currentDir = Dir::getDirById($searchModel->dir_id);
+$dirSelectIds = $currentDir == null ? [0] : explode(',', $currentDir->path);
+$dirLevels = $dirDatas['dirLevels'];
+$dirCounts = $dirDatas['dirCounts'];
 
 ?>
 
@@ -33,31 +42,43 @@ use yii\widgets\ActiveForm;
         ]);?>
 
         <div class="col-lg-12 col-md-12 search-panel">
-            <!--存储目录-->
-            <div class="col-lg-12 col-md-12 search-dir">
-                <?= $form->field($searchModel, 'dir_id')->widget(zTreeDropDown::class, [
-                    'data' => $dirDataProvider,
-                    'url' => [
-                        'index' => Url::to(['search-children']),
-                        'view' => Url::to(['dir-detail']),
-                    ],
-                    'pluginOptions' => [
-                        'type' => zTreeDropDown::TYPE_SEARCH,
-                        'edit' => [
-                            'enable' => false
-                        ]
-                    ],
-                    'pluginEvents' => [
-                        'callback' => [
-                            'onClick' => new JsExpression('function(event, treeId, treeNode){
-                                zTreeDropdown.setVoluation(treeNode.id, treeNode.name);
-                                zTreeDropdown.hideTree();  
-                                submitForm();
-                            }'),
-                        ]
-                    ],
-                ])->label(Yii::t('app', 'Storage Dir') . '：') ?>
+            
+            <!-- 目录 -->
+            <div class="col-lg-12 col-md-12 dir-box">
+                <?php foreach ($dirLevels as $index => $dirs): ?>
+                    <div class="filter-row form-group">
+                        <label class="filter-label col-lg-1 col-md-1 control-label form-label"><?= $index == 0 ? "课程：" : "" ?></label>
+                        
+                        <div class="filter-control col-lg-10 col-md-10">
+                            <?php
+                            /*
+                             * 什么时候显示选择【全部】？
+                             * 可通过获取当前已选择分类的path获取分类的父级路径，
+                             * 如 当前已选择A分类，A分类上是顶级分类，A下面还有一级分类，那么$dirLevels的长度为3，而A.path的长度为3(0,2,26)
+                             * 所以A显示选中状态，而A下级的分类即显示选择【全部】
+                             * 
+                             * 只有最后一排分类才需要考虑是否显示选择【全部】 
+                             */
+                            $all_active = ($index == count($dirLevels) - 1 && count($dirLevels) >= count($dirSelectIds));
+                            
+                            ?>
+                            <a href="javascript:" onclick="searchF(<?= $dirSelectIds[$index]; ?>)" class="filter-item filter-all <?= $all_active ? 'active' : '' ?>">全部</a>
+                            <?php foreach ($dirs as $cid => $cname): ?>
+                                <?php 
+                                    //当前选择样式
+                                    $activedClass = (isset($dirSelectIds[$index + 1]) && $cid == $dirSelectIds[$index + 1]) ? 'active' : '';
+                                    //是否禁用样式，目录下没有媒体时显示禁用
+                                    $disabledClass = (isset($dirCounts[$cid]) && ($dirCounts[$cid] > 0)) ? '' : 'disabled';
+                                ?>
+                                <a href="javascript:" onclick="searchF(<?= $cid ?>)" 
+                                   class="filter-item <?= $activedClass ?> <?= $disabledClass ?>"><?= $cname ?></a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?= Html::activeHiddenInput($searchModel, 'dir_id') ?>
             </div>
+            
             
             <!--素材类型-->
             <div class="col-lg-12 col-md-12">
@@ -124,6 +145,16 @@ use yii\widgets\ActiveForm;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+<script>
+    /**
+     * 目录分类改变 
+     **/
+    function searchF(value){
+        $('#mediasearch-dir_id').val(value);
+        submitForm();
+    }
+</script>
 
 <?php
 $js = <<<JS

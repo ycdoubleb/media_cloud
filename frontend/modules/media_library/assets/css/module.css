@@ -39,6 +39,33 @@ and open the template in the editor.
 .media-form .search-panel {
     padding: 35px 0px; 
 }
+/**
+ * 存储目录/分类 样式
+ **/
+.media-form .dir-box .filter-row .filter-row{
+    margin: 20px 0;
+}
+/* 选项 */
+.media-form .dir-box .filter-row .filter-item {
+    display: inline-block;
+    margin: 6px 20px 6px 0;
+    text-decoration: none;
+    outline: none;
+    color: inherit;
+}
+.media-form .dir-box .filter-row .filter-label {
+    padding-right: 0px;
+}
+.media-form .dir-box .filter-row .filter-control {
+    padding-left: 35px;
+}
+.media-form .dir-box .filter-row .active {
+    color: #FC583D;
+}
+.media-form .dir-box .filter-row .disabled {
+    color: #999999;
+}
+
 
 /*替换下拉框的样式*/
 .mediacloud .media-form .select2-container--krajee .select2-selection--single .select2-selection__rendered {

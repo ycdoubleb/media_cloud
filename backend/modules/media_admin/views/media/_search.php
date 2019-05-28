@@ -76,8 +76,8 @@ zTreeAsset::register($this);
         
         <!--素材类型-->
         <?= $form->field($model, 'type_id', [
-            'template' => "{label}\n<div class=\"col-lg-6 col-md-6\">{input}"
-            . "<span class=\"selectall\" onclick=\"selectall();\">全选</span>|<span class=\"unselectall\" onclick=\"unselectall();\">反选</span></div>", 
+            'template' => "{label}\n<div class=\"col-lg-6 col-md-6\"><span class=\"selectall\" onclick=\"selectall();\" style=\"margin-right: 30px;\">全选</span>{input}"
+            . "</div>", 
         ])->checkboxList(MediaType::getMediaByType(), [
             'style' => 'display: inline-block;',
             'itemOptions'=>[
@@ -108,7 +108,7 @@ zTreeAsset::register($this);
                                 'name' => 'MediaSearch[attribute_value_id][]',
                                 'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
                                 'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
-                                'hideSearch' => true,
+                                'hideSearch' => false,
                                 'options' => ['placeholder' => $atts['name']],
                                 'pluginOptions' => ['allowClear' => true],
                                 'pluginEvents' => ['change' => 'function(){ submitForm()}']
@@ -178,22 +178,38 @@ zTreeAsset::register($this);
 </div>
 
 <script type="text/javascript">
-    
-    // 提交表单    
-    function submitForm (){
-        $('#media-search-form').submit();
-    }   
+    // 定时器
+    var set_timeout = null;
     
     // 全选
     function selectall(){
-        $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', true);
-        submitForm();
+        var selected = 0;
+            checkboxs = $('#mediasearch-type_id').find('input[type="checkbox"]'),
+            total = checkboxs.length;   //复选框总数
+        // 复选框选中的个数
+        checkboxs.each(function(){
+            if($(this).is(':checked')){
+                selected++;
+            }
+        });
+        if(total === selected){
+            $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', false);
+            submitForm(1000);
+        }else{
+            $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', true);
+            submitForm();
+        }
     }
     
-    // 反选
-    function unselectall(){
-        $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', false);
-        submitForm();
-    }
+    // 提交表单    
+    function submitForm (timeout){
+        clearTimeout(set_timeout);
+        if(timeout == undefined || timeout == null){
+            timeout = 100;
+        }
+        set_timeout = setTimeout(function(){
+            $('#media-search-form').submit();
+        }, timeout);
+    }   
     
 </script>

@@ -1,6 +1,6 @@
 <tr id="tr-{%id%}" data-key="{%row%}">
     <td><input type="checkbox" name="selection[]" value="{%id%}"></td>
-    <td><img src="{%cover_img%}" width="70px"/></td>
+    <td><div class="cover-img"><img src="{%cover_img%}" width="70px"/></div></td>
     <td>{%id%}</td>
     <td><span class="multi-line-clamp" style="-webkit-line-clamp:4">{%name%}</span></td>
     <td><span class="multi-line-clamp" style="-webkit-line-clamp:4">{%dir_id%}</span></td>

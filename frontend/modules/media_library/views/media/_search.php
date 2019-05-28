@@ -82,15 +82,16 @@ $dirCounts = $dirDatas['dirCounts'];
             
             <!--素材类型-->
             <div class="col-lg-12 col-md-12">
-                <?= $form->field($searchModel, 'type_id')->checkboxList(MediaType::getMediaByType(), [
+                <?= $form->field($searchModel, 'type_id', [
+                    'template' => "{label}\n<div class=\"col-lg-6 col-md-6 \" style=\"padding-left: 32px;\">"
+                    . "<span class=\"selectall\" onclick=\"selectall();\">全选</span>{input}</div>", 
+                ])->checkboxList(MediaType::getMediaByType(), [
+                    'style' => 'display: inline-block;',
                     'itemOptions'=>[
+                        'class' => 'pull-left',
                         'onclick' => 'submitForm();',
                         'labelOptions'=>[
-                            'style'=>[
-                                'margin'=>'5px 30px 10px 0px',
-                                'color' => '#666666',
-                                'font-weight' => 'normal',
-                            ]
+                            'class' => 'checkbox-list-label',
                         ]
                     ],
                 ])->label(I18NUitl::t('app', '{Medias}{Type}：')) ?>
@@ -109,7 +110,7 @@ $dirCounts = $dirDatas['dirCounts'];
                                         'name' => 'MediaSearch[attribute_value_id][]',
                                         'value' => ArrayHelper::getValue($filters, 'MediaSearch.attribute_value_id'),
                                         'data' => ArrayHelper::map($atts['childrens'], 'attr_val_id', 'attr_val_value'),
-                                        'hideSearch' => true,
+                                        'hideSearch' => false,
                                         'options' => ['placeholder' => $atts['name']],
                                         'pluginOptions' => ['allowClear' => true],
                                         'pluginEvents' => ['change' => 'function(){ submitForm()}']
@@ -133,6 +134,7 @@ $dirCounts = $dirDatas['dirCounts'];
                                 'id' => 'mediasearch-keyword',
                                 'class' => 'form-control',
                                 'placeholder' => Yii::t('app', 'Please enter a name or label'),
+                                'onchange' => 'submitForm()'
                             ])
                         ?>
                         <div class="search-icon"><i class="glyphicon glyphicon-search"></i></div>
@@ -154,6 +156,26 @@ $dirCounts = $dirDatas['dirCounts'];
         $('#mediasearch-dir_id').val(value);
         submitForm();
     }
+    
+    // 全选
+    function selectall(){
+        var selected = 0;
+            checkboxs = $('#mediasearch-type_id').find('input[type="checkbox"]'),
+            total = checkboxs.length;   //复选框总数
+        // 复选框选中的个数
+        checkboxs.each(function(){
+            if($(this).is(':checked')){
+                selected++;
+            }
+        });
+        if(total === selected){
+            $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', false);
+            submitForm(1000);
+        }else{
+            $('#mediasearch-type_id').find('input[type="checkbox"]').prop('checked', true);
+            submitForm();
+        }
+    }
 </script>
 
 <?php
@@ -163,11 +185,20 @@ $js = <<<JS
         submitForm();
     })
         
+    // 定时器
+    var set_timeout = null;
+        
     /**
      * 提交表单
      */
-    window.submitForm = function(){
-        $('#media-form').submit();
+    window.submitForm = function(timeout){
+        clearTimeout(set_timeout);
+        if(timeout == undefined || timeout == null){
+            timeout = 100;
+        }
+        set_timeout = setTimeout(function(){
+            $('#media-form').submit();
+        }, timeout);
     }
 JS;
     $this->registerJs($js,  View::POS_READY);

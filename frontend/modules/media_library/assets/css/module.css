@@ -93,6 +93,21 @@ and open the template in the editor.
     cursor: pointer;
 }
 
+.media-form .form-group .checkbox-list-label {
+    margin: 5px 30px 10px 20px;
+    color: #666666;
+    font-weight: normal;
+}
+
+.selectall, .unselectall {
+    margin: 0px 3px;
+    font-size: 13px;
+    outline: none;
+    text-decoration: none;
+    color: #72afd2;
+    cursor: pointer;
+}
+
 .media-form .search-panel .field-mediasearch-attribute_value_id .dep-dropdown {
     display: inline-block;
     width: 134px;
@@ -117,6 +132,12 @@ and open the template in the editor.
 .media-index  .mc-table > tbody > tr > td {
     font-size: 12px !important;
     height: 90px !important;
+}
+
+.media-index .mc-table > tbody > tr > td .cover-img {
+    height: 79px;
+    line-height: 79px;
+    overflow: hidden;
 }
 
 .common .mc-panel {

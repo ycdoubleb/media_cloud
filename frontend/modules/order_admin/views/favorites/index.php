@@ -51,7 +51,7 @@ $this->title = Yii::t('app', 'Favorites');
                     'format' => 'raw',
                     'value' => function($data){
                         return '<img src="'.Aliyun::absolutePath(!empty($data['cover_url']) ? 
-                                        $data['cover_url'] : 'static/imgs/notfound.png').'" style="width: 70px"/>';
+                                        $data['cover_url'] : 'static/imgs/notfound.png').'" style="width: 70px; max-height: 79px;"/>';
                     },
                     'headerOptions' => [
                         'style' => 'width: 80px',

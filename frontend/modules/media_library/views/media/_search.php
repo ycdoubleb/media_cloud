@@ -89,7 +89,7 @@ $dirCounts = $dirDatas['dirCounts'];
                     'style' => 'display: inline-block;',
                     'itemOptions'=>[
                         'class' => 'pull-left',
-                        'onclick' => 'submitForm();',
+                        'onclick' => 'submitForm(500);',
                         'labelOptions'=>[
                             'class' => 'checkbox-list-label',
                         ]

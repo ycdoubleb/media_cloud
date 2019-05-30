@@ -226,7 +226,7 @@ class RankingStatisticsController extends Controller
     {
         /* @var $query Query */
         $query = (new Query())
-                ->select(['Media.id','MediaVisitLog.visit_count AS value'])
+                ->select(['Media.id','SUM(MediaVisitLog.visit_count) AS value'])
                 ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
                 ->andFilterWhere(['Media.status' => Media::STATUS_PUBLISHED])   //已发布的素材
                 ->leftJoin(['Media' => Media::tableName()], 'Media.id = MediaVisitLog.media_id')

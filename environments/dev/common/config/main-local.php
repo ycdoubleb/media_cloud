@@ -3,7 +3,7 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=172.16.163.111;dbname=media_cloud',
+            'dsn' => 'mysql:host=172.16.149.111;dbname=media_cloud',
             'username' => 'wskeee',
             'password' => '1234',
             //测试机数据库

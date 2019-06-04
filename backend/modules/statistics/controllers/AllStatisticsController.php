@@ -68,14 +68,11 @@ class AllStatisticsController extends Controller
     protected function getTotalVisitNumber()
     {
         $query = (new Query())
-                ->select(['MediaVisitLog.visit_count AS value'])
+                ->select(['SUM(MediaVisitLog.visit_count) AS value'])
                 ->from(['MediaVisitLog' => MediaVisitLog::tableName()])
-                ->all();
+                ->one();
         
-        $totalResults = 0;
-        foreach ($query as $value) {
-            $totalResults += $value['value'];
-        }
+        $totalResults = $query['value'];
         
         return $totalResults;
     }

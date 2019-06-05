@@ -90,6 +90,7 @@ class DirController extends GridViewChangeSelfController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $category_id = ArrayHelper::getValue(Yii::$app->request->queryParams, 'category_id');
         
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if(empty($model->parent_id)) $model->parent_id = 0;
@@ -123,7 +124,7 @@ class DirController extends GridViewChangeSelfController
                 Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Operation Failed:') . $ex->getMessage());
             }
             
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'category_id' => $category_id]);
         }
 
         return $this->renderAjax('update', [

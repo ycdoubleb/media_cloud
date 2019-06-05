@@ -72,14 +72,14 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
                     var _this = $(this);
                     switch(index){
                         case 0:
-                            _this.attr({href: \'/media_config/dir/create?id=\' + node.key});
+                            var url = _this.attr({href: _this.attr("href") + "&id=" + node.key});
                             _this.click(function(e){
                                 e.preventDefault();
                                 showModal(_this);
                             });
                             break;
                         case 1:
-                            _this.attr({href: \'/media_config/dir/update?id=\' + node.key});
+                            _this.attr({href: _this.attr("href") + "&id=" + node.key});
                             _this.click(function(e){
                                 e.preventDefault();
                                 showModal(_this);
@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
                             _this.click(function(e){
                                 e.preventDefault();
                                 if(confirm("您确定要删除此项吗？") == true){
-                                    $.post(\'/media_config/dir/delete?id=\' + node.key, function(response){
+                                    $.post(_this.attr("href") + "?id=" + node.key, function(response){
                                         if(response.code == 0){
                                             node.remove();
                                         }else{
@@ -125,9 +125,13 @@ $this->params['breadcrumbs'][] = Yii::t('app', '{Dir}{List}', [
                     <td class="is_del" style="text-align: center;"></td>
                     <td class="btn_groups" style="text-align: center;">
                         <?php
-                            echo Html::a('<span class="glyphicon glyphicon-plus"></span>', 'javascript:;', ['title' => Yii::t('app', 'Create')]) . '&nbsp;';
-                            echo Html::a('<span class="glyphicon glyphicon-pencil"></span>', 'javascript:;', ['title' => Yii::t('app', 'Update')]) . '&nbsp;';     
-                            echo Html::a('<span class="glyphicon glyphicon-trash"></span>', 'javascript:;', ['title' => Yii::t('app', 'Delete')]);     
+                            echo Html::a('<span class="glyphicon glyphicon-plus"></span>', [
+                                'create', 'category_id' => $category_id
+                            ], ['title' => Yii::t('app', 'Create')]) . '&nbsp;';
+                            echo Html::a('<span class="glyphicon glyphicon-pencil"></span>', [
+                                'update', 'category_id' => $category_id
+                            ], ['title' => Yii::t('app', 'Update')]) . '&nbsp;';     
+                            echo Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete'], ['title' => Yii::t('app', 'Delete')]);     
                         ?>
                     </td>
                 </tr>

@@ -96,7 +96,7 @@ use yii\helpers\Url;
                     },
                 ],
                 [
-                    'label' => I18NUitl::t('app', '{Route}{Copy}'),
+                    'label' => I18NUitl::t('app', '{Path}{Copy}'),
                     'headerOptions' => [
                         'style' => 'width: 135px',
                     ],

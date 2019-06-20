@@ -139,7 +139,7 @@ $this->title = Yii::t('app', 'Medias');
                         'contentOptions' => ['style' => 'font-size: 13px'],
                     ],
                     [
-                        'label' => I18NUitl::t('app', '{Copy}{Route}'),
+                        'label' => I18NUitl::t('app', '{Path}{Copy}'),
                         'headerOptions' => [
                             'style' => [
                                 'width' => '90px',

@@ -43,3 +43,4 @@ phpunit.phar
 /apiend/runtime/
 /apiend/web/assets/
 /apiend/web/upload/
+/sql/

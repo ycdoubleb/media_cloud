@@ -175,7 +175,6 @@ class zTreeDropDown extends InputWidget {
                         zTreeDropdown.removeHoverDom(treeId, treeNode);
                     }');
                     $events['onClick'] =  new JsExpression('function(event, treeId, treeNode){
-                        console.log(zTreeDropdown);
                         zTreeDropdown.zTreeOnClick(event, treeId, treeNode);
                     }');
                     $events['onExpand'] = new JsExpression('function(event, treeId, treeNode){
